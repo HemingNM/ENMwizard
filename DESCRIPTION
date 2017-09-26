@@ -11,3 +11,18 @@ LazyData: true
 URL: http://github.com/HemingNM/ENMwizard
 BugReports: http://github.com/HemingNM/ENMwizard/issues
 RoxygenNote: 6.0.1
+Imports:
+  dismo,
+  rJava,
+  ENMeval,
+  spThin,
+  rgdal,
+  raster,
+  sp,
+  rgeos,
+  maptools,
+  fields,
+  xlsx,
+  readxl,
+  alphahull,
+  igraph
