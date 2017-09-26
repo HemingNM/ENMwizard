@@ -1,8 +1,16 @@
 #####------- 1. Prepare environmental data
 
 # 1. Prepare enviromental layers
-##### 1.1 create occ polygon to crop rasters prior to modelling
-
+#' Create occ polygon to crop rasters prior to modelling
+#'
+#' @param occ.spdf A spatial data.frame of coordinates, usually species occurence coordinates
+#' @param o.path Output path
+#' @param lr.nm Polygon output name
+#' @param convex Concave or convex polygon (T or F)
+#' @return spatial polygon built using coordinates
+#' @examples
+#' occ_poly <- f.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
+#' plot(occ_poly)
 f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10, crs.set = NA ){
   if(convex==F){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
@@ -48,11 +56,16 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
   }
   return(occ_poly)
 }
-# rm(ch, chg, cutg, ends, path, pathX, coords)
-# occ_poly <- f.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly", convex=T, alpha=10)
-# plot(occ_poly)
 
-##### 1.1 create occ polygon for several spp
+
+#' Create occ polygon for several species
+#'
+#' @param spp.occ.list A named list of spatial data.frame of species occurence points
+#' @param o.path Output path
+#' @param convex Concave or convex polygon (T or F)
+#' @return A named list of spatial polygons built using coordinates
+#' @examples
+#' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
 f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alpha=10){
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), o.path, sep = ".")
@@ -69,7 +82,6 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
   return(occ.pgns)
 }
 
-# occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
 
 
 
