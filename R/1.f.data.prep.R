@@ -113,22 +113,22 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
 occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set) #
 
 
-# path to environmental variables
-path.env <- "/Volumes/Samsung SSD/neanderh/Documents/CloudStation/ArcGIS-Virtual Machine/Mapas/Clima e Biosfera/ClimaticScenaries/PR/WorldClim/2_5min/bio_2-5m_bil"
-biovars <- paste0("bio", 1:17)#c("bio5", "bio8", "bio10", "bio13", "bio16") # "bio18" tem problemas para o cerrado
-pattern.env = 'asc'
-path.env.out <- "3_envData"
-
-# 1.3. Cut enviromental layers with M and save in hardrive.
-# Get uncut variables
-env_uncut <- list.files(path.env, pattern = pattern.env, full.names=TRUE)
-env_uncut <- env_uncut[grepl(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env_uncut)]
-env_uncut <- stack(env_uncut) #predictors_uncut
-crs(env_uncut) <- crs.set
-
-# # Se as variáveis estiverem prontas:
-env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
-
+# # path to environmental variables
+# path.env <- "/Volumes/Samsung SSD/neanderh/Documents/CloudStation/ArcGIS-Virtual Machine/Mapas/Clima e Biosfera/ClimaticScenaries/PR/WorldClim/2_5min/bio_2-5m_bil"
+# biovars <- paste0("bio", 1:17)#c("bio5", "bio8", "bio10", "bio13", "bio16") # "bio18" tem problemas para o cerrado
+# pattern.env = 'asc'
+# path.env.out <- "3_envData"
+#
+# # 1.3. Cut enviromental layers with M and save in hardrive.
+# # Get uncut variables
+# env_uncut <- list.files(path.env, pattern = pattern.env, full.names=TRUE)
+# env_uncut <- env_uncut[grepl(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env_uncut)]
+# env_uncut <- stack(env_uncut) #predictors_uncut
+# crs(env_uncut) <- crs.set
+#
+# # # Se as variáveis estiverem prontas:
+# env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
+#
 
 #### Function to crop environmental variables for each species
 f.cut.env <- function(occ_b, env_uncut){
@@ -155,9 +155,9 @@ f.cut.env <- function(occ_b, env_uncut){
   return(occ_b_env)
 }
 
-# 1.3.2 crop environmental variables for each species
-occ_b_env <- f.cut.env(occ_b, env_uncut)
-
-for(i in 1:length(occ_b_env)){
-  plot(occ_b_env[[i]][[1]])
-}
+# # 1.3.2 crop environmental variables for each species
+# occ_b_env <- f.cut.env(occ_b, env_uncut)
+#
+# for(i in 1:length(occ_b_env)){
+#   plot(occ_b_env[[i]][[1]])
+# }
