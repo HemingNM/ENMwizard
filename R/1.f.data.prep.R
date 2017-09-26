@@ -69,7 +69,7 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
   return(occ.pgns)
 }
 
-occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
+# occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
 
 
 
@@ -110,7 +110,7 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
   return(occ_b)
 }
 
-occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set) #
+# occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set) #
 
 
 # # path to environmental variables
