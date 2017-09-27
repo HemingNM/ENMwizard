@@ -80,6 +80,78 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
 }
 
 
+#' merge several shapefiles into a single one
+#'
+#' @param files
+#' @param sp.nm
+#' @param o.path Output path
+#' @param crs.set
+#' @return
+f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
+  # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
+  # Require packages: rgdal and maptool
+  #-------------------------------------
+  library(rgdal)
+  library(maptools)
+
+  # Get polygons and change IDs
+  #-------------------------------------
+  uid<-1
+  poly.l <- vector("list", length(files))
+  for (i in 1:length(files)) {
+    temp.data <- files[[i]]
+    n <- length(slot(temp.data, "polygons"))
+    temp.data <- spChFIDs(temp.data, as.character(uid:(uid+n-1)))
+    uid <- uid + n
+    poly.l[[i]] <- temp.data
+    # poly.data <- spRbind(poly.data,temp.data)
+  }
+
+  # mapunit polygoan: combin remaining  polygons with first polygoan
+  #-----------------------------------------------------------------
+  poly.data <- do.call(bind, poly.l)
+  # names(poly.data)
+  crs(poly.data) <- crs.set
+  sp.nm <- paste0(sp.nm, ".occ_poly")
+  if(!is.null(o.path)){
+    shapefile(poly.data, filename = paste(o.path, paste0(sp.nm,".shp"), sep = "/" ), overwrite=TRUE)
+    # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
+    return(readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
+  } else {
+    return(poly.data)
+  }
+}
+
+#' create N polygons for a species (whenever distribution seems disjoint) and save in a single .shp
+#'
+#' @param spp.occ species occurence coordinates
+#' @param k number of polygons to create based on coordinates
+#' @param convex boolean (T or F). Create concave or convex polygons
+#' @param alpha
+#' @param sp.nm output name
+#' @param o.path Output path
+#' @param crs.set
+#' @return spatial polygons built using coordinates
+#' @examples
+#' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly", crs.set = crs.set)
+f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NA){
+  hc <- hclust(dist(cbind(spp.occ$LONG, spp.occ$LAT)))
+  # plot(hc)
+  clust <- cutree(hc, k)
+
+  # create one polygon for each set of points
+  spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
+  occ_polys.lst <- f.poly.batch(spp.k.list, convex=convex, alpha=alpha)
+  occ_polys.sp <- f.bind.shp(occ_polys.lst, sp.nm = sp.nm, o.path = o.path, crs.set = crs.set)
+  crs(occ_polys.sp) <- crs.set
+  plot(occ_polys.sp)
+  spp.occ <- as.data.frame(spp.occ)
+  coordinates(spp.occ) <- ~LONG+LAT
+  plot(spp.occ, col="red", add=T)
+  return(occ_polys.sp)
+}
+
+
 
 
 #### 1.2 creating buffer
@@ -89,7 +161,7 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
 #' @param bffr.width Buffer width. See 'width' of ?gBuffer
 #' @param mult How much expand bffr.width
 #' @param quadsegs
-#' @param o.path
+#' @param o.path Output path
 #' @param crs.set
 #' @param plot Boolean, to draw plots or not
 #' @return A named list of SpatialPolygons
@@ -145,9 +217,19 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
 # env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 #
 
-#### Function to crop environmental variables for each species
+#' Crop environmental variables for each species
+#'
+#' @param occ_b polygon, usually a buffer
+#' @param env_uncut raster brick or stack to be cropped
+#' @return
+#' @examples
+#' 1.3.2 crop environmental variables for each species
+#' occ_b_env <- f.cut.env(occ_b, env_uncut)
+#' for(i in 1:length(occ_b_env)){
+#'    plot(occ_b_env[[i]][[1]])
+#'    plot(occ_b[[i]], add=T)
+#'    }
 f.cut.env <- function(occ_b, env_uncut){
-  library(raster)
   path.env.out <- "3_envData"
   ## Clipping rasters for each species
   occ_b_env <- vector("list", length(occ_b))
@@ -156,12 +238,12 @@ f.cut.env <- function(occ_b, env_uncut){
 
   for(i in 1:length(occ_b)){
     cat(c("Cutting environmental variables of species", i, "of", length(occ_b), "\n"))
-    occ_b[[i]] <- spTransform(occ_b[[i]], crs(env_uncut))
-    occ_b_env[[i]] <- crop(env_uncut, extent(occ_b[[i]]))
-    occ_b_env[[i]] <- mask(occ_b_env[[i]], occ_b[[i]])
-    crs(occ_b_env[[i]]) <- crs(env_uncut)
+    occ_b[[i]] <- sp::spTransform(occ_b[[i]], raster::crs(env_uncut))
+    occ_b_env[[i]] <- raster::crop(env_uncut, raster::extent(occ_b[[i]]))
+    occ_b_env[[i]] <- raster::mask(occ_b_env[[i]], occ_b[[i]])
+    raster::crs(occ_b_env[[i]]) <- raster::crs(env_uncut)
     # if(dir.exists(paste("3_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("3_envData", names(spp.occ.list)[i], sep = "/"))
-    occ_b_env[[i]] <- writeRaster(occ_b_env[[i]],
+    occ_b_env[[i]] <- raster::writeRaster(occ_b_env[[i]],
                                   filename = paste(path.env.out, paste("envData.", names(occ_b_env)[i], ".grd", sep=''), sep='/'),
                                   format = "raster", overwrite = T)
     # plot(occ_b_env[[i]])
@@ -170,9 +252,6 @@ f.cut.env <- function(occ_b, env_uncut){
   return(occ_b_env)
 }
 
-# # 1.3.2 crop environmental variables for each species
 # occ_b_env <- f.cut.env(occ_b, env_uncut)
 #
-# for(i in 1:length(occ_b_env)){
-#   plot(occ_b_env[[i]][[1]])
-# }
+#
