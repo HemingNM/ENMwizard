@@ -7,6 +7,8 @@
 #' @param o.path Output path
 #' @param lr.nm Polygon output name
 #' @param convex Concave or convex polygon (T or F)
+#' @param alpha see ?alphahull::ashape
+#' @param crs.set crs value used ???
 #' @return spatial polygon built using coordinates
 #' @examples
 #' occ_poly <- f.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
@@ -16,7 +18,7 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
 
-    ch <- alphahull::ashape(unique(coordinates(occ.spdf)), alpha=10)
+    ch <- alphahull::ashape(unique(coordinates(occ.spdf)), alpha=alpha)
     chg <- igraph::graph.edgelist(cbind(as.character(ch$edges[, "ind1"]),
                                as.character(ch$edges[, "ind2"])), directed = FALSE)
     if (!igraph::is.connected(chg)) {
@@ -58,8 +60,7 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
 #' Create occ polygon for several species
 #'
 #' @param spp.occ.list A named list of spatial data.frame of species occurence points
-#' @param o.path Output path
-#' @param convex Concave or convex polygon (T or F)
+#' @inheritParams f.poly
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
 #' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
@@ -82,11 +83,10 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
 
 #' merge several shapefiles into a single one
 #'
-#' @param files
-#' @param sp.nm
-#' @param o.path Output path
-#' @param crs.set
-#' @return
+#' @param files ??
+#' @param sp.nm name used to save file
+#' @inheritParams f.poly
+#' @return shapefile with binded polygons
 f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Require packages: rgdal and maptool
@@ -126,11 +126,8 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
 #'
 #' @param spp.occ species occurence coordinates
 #' @param k number of polygons to create based on coordinates
-#' @param convex boolean (T or F). Create concave or convex polygons
-#' @param alpha
-#' @param sp.nm output name
-#' @param o.path Output path
-#' @param crs.set
+#' @inheritParams f.poly
+#' @inheritParams f.bind.shp
 #' @return spatial polygons built using coordinates
 #' @examples
 #' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly", crs.set = crs.set)
@@ -160,10 +157,9 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 #' @param occ_polys Spatial polygon
 #' @param bffr.width Buffer width. See 'width' of ?gBuffer
 #' @param mult How much expand bffr.width
-#' @param quadsegs
-#' @param o.path Output path
-#' @param crs.set
 #' @param plot Boolean, to draw plots or not
+#' @param quadsegs see ?rgeos::gBuffer
+#' @inheritParams f.poly
 #' @return A named list of SpatialPolygons
 #' @examples
 #' occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set) #
@@ -215,15 +211,13 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
 #
 # # # Se as variáveis estiverem prontas:
 # env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
-#
 
 #' Crop environmental variables for each species
 #'
 #' @param occ_b polygon, usually a buffer
 #' @param env_uncut raster brick or stack to be cropped
-#' @return
+#' @return list [for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
-#' 1.3.2 crop environmental variables for each species
 #' occ_b_env <- f.cut.env(occ_b, env_uncut)
 #' for(i in 1:length(occ_b_env)){
 #'    plot(occ_b_env[[i]][[1]])
@@ -255,3 +249,98 @@ f.cut.env <- function(occ_b, env_uncut){
 # occ_b_env <- f.cut.env(occ_b, env_uncut)
 #
 #
+
+
+#####------- 2. Filtering original dataset
+# for several files
+#' Filter each species' occurence dataset
+#'
+#' @param loc.data.lst Named list containing species occ data
+#' @param lat.col See ?thin of spThin package
+#' @param long.col See ?thin of spThin package
+#' @param spec.col See ?thin of spThin package
+#' @param thin.par See ?thin of spThin package
+#' @param reps See ?thin of spThin package
+#' @param locs.thinned.list.return See ?thin of spThin package
+#' @param write.files See ?thin of spThin package
+#' @param max.files See ?thin of spThin package
+#' @param write.log.file See ?thin of spThin package
+#' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ_thinned_full".
+#' @examples
+#' thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
+#' plotThin(thinned_dataset_batch[[1]])
+#' length(thinned_dataset_batch[[1]])
+thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.col = "SPEC",
+                       thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
+                       write.files = TRUE, max.files = 1, write.log.file = TRUE) {
+
+  out.dir <- "occ_thinned_full"
+  if(dir.exists(out.dir)==F) dir.create(out.dir)
+  spp <- names(loc.data.lst)
+
+  t.loc <- function(i, loc.data.lst,  spp, ...){
+    spThin::thin(loc.data.lst[[i]],
+                 lat.col = lat.col, long.col = long.col,
+                 spec.col = spec.col,
+                 thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
+                 locs.thinned.list.return = locs.thinned.list.return,
+                 write.files = write.files,
+                 max.files = max.files,
+                 out.dir = out.dir,
+                 out.base = paste0(spp[i], ".occ_thinned"),
+                 log.file = paste0(out.dir, "/", spp[i], ".occ_thinned_full_log_file.txt"),
+                 write.log.file = write.log.file)
+  }
+
+  thinned_dataset_full <- vector(mode = "list", length = length(loc.data.lst))
+  thinned_dataset_full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
+
+  names(thinned_dataset_full) <- spp
+
+  return(thinned_dataset_full)
+}
+
+
+
+
+#
+# plotThin(thinned_dataset_batch[[2]])
+# plotThin(thinned_dataset_batch[[3]])
+
+#' Load occurrence data filtered using "thin.batch"
+#' @param occ.list.thin named list returned from "thin.batch"
+#' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
+#' @param wtd : which thinned dataset?
+#' @return named list of thinned occurence data for each species in the list
+#' @examples
+#' occ_locs <- f.load_occ_T(thinned_dataset_batch)
+f.load_occ_T <- function(occ.list.thin, from.disk=F, wtd=1){
+
+  if (from.disk){ # retrieve from disk
+    out.dir <- "occ_thinned_full"
+
+    occ_l <- vector("list", length(occ.list.thin))
+    names(occ_l) <- names(occ.list.thin)
+    for(i in 1:length(occ.list.thin)){
+      occ_l[[i]] <- read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ_thinned", "_thin1.csv"),
+                             header=TRUE, sep=',', stringsAsFactors=F)[2:3]
+    }
+  } else { # retrieve from thinned obj
+    for(i in 1:length(occ.list.thin)){
+      if(wtd > length(occ.list.thin[[i]])) stop(paste("There are only", length(occ.list.thin[[i]]), "thinned datasets. 'wtd' was", wtd))
+
+      occ_l[[i]] <- occ.list.thin[[i]][[wtd]]
+      colnames(occ_l[[i]]) <- c("LONG", "LAT")
+    }
+  }
+
+  return(occ_l)
+}
+
+# Check
+# occ_locs[[i]]
+# names(occ_locs)
+
+# write.xlsx(occ_locs[[1]], paste0(out.dir, "/", names(occ_locs)[1], ".occ_thinned", ".xlsx"))
+# write.xlsx(occ_locs[[2]], paste0(out.dir, "/", names(occ_locs)[2], ".occ_thinned", ".xlsx"))
+# write.xlsx(occ_locs[[3]], paste0(out.dir, "/", names(occ_locs)[3], ".occ_thinned", ".xlsx"))

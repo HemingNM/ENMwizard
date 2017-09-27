@@ -98,3 +98,20 @@ for(i in 1:length(occ_b_env)){
   plot(occ_b[[i]], add = T)
 }
 ```
+
+
+## ------- 2. Prepare occurence data
+### ------- 2.1 Filtering original dataset
+Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
+```r
+thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
+```
+
+After thinning, we choose one of dataset for each species for modelling.
+```r
+occ_locs <- f.load_occ_T(thinned_dataset_batch)
+```
+
+Great! Now we are ready for tunning species' ENMs
+
+

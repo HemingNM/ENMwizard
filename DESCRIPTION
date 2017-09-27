@@ -1,11 +1,11 @@
 Package: ENMwizard
 Type: Package
-Title: Automate Tasks Related to ENM
+Title: Advanced tecniques for ecological niche models made easy in R
 Version: 0.1.0
 Author: Neander Marcel Heming, Eliécer E. Gutierrez
 Maintainer: Neander Marcel Heming <neanderh@yahoo.com.br>
-Description: Tools to automate tasks related to ENM. From data preparation to model selection and maxent niche modelling.
-License: GPL-2
+Description: This package provides tools to facilitate the use of advanced techiques related to ENM and the automation of repetitive tasks (when modelling several species). This package has functions to enable easier: 1. preparation of occurence and environmental data used in ENM, 2. model tunning (thanks to ENMeval), 3. model fitting and projection. ENMwizard also implements methods described in Gutierrez & Heming in prep. See readme in https://github.com/HemingNM/ENMwizard for a brief tutorial.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/HemingNM/ENMwizard

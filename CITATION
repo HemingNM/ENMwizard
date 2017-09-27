@@ -1,0 +1,19 @@
+citHeader("To cite ENMwizard in publications please use:")
+
+citEntry(entry	= "Article",
+  title 	= "ENMwizard: An R package for conducting spatially independent evaluations and estimating optimal model complexity for ecological niche models",
+  author 	= personList(as.person("N.M. Heming"),
+			as.person("E.E. Gutierrez")),
+  journal	= "in prep",
+  year 		= "2017",
+  volume	= "xx",
+  number	= "xx",
+  pages		= "xx-xx",
+
+  textVersion	=
+  paste("Heming, N.M., Gutierrez, E.E. (2017). ENMwizard:
+  Advanced tecniques for ecological niche models made easy in R (from data preparation to AICc model averaging and beyond).
+  An R package to facilitate advanced tecniques for ecological niche models (from data preparation to model selection).
+  A multi-task R package for advanced tecniques in ecological niche models
+  Published in Journal.")
+)
