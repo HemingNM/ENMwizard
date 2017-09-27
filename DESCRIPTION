@@ -8,8 +8,8 @@ Description: Tools to automate tasks related to ENM. From data preparation to mo
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-URL: http://github.com/HemingNM/ENMwizard
-BugReports: http://github.com/HemingNM/ENMwizard/issues
+URL: https://github.com/HemingNM/ENMwizard
+BugReports: https://github.com/HemingNM/ENMwizard/issues
 RoxygenNote: 6.0.1
 Imports:
   dismo,
