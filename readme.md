@@ -112,6 +112,6 @@ After thinning, we choose one of dataset for each species for modelling.
 occ_locs <- f.load_occ_T(thinned_dataset_batch)
 ```
 
-Great! Now we are ready for tunning species' ENMs
+### Great! Now we are ready for tunning species' ENMs
 
 
