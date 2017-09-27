@@ -18,7 +18,7 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
 
-    ch <- alphahull::ashape(unique(coordinates(occ.spdf)), alpha=alpha)
+    ch <- alphahull::ashape(unique(sp::coordinates(occ.spdf)), alpha=alpha)
     chg <- igraph::graph.edgelist(cbind(as.character(ch$edges[, "ind1"]),
                                as.character(ch$edges[, "ind2"])), directed = FALSE)
     if (!igraph::is.connected(chg)) {
@@ -44,12 +44,12 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
     # lines(ch$x[pathX, ], lwd = 2)
     coords <- ch$x[pathX, ]
   } else {
-    ch <- grDevices::chull(coordinates(occ.spdf))
+    ch <- grDevices::chull(sp::coordinates(occ.spdf))
     coords <- sp::coordinates(occ.spdf)[c(ch, ch[1]),]
   }
   occ_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ_poly <- sp::SpatialPolygonsDataFrame(occ_poly, data=data.frame(ID=1))
-  crs(occ_poly) <- crs.set
+  raster::crs(occ_poly) <- crs.set
   if(!is.null(o.path)){
     raster::shapefile(occ_poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
   }
@@ -73,8 +73,8 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
     sp::coordinates(occ.spdf) <- ~LONG+LAT
     raster::crs(occ.spdf) <- crs.set
     occ.pgns[[i]] <- f.poly(occ.spdf, o.path=o.path, lr.nm=lr.nm[i], convex=convex, alpha=alpha, crs.set=crs.set)
-    plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
-    plot(occ.spdf, col="red", add=T)
+    sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
+    sp::plot(occ.spdf, col="red", add=T)
   }
   names(occ.pgns) <- names(spp.occ.list)
   return(occ.pgns)
@@ -91,17 +91,14 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Require packages: rgdal and maptool
   #-------------------------------------
-  library(rgdal)
-  library(maptools)
-
   # Get polygons and change IDs
   #-------------------------------------
   uid<-1
   poly.l <- vector("list", length(files))
   for (i in 1:length(files)) {
     temp.data <- files[[i]]
-    n <- length(slot(temp.data, "polygons"))
-    temp.data <- spChFIDs(temp.data, as.character(uid:(uid+n-1)))
+    n <- length(methods::slot(temp.data, "polygons"))
+    temp.data <- sp::spChFIDs(temp.data, as.character(uid:(uid+n-1)))
     uid <- uid + n
     poly.l[[i]] <- temp.data
     # poly.data <- spRbind(poly.data,temp.data)
@@ -109,14 +106,14 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
 
   # mapunit polygoan: combin remaining  polygons with first polygoan
   #-----------------------------------------------------------------
-  poly.data <- do.call(bind, poly.l)
+  poly.data <- do.call(raster::bind, poly.l)
   # names(poly.data)
-  crs(poly.data) <- crs.set
+  raster::crs(poly.data) <- crs.set
   sp.nm <- paste0(sp.nm, ".occ_poly")
   if(!is.null(o.path)){
-    shapefile(poly.data, filename = paste(o.path, paste0(sp.nm,".shp"), sep = "/" ), overwrite=TRUE)
+    raster::shapefile(poly.data, filename = paste(o.path, paste0(sp.nm,".shp"), sep = "/" ), overwrite=TRUE)
     # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
-    return(readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
+    return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
   } else {
     return(poly.data)
   }
@@ -132,19 +129,19 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
 #' @examples
 #' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly", crs.set = crs.set)
 f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NA){
-  hc <- hclust(dist(cbind(spp.occ$LONG, spp.occ$LAT)))
+  hc <- stats::hclust(stats::dist(cbind(spp.occ$LONG, spp.occ$LAT)))
   # plot(hc)
-  clust <- cutree(hc, k)
+  clust <- stats::cutree(hc, k)
 
   # create one polygon for each set of points
   spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
   occ_polys.lst <- f.poly.batch(spp.k.list, convex=convex, alpha=alpha)
   occ_polys.sp <- f.bind.shp(occ_polys.lst, sp.nm = sp.nm, o.path = o.path, crs.set = crs.set)
-  crs(occ_polys.sp) <- crs.set
-  plot(occ_polys.sp)
+  raster::crs(occ_polys.sp) <- crs.set
+  sp::plot(occ_polys.sp)
   spp.occ <- as.data.frame(spp.occ)
-  coordinates(spp.occ) <- ~LONG+LAT
-  plot(spp.occ, col="red", add=T)
+  sp::coordinates(spp.occ) <- ~LONG+LAT
+  sp::plot(spp.occ, col="red", add=T)
   return(occ_polys.sp)
 }
 
@@ -165,8 +162,6 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 #' occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set) #
 f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "occ_poly", crs.set=NULL, plot=T){
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
-  library(rgeos)
-  library(raster)
   occ_b <- vector("list", length(occ_polys))
   names(occ_b) <- names(occ_polys)
   if(dir.exists(o.path)==F) dir.create(o.path)
@@ -182,8 +177,8 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
     }
     cat(c("Buffer width for", names(occ_b)[i], "is", bffr.width, "\n"))
     occ_b[[i]] <- rgeos::gBuffer(occ_polys[[i]], width=bffr.width, quadsegs=quadsegs)
-    crs(occ_b[[i]]) <- crs.set
-    shapefile(occ_b[[i]], filename = paste(o.path, "bffr", paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ), overwrite=TRUE)
+    raster::crs(occ_b[[i]]) <- crs.set
+    raster::shapefile(occ_b[[i]], filename = paste(o.path, "bffr", paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ), overwrite=TRUE)
     occ_b[[i]] <- raster::shapefile(paste(o.path, "bffr", paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ))
 
     if(plot == T){
@@ -322,7 +317,7 @@ f.load_occ_T <- function(occ.list.thin, from.disk=F, wtd=1){
     occ_l <- vector("list", length(occ.list.thin))
     names(occ_l) <- names(occ.list.thin)
     for(i in 1:length(occ.list.thin)){
-      occ_l[[i]] <- read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ_thinned", "_thin1.csv"),
+      occ_l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ_thinned", "_thin1.csv"),
                              header=TRUE, sep=',', stringsAsFactors=F)[2:3]
     }
   } else { # retrieve from thinned obj
