@@ -25,5 +25,5 @@ A named list of spatial polygons built using coordinates
 Create occ polygon for several species
 }
 \examples{
-occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
+occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
 }

@@ -10,7 +10,7 @@ f.bffr(occ_polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 \arguments{
 \item{occ_polys}{Spatial polygon}
 
-\item{bffr.width}{Buffer width. See 'width' of ?gBuffer}
+\item{bffr.width}{Buffer width. See 'width' of ?rgeos::gBuffer}
 
 \item{mult}{How much expand bffr.width}
 

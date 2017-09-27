@@ -63,7 +63,7 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
 #' @inheritParams f.poly
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
-#' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10, crs.set = crs.set)
+#' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
 f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alpha=10){
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), o.path, sep = ".")
@@ -155,7 +155,7 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 #' Create buffer based on polygon
 #'
 #' @param occ_polys Spatial polygon
-#' @param bffr.width Buffer width. See 'width' of ?gBuffer
+#' @param bffr.width Buffer width. See 'width' of ?rgeos::gBuffer
 #' @param mult How much expand bffr.width
 #' @param plot Boolean, to draw plots or not
 #' @param quadsegs see ?rgeos::gBuffer
