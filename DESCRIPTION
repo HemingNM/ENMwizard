@@ -1,6 +1,6 @@
 Package: ENMwizard
 Type: Package
-Title: Advanced tecniques for ecological niche models made easy in R
+Title: Advanced tecniques for ecological niche models made easy
 Version: 0.1.0
 Author: Neander Marcel Heming, Eliécer E. Gutiérrez
 Maintainer: Neander Marcel Heming <neanderh@yahoo.com.br>
@@ -25,4 +25,6 @@ Imports:
   xlsx,
   readxl,
   alphahull,
-  igraph
+  igraph,
+  methods
+Suggests: testthat

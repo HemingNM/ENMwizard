@@ -1,6 +1,3 @@
-#####------- 1. Prepare environmental data
-
-# 1. Prepare enviromental layers
 #' Create occ polygon to crop rasters prior to modelling
 #'
 #' @param occ.spdf A spatial data.frame of coordinates, usually species occurence coordinates
@@ -13,6 +10,7 @@
 #' @examples
 #' occ_poly <- f.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
 #' plot(occ_poly)
+#' @export
 f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10, crs.set = NA ){
   if(convex==F){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
@@ -64,6 +62,7 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
 #' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
+#' @export
 f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alpha=10){
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), o.path, sep = ".")
@@ -87,6 +86,7 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
 #' @param sp.nm name used to save file
 #' @inheritParams f.poly
 #' @return shapefile with binded polygons
+#' @export
 f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Require packages: rgdal and maptool
@@ -128,6 +128,7 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
 #' @return spatial polygons built using coordinates
 #' @examples
 #' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly", crs.set = crs.set)
+#' @export
 f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NA){
   hc <- stats::hclust(stats::dist(cbind(spp.occ$LONG, spp.occ$LAT)))
   # plot(hc)
@@ -148,7 +149,7 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 
 
 
-#### 1.2 creating buffer
+
 #' Create buffer based on polygon
 #'
 #' @param occ_polys Spatial polygon
@@ -159,7 +160,8 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 #' @inheritParams f.poly
 #' @return A named list of SpatialPolygons
 #' @examples
-#' occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set) #
+#' occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set)
+#' @export
 f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "occ_poly", crs.set=NULL, plot=T){
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
   occ_b <- vector("list", length(occ_polys))
@@ -191,21 +193,6 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
 
 
 
-# # path to environmental variables
-# path.env <- "/Volumes/Samsung SSD/neanderh/Documents/CloudStation/ArcGIS-Virtual Machine/Mapas/Clima e Biosfera/ClimaticScenaries/PR/WorldClim/2_5min/bio_2-5m_bil"
-# biovars <- paste0("bio", 1:17)#c("bio5", "bio8", "bio10", "bio13", "bio16") # "bio18" tem problemas para o cerrado
-# pattern.env = 'asc'
-# path.env.out <- "3_envData"
-#
-# # 1.3. Cut enviromental layers with M and save in hardrive.
-# # Get uncut variables
-# env_uncut <- list.files(path.env, pattern = pattern.env, full.names=TRUE)
-# env_uncut <- env_uncut[grepl(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env_uncut)]
-# env_uncut <- stack(env_uncut) #predictors_uncut
-# crs(env_uncut) <- crs.set
-#
-# # # Se as variáveis estiverem prontas:
-# env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 
 #' Crop environmental variables for each species
 #'
@@ -217,7 +204,8 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
 #' for(i in 1:length(occ_b_env)){
 #'    plot(occ_b_env[[i]][[1]])
 #'    plot(occ_b[[i]], add=T)
-#'    }
+#' }
+#' @export
 f.cut.env <- function(occ_b, env_uncut){
   path.env.out <- "3_envData"
   ## Clipping rasters for each species
@@ -241,13 +229,8 @@ f.cut.env <- function(occ_b, env_uncut){
   return(occ_b_env)
 }
 
-# occ_b_env <- f.cut.env(occ_b, env_uncut)
-#
-#
 
 
-#####------- 2. Filtering original dataset
-# for several files
 #' Filter each species' occurence dataset
 #'
 #' @param loc.data.lst Named list containing species occ data
@@ -265,6 +248,7 @@ f.cut.env <- function(occ_b, env_uncut){
 #' thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
 #' plotThin(thinned_dataset_batch[[1]])
 #' length(thinned_dataset_batch[[1]])
+#' @export
 thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.col = "SPEC",
                        thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
                        write.files = TRUE, max.files = 1, write.log.file = TRUE) {
@@ -298,10 +282,6 @@ thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.co
 
 
 
-#
-# plotThin(thinned_dataset_batch[[2]])
-# plotThin(thinned_dataset_batch[[3]])
-
 #' Load occurrence data filtered using "thin.batch"
 #' @param occ.list.thin named list returned from "thin.batch"
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
@@ -309,6 +289,7 @@ thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.co
 #' @return named list of thinned occurence data for each species in the list
 #' @examples
 #' occ_locs <- f.load_occ_T(thinned_dataset_batch)
+#' @export
 f.load_occ_T <- function(occ.list.thin, from.disk=F, wtd=1){
 
   if (from.disk){ # retrieve from disk
@@ -331,11 +312,3 @@ f.load_occ_T <- function(occ.list.thin, from.disk=F, wtd=1){
 
   return(occ_l)
 }
-
-# Check
-# occ_locs[[i]]
-# names(occ_locs)
-
-# write.xlsx(occ_locs[[1]], paste0(out.dir, "/", names(occ_locs)[1], ".occ_thinned", ".xlsx"))
-# write.xlsx(occ_locs[[2]], paste0(out.dir, "/", names(occ_locs)[2], ".occ_thinned", ".xlsx"))
-# write.xlsx(occ_locs[[3]], paste0(out.dir, "/", names(occ_locs)[3], ".occ_thinned", ".xlsx"))

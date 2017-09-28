@@ -22,5 +22,5 @@ occ_b_env <- f.cut.env(occ_b, env_uncut)
 for(i in 1:length(occ_b_env)){
    plot(occ_b_env[[i]][[1]])
    plot(occ_b[[i]], add=T)
-   }
+}
 }
