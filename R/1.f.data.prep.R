@@ -1,4 +1,4 @@
-#' Create occ polygon to crop rasters prior to modelling
+#' Create polygon based on species occurence coordinates
 #'
 #' @param occ.spdf A spatial data.frame of coordinates, usually species occurence coordinates
 #' @param o.path Output path
@@ -8,10 +8,10 @@
 #' @param crs.set crs value used ???
 #' @return spatial polygon built using coordinates
 #' @examples
-#' occ_poly <- f.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
+#' occ_poly <- c.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
 #' plot(occ_poly)
 #' @export
-f.poly <- function(occ.spdf, o.path = NULL, lr.nm="sp_nm", convex=T, alpha=10, crs.set = NULL ){
+c.poly <- function(occ.spdf, o.path = NULL, lr.nm="sp_nm", convex=T, alpha=10, crs.set = NULL ){
   if(convex==F){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
@@ -59,12 +59,12 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="sp_nm", convex=T, alpha=10, c
 #' Create occ polygon for several species
 #'
 #' @param spp.occ.list A named list of spatial data.frame of species occurence points
-#' @inheritParams f.poly
+#' @inheritParams c.poly
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
-#' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
+#' occ_polys <- c.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
 #' @export
-f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NULL, convex=T, alpha=10){
+c.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NULL, convex=T, alpha=10, plot=T){
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), o.path, sep = ".")
   if(!is.null(o.path)) {if(dir.exists(o.path)==F) dir.create(o.path)}
@@ -73,28 +73,27 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NULL, convex=T, al
     sp::coordinates(occ.spdf) <- ~LONG+LAT
     # raster::crs(occ.spdf) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
-    occ.pgns[[i]] <- f.poly(occ.spdf, o.path=o.path, lr.nm=lr.nm[i], convex=convex, alpha=alpha, crs.set=crs.set)
-    sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
-    sp::plot(occ.spdf, col="red", add=T)
+    occ.pgns[[i]] <- c.poly(occ.spdf, o.path=o.path, lr.nm=lr.nm[i], convex=convex, alpha=alpha, crs.set=crs.set)
+    if(plot){
+      sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
+      sp::plot(occ.spdf, col="red", add=T)
+    }
   }
   names(occ.pgns) <- names(spp.occ.list)
   return(occ.pgns)
 }
 
 
-#' merge several shapefiles into a single one
+#' bind list of SpatialPolygons into a single SpatialPolygon
 #'
 #' @param files ??
 #' @param sp.nm name used to save file
-#' @inheritParams f.poly
+#' @inheritParams c.poly
 #' @return shapefile with binded polygons
 #' @export
-f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NULL ){
+bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NULL ){
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
-  # Require packages: rgdal and maptool
-  #-------------------------------------
   # Get polygons and change IDs
-  #-------------------------------------
   uid<-1
   poly.l <- vector("list", length(files))
   for (i in 1:length(files)) {
@@ -107,7 +106,6 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NULL ){
   }
 
   # mapunit polygoan: combin remaining  polygons with first polygoan
-  #-----------------------------------------------------------------
   poly.data <- do.call(raster::bind, poly.l)
   # names(poly.data)
   # raster::crs(poly.data) <- crs.set
@@ -122,25 +120,25 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NULL ){
   }
 }
 
-#' create N polygons for a species (whenever distribution seems disjoint) and save in a single .shp
+#' split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
 #'
 #' @param spp.occ species occurence coordinates
 #' @param k number of polygons to create based on coordinates
-#' @inheritParams f.poly
-#' @inheritParams f.bind.shp
+#' @inheritParams c.poly
+#' @inheritParams bind.shp
 #' @return spatial polygons built using coordinates
 #' @examples
-#' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly")
+#' occ_polys$Bvarieg <- poly.splt(spp.occ = Bvarieg.occ, k=5)
 #' @export
-f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NULL){
+poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NULL){
   hc <- stats::hclust(stats::dist(cbind(spp.occ$LONG, spp.occ$LAT)))
   # plot(hc)
   clust <- stats::cutree(hc, k)
 
   # create one polygon for each set of points
   spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
-  occ_polys.lst <- f.poly.batch(spp.k.list, convex=convex, alpha=alpha)
-  occ_polys.sp <- f.bind.shp(occ_polys.lst, sp.nm = sp.nm, o.path = o.path, crs.set = crs.set)
+  occ_polys.lst <- c.poly.batch(spp.k.list, convex=convex, alpha=alpha, plot=F)
+  occ_polys.sp <- bind.shp(occ_polys.lst, sp.nm = sp.nm, o.path = o.path, crs.set = crs.set)
   # raster::crs(occ_polys.sp) <- crs.set
   # if(!is.null(crs.set)){raster::projection(occ_polys.sp) <- crs.set}
   sp::plot(occ_polys.sp)
@@ -154,19 +152,19 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 
 
 
-#' Create buffer based on polygon
+#' Create buffer based on species polygons
 #'
-#' @param occ_polys Spatial polygon
+#' @param occ_polys list of SpatialPolygons, usually obj returned from c.poly.batch()
 #' @param bffr.width Buffer width. See 'width' of ?rgeos::gBuffer
 #' @param mult How much expand bffr.width
 #' @param plot Boolean, to draw plots or not
 #' @param quadsegs see ?rgeos::gBuffer
-#' @inheritParams f.poly
+#' @inheritParams c.poly
 #' @return A named list of SpatialPolygons
 #' @examples
-#' occ_b <- f.bffr(occ_polys, bffr.width=1.5)
+#' occ_b <- bffr.b(occ_polys, bffr.width=1.5)
 #' @export
-f.bffr <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, o.path = "occ_poly", crs.set = NULL, plot = T){
+bffr.b <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, o.path = "occ_poly", crs.set = NULL, plot = T){
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
   occ_b <- vector("list", length(occ_polys))
   names(occ_b) <- names(occ_polys)
@@ -205,13 +203,14 @@ f.bffr <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, o.pa
 #' @param env_uncut raster brick or stack to be cropped
 #' @return list [for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
-#' occ_b_env <- f.cut.env(occ_b, env_uncut)
+#' env_uncut <- brick("path/to/env")
+#' occ_b_env <- cut.env(occ_b, env_uncut)
 #' for(i in 1:length(occ_b_env)){
 #'    plot(occ_b_env[[i]][[1]])
 #'    plot(occ_b[[i]], add=T)
 #' }
 #' @export
-f.cut.env <- function(occ_b, env_uncut){
+cut.env <- function(occ_b, env_uncut){
   path.env.out <- "3_envData"
   ## Clipping rasters for each species
   occ_b_env <- vector("list", length(occ_b))
@@ -293,9 +292,9 @@ thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.co
 #' @param wtd : which thinned dataset?
 #' @return named list of thinned occurence data for each species in the list
 #' @examples
-#' occ_locs <- f.load_occ_T(thinned_dataset_batch)
+#' occ_locs <- loadTocc(thinned_dataset_batch)
 #' @export
-f.load_occ_T <- function(occ.list.thin, from.disk=F, wtd=1){
+loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
 
   if (from.disk){ # retrieve from disk
     out.dir <- "occ_thinned_full"

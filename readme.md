@@ -56,21 +56,21 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 
 The occurence points in the named list are used to create polygons ...
 ```r
-occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly")
+occ_polys <- c.poly.batch(spp.occ.list, o.path="occ_poly")
 ```
 
 ### ------- 1.2.1 creating buffer
 
 ... and the occurrence polygons are buffered 1.5 degrees wider.
 ```r
-occ_b <- f.bffr(occ_polys, bffr.width = 1.5)
+occ_b <- bffr.b(occ_polys, bffr.width = 1.5)
 ```
 
 ### ------- 1.3. Cut enviromental layers with occ_b and save in hardrive.
 Specify the path to the environmental variables
 ```r
 path.env <- "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
-biovars <- paste0("bio", 1:17) #c("bio5", "bio8", "bio10", "bio13", "bio16") # "bio18" tem problemas para o cerrado
+biovars <- paste0("bio", 1:17) #c("bio5", "bio8", "bio10", "bio13", "bio16")
 pattern.env = 'asc'
 path.env.out <- "3_envData"
 ```
@@ -90,7 +90,7 @@ env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 
 Finally, crop environmental variables for each species (and plot them for visual inspection)
 ```r
-occ_b_env <- f.cut.env(occ_b, env_uncut)
+occ_b_env <- cut.env(occ_b, env_uncut)
 
 for(i in 1:length(occ_b_env)){
   plot(occ_b_env[[i]][[1]])
@@ -109,7 +109,7 @@ thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
 
 After thinning, we choose one of dataset for each species for modelling.
 ```r
-occ_locs <- f.load_occ_T(thinned_dataset_batch)
+occ_locs <- loadTocc(thinned_dataset_batch)
 ```
 
 ### Great! Now we are ready for tunning species' ENMs
