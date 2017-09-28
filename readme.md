@@ -56,7 +56,7 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 
 The occurence points in the named list are used to create polygons ...
 ```r
-occ_polys <- c.poly.batch(spp.occ.list, o.path="occ_poly")
+occ_polys <- poly.c.batch(spp.occ.list, o.path="occ_poly")
 ```
 
 ### ------- 1.2.1 creating buffer
@@ -68,22 +68,22 @@ occ_b <- bffr.b(occ_polys, bffr.width = 1.5)
 
 ### ------- 1.3. Cut enviromental layers with occ_b and save in hardrive.
 Specify the path to the environmental variables
+it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
+here we will use variables available in dismo package
 ```r
-path.env <- "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
-biovars <- paste0("bio", 1:17) #c("bio5", "bio8", "bio10", "bio13", "bio16")
-pattern.env = 'asc'
-path.env.out <- "3_envData"
+path.env <- paste(system.file(package="dismo"), "/ex", sep="")
+biovars <- paste0("bio", 1:17)
+pattern.env <- 'grd'
 ```
 
 Get uncut variables
 ```r
-env_uncut <- list.files(path.env, pattern = pattern.env, full.names=TRUE)
-env_uncut <- env_uncut[grepl(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env_uncut)]
-env_uncut <- stack(env_uncut) #predictors_uncut
-crs(env_uncut) <- crs.set
+env_uncut <- list.files(path.env, full.names=TRUE)
+env_uncut <- env_uncut[grep(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env_uncut)]
+env_uncut <- stack(env_uncut)
 ```
 
-If the variables were already cropped and saved in a raster brick, you just need to read them
+If the variables were already saved in a raster brick, you just need to read them
 ```r
 env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 ```

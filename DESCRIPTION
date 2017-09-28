@@ -27,4 +27,7 @@ Imports:
   alphahull,
   igraph,
   methods
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
