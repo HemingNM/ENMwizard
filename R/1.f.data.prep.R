@@ -223,7 +223,7 @@ env.cut <- function(occ_b, env_uncut){
 
   for(i in 1:length(occ_b)){
     cat(c("Cutting environmental variables of species", i, "of", length(occ_b), "\n"))
-    occ_b[[i]] <- sp::spTransform(occ_b[[i]], raster::crs(env_uncut))
+    # occ_b[[i]] <- sp::spTransform(occ_b[[i]], raster::crs(env_uncut))
     occ_b_env[[i]] <- raster::crop(env_uncut, raster::extent(occ_b[[i]]))
     occ_b_env[[i]] <- raster::mask(occ_b_env[[i]], occ_b[[i]])
     # raster::crs(occ_b_env[[i]]) <- raster::crs(env_uncut)
