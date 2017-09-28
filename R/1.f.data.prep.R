@@ -208,13 +208,13 @@ bffr.b <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, o.pa
 #' @return list [for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
 #' env_uncut <- brick("path/to/env")
-#' occ_b_env <- cut.env(occ_b, env_uncut)
+#' occ_b_env <- env.cut(occ_b, env_uncut)
 #' for(i in 1:length(occ_b_env)){
 #'    plot(occ_b_env[[i]][[1]])
 #'    plot(occ_b[[i]], add=T)
 #' }
 #' @export
-cut.env <- function(occ_b, env_uncut){
+env.cut <- function(occ_b, env_uncut){
   path.env.out <- "2_envData"
   if(dir.exists(path.env.out)==F) dir.create(path.env.out)
   ## Clipping rasters for each species

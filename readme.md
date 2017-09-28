@@ -90,7 +90,7 @@ env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 
 Finally, crop environmental variables for each species (and plot them for visual inspection)
 ```r
-occ_b_env <- cut.env(occ_b, env_uncut)
+occ_b_env <- env.cut(occ_b, env_uncut)
 
 for(i in 1:length(occ_b_env)){
   plot(occ_b_env[[i]][[1]])
