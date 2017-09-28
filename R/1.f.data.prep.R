@@ -226,7 +226,7 @@ env.cut <- function(occ_b, env_uncut){
     occ_b[[i]] <- sp::spTransform(occ_b[[i]], raster::crs(env_uncut))
     occ_b_env[[i]] <- raster::crop(env_uncut, raster::extent(occ_b[[i]]))
     occ_b_env[[i]] <- raster::mask(occ_b_env[[i]], occ_b[[i]])
-    raster::crs(occ_b_env[[i]]) <- raster::crs(env_uncut)
+    # raster::crs(occ_b_env[[i]]) <- raster::crs(env_uncut)
     # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
     occ_b_env[[i]] <- raster::writeRaster(occ_b_env[[i]],
                                   filename = paste(path.env.out, paste("envData.", names(occ_b_env)[i], ".grd", sep=''), sep='/'),
