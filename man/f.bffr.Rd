@@ -29,5 +29,5 @@ A named list of SpatialPolygons
 Create buffer based on polygon
 }
 \examples{
-occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set)
+occ_b <- f.bffr(occ_polys, bffr.width=1.5)
 }

@@ -11,7 +11,7 @@
 #' occ_poly <- f.poly(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
 #' plot(occ_poly)
 #' @export
-f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10, crs.set = NA ){
+f.poly <- function(occ.spdf, o.path = NULL, lr.nm="sp_nm", convex=T, alpha=10, crs.set = NULL ){
   if(convex==F){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
@@ -47,7 +47,8 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
   }
   occ_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ_poly <- sp::SpatialPolygonsDataFrame(occ_poly, data=data.frame(ID=1))
-  raster::crs(occ_poly) <- crs.set
+  # raster::crs(occ_poly) <- crs.set
+  # if(!is.null(crs.set)){raster::projection(occ_poly) <- crs.set}
   if(!is.null(o.path)){
     raster::shapefile(occ_poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
   }
@@ -63,14 +64,15 @@ f.poly <- function(occ.spdf, o.path = NULL, lr.nm="occ_poly", convex=T, alpha=10
 #' @examples
 #' occ_polys <- f.poly.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
 #' @export
-f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alpha=10){
+f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NULL, convex=T, alpha=10){
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), o.path, sep = ".")
   if(!is.null(o.path)) {if(dir.exists(o.path)==F) dir.create(o.path)}
   for(i in 1:length(spp.occ.list)){
     occ.spdf <- data.frame(spp.occ.list[[i]])
     sp::coordinates(occ.spdf) <- ~LONG+LAT
-    raster::crs(occ.spdf) <- crs.set
+    # raster::crs(occ.spdf) <- crs.set
+    # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
     occ.pgns[[i]] <- f.poly(occ.spdf, o.path=o.path, lr.nm=lr.nm[i], convex=convex, alpha=alpha, crs.set=crs.set)
     sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
     sp::plot(occ.spdf, col="red", add=T)
@@ -87,7 +89,7 @@ f.poly.batch <- function(spp.occ.list, o.path=NULL, crs.set = NA, convex=T, alph
 #' @inheritParams f.poly
 #' @return shapefile with binded polygons
 #' @export
-f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
+f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NULL ){
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Require packages: rgdal and maptool
   #-------------------------------------
@@ -108,7 +110,8 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
   #-----------------------------------------------------------------
   poly.data <- do.call(raster::bind, poly.l)
   # names(poly.data)
-  raster::crs(poly.data) <- crs.set
+  # raster::crs(poly.data) <- crs.set
+  # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
   sp.nm <- paste0(sp.nm, ".occ_poly")
   if(!is.null(o.path)){
     raster::shapefile(poly.data, filename = paste(o.path, paste0(sp.nm,".shp"), sep = "/" ), overwrite=TRUE)
@@ -127,9 +130,9 @@ f.bind.shp <- function(files, sp.nm="sp", o.path = "occ_poly", crs.set = NA ){
 #' @inheritParams f.bind.shp
 #' @return spatial polygons built using coordinates
 #' @examples
-#' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly", crs.set = crs.set)
+#' occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly")
 #' @export
-f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NA){
+f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path = "occ_poly", crs.set = NULL){
   hc <- stats::hclust(stats::dist(cbind(spp.occ$LONG, spp.occ$LAT)))
   # plot(hc)
   clust <- stats::cutree(hc, k)
@@ -138,7 +141,8 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
   spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
   occ_polys.lst <- f.poly.batch(spp.k.list, convex=convex, alpha=alpha)
   occ_polys.sp <- f.bind.shp(occ_polys.lst, sp.nm = sp.nm, o.path = o.path, crs.set = crs.set)
-  raster::crs(occ_polys.sp) <- crs.set
+  # raster::crs(occ_polys.sp) <- crs.set
+  # if(!is.null(crs.set)){raster::projection(occ_polys.sp) <- crs.set}
   sp::plot(occ_polys.sp)
   spp.occ <- as.data.frame(spp.occ)
   sp::coordinates(spp.occ) <- ~LONG+LAT
@@ -160,9 +164,9 @@ f.poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", o.path 
 #' @inheritParams f.poly
 #' @return A named list of SpatialPolygons
 #' @examples
-#' occ_b <- f.bffr(occ_polys, bffr.width=1.5, crs.set=crs.set)
+#' occ_b <- f.bffr(occ_polys, bffr.width=1.5)
 #' @export
-f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "occ_poly", crs.set=NULL, plot=T){
+f.bffr <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, o.path = "occ_poly", crs.set = NULL, plot = T){
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
   occ_b <- vector("list", length(occ_polys))
   names(occ_b) <- names(occ_polys)
@@ -179,7 +183,8 @@ f.bffr <- function(occ_polys, bffr.width=NULL, mult=.2, quadsegs=100, o.path = "
     }
     cat(c("Buffer width for", names(occ_b)[i], "is", bffr.width, "\n"))
     occ_b[[i]] <- rgeos::gBuffer(occ_polys[[i]], width=bffr.width, quadsegs=quadsegs)
-    raster::crs(occ_b[[i]]) <- crs.set
+    # raster::crs(occ_b[[i]]) <- crs.set
+    # if(!is.null(crs.set)){raster::projection(occ_b[[i]]) <- crs.set}
     raster::shapefile(occ_b[[i]], filename = paste(o.path, "bffr", paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ), overwrite=TRUE)
     occ_b[[i]] <- raster::shapefile(paste(o.path, "bffr", paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ))
 

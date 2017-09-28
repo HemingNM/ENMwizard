@@ -29,5 +29,5 @@ spatial polygons built using coordinates
 create N polygons for a species (whenever distribution seems disjoint) and save in a single .shp
 }
 \examples{
-occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly", crs.set = crs.set)
+occ_polys$Bvarieg <- f.poly.splt(spp.occ = Bvarieg.occ, k=5, convex=T, alpha=10, sp.nm = "Bvarieg", o.path = "occ_poly")
 }

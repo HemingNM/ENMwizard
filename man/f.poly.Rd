@@ -4,8 +4,8 @@
 \alias{f.poly}
 \title{Create occ polygon to crop rasters prior to modelling}
 \usage{
-f.poly(occ.spdf, o.path = NULL, lr.nm = "occ_poly", convex = T,
-  alpha = 10, crs.set = NA)
+f.poly(occ.spdf, o.path = NULL, lr.nm = "sp_nm", convex = T, alpha = 10,
+  crs.set = NA)
 }
 \arguments{
 \item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
