@@ -1,6 +1,8 @@
 ENMwizard
 ======================
-This package has several functions to facilitate the use of Ecological Niche Modelling (ENM) in R
+### Advanced tecniques for ecological niche models made easy
+
+This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modelling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions to enable easier: 1. preparation of occurence and environmental data, 2. model tunning (thanks to the package ENMeval), 3. model fitting and projection. ENMwizard also implements methods described in Gutiérrez & Heming in prep.
 
 -----
 
