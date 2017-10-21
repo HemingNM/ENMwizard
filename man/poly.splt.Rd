@@ -5,7 +5,7 @@
 \title{split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
 poly.splt(spp.occ, k = 2, convex = T, alpha = 10, sp.nm = "sp1",
-  o.path = "occ_poly", crs.set = NULL)
+  crs.set = NULL)
 }
 \arguments{
 \item{spp.occ}{species occurence coordinates}
@@ -17,8 +17,6 @@ poly.splt(spp.occ, k = 2, convex = T, alpha = 10, sp.nm = "sp1",
 \item{alpha}{see ?alphahull::ashape}
 
 \item{sp.nm}{name used to save file}
-
-\item{o.path}{Output path}
 
 \item{crs.set}{crs value used ???}
 }

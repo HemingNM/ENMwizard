@@ -4,13 +4,11 @@
 \alias{poly.c}
 \title{Create polygon based on species occurence coordinates}
 \usage{
-poly.c(occ.spdf, o.path = NULL, lr.nm = "sp_nm", convex = T, alpha = 10,
+poly.c(occ.spdf, lr.nm = "sp_nm", convex = T, alpha = 10,
   crs.set = NULL)
 }
 \arguments{
 \item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
-
-\item{o.path}{Output path}
 
 \item{lr.nm}{Polygon output name}
 
@@ -21,12 +19,12 @@ poly.c(occ.spdf, o.path = NULL, lr.nm = "sp_nm", convex = T, alpha = 10,
 \item{crs.set}{crs value used ???}
 }
 \value{
-spatial polygon built using coordinates
+spatial polygon of occurencies built using coordinates
 }
 \description{
 Create polygon based on species occurence coordinates
 }
 \examples{
-occ_poly <- poly.c(occ.spdf, o.path="occ_poly", lr.nm="occ_poly")
+occ_poly <- poly.c(occ.spdf, lr.nm="occ_poly")
 plot(occ_poly)
 }

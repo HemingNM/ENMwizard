@@ -4,19 +4,19 @@
 \alias{poly.c.batch}
 \title{Create occ polygon for several species}
 \usage{
-poly.c.batch(spp.occ.list, o.path = NULL, crs.set = NULL, convex = T,
-  alpha = 10, plot = T)
+poly.c.batch(spp.occ.list, crs.set = NULL, convex = T, alpha = 10,
+  plot = T)
 }
 \arguments{
 \item{spp.occ.list}{A named list of spatial data.frame of species occurence points}
-
-\item{o.path}{Output path}
 
 \item{crs.set}{crs value used ???}
 
 \item{convex}{Concave or convex polygon (T or F)}
 
 \item{alpha}{see ?alphahull::ashape}
+
+\item{plot}{logical. Plot results or not?}
 }
 \value{
 A named list of spatial polygons built using coordinates
@@ -25,5 +25,5 @@ A named list of spatial polygons built using coordinates
 Create occ polygon for several species
 }
 \examples{
-occ_polys <- poly.c.batch(spp.occ.list, o.path="occ_poly", convex=T, alpha=10)
+occ_polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 }

@@ -5,7 +5,7 @@
 \title{Create buffer based on species polygons}
 \usage{
 bffr.b(occ_polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
-  o.path = "occ_poly", crs.set = NULL, plot = T)
+  crs.set = NULL, plot = T)
 }
 \arguments{
 \item{occ_polys}{list of SpatialPolygons, usually obj returned from poly.c.batch()}
@@ -15,8 +15,6 @@ bffr.b(occ_polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 \item{mult}{How much expand bffr.width}
 
 \item{quadsegs}{see ?rgeos::gBuffer}
-
-\item{o.path}{Output path}
 
 \item{crs.set}{crs value used ???}
 
@@ -32,6 +30,6 @@ Create buffer based on species polygons
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-occ_polys <- poly.c.batch(spp.occ.list, o.path="occ_poly")
+occ_polys <- poly.c.batch(spp.occ.list)
 occ_b <- bffr.b(occ_polys, bffr.width=1.5)
 }

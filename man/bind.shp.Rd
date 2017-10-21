@@ -4,14 +4,12 @@
 \alias{bind.shp}
 \title{bind list of SpatialPolygons into a single SpatialPolygon}
 \usage{
-bind.shp(files, sp.nm = "sp", o.path = "occ_poly", crs.set = NULL)
+bind.shp(files, sp.nm = "sp", crs.set = NULL)
 }
 \arguments{
 \item{files}{??}
 
 \item{sp.nm}{name used to save file}
-
-\item{o.path}{Output path}
 
 \item{crs.set}{crs value used ???}
 }
