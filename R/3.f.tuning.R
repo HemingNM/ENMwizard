@@ -5,6 +5,7 @@
 #' cropped environmental variables (occ_b_env) for model tuning.
 #' @param occ_locs list of species occurrence data
 #' @param occ_b_env list of cropped environmental variables for model tuning
+#' @param bg.coords.l list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).
 #' @inheritParams  ENMeval::ENMevaluate
 #' @examples
 #' ENMeval_res.lst <- ENMevaluate.batch(occ_locs, occ_b_env, parallel = T , numCores = 7)
@@ -20,11 +21,11 @@ ENMevaluate.batch <- function(occ_locs, occ_b_env, bg.coords.l = NULL, occ.grp =
 
   if(is.null(bg.coords.l)) bg.coords.l <- vector("list", length(occ_locs))
   if(length(bg.coords.l)!=length(occ_locs)){ stop("bg.coords.l must contain one dataset of 'bg.coords' for each species")}
-  ENMeval_res <- vector("list", length(spp.occ.list))
-  names(ENMeval_res) <- names(spp.occ.list)
+  ENMeval_res <- vector("list", length(occ_locs))
+  names(ENMeval_res) <- names(occ_locs)
   # ENMeval_occ_results <- ENMeval_res
-  for(i in 1:length(spp.occ.list)){
-    cat(c( "sp", i, "\n", names(spp.occ.list)[i]), "\n")
+  for(i in 1:length(occ_locs)){
+    cat(c( "sp", i, "\n", names(occ_locs)[i]), "\n")
     ENMeval_res[[i]] <- ENMeval::ENMevaluate(occ_locs[[i]], occ_b_env[[i]], bg.coords = bg.coords.l[[i]],
                                              occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
                                     fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,

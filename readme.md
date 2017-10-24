@@ -45,7 +45,8 @@ library(ENMwizard)
 
 First, lets use occ data available in dismo package
 ```r
-Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+"/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 ```
 

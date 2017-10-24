@@ -87,6 +87,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' If x is a data.frame, p should be a vector with a length equal to nrow(x) and contain 0
 #' (background) and 1 (presence) values, to indicate which records (rows) in data.frame x are
 #' presence records, and which are background records
+#' @param formt Character. Output file type. Argument 'format' of raster::writeRaster
 #' @param pred.args Charater. Argument 'args' of dismo::maxent. Additional argument that can be
 #' passed to MaxEnt. See the MaxEnt help for more information. The R maxent function only uses the
 #' arguments relevant to model fitting. There is no point in using args='outputformat=raw' when
@@ -166,15 +167,15 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
 
     ### stack prediction rasters (to create Average Model prediction)
     path2stk <- paste(avg.m.path, mod.nms[seq_along(args.aicc)], sep='/')
-    filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], pred.nm, ".grd"), sep='/')
+    filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], ".grd"), sep='/')
     Mod_AICc.stack <- raster::stack(filename)
 
     # create averaged prediction map
     cat(c("\n",paste(mod.pred.nms[1]), "\n"))
-    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mask((sum(Mod_AICc.stack*wv, na.rm=T)/sum(wv)), area_projection[[1]]),
+    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod_AICc.stack*wv, na.rm=T)/sum(wv)), area_projection[[1]]),
                                                  filename = paste(avg.m.path, paste0(mod.pred.nms[1], ".grd"), sep='/'),
                                                  format = formt, overwrite = T) )
-    names(mod.preds)[nlayers(mod.preds)] <- mod.pred.nms[1]
+    names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
   }
 
   #### Low AIC
@@ -190,7 +191,7 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.avg.i[[1]],
                                                  filename = filename,
                                                  format = formt, overwrite = T) )
-    names(mod.preds)[nlayers(mod.preds)] <- mod.pred.nms[2]
+    names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[2]
   }
 
 
@@ -211,7 +212,7 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
       mod.preds <- raster::addLayer(mod.preds, dismo::predict(mxnt.mdls[[i]], area_projection, args=pred.args, progress='text',
                                                file = filename,
                                                format = formt, overwrite = T) )
-      names(mod.preds)[nlayers(mod.preds)] <- mod.nms[i]
+      names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms[i]
     }
   }
   return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args, mxnt.preds = mod.preds))
@@ -227,12 +228,11 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
 #' @param area_proj.lst List of projection areas. See argument "area_projection" in f.mxnt.mdl.pred.
 #' @param occ_b_env.lst List of predictor areas.
 #' @param occ_locs.lst List of occurence data. See argument "occ_locs" in f.mxnt.mdl.pred.
-#' @param formt Character. Output file type. Argument 'format' of raster::writeRaster
 #' @inheritParams f.mxnt.mdl.pred
 #' @return A list of objects returned from f.mxnt.mdl.pred
 #' @examples
-#' mxnt.mdls.preds.lst <- f.mxnt.mdl.pred.batch(ENMeval_res=ENMeval_res.lst,  area_proj.lst=area_projection,
-#' occ_b_env.lst=occ_b_env, occ_locs.lst=occ_locs, wAICsum=0.99)
+#' mxnt.mdls.preds.lst <- f.mxnt.mdl.pred.batch(ENMeval_res=ENMeval_res.lst,
+#' area_proj.lst=area_projection, occ_b_env.lst=occ_b_env, occ_locs.lst=occ_locs, wAICsum=0.99)
 #' mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of wAICc
 #' mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models
 #' mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
