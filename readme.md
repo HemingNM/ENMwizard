@@ -58,7 +58,7 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 
 The occurence points in the named list are used to create polygons ...
 ```r
-occ_polys <- poly.c.batch(spp.occ.list, o.path="occ_poly")
+occ_polys <- poly.c.batch(spp.occ.list)
 ```
 
 ### ------- 1.2.1 creating buffer
@@ -109,11 +109,32 @@ Now we want to remove localities that are too close apart. We will do it for all
 thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
 ```
 
-After thinning, we choose one of dataset for each species for modelling.
+### Great! Now we are ready for tunning species' ENMs
+
+
+-----
+
+
+## ------- 3. Tunning Maxent's feauture classes and regularization multiplier via ENMeval
+### ------- 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
+After thinning, we choose one dataset for each species for modelling.
 ```r
 occ_locs <- loadTocc(thinned_dataset_batch)
 ```
 
-### Great! Now we are ready for tunning species' ENMs
+### ------- 3.3 model tuning using ENMeval
+Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ_locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
+```r
+ENMeval_res.lst <- ENMevaluate.batch(occ_locs, occ_b_env)
+```
+
+-----
+### TODO
+# 4. Model Fitting (Calibration) and Projection
+# 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "area_projection"
+# 4.1.1 select area for projection based on the extent of occ points
+
+
+
 
 
