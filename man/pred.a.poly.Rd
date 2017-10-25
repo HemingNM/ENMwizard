@@ -35,6 +35,3 @@ The user can also set a buffer around occ_poly to cut the raster/brick object. B
 calculated in the same way as "extent increase", using "max(abs(ext_proj[1]-ext_proj[2]), abs(ext_proj[3]-ext_proj[4]))".
 But the exact value can be defined through "deg.incr" and "mult". This method takes longer to run.
 }
-\examples{
-
-}

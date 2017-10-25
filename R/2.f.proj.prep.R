@@ -25,7 +25,7 @@
 #' @param buffer should the area be cut using a buffer around occ_poly?
 #' @param same should latitudinal and longitudinal increase vary independently?
 #' @return  SpatialPolygons (enlarged occ_poly)
-#' @examples
+# #' @examples
 #'
 #' @export
 pred.a.poly <- function(occ_poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=F, same=T){ #, o.path = "occ_poly"
@@ -123,7 +123,7 @@ pred.a.polyb <- function(occ_polys, deg.incr=NULL, mult=1, buffer=F, same=T){ # 
 #' @param sp.nm name (of species) to give to saved object
 #' @return  raster or brick cropped based on SpatialPolygons
 # TODO - examples
-#' @examples
+# #' @examples
 #'
 #' @export
 pred.a <- function(pred_poly, env_uncut, prj.nm="", sp.nm="sp"){
@@ -185,7 +185,7 @@ pred.ab <- function(pred_polys, env_uncut, prj.nm=""){ # pred_poly, env_uncut, p
 # #' @param ext_proj
 #' @return  named list of cropped list of raster/brick of environmental variables
 # TODO - examples
-#' @examples
+# #' @examples
 #'
 #' @export
 pred.ab.mscn <- function(pred_polys, env_uncut.l, prj.nm="", cores=1){ # , ext_proj=NULL
@@ -228,9 +228,9 @@ pred.ab.mscn <- function(pred_polys, env_uncut.l, prj.nm="", cores=1){ # , ext_p
 #' @param mask should use area_p to "mask" or "crop" env_uncut? See ?raster::mask and ?raster::crop for details
 #' @return environmental layers (raster/brick) cutted
 # TODO - examples
-#' @examples
+# #' @examples
 #'
-# @export
+#' @export
 pred.a.rst <- function(area_p, env_uncut, mask=F, prj.nm="", sp.nm="sp"){ # , crs.set
   path.proj <- "2_envData/area_proj"
   if(dir.exists(path.proj)==F) dir.create(path.proj)
@@ -262,7 +262,7 @@ pred.a.rst <- function(area_p, env_uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 #' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area_p
 #' @return list of environmental layers (raster/brick) cutted
 # TODO - examples
-#' @examples
+# #' @examples
 #'
 #' @export
 pred.ab.rst <- function(area_p, env_uncut, occ_polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp"){
@@ -300,7 +300,7 @@ pred.ab.rst <- function(area_p, env_uncut, occ_polys, mask=F, prj.nm="", sp.nm =
 #' @inheritParams pred.ab.rst
 #' @return list of list with multiple environmental layers (raster/brick) cutted
 # TODO - examples
-#' @examples
+# #' @examples
 #'
 #' @export
 pred.ab.rst.mscn <- function(area_p, env_uncut.l, occ_polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp", cores=1){

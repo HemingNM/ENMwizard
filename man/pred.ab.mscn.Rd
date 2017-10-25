@@ -23,6 +23,3 @@ This function is a wrapper for "pred.a". See ?pred.a. This function delimitates 
  each of the species contained in the pred_polys named list and crops
  multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species
 }
-\examples{
-
-}

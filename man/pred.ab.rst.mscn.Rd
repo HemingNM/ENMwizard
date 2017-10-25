@@ -29,6 +29,3 @@ list of list with multiple environmental layers (raster/brick) cutted
 This function will use a single SpatialPolygon to crop/mask multiple raster/brick objects
 to be used on model projections.
 }
-\examples{
-
-}

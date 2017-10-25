@@ -19,7 +19,7 @@
 f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2= 'noautofeature'){ # , seq=T
   # AICc
   x <- x[order(x$delta.AICc),]
-  if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function f.mxnt.mdl.pred, check this line
+  if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.cp, check this line
   # seq
   x.m <- x[order(x$Mean.ORmin, -x$Mean.AUC),][1,]
   # seqOr10
@@ -68,17 +68,18 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 
 #### 4.3 Run top corresponding models and save predictions
 #### 4.3.1 save maxent best models and predictions for each model
+# "f.mxnt.mdl.pred" renamed to "mxnt.cp"
 #' Calibrating and predicting selected models
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return selected maxent model calibrations and predictions.
 #' @param x Slot "results" of object of class ENMevaluation
 #' @param sp.nm Species name. Used to name the output folder
-#' @param area_projection A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict
-#' @param occ_b_env Predictors. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
+#' @param a_calib Predictors. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
 #' predictor variables. These will be used to extract values from for the point locations. Can
 #' also be a data.frame, in which case each column should be a predictor variable and each row
 #' a presence or background record.
+#' @param a_proj A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict
 #' @param occ_locs Occurrence data. Argument 'p' of dismo::maxent. This can be a data.frame, matrix,
 #' SpatialPoints* object, or a vector. If p is a data.frame or matrix it represents a set of point
 #' locations; and it must have two columns with the first being the x-coordinate (longitude) and
@@ -100,7 +101,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
 #' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUC_min, Mean.AUC_10)
 #' @export
-f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, formt = "raster",
+mxnt.cp <- function(x, sp.nm, a_calib, a_proj, occ_locs, formt = "raster",
                             pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                             wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){
 
@@ -153,9 +154,9 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
       # maxent models
       set.seed(1)
-      mxnt.mdls[[i]] <<- dismo::maxent(occ_b_env, occ_locs, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+      mxnt.mdls[[i]] <<- dismo::maxent(a_calib, occ_locs, path=path2file, args=args.all[[i]]) # final model fitting/calibration
 
-      mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], area_projection, args=pred.args, progress='text',
+      mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a_proj, args=pred.args, progress='text',
                                  file = filename, format = formt, overwrite=T)
     }) #) ## fecha for or lapply
 
@@ -172,7 +173,7 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
 
     # create averaged prediction map
     cat(c("\n",paste(mod.pred.nms[1]), "\n"))
-    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod_AICc.stack*wv, na.rm=T)/sum(wv)), area_projection[[1]]),
+    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod_AICc.stack*wv, na.rm=T)/sum(wv)), a_proj[[1]]),
                                                  filename = paste(avg.m.path, paste0(mod.pred.nms[1], ".grd"), sep='/'),
                                                  format = formt, overwrite = T) )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
@@ -204,12 +205,12 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
       if(dir.exists(path2file)==F) dir.create(path2file)
       # maxent models
       set.seed(1)
-      mxnt.mdls[[i]] <- dismo::maxent(occ_b_env, occ_locs, path=path2file, args=args.all[[i]])
+      mxnt.mdls[[i]] <- dismo::maxent(a_calib, occ_locs, path=path2file, args=args.all[[i]])
 
       # grep("Mod_Mean.ORmin", xsel.mdls$sel.cri)
       # m <-  grep(mod.nms[i], xsel.mdls$sel.cri)
       cat(c(paste(mod.nms[i]), "\n"))
-      mod.preds <- raster::addLayer(mod.preds, dismo::predict(mxnt.mdls[[i]], area_projection, args=pred.args, progress='text',
+      mod.preds <- raster::addLayer(mod.preds, dismo::predict(mxnt.mdls[[i]], a_proj, args=pred.args, progress='text',
                                                file = filename,
                                                format = formt, overwrite = T) )
       names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms[i]
@@ -218,27 +219,28 @@ f.mxnt.mdl.pred <- function(x, sp.nm, area_projection, occ_b_env, occ_locs, form
   return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args, mxnt.preds = mod.preds))
 }
 
+# "f.mxnt.mdl.pred.batch" renamed to "mxnt.cpb"
 #' Calibrating and predicting selected models for several species
 #'
 #' This function will read a list of objects of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return selected maxent model calibrations and predictions. Each element on the list is usually a species.
-#' area_proj.lst, occ_b_env.lst, occ_locs.lst are lists with occurence data, projection and calibration/predictor data.
+#' a_proj.lst, a_calib.lst, occ_locs.lst are lists with occurence data, projection and calibration/predictor data.
 #' Species in these lists must all be in the same order of species in ENMeval_res.
 #' @param ENMeval_res List of objects of class ENMevaluation
-#' @param area_proj.lst List of projection areas. See argument "area_projection" in f.mxnt.mdl.pred.
-#' @param occ_b_env.lst List of predictor areas.
-#' @param occ_locs.lst List of occurence data. See argument "occ_locs" in f.mxnt.mdl.pred.
-#' @inheritParams f.mxnt.mdl.pred
-#' @return A list of objects returned from f.mxnt.mdl.pred
+#' @param a_calib.lst List of predictor areas.
+#' @param a_proj.lst List of projection areas. See argument "a_proj" in mxnt.cp.
+#' @param occ_locs.lst List of occurence data. See argument "occ_locs" in mxnt.cp.
+#' @inheritParams mxnt.cp
+#' @return A list of objects returned from function "mxnt.cp"
 #' @examples
-#' mxnt.mdls.preds.lst <- f.mxnt.mdl.pred.batch(ENMeval_res=ENMeval_res.lst,
-#' area_proj.lst=area_projection, occ_b_env.lst=occ_b_env, occ_locs.lst=occ_locs, wAICsum=0.99)
+#' mxnt.mdls.preds.lst <- mxnt.cpb(ENMeval_res=ENMeval_res.lst,
+#' a_proj.lst=areas_projection, a_calib.lst=occ_b_env, occ_locs.lst=occ_locs, wAICsum=0.99)
 #' mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of wAICc
 #' mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models
 #' mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
-f.mxnt.mdl.pred.batch <- function(ENMeval_res, area_proj.lst, occ_b_env.lst, occ_locs.lst, formt = "raster",
+mxnt.cpb <- function(ENMeval_res, a_calib.lst, a_proj.lst, occ_locs.lst, formt = "raster",
                                   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                                   wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){
 
@@ -253,10 +255,11 @@ f.mxnt.mdl.pred.batch <- function(ENMeval_res, area_proj.lst, occ_b_env.lst, occ
     cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
     # compute final models and predictions
-    mxnt.mdls.preds.lst[[i]] <- f.mxnt.mdl.pred(x = ENMeval_res[[i]], sp.nm = names(ENMeval_res[i]), area_projection = area_proj.lst[[i]],
-                                                occ_b_env = occ_b_env.lst[[i]], occ_locs = occ_locs.lst[[i]],
-                                                formt = formt, pred.args = pred.args, wAICsum = wAICsum,
-                                                randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)
+    mxnt.mdls.preds.lst[[i]] <- mxnt.cp(x = ENMeval_res[[i]], sp.nm = names(ENMeval_res[i]),
+                                        a_calib = a_calib.lst[[i]], a_proj = a_proj.lst[[i]],
+                                        occ_locs = occ_locs.lst[[i]], formt = formt,
+                                        pred.args = pred.args, wAICsum = wAICsum,
+                                        randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)
     # mxnt.mdls.preds.lst[[i]]$pred.args <- pred.args
   }
   return(mxnt.mdls.preds.lst)

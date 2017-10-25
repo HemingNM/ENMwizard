@@ -21,6 +21,3 @@ raster or brick cropped based on SpatialPolygons
 \description{
 This function will use SpatialPolygons to crop/mask raster/brick objects to be used on model projections.
 }
-\examples{
-
-}
