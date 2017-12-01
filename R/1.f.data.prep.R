@@ -194,9 +194,9 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.b <- bffr.b(occ.polys, bffr.width=1.5)
+#' occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
 #' @export
-bffr.b <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
+bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.bffr"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
@@ -244,7 +244,7 @@ bffr.b <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.b <- bffr.b(occ.polys, bffr.width=1.5)
+#' occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
 #' env.uncut <- brick("path/to/env")
 #' occ.b.env <- env.cut(occ.b, env.uncut)
 #' for(i in 1:length(occ.b.env)){

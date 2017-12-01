@@ -214,7 +214,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
   return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 
-# "f.mxnt.mdl.pred.batch" renamed to "mxnt.cpb"
+# "f.mxnt.mdl.pred.batch" renamed to "mxnt.cp.batch"
 #' Calibrating and predicting selected models for several species
 #'
 #' This function will read a list of objects of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
@@ -231,14 +231,14 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' @inheritParams mxnt.cp
 #' @return A list of objects returned from function "mxnt.cp"
 #' @examples
-#' mxnt.mdls.preds.lst <- mxnt.cpb(ENMeval.res=ENMeval.res.lst,
+#' mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res=ENMeval.res.lst,
 #' a.calib.l=occ.b.env, a.proj.l=areas.projection, occ.l=occ, wAICsum=0.99)
 #' mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of wAICc
 #' mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models
 #' mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
-mxnt.cpb <- function(ENMeval.res, a.calib.l, a.proj.l, occ.l, formt = "raster",
+mxnt.cp.batch <- function(ENMeval.res, a.calib.l, a.proj.l, occ.l, formt = "raster",
                                   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                                   wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){
 

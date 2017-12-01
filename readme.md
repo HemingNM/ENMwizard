@@ -59,17 +59,17 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 
 The occurence points in the named list are used to create polygons ...
 ```r
-occ_polys <- poly.c.batch(spp.occ.list)
+occ.polys <- poly.c.batch(spp.occ.list)
 ```
 
 ### ------- 1.2.1 creating buffer
 
 ... and the occurrence polygons are buffered 1.5 degrees wider.
 ```r
-occ_b <- bffr.b(occ_polys, bffr.width = 1.5)
+occ.b <- bffr.batch(occ.polys, bffr.width = 1.5)
 ```
 
-### ------- 1.3. Cut enviromental layers with occ_b and save in hardrive.
+### ------- 1.3. Cut enviromental layers with occ.b and save in hardrive.
 Specify the path to the environmental variables
 it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
 here we will use variables available in dismo package
@@ -81,24 +81,24 @@ pattern.env <- 'grd'
 
 Get uncut variables
 ```r
-env_uncut <- list.files(path.env, full.names=TRUE)
-env_uncut <- env_uncut[grep(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env_uncut)]
-env_uncut <- stack(env_uncut)
+env.uncut <- list.files(path.env, full.names=TRUE)
+env.uncut <- env.uncut[grep(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env.uncut)]
+env.uncut <- stack(env.uncut)
 ```
 
 If the variables were already saved in a raster brick, you just need to read them
 ```r
-env_uncut <- brick(paste(path.env, "bio.grd", sep="/"))
+env.uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 ```
 
 Finally, crop environmental variables for each species (and plot them for visual inspection)
 ```r
-occ_b_env <- env.cut(occ_b, env_uncut)
+occ.b.env <- env.cut(occ.b, env.uncut)
 
-for(i in 1:length(occ_b_env)){
-  plot(occ_b_env[[i]][[1]])
-  plot(occ_polys[[i]], border = "red", add = T)
-  plot(occ_b[[i]], add = T)
+for(i in 1:length(occ.b.env)){
+  plot(occ.b.env[[i]][[1]])
+  plot(occ.polys[[i]], border = "red", add = T)
+  plot(occ.b[[i]], add = T)
 }
 ```
 
@@ -107,7 +107,7 @@ for(i in 1:length(occ_b_env)){
 ### ------- 2.1 Filtering original dataset
 Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
 ```r
-thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
+thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
 ```
 
 ### Great! Now we are ready for tunning species' ENMs
@@ -120,19 +120,19 @@ thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
 ### ------- 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
 After thinning, we choose one dataset for each species for modelling.
 ```r
-occ_locs <- loadTocc(thinned_dataset_batch)
+occ.locs <- loadTocc(thinned.dataset.batch)
 ```
 
 ### ------- 3.3 model tuning using ENMeval
-Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ_locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
+Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
-ENMeval_res.lst <- ENMevaluate.batch(occ_locs, occ_b_env)
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env)
 ```
 
 -----
 ### TODO
 # 4. Model Fitting (Calibration) and Projection
-# 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas_projection"
+# 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
 # 4.1.1 select area for projection based on the extent of occ points
 
 

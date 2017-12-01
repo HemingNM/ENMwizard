@@ -91,10 +91,10 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=F, s
 #' @return  named list of SpatialPolygons (enlarged occ.poly)
 # TODO - examples
 #' @examples
-#'area.projection <- pred.a.polyb(occ.polys, mult=.55, buffer=F)
+#'area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=F)
 #'plot(area.projection[[1]][[1]])
 #' @export
-pred.a.polyb <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T){ # , o.path = "occ.poly"
+pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T){ # , o.path = "occ.poly"
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
   # cat("\n", deg.incr, "\n")
@@ -258,7 +258,7 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
 #' @inheritParams pred.a
 #' @inheritParams pred.ab
-#' @inheritParams pred.a.polyb
+#' @inheritParams pred.a.poly.batch
 #' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p
 #' @return list of environmental layers (raster/brick) cutted
 # TODO - examples
@@ -296,7 +296,7 @@ pred.ab.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm =
 #' This function will use a single SpatialPolygon to crop/mask multiple raster/brick objects
 #' to be used on model projections.
 #' @inheritParams pred.ab.mscn
-#' @inheritParams pred.a.polyb
+#' @inheritParams pred.a.poly.batch
 #' @inheritParams pred.ab.rst
 #' @return list of list with multiple environmental layers (raster/brick) cutted
 # TODO - examples

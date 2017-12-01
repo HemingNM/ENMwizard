@@ -133,10 +133,10 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster"){
 #' @inheritParams mxnt.cpb
 #' @return A list of objects returned from function "mxnt.p"
 #' @examples
-#' mxnt.mdls.preds <- mxnt.pb(mxnt.c.mdls.lst = mxnt.mdls.preds.lst[1],
+#' mxnt.mdls.preds <- mxnt.p.batch(mxnt.c.mdls.lst = mxnt.mdls.preds.lst[1],
 #                                     pred.nm ="fut", a.proj.l = areas.projection)
 #' @export
-mxnt.pb <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "raster"){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "raster"){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
                               # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                               # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 
@@ -168,12 +168,12 @@ mxnt.pb <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "raster"){
 #' This function will read an object returned by "mxnt.cpb", read the calibrated models and project into
 #' several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
 #' each element (species) the original object.
-#' @inheritParams mxnt.pb
+#' @inheritParams mxnt.p.batch
 #' @return A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
 #' @examples
-#' mxnt.mdls.preds.pf <- mxnt.pb.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
+#' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
-mxnt.pb.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster"){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster"){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
                                    # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                                    # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 
