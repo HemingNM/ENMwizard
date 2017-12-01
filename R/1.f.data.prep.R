@@ -4,15 +4,16 @@
 # @param o.path Output path
 #' @param lr.nm Polygon output name
 #' @param convex Concave or convex polygon (T or F)
-#' @param alpha see ?alphahull::ashape
+# #' @param alpha see ?alphahull::ashape
 #' @param crs.set crs value used ???
+#' @inheritParams alphahull::ashape
 #' @return spatial polygon of occurencies built using coordinates
 #' @examples
-#' occ_poly <- poly.c(occ.spdf, lr.nm="occ_poly")
-#' plot(occ_poly)
+#' occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
+#' plot(occ.poly)
 #' @export
-poly.c <- function(occ.spdf, lr.nm="sp_nm", convex=T, alpha=10, crs.set = NULL ){ # , o.path = NULL
-  o.path <- "1_sppData/occ_poly"
+poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = NULL){ # , o.path = NULL
+  o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
 
@@ -50,14 +51,14 @@ poly.c <- function(occ.spdf, lr.nm="sp_nm", convex=T, alpha=10, crs.set = NULL )
     ch <- grDevices::chull(sp::coordinates(occ.spdf))
     coords <- sp::coordinates(occ.spdf)[c(ch, ch[1]),]
   }
-  occ_poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
-  occ_poly <- sp::SpatialPolygonsDataFrame(occ_poly, data=data.frame(ID=1))
-  # raster::crs(occ_poly) <- crs.set
-  # if(!is.null(crs.set)){raster::projection(occ_poly) <- crs.set}
+  occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
+  occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
+  # raster::crs(occ.poly) <- crs.set
+  # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
-    raster::shapefile(occ_poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
+    raster::shapefile(occ.poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
   # }
-  return(occ_poly)
+  return(occ.poly)
 }
 
 
@@ -68,20 +69,24 @@ poly.c <- function(occ.spdf, lr.nm="sp_nm", convex=T, alpha=10, crs.set = NULL )
 #' @param plot logical. Plot results or not?
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
-#' occ_polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+#' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+#' occ.polys <- poly.c.batch(spp.occ.list)
+#' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, crs.set = NULL, convex=T, alpha=10, plot=T){ #, o.path=NULL
+poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = NULL){ #, o.path=NULL
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
-  lr.nm <- paste(names(spp.occ.list), "occ_poly", sep = ".")
+  lr.nm <- paste(names(spp.occ.list), "occ.poly", sep = ".")
 
-  o.path.pts <- "1_sppData/occ_pts"
+  o.path.pts <- "1_sppData/occ.pts"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
   #
   for(i in 1:length(spp.occ.list)){
     occ.spdf <- data.frame(spp.occ.list[[i]])
     sp::coordinates(occ.spdf) <- ~LONG+LAT
-    raster::shapefile(occ.spdf , filename = paste(o.path.pts, paste0(paste(names(spp.occ.list), "occ_pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
+    raster::shapefile(occ.spdf , filename = paste(o.path.pts, paste0(paste(names(spp.occ.list), "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
     # raster::crs(occ.spdf) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
     occ.pgns[[i]] <- poly.c(occ.spdf, lr.nm=lr.nm[i], convex=convex, alpha=alpha, crs.set=crs.set) # , o.path=o.path
@@ -102,8 +107,8 @@ poly.c.batch <- function(spp.occ.list, crs.set = NULL, convex=T, alpha=10, plot=
 #' @inheritParams poly.c
 #' @return shapefile with binded polygons
 #' @export
-bind.shp <- function(files, sp.nm="sp", crs.set = NULL ){ # , o.path = "occ_poly"
-  o.path <- "1_sppData/occ_poly"
+bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
+  o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
 
@@ -125,7 +130,7 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL ){ # , o.path = "occ_poly
   # names(poly.data)
   # raster::crs(poly.data) <- crs.set
   # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
-  sp.nm <- paste(sp.nm, "occ_poly", sep = ".")
+  sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
 
   # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
@@ -143,10 +148,14 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL ){ # , o.path = "occ_poly
 #' @inheritParams bind.shp
 #' @return spatial polygons built using coordinates
 #' @examples
-#' occ_polys$Bvarieg <- poly.splt(spp.occ = Bvarieg.occ, k=5)
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+#' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+#' occ.polys <- poly.c.batch(spp.occ.list)
+#' occ.polys$Bvarieg <- poly.splt(spp.occ = spp.occ.list$Bvarieg, k=5)
 #' @export
-poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL){ # , o.path = "occ_poly"
-  # o.path <- "1_sppData/occ_poly"
+poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL){ # , o.path = "occ.poly"
+  # o.path <- "1_sppData/occ.poly"
   # if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   # if(dir.exists(o.path)==F) dir.create(o.path)
 
@@ -156,15 +165,15 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
 
   # create one polygon for each set of points
   spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
-  occ_polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F)
-  occ_polys.sp <- bind.shp(occ_polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
-  # raster::crs(occ_polys.sp) <- crs.set
-  # if(!is.null(crs.set)){raster::projection(occ_polys.sp) <- crs.set}
-  sp::plot(occ_polys.sp)
+  occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F)
+  occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
+  # raster::crs(occ.polys.sp) <- crs.set
+  # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
+  sp::plot(occ.polys.sp)
   spp.occ <- as.data.frame(spp.occ)
   sp::coordinates(spp.occ) <- ~LONG+LAT
   sp::plot(spp.occ, col="red", add=T)
-  return(occ_polys.sp)
+  return(occ.polys.sp)
 }
 
 
@@ -173,7 +182,7 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
 
 #' Create buffer based on species polygons
 #'
-#' @param occ_polys list of SpatialPolygons, usually obj returned from poly.c.batch()
+#' @param occ.polys list of SpatialPolygons, usually obj returned from poly.c.batch()
 #' @param bffr.width Buffer width. See 'width' of ?rgeos::gBuffer
 #' @param mult How much expand bffr.width
 #' @param plot Boolean, to draw plots or not
@@ -184,42 +193,42 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
 #' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-#' occ_polys <- poly.c.batch(spp.occ.list)
-#' occ_b <- bffr.b(occ_polys, bffr.width=1.5)
+#' occ.polys <- poly.c.batch(spp.occ.list)
+#' occ.b <- bffr.b(occ.polys, bffr.width=1.5)
 #' @export
-bffr.b <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.set = NULL, plot = T){ # , o.path = "occ_poly"
-  o.path <- "1_sppData/occ_bffr"
+bffr.b <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
+  o.path <- "1_sppData/occ.bffr"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
 
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
-  occ_b <- vector("list", length(occ_polys))
-  names(occ_b) <- names(occ_polys)
+  occ.b <- vector("list", length(occ.polys))
+  names(occ.b) <- names(occ.polys)
   if(dir.exists(o.path)==F) dir.create(o.path)
   bf.path <- paste(o.path,"bffr", sep = "/" )
   if(dir.exists(bf.path)==F) dir.create(bf.path)
 
-  if(length(mult)==1){ mult <- rep(mult, length(occ_polys))}
+  if(length(mult)==1){ mult <- rep(mult, length(occ.polys))}
   TF.b.w <- is.null(bffr.width)
-  for(i in 1:length(occ_polys)){
-    if(!is.null(crs.set) & is.null(raster::projection(occ_polys[[i]]))){raster::projection(occ_polys[[i]]) <- crs.set}
+  for(i in 1:length(occ.polys)){
+    if(!is.null(crs.set) & is.null(raster::projection(occ.polys[[i]]))){raster::projection(occ.polys[[i]]) <- crs.set}
     if(TF.b.w){
-      ext_proj <- raster::extent(occ_polys[[i]])
-      bffr.width <- mean(c(abs(ext_proj[1]-ext_proj[2]), abs(ext_proj[3]-ext_proj[4])))*mult[i]
+      ext.proj <- raster::extent(occ.polys[[i]])
+      bffr.width <- mean(c(abs(ext.proj[1]-ext.proj[2]), abs(ext.proj[3]-ext.proj[4])))*mult[i]
     }
-    cat(c("Buffer width for", names(occ_b)[i], "is", bffr.width, "\n"))
-    occ_b[[i]] <- rgeos::gBuffer(occ_polys[[i]], width=bffr.width, quadsegs=quadsegs)
-    # raster::crs(occ_b[[i]]) <- crs.set
-    # if(!is.null(crs.set)){raster::projection(occ_b[[i]]) <- crs.set}
-    raster::shapefile(occ_b[[i]], filename = paste(o.path, paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ), overwrite=TRUE)
-    occ_b[[i]] <- raster::shapefile(paste(o.path, paste0(names(occ_b)[i], "_bffr", ".shp"), sep = "/" ))
+    cat(c("Buffer width for", names(occ.b)[i], "is", bffr.width, "\n"))
+    occ.b[[i]] <- rgeos::gBuffer(occ.polys[[i]], width=bffr.width, quadsegs=quadsegs)
+    # raster::crs(occ.b[[i]]) <- crs.set
+    # if(!is.null(crs.set)){raster::projection(occ.b[[i]]) <- crs.set}
+    raster::shapefile(occ.b[[i]], filename = paste(o.path, paste0(names(occ.b)[i], ".bffr", ".shp"), sep = "/" ), overwrite=TRUE)
+    occ.b[[i]] <- raster::shapefile(paste(o.path, paste0(names(occ.b)[i], ".bffr", ".shp"), sep = "/" ))
 
     if(plot == T){
-      plot(occ_b[[i]], col="green", main=names(occ_b)[i])
-      plot(occ_polys[[i]], border="red", add=T)
+      plot(occ.b[[i]], col="green", main=names(occ.b)[i])
+      plot(occ.polys[[i]], border="red", add=T)
     }
   }
-  return(occ_b)
+  return(occ.b)
 }
 
 
@@ -227,38 +236,43 @@ bffr.b <- function(occ_polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.
 
 #' Crop environmental variables for each species
 #'
-#' @param occ_b polygon, usually a buffer
-#' @param env_uncut raster brick or stack to be cropped
+#' @param occ.b polygon, usually a buffer
+#' @param env.uncut raster brick or stack to be cropped
 #' @return list [for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
-#' env_uncut <- brick("path/to/env")
-#' occ_b_env <- env.cut(occ_b, env_uncut)
-#' for(i in 1:length(occ_b_env)){
-#'    plot(occ_b_env[[i]][[1]])
-#'    plot(occ_b[[i]], add=T)
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+#' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+#' occ.polys <- poly.c.batch(spp.occ.list)
+#' occ.b <- bffr.b(occ.polys, bffr.width=1.5)
+#' env.uncut <- brick("path/to/env")
+#' occ.b.env <- env.cut(occ.b, env.uncut)
+#' for(i in 1:length(occ.b.env)){
+#'    plot(occ.b.env[[i]][[1]])
+#'    plot(occ.b[[i]], add=T)
 #' }
 #' @export
-env.cut <- function(occ_b, env_uncut){
+env.cut <- function(occ.b, env.uncut){
   path.env.out <- "2_envData"
   if(dir.exists(path.env.out)==F) dir.create(path.env.out)
   ## Clipping rasters for each species
-  occ_b_env <- vector("list", length(occ_b))
-  names(occ_b_env) <- names(occ_b)
+  occ.b.env <- vector("list", length(occ.b))
+  names(occ.b.env) <- names(occ.b)
 
-  for(i in 1:length(occ_b)){
-    cat(c("Cutting environmental variables of species", i, "of", length(occ_b), "\n"))
-    # occ_b[[i]] <- sp::spTransform(occ_b[[i]], raster::crs(env_uncut))
-    occ_b_env[[i]] <- raster::crop(env_uncut, raster::extent(occ_b[[i]]))
-    occ_b_env[[i]] <- raster::mask(occ_b_env[[i]], occ_b[[i]])
-    # raster::crs(occ_b_env[[i]]) <- raster::crs(env_uncut)
+  for(i in 1:length(occ.b)){
+    cat(c("Cutting environmental variables of species", i, "of", length(occ.b), "\n"))
+    # occ.b[[i]] <- sp::spTransform(occ.b[[i]], raster::crs(env.uncut))
+    occ.b.env[[i]] <- raster::crop(env.uncut, raster::extent(occ.b[[i]]))
+    occ.b.env[[i]] <- raster::mask(occ.b.env[[i]], occ.b[[i]])
+    # raster::crs(occ.b.env[[i]]) <- raster::crs(env.uncut)
     # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
-    occ_b_env[[i]] <- raster::writeRaster(occ_b_env[[i]],
-                                  filename = paste(path.env.out, paste("envData.", names(occ_b_env)[i], ".grd", sep=''), sep='/'),
+    occ.b.env[[i]] <- raster::writeRaster(occ.b.env[[i]],
+                                  filename = paste(path.env.out, paste("envData.", names(occ.b.env)[i], ".grd", sep=''), sep='/'),
                                   format = "raster", overwrite = T)
-    # plot(occ_b_env[[i]])
+    # plot(occ.b.env[[i]])
   }
 
-  return(occ_b_env)
+  return(occ.b.env)
 }
 
 
@@ -275,17 +289,17 @@ env.cut <- function(occ_b, env_uncut){
 #' @param write.files See ?thin of spThin package
 #' @param max.files See ?thin of spThin package
 #' @param write.log.file See ?thin of spThin package
-#' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ_thinned_full".
+#' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
-#' thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
-#' plotThin(thinned_dataset_batch[[1]])
-#' length(thinned_dataset_batch[[1]])
+#' thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
+#' plotThin(thinned.dataset.batch[[1]])
+#' length(thinned.dataset.batch[[1]])
 #' @export
 thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.col = "SPEC",
                        thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
                        write.files = TRUE, max.files = 1, write.log.file = TRUE) {
 
-  out.dir <- "1_sppData/occ_thinned_full"
+  out.dir <- "1_sppData/occ.thinned.full"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(out.dir)==F) dir.create(out.dir)
 
@@ -300,49 +314,50 @@ thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.co
                  write.files = write.files,
                  max.files = max.files,
                  out.dir = out.dir,
-                 out.base = paste0(spp[i], ".occ_thinned"),
-                 log.file = paste0(out.dir, "/", spp[i], ".occ_thinned_full_log_file.txt"),
+                 out.base = paste0(spp[i], ".occ.thinned"),
+                 log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
                  write.log.file = write.log.file)
   }
 
-  thinned_dataset_full <- vector(mode = "list", length = length(loc.data.lst))
-  thinned_dataset_full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
+  thinned.dataset.full <- vector(mode = "list", length = length(loc.data.lst))
+  thinned.dataset.full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
 
-  names(thinned_dataset_full) <- spp
+  names(thinned.dataset.full) <- spp
 
-  return(thinned_dataset_full)
+  return(thinned.dataset.full)
 }
 
 
 
 
-#' Load occurrence data filtered using "thin.batch"
+#' Load "thin.batch" filtered occurrence data
+#'
 #' @param occ.list.thin named list returned from "thin.batch"
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
 #' @param wtd : which thinned dataset?
 #' @return named list of thinned occurence data for each species in the list
 #' @examples
-#' occ_locs <- loadTocc(thinned_dataset_batch)
+#' occ.locs <- loadTocc(thinned.dataset.batch)
 #' @export
 loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
 
   if (from.disk){ # retrieve from disk
-    out.dir <- "1_sppData/occ_thinned_full"
+    out.dir <- "1_sppData/occ.thinned.full"
 
-    occ_l <- vector("list", length(occ.list.thin))
-    names(occ_l) <- names(occ.list.thin)
+    occ.l <- vector("list", length(occ.list.thin))
+    names(occ.l) <- names(occ.list.thin)
     for(i in 1:length(occ.list.thin)){
-      occ_l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ_thinned", "_thin1.csv"),
+      occ.l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ.thinned", ".thin1.csv"),
                              header=TRUE, sep=',', stringsAsFactors=F)[2:3]
     }
   } else { # retrieve from thinned obj
     for(i in 1:length(occ.list.thin)){
       if(wtd > length(occ.list.thin[[i]])) stop(paste("There are only", length(occ.list.thin[[i]]), "thinned datasets. 'wtd' was", wtd))
 
-      occ_l[[i]] <- occ.list.thin[[i]][[wtd]]
-      colnames(occ_l[[i]]) <- c("LONG", "LAT")
+      occ.l[[i]] <- occ.list.thin[[i]][[wtd]]
+      colnames(occ.l[[i]]) <- c("LONG", "LAT")
     }
   }
 
-  return(occ_l)
+  return(occ.l)
 }
