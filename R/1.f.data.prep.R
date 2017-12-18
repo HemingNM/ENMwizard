@@ -5,7 +5,7 @@
 #' @param lr.nm Polygon output name
 #' @param convex Concave or convex polygon (T or F)
 # #' @param alpha see ?alphahull::ashape
-#' @param crs.set crs value used ???
+#' @param crs.set set the coordinate reference system (CRS) of the polygons
 #' @inheritParams alphahull::ashape
 #' @return spatial polygon of occurencies built using coordinates
 #' @examples
@@ -53,7 +53,7 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = NULL){
   }
   occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
-  # raster::crs(occ.poly) <- crs.set
+  raster::crs(occ.poly) <- crs(crs.set)
   # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
     raster::shapefile(occ.poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
