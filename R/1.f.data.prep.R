@@ -12,7 +12,7 @@
 #' occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
 #' plot(occ.poly)
 #' @export
-poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = NULL){ # , o.path = NULL
+poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
