@@ -11,7 +11,7 @@ bind.shp(files, sp.nm = "sp", crs.set = NULL)
 
 \item{sp.nm}{name used to save file}
 
-\item{crs.set}{crs value used ???}
+\item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
 \value{
 shapefile with binded polygons

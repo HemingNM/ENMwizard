@@ -12,7 +12,7 @@
 #' occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
 #' plot(occ.poly)
 #' @export
-poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"){ # , o.path = NULL
+poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
@@ -53,7 +53,7 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
   }
   occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
-  raster::crs(occ.poly) <- crs(crs.set)
+  raster::crs(occ.poly) <- raster::crs(crs.set)
   # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
     raster::shapefile(occ.poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
@@ -75,7 +75,7 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"){ #, o.path=NULL
+poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ #, o.path=NULL
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), "occ.poly", sep = ".")
 

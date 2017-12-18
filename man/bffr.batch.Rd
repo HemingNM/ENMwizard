@@ -16,7 +16,7 @@ bffr.batch(occ.polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 
 \item{quadsegs}{see ?rgeos::gBuffer}
 
-\item{crs.set}{crs value used ???}
+\item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 
 \item{plot}{Boolean, to draw plots or not}
 }

@@ -5,7 +5,7 @@
 \title{Create polygon based on species occurence coordinates}
 \usage{
 poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10,
-  crs.set = NULL)
+  crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
 }
 \arguments{
 \item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
@@ -16,7 +16,7 @@ poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10,
 
 \item{alpha}{Value of \eqn{\alpha}.}
 
-\item{crs.set}{crs value used ???}
+\item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
 \value{
 spatial polygon of occurencies built using coordinates

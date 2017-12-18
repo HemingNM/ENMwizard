@@ -18,7 +18,7 @@ poly.splt(spp.occ, k = 2, convex = T, alpha = 10, sp.nm = "sp1",
 
 \item{sp.nm}{name used to save file}
 
-\item{crs.set}{crs value used ???}
+\item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
 \value{
 spatial polygons built using coordinates
