@@ -20,6 +20,8 @@ install_github("HemingNM/ENMwizard")
 library(ENMwizard)
 ```
 
+
+
 ### Install from zip file
 You can also download a zip file containing the package and install it from R.
 
@@ -47,7 +49,11 @@ First, lets use occ data available in dismo package
 ```r
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
-colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+
+head(Bvarieg.occ)# Check first rows
+
+# Column names must be in capital letters
+colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT") # Change column names
 ```
 
 Now we make it a named list, where names correspond to species names
@@ -60,6 +66,9 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 The occurence points in the named list are used to create polygons ...
 ```r
 occ.polys <- poly.c.batch(spp.occ.list)
+
+crs(occ.polys$Bvarieg) <- "+proj=longlat +ellps=WGS84"
+
 ```
 
 ### ------- 1.2.1 creating buffer
