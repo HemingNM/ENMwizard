@@ -224,8 +224,8 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
     occ.b[[i]] <- raster::shapefile(paste(o.path, paste0(names(occ.b)[i], ".bffr", ".shp"), sep = "/" ))
 
     if(plot == T){
-      plot(occ.b[[i]], col="green", main=names(occ.b)[i])
-      plot(occ.polys[[i]], border="red", add=T)
+      sp::plot(occ.b[[i]], col="green", main=names(occ.b)[i])
+      sp::plot(occ.polys[[i]], border="red", add=T)
     }
   }
   return(occ.b)
