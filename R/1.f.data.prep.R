@@ -75,7 +75,7 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = NULL){ #, o.path=NULL
+poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"){ #, o.path=NULL
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), "occ.poly", sep = ".")
 
