@@ -4,12 +4,12 @@
 \alias{pred.ab.mscn}
 \title{Cut multiple projection areas (climatic scenarios) for multiple species (list of SpatialPolygons)}
 \usage{
-pred.ab.mscn(pred_polys, env_uncut.l, prj.nm = "", cores = 1)
+pred.ab.mscn(pred.polys, env.uncut.l, prj.nm = "", cores = 1)
 }
 \arguments{
-\item{pred_polys}{list of SpatialPolygons (usually of based on species occ points)}
+\item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)}
 
-\item{env_uncut.l}{list of raster/brick of environmental variables to be cut}
+\item{env.uncut.l}{list of raster/brick of environmental variables to be cut}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 
@@ -20,6 +20,6 @@ named list of cropped list of raster/brick of environmental variables
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a. This function delimitates the projection area for
- each of the species contained in the pred_polys named list and crops
+ each of the species contained in the pred.polys named list and crops
  multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species
 }

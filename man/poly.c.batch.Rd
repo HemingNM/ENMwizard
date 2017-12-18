@@ -4,19 +4,19 @@
 \alias{poly.c.batch}
 \title{Create occ polygon for several species}
 \usage{
-poly.c.batch(spp.occ.list, crs.set = NULL, convex = T, alpha = 10,
-  plot = T)
+poly.c.batch(spp.occ.list, convex = T, alpha = 10, plot = T,
+  crs.set = NULL)
 }
 \arguments{
 \item{spp.occ.list}{A named list of spatial data.frame of species occurence points}
 
-\item{crs.set}{crs value used ???}
-
 \item{convex}{Concave or convex polygon (T or F)}
 
-\item{alpha}{see ?alphahull::ashape}
+\item{alpha}{Value of \eqn{\alpha}.}
 
 \item{plot}{logical. Plot results or not?}
+
+\item{crs.set}{crs value used ???}
 }
 \value{
 A named list of spatial polygons built using coordinates
@@ -25,5 +25,9 @@ A named list of spatial polygons built using coordinates
 Create occ polygon for several species
 }
 \examples{
-occ_polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+occ.polys <- poly.c.batch(spp.occ.list)
+occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 }

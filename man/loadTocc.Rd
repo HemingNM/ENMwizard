@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{loadTocc}
 \alias{loadTocc}
-\title{Load occurrence data filtered using "thin.batch"}
+\title{Load "thin.batch" filtered occurrence data}
 \usage{
 loadTocc(occ.list.thin, from.disk = F, wtd = 1)
 }
@@ -17,8 +17,8 @@ loadTocc(occ.list.thin, from.disk = F, wtd = 1)
 named list of thinned occurence data for each species in the list
 }
 \description{
-Load occurrence data filtered using "thin.batch"
+Load "thin.batch" filtered occurrence data
 }
 \examples{
-occ_locs <- loadTocc(thinned_dataset_batch)
+occ.locs <- loadTocc(thinned.dataset.batch)
 }

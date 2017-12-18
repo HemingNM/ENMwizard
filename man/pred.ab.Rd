@@ -4,12 +4,12 @@
 \alias{pred.ab}
 \title{Cut area for projection based on a list of SpatialPolygons}
 \usage{
-pred.ab(pred_polys, env_uncut, prj.nm = "")
+pred.ab(pred.polys, env.uncut, prj.nm = "")
 }
 \arguments{
-\item{pred_polys}{list of SpatialPolygons (usually of based on species occ points)}
+\item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)}
 
-\item{env_uncut}{raster/brick of environmental variables to be cut}
+\item{env.uncut}{raster/brick of environmental variables to be cut}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 }
@@ -18,9 +18,9 @@ named list of cropped raster or brick
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a
-It works with a named list of pred_poly to delimitate the projection area for each of the species
+It works with a named list of pred.poly to delimitate the projection area for each of the species
 }
 \examples{
-area_projection <- pred.ab(pred_polys, env_uncut, mult=.55, buffer=F)
-plot(area_projection[[1]][[1]])
+area.projection <- pred.ab(pred.polys, env.uncut, mult=.55, buffer=F)
+plot(area.projection[[1]][[1]])
 }

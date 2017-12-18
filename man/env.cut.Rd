@@ -4,12 +4,12 @@
 \alias{env.cut}
 \title{Crop environmental variables for each species}
 \usage{
-env.cut(occ_b, env_uncut)
+env.cut(occ.b, env.uncut)
 }
 \arguments{
-\item{occ_b}{polygon, usually a buffer}
+\item{occ.b}{polygon, usually a buffer}
 
-\item{env_uncut}{raster brick or stack to be cropped}
+\item{env.uncut}{raster brick or stack to be cropped}
 }
 \value{
 list [for each species] of cropped environmental variables. Details in ?raster::crop
@@ -18,10 +18,15 @@ list [for each species] of cropped environmental variables. Details in ?raster::
 Crop environmental variables for each species
 }
 \examples{
-env_uncut <- brick("path/to/env")
-occ_b_env <- env.cut(occ_b, env_uncut)
-for(i in 1:length(occ_b_env)){
-   plot(occ_b_env[[i]][[1]])
-   plot(occ_b[[i]], add=T)
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+occ.polys <- poly.c.batch(spp.occ.list)
+occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
+env.uncut <- brick("path/to/env")
+occ.b.env <- env.cut(occ.b, env.uncut)
+for(i in 1:length(occ.b.env)){
+   plot(occ.b.env[[i]][[1]])
+   plot(occ.b[[i]], add=T)
 }
 }

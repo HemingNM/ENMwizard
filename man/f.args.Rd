@@ -32,6 +32,6 @@ This function will read an object of class ENMevaluation (See ?ENMeval::ENMevalu
 return the necessary arguments for final model calibration and predictions.
 }
 \examples{
-ENMeval_res.lst <- ENMevaluate.batch(occ_locs, occ_b_env, parallel = T , numCores = 7)
-f.args(ENMeval_res.lst[[1]]@results)
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
+f.args(ENMeval.res.lst[[1]]@results)
 }

@@ -4,17 +4,17 @@
 \alias{pred.ab.rst}
 \title{Cut projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)}
 \usage{
-pred.ab.rst(area_p, env_uncut, occ_polys, mask = F, prj.nm = "",
+pred.ab.rst(area.p, env.uncut, occ.polys, mask = F, prj.nm = "",
   sp.nm = "a.proj4mult.spp")
 }
 \arguments{
-\item{area_p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}
+\item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}
 
-\item{env_uncut}{raster/brick of environmental variables to be cut}
+\item{env.uncut}{raster/brick of environmental variables to be cut}
 
-\item{occ_polys}{list of occ_poly SpatialPolygons.  see ?pred.a.poly for details}
+\item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details}
 
-\item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area_p}
+\item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 

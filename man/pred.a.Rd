@@ -4,12 +4,12 @@
 \alias{pred.a}
 \title{Cut area for projection based on SpatialPolygons}
 \usage{
-pred.a(pred_poly, env_uncut, prj.nm = "", sp.nm = "sp")
+pred.a(pred.poly, env.uncut, prj.nm = "", sp.nm = "sp")
 }
 \arguments{
-\item{pred_poly}{list of SpatialPolygons (usually of based on species occ points)}
+\item{pred.poly}{list of SpatialPolygons (usually of based on species occ points)}
 
-\item{env_uncut}{raster/brick of environmental variables to be cut}
+\item{env.uncut}{raster/brick of environmental variables to be cut}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 

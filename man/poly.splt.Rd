@@ -14,7 +14,7 @@ poly.splt(spp.occ, k = 2, convex = T, alpha = 10, sp.nm = "sp1",
 
 \item{convex}{Concave or convex polygon (T or F)}
 
-\item{alpha}{see ?alphahull::ashape}
+\item{alpha}{Value of \eqn{\alpha}.}
 
 \item{sp.nm}{name used to save file}
 
@@ -27,5 +27,9 @@ spatial polygons built using coordinates
 split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
 }
 \examples{
-occ_polys$Bvarieg <- poly.splt(spp.occ = Bvarieg.occ, k=5)
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+occ.polys <- poly.c.batch(spp.occ.list)
+occ.polys$Bvarieg <- poly.splt(spp.occ = spp.occ.list$Bvarieg, k=5)
 }

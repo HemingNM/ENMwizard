@@ -4,14 +4,14 @@
 \alias{pred.a.rst}
 \title{Cut a projection area based on a SpatialPolygon (e.g. Ecoregion)}
 \usage{
-pred.a.rst(area_p, env_uncut, mask = F, prj.nm = "", sp.nm = "sp")
+pred.a.rst(area.p, env.uncut, mask = F, prj.nm = "", sp.nm = "sp")
 }
 \arguments{
-\item{area_p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}
+\item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}
 
-\item{env_uncut}{raster/brick of environmental variables to be cut}
+\item{env.uncut}{raster/brick of environmental variables to be cut}
 
-\item{mask}{should use area_p to "mask" or "crop" env_uncut? See ?raster::mask and ?raster::crop for details}
+\item{mask}{should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 

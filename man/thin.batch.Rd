@@ -31,13 +31,13 @@ thin.batch(loc.data.lst, lat.col = "LAT", long.col = "LONG",
 \item{write.log.file}{See ?thin of spThin package}
 }
 \value{
-Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ_thinned_full".
+Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 }
 \description{
 Filter each species' occurence dataset
 }
 \examples{
-thinned_dataset_batch <- thin.batch(loc.data.lst = spp.occ.list)
-plotThin(thinned_dataset_batch[[1]])
-length(thinned_dataset_batch[[1]])
+thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
+plotThin(thinned.dataset.batch[[1]])
+length(thinned.dataset.batch[[1]])
 }

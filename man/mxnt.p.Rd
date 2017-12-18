@@ -4,7 +4,7 @@
 \alias{mxnt.p}
 \title{Projecting calibrated MaxEnt models}
 \usage{
-mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a_proj, formt = "raster")
+mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster")
 }
 \arguments{
 \item{mxnt.c.mdls}{Objects returned by "mxnt.cp", containing calibrated models.}
@@ -13,12 +13,12 @@ mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a_proj, formt = "raster")
 
 \item{pred.nm}{Character. Prefix to add to projection name (e.g. "fut" or "past")}
 
-\item{a_proj}{A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict}
+\item{a.proj}{A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict}
 
 \item{formt}{Character. Output file type. Argument 'format' of raster::writeRaster}
 }
 \value{
-A list containing all the items returned from function "mxnt.cp", plus the projection specified in a_proj.
+A list containing all the items returned from function "mxnt.cp", plus the projection specified in a.proj.
 }
 \description{
 This function will read an object returned by "mxnt.cp", read the calibrated models and project into

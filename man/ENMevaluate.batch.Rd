@@ -4,7 +4,7 @@
 \alias{ENMevaluate.batch}
 \title{Tuning and evaluation of ENMs with Maxent for several species using ENMeval}
 \usage{
-ENMevaluate.batch(occ_locs, occ_b_env, bg.coords.l = NULL, occ.grp = NULL,
+ENMevaluate.batch(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
   bg.grp = NULL, RMvalues = seq(0.5, 4, 0.5), fc = c("L", "LQ", "H",
   "LQH", "LQHP", "LQHPT"), categoricals = NULL, n.bg = 10000,
   method = NULL, overlap = FALSE, aggregation.factor = c(2, 2),
@@ -13,9 +13,12 @@ ENMevaluate.batch(occ_locs, occ_b_env, bg.coords.l = NULL, occ.grp = NULL,
   updateProgress = FALSE, ...)
 }
 \arguments{
-\item{occ_locs}{list of species occurrence data}
+\item{occ.l}{list of species occurrence data}
 
-\item{occ_b_env}{list of cropped environmental variables for model tuning}
+\item{a.calib.l}{list of predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
+predictor variables. These will be used to extract values from for the point locations. Can
+also be a data.frame, in which case each column should be a predictor variable and each row
+a presence or background record.}
 
 \item{bg.coords.l}{list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).}
 
@@ -57,9 +60,9 @@ ENMevaluate.batch(occ_locs, occ_b_env, bg.coords.l = NULL, occ.grp = NULL,
 }
 \description{
 This function is a wrapper for ENMeval::ENMevaluate. See ?ENMeval::ENMevaluate for details
-It works with a named list of species occurrence data (occ_locs) and a list of
-cropped environmental variables (occ_b_env) for model tuning.
+It works with a named list of species occurrence data (occ.l) and a list of
+cropped environmental variables (a.calib.l) for model tuning.
 }
 \examples{
-ENMeval_res.lst <- ENMevaluate.batch(occ_locs, occ_b_env, parallel = T , numCores = 7)
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 }

@@ -4,7 +4,7 @@
 \alias{mxnt.cp}
 \title{Calibrating and predicting selected models}
 \usage{
-mxnt.cp(x, sp.nm, a_calib, a_proj, occ_locs, formt = "raster",
+mxnt.cp(x, sp.nm, a.calib, occ, formt = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   wAICsum = 0.99, randomseed = F, responsecurves = T,
   arg1 = "noaddsamplestobackground", arg2 = "noautofeature")
@@ -14,14 +14,12 @@ mxnt.cp(x, sp.nm, a_calib, a_proj, occ_locs, formt = "raster",
 
 \item{sp.nm}{Species name. Used to name the output folder}
 
-\item{a_calib}{Predictors. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
+\item{a.calib}{Predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
 predictor variables. These will be used to extract values from for the point locations. Can
 also be a data.frame, in which case each column should be a predictor variable and each row
 a presence or background record.}
 
-\item{a_proj}{A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict}
-
-\item{occ_locs}{Occurrence data. Argument 'p' of dismo::maxent. This can be a data.frame, matrix,
+\item{occ}{Occurrence data. Argument 'p' of dismo::maxent. This can be a data.frame, matrix,
 SpatialPoints* object, or a vector. If p is a data.frame or matrix it represents a set of point
 locations; and it must have two columns with the first being the x-coordinate (longitude) and
 the second the y-coordinate (latitude). Coordinates can also be specified with a SpatialPoints*
@@ -53,7 +51,7 @@ function. Some other arguments do not apply at all to the R implementation. An e
 A list containing the models ('selected.mdls') used for model calibration and prediction,
 calibrated maxent models ('mxnt.mdls'), arguments used for prediction/calibration ('pred.args'), and
 a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
-a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUC_min, Mean.AUC_10)
+a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
 }
 \description{
 This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and

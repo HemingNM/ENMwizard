@@ -4,7 +4,7 @@
 \alias{poly.c}
 \title{Create polygon based on species occurence coordinates}
 \usage{
-poly.c(occ.spdf, lr.nm = "sp_nm", convex = T, alpha = 10,
+poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10,
   crs.set = NULL)
 }
 \arguments{
@@ -14,7 +14,7 @@ poly.c(occ.spdf, lr.nm = "sp_nm", convex = T, alpha = 10,
 
 \item{convex}{Concave or convex polygon (T or F)}
 
-\item{alpha}{see ?alphahull::ashape}
+\item{alpha}{Value of \eqn{\alpha}.}
 
 \item{crs.set}{crs value used ???}
 }
@@ -25,6 +25,6 @@ spatial polygon of occurencies built using coordinates
 Create polygon based on species occurence coordinates
 }
 \examples{
-occ_poly <- poly.c(occ.spdf, lr.nm="occ_poly")
-plot(occ_poly)
+occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
+plot(occ.poly)
 }
