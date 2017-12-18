@@ -125,12 +125,13 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster"){
 #### for several species
 #' Projecting calibrated MaxEnt models for several species
 #'
-#' This function will read an object returned by "mxnt.cpb", read the calibrated models and project into
+#' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
 #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
 #' each element (species) the original object
 #' @param mxnt.c.mdls.lst A list of objects returned by "mxnt.cp", containing calibrated models.
+#' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
 #' @inheritParams mxnt.p
-#' @inheritParams mxnt.cpb
+#' @inheritParams mxnt.cp.batch
 #' @return A list of objects returned from function "mxnt.p"
 #' @examples
 #' mxnt.mdls.preds <- mxnt.p.batch(mxnt.c.mdls.lst = mxnt.mdls.preds.lst[1],
@@ -165,7 +166,7 @@ mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "rast
 
 #' Projecting calibrated MaxEnt models for several species onto multiple environmental scenarios
 #'
-#' This function will read an object returned by "mxnt.cpb", read the calibrated models and project into
+#' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
 #' several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
 #' each element (species) the original object.
 #' @inheritParams mxnt.p.batch

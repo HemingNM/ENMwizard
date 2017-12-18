@@ -194,18 +194,18 @@ pred.ab.mscn <- function(pred.polys, env.uncut.l, prj.nm="", cores=1){ # , ext.p
   if(dir.exists(path.proj)==F) dir.create(path.proj)
   area.pl <- vector("list", length(pred.polys))
   names(area.pl) <- names(pred.polys)
-  for(i in seq_along(pred.polys)){
+  for(i in base::seq_along(pred.polys)){
     area.p.spi <- vector("list", length(env.uncut.l))
     # names(area.p.spi) <- names(env.uncut.l)
     # for(j in seq_along(area.p.spi)){
     if(cores>1){
-      area.pl[[i]] <- unlist(parallel::mclapply(seq.along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
+      area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
         prj.nm.j <- gsub("[..]",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
     } else {
-      area.pl[[i]] <- unlist(lapply(seq_along(area.p.spi), function(j){
+      area.pl[[i]] <- unlist(lapply(base::seq_along(area.p.spi), function(j){
         prj.nm.j <- gsub("[..]",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
@@ -329,7 +329,7 @@ pred.ab.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm="", 
   cat(c("\n","Creating projection area","\n"))
   area.p.spi <- vector("list", length(env.uncut.l))
 
-  area.pl[[1]] <- unlist(parallel::mclapply(seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
+  area.pl[[1]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
     prj.nm.j <- paste("", prj.nm, names(env.uncut.l)[j], sep=".")
     # area.p.spi[[j]] <- pred.a.rst(area.p, env.uncut.l[[j]], occ.polys[[1]], mask=mask, prj.nm = prj.nm.j, sp.nm = sp.nm)
     area.p.spi[[j]] <- pred.a(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)

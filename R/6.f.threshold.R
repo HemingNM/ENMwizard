@@ -4,8 +4,9 @@
 #' Function Title (short description)
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
-#' @param arg1 List of occurence data. See argument "occ.locs" in mxnt.cp.
-#' @inheritParams function1
+#' @param mxnt.mdls.preds.spi Stack or brick of predictions to apply the threshold
+#' @param pred.nm name of prediction to... TODO
+#' @param thrshld.i List of threshold criteria to be applied
 #' @return objects returned from function
 #' @examples
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
@@ -57,7 +58,7 @@ f.thr <- function(mxnt.mdls.preds.spi, pred.nm = "", thrshld.i = 4:6) {
   ## TO DO - change order of all stacks to c("Mod.AvgAICc", "Mod.LowAICc", "Mod.Mean.ORmin", "Mod.Mean.OR10", "Mod.Mean.AUCmin", "Mod.Mean.AUC10")
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
-      apply(thrshld.crit.v[grep("Mod.AICc", mxnt.mdls.preds.spi[[1]]$sel.cri),], 2, function(x) weighted.mean(x, wv))
+      apply(thrshld.crit.v[grep("Mod.AICc", mxnt.mdls.preds.spi[[1]]$sel.cri),], 2, function(x) stats::weighted.mean(x, wv)) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
       thrshld.crit.v[grep("Mod.AICc_1$", mxnt.mdls.preds.spi[[1]]$sel.cri),]
@@ -94,7 +95,7 @@ f.thr <- function(mxnt.mdls.preds.spi, pred.nm = "", thrshld.i = 4:6) {
     }
     names(pred.t) <- mod.pred.nms.t
     assign(brick.nms.t[t],
-           writeRaster(x = pred.t,
+           raster::writeRaster(x = pred.t,
                        filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",pred.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
                        format = "raster", overwrite = T))
     # create presence only raster
@@ -102,7 +103,7 @@ f.thr <- function(mxnt.mdls.preds.spi, pred.nm = "", thrshld.i = 4:6) {
       pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
     }
     assign(brick.nms.t.b[t],
-           writeRaster(x = pred.t,
+           raster::writeRaster(x = pred.t,
                        filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",pred.nm)), ".b.", thrshld.nms[t], ".grd"), sep='/'),
                        format = "raster", overwrite = T))
   }
@@ -120,8 +121,8 @@ f.thr <- function(mxnt.mdls.preds.spi, pred.nm = "", thrshld.i = 4:6) {
 #' Function Title (short description)
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
-#' @param arg1 List of occurence data. See argument "occ.locs" in mxnt.cp.
-#' @inheritParams function1
+#' @param mxnt.mdls.preds.splst List of stack/brick of predictions to apply the threshold
+#' @inheritParams f.thr
 #' @return objects returned from function
 #' @examples
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
@@ -142,9 +143,9 @@ f.thr.batch <- function(mxnt.mdls.preds.splst, pred.nm="", thrshld.i = 4:6){
     #scn.ind <- grep(n.pred.nm, names(mxnt.mdls.preds.splst[[i]]))
     scn.ind <- grep(pred.nm, names(mxnt.mdls.preds.splst[[i]]))
     scn.nms <- names(mxnt.mdls.preds.splst[[i]])[scn.ind]
-    mods.thrshld.spi <- setNames(vector("list", length(scn.nms)), scn.nms)
+    mods.thrshld.spi <- stats::setNames(vector("list", length(scn.nms)), scn.nms)
     for(j in seq_along(scn.ind)){ # climatic scenario
-      mods.thrshld.spi[[j]] <- f.thr(mxnt.mdls.preds.splst[[i]], pred.nm = scn.nms[j], thrshld.i, path.mdls[i])
+      mods.thrshld.spi[[j]] <- f.thr(mxnt.mdls.preds.splst[[i]], pred.nm = scn.nms[j], thrshld.i) # , path.mdls[i]
     }
     mods.thrshld[[i]] <- append(mods.thrshld[[i]], mods.thrshld.spi)
   }

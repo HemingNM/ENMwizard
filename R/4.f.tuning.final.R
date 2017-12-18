@@ -247,14 +247,14 @@ mxnt.cp.batch <- function(ENMeval.res, a.calib.l, a.proj.l, occ.l, formt = "rast
   # path.mdls <- paste(path.res, paste0("Mdls.", names(ENMeval.res)), sep="/")
   mxnt.mdls.preds.lst <- vector("list", length(ENMeval.res))
   names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
-  for(i in seq_along(ENMeval.res)){
+  for(i in base::seq_along(ENMeval.res)){
     ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
     ENMeval.res[[i]] <- ENMeval.res[[i]]@results
     cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
     # compute final models and predictions
     mxnt.mdls.preds.lst[[i]] <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
-                                        a.calib = a.calib.l[[i]], a.proj = a.proj.l[[i]],
+                                        a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                                         occ = occ.l[[i]], formt = formt,
                                         pred.args = pred.args, wAICsum = wAICsum,
                                         randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)

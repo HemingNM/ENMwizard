@@ -20,6 +20,10 @@
 
 
 ############# TODO
+# 5.f.mscn.
+# function "mxnt.p"
+# paralelize line 58-64 & 107-118  ##### list of models to average
+
 # CHANGE: instead of exporting in .xlsx, export in .csv
 
 ## 3.f.tuning
