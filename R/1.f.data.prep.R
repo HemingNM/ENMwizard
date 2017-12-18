@@ -340,12 +340,11 @@ thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.co
 #' occ.locs <- loadTocc(thinned.dataset.batch)
 #' @export
 loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
+  occ.l <- vector("list", length(occ.list.thin))
+  names(occ.l) <- names(occ.list.thin)
 
   if (from.disk){ # retrieve from disk
     out.dir <- "1_sppData/occ.thinned.full"
-
-    occ.l <- vector("list", length(occ.list.thin))
-    names(occ.l) <- names(occ.list.thin)
     for(i in 1:length(occ.list.thin)){
       occ.l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ.thinned", ".thin1.csv"),
                              header=TRUE, sep=',', stringsAsFactors=F)[2:3]
