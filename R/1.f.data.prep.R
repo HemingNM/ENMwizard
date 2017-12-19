@@ -69,7 +69,8 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
 #' @param plot logical. Plot results or not?
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
-#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+#'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
@@ -148,7 +149,8 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
 #' @inheritParams bind.shp
 #' @return spatial polygons built using coordinates
 #' @examples
-#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+#'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
@@ -190,7 +192,8 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
 #' @inheritParams poly.c
 #' @return A named list of SpatialPolygons
 #' @examples
-#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+#'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
@@ -240,7 +243,8 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 #' @param env.uncut raster brick or stack to be cropped
 #' @return list [for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
-#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+#'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)

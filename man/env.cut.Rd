@@ -18,7 +18,8 @@ list [for each species] of cropped environmental variables. Details in ?raster::
 Crop environmental variables for each species
 }
 \examples{
-Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+ "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)

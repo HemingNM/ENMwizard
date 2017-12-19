@@ -25,7 +25,8 @@ A named list of spatial polygons built using coordinates
 Create occ polygon for several species
 }
 \examples{
-Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+ "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)

@@ -27,7 +27,8 @@ A named list of SpatialPolygons
 Create buffer based on species polygons
 }
 \examples{
-Bvarieg.occ <- read.table(paste(system.file(package="dismo"), "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+ "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)

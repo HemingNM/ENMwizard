@@ -4,17 +4,17 @@
 \alias{f.thr}
 \title{Function Title (short description)}
 \usage{
-f.thr(mxnt.mdls.preds.spi, pred.nm = "", thrshld.i = 4:6)
+f.thr(mmp.spi, pred.nm = "", thrshld.i = 4:6)
 }
 \arguments{
-\item{mxnt.mdls.preds.spi}{Stack or brick of predictions to apply the threshold}
+\item{mmp.spi}{Stack or brick of predictions to apply the threshold}
 
-\item{pred.nm}{name of prediction to... TODO}
+\item{pred.nm}{name of prediction to be appended to the final name. Usually "pres", "past" or "fut".}
 
 \item{thrshld.i}{List of threshold criteria to be applied}
 }
 \value{
-objects returned from function
+Stack or brick of thresholded predictions
 }
 \description{
 General function description. A short paragraph (or more) describing what the function does.

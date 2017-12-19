@@ -4,17 +4,17 @@
 \alias{f.thr.batch}
 \title{Function Title (short description)}
 \usage{
-f.thr.batch(mxnt.mdls.preds.splst, pred.nm = "", thrshld.i = 4:6)
+f.thr.batch(mmp.spl, pred.nm = "", thrshld.i = 4:6)
 }
 \arguments{
-\item{mxnt.mdls.preds.splst}{List of stack/brick of predictions to apply the threshold}
+\item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
 
-\item{pred.nm}{name of prediction to... TODO}
+\item{pred.nm}{name of prediction to be appended to the final name. Usually "pres", "past" or "fut".}
 
 \item{thrshld.i}{List of threshold criteria to be applied}
 }
 \value{
-objects returned from function
+List of stack or brick of thresholded predictions
 }
 \description{
 General function description. A short paragraph (or more) describing what the function does.
