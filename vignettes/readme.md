@@ -182,7 +182,7 @@ plot(poly.projection[[1]])
 plot(occ.polys[[1]], col="red", add=T)
 # area.projection <- pred.a.batch(poly.projection, env.uncut)
 
-# pa.current.l <- pred.a.batch.mscn(poly.projection, current.l)
+pa.current.l <- pred.a.batch.mscn(poly.projection, current.l)
 pa.future.l  <- pred.a.batch.mscn(poly.projection, future.l)
 ```
 
@@ -201,7 +201,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.pred.current)
 
 # or
 
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = list(Bvarieg=current.l))
+mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.current.l,numCores=2)
 mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf2, a.proj.l = pa.future.l)
 plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
 

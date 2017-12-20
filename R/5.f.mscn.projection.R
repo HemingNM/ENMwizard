@@ -58,7 +58,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
   ##### list of models to average
   mod.avg.i <- vector("list")
-  filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, pred.nm), sep='/')
+  filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, pred.nm,".grd"), sep='/')
 
   if(numCores>1){
 
@@ -89,13 +89,13 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
     ### stack prediction rasters (to create Average Model prediction)
     path2stk <- paste(avg.m.path, mod.nms[seq_along(args.aicc)], sep='/')
-    filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], pred.nm), sep='/')
+    filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], pred.nm,".grd"), sep='/')
     Mod.AICc.stack <- raster::stack(filename)
 
     # create averaged prediction map
     print(mod.pred.nms[1])
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
-                                                 filename = paste(avg.m.path, paste0(mod.pred.nms[1], pred.nm), sep='/'),
+                                                 filename = paste(avg.m.path, paste0(mod.pred.nms[1], pred.nm,".grd"), sep='/'),
                                                  format = formt, overwrite = T) )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
   }
@@ -104,7 +104,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   # if(i == 1) # usar if(low = T) pra escolher o low aic ou if(grep("low", Mod.pred))
   {
     path2file <- paste(path.mdls, outpt, mod.pred.nms[2], sep='/')
-    filename <- paste(path2file, paste0(mod.pred.nms[2], pred.nm), sep='/')
+    filename <- paste(path2file, paste0(mod.pred.nms[2], pred.nm,".grd"), sep='/')
     if(dir.exists(path2file) == FALSE) dir.create(path2file)
 
     #### 4.3.2.1.1 create Low AIC model prediction on a specific path
@@ -124,7 +124,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
     for(i in (length(args.aicc)+1):length(args.all)){
       path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
-      filename <- paste(path2file, paste0(mod.nms[i], pred.nm), sep='/')
+      filename <- paste(path2file, paste0(mod.nms[i], pred.nm,".grd"), sep='/')
       if(dir.exists(path2file) == FALSE) dir.create(path2file)
       # grep("Mod.Mean.ORmin", xsel.mdls$sel.cri)
       # m <-  grep(mod.nms[i], xsel.mdls$sel.cri)
@@ -193,13 +193,76 @@ mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "rast
 #' @examples
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
-mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster"){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
-                                   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                                   # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
+# mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster"){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+#                                    # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+#                                    # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
+#
+#   # path.res <- "4_ENMeval.results"
+#   # if(dir.exists(path.res)==F) dir.create(path.res)
+#   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
+#
+#   for(i in seq_along(mxnt.c.mdls.lst)){ # loop for each species
+#     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+#     cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
+#     mxnt.preds.spi <- vector("list", length(a.proj.l[[i]]))
+#     # compute final models and predictions
+#     for(j in seq_along(mxnt.preds.spi)){
+#       cat(c("\n", paste0("mxnt.pred.", names(a.proj.l[[i]])[j]), "\n",
+#             "projection ", j, " of ", length(mxnt.preds.spi), "\n"))
+#       mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls.lst[[i]],
+#                                   sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = names(a.proj.l[[i]])[j],
+#                                   a.proj = a.proj.l[[i]][[j]],
+#                                   formt = formt)[length(mxnt.c.mdls.lst[[i]]) + 1] #, # pred.args = pred.args,
+#                                        # wAICsum = wAICsum,
+#                                        # randomseed = randomseed, responsecurves = responsecurves,
+#                                        # arg1 = arg1, arg2 = arg2)[length(mxnt.c.mdls.lst[[i]]) + 1]
+#       names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj.l[[i]])[j])
+#     }
+#     mxnt.c.mdls.lst[[i]] <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
+#   }
+#   return(mxnt.c.mdls.lst)
+# }
+
+mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCores=1){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+  # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+  # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 
   # path.res <- "4_ENMeval.results"
   # if(dir.exists(path.res)==F) dir.create(path.res)
   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
+
+  if(numCores>1){
+
+    cl<-parallel::makeCluster(2)
+    clusterExport(cl,list("mxnt.p"))
+
+    mxnt.c.mdls.lst <- clusterApply(cl,seq_along(mxnt.c.mdls.lst),
+
+                                    function(i,a.proj.l,mxnt.c.mdls.lst,formt){
+                                      mxnt.preds.spi <- list()
+                                      mxnt.c.mdls<- mxnt.c.mdls.lst[[i]]
+                                      sp.nm<- names(mxnt.c.mdls.lst)[i]
+                                      pred.nm<-names(a.proj.l[[i]])
+                                      a.proj = a.proj.l[[i]]
+
+                                       for(j in 1:length(a.proj)){
+                                         mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
+                                                                     sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                                                     a.proj = a.proj[[j]],
+                                                                     formt = formt)[length(mxnt.c.mdls) + 1]
+
+
+                                         names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
+                                       }
+
+                   resu<-append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
+                   return(resu)},a.proj.l,mxnt.c.mdls.lst,formt)
+
+
+    stopCluster(cl)
+
+
+  }else{
 
   for(i in seq_along(mxnt.c.mdls.lst)){ # loop for each species
     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
@@ -213,14 +276,13 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster"){ #, #
                                   sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = names(a.proj.l[[i]])[j],
                                   a.proj = a.proj.l[[i]][[j]],
                                   formt = formt)[length(mxnt.c.mdls.lst[[i]]) + 1] #, # pred.args = pred.args,
-                                       # wAICsum = wAICsum,
-                                       # randomseed = randomseed, responsecurves = responsecurves,
-                                       # arg1 = arg1, arg2 = arg2)[length(mxnt.c.mdls.lst[[i]]) + 1]
+      # wAICsum = wAICsum,
+      # randomseed = randomseed, responsecurves = responsecurves,
+      # arg1 = arg1, arg2 = arg2)[length(mxnt.c.mdls.lst[[i]]) + 1]
       names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj.l[[i]])[j])
     }
     mxnt.c.mdls.lst[[i]] <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-  }
+  }}
+
   return(mxnt.c.mdls.lst)
 }
-
-
