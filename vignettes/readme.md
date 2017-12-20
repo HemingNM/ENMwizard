@@ -69,8 +69,6 @@ The occurence points in the named list are used to create polygons ...
 ```r
 occ.polys <- poly.c.batch(spp.occ.list)
 
-crs(occ.polys$Bvarieg) <- "+proj=longlat +ellps=WGS84"
-
 ```
 
 ### ------- 1.2.1 creating buffer
@@ -92,13 +90,12 @@ pattern.env <- 'grd'
 
 Get uncut variables
 ```r
-library(raster)
 env.uncut <- list.files(path.env, full.names=TRUE)
 env.uncut <- env.uncut[grep(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env.uncut)]
 env.uncut <- stack(env.uncut)
 ```
 
-If the variables were already saved in a raster brick, you just need to read them
+If the variables were already saved in a raster brick, you just need to read them. Run only if previous commant did not work.
 ```r
 env.uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 ```
@@ -138,7 +135,7 @@ occ.locs <- loadTocc(thinned.dataset.batch)
 ### ------- 3.3 model tuning using ENMeval
 Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
-ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env)
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 ```
 
 -----
@@ -147,16 +144,15 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env)
 # 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
 # 4.1.1 select area for projection based on the extent of occ points
 ```r
-area.projection <- pred.a.poly.batch(occ.polys, env.uncut, mult = .75, buffer=F)#
-plot(area.projection[[1]][[1]])
+area.projection <- pred.a.poly.batch(occ.polys,deg.incr=2, env.uncut, mult = .75, buffer=FALSE)#
+plot(area.projection[[1]])
 plot(occ.polys[[1]], col="red", add=T)
 ```
 
 #### 4.3 Run top corresponding models and save predictions 
 #### 4.3.1 save maxent best models and predictions for each model
 ```r
-mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,
-                                             a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99)
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99,numCores=3)
 ```
 
 

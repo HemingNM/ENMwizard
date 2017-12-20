@@ -10,7 +10,7 @@
 #' @param responsecurves logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param arg1 charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param arg2 charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
-#' @examples
+#' #' @examples
 #' ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 #' f.args(ENMeval.res.lst[[1]]@results)
 #' @return A vector of args (if save="A"), data.frame of selected models (if save="M") or
@@ -95,6 +95,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' *fitting* the model; but you can use arguments relevant for *prediction* when using the predict
 #' function. Some other arguments do not apply at all to the R implementation. An example is
 #' 'outputfiletype', because the 'predict' function has its own 'filename' argument for that.
+#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams f.args
 #' @return A list containing the models ('selected.mdls') used for model calibration and prediction,
 #' calibrated maxent models ('mxnt.mdls'), arguments used for prediction/calibration ('pred.args'), and
@@ -103,7 +104,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' @export
 mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
                             pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                            wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){
+                            wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1){
 
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
@@ -144,16 +145,44 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
     ##### list of models to average
     mod.avg.i <- vector("list", length(args.aicc))
     # filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".grd"), sep='/')
-    lapply(seq_along(args.aicc), function(i) {
-      path2file <- paste(avg.m.path, mod.nms[i], sep='/')
+
+    if(numCores>1){
+
+      require(parallel)
+
+      cl<-makeCluster(numCores)
+
+      mxnt.mdls<-clusterApply(cl,seq_along(args.aicc), function(i,args.all,mod.nms,a.calib,occ) {
+        path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
+        filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+        # maxent models
+        set.seed(1)
+        resu<-dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+        return(resu)
+        # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
+        #                            file = filename, format = formt, overwrite=T)
+      },args.all,mod.nms,a.calib,occ) #)
+
+      stopCluster(cl)
+
+
+
+    }else{
+      mxnt.mdls<-lapply(seq_along(args.aicc), function(i) {
+      path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
       # maxent models
       set.seed(1)
-      mxnt.mdls[[i]] <<- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
-
+      resu<-dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+      return(resu)
       # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
       #                            file = filename, format = formt, overwrite=T)
     }) #) ## fecha for or lapply
+
+    } # closes else
+
+
+
 
     # mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
     #
@@ -228,6 +257,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' a presence or background record..
 #' @param a.proj.l List of projection areas. See argument "a.proj" in mxnt.cp.
 #' @param occ.l List of occurence data. See argument "occ" in mxnt.cp.
+#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.cp
 #' @return A list of objects returned from function "mxnt.cp"
 #' @examples
@@ -240,7 +270,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' @export
 mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a.proj.l
                                   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                                  wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){
+                                  wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1){
 
   # path.res <- "4_ENMeval.results"
   # if(dir.exists(path.res)==F) dir.create(path.res)
@@ -257,12 +287,19 @@ mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a
                                         a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                                         occ = occ.l[[i]], formt = formt,
                                         pred.args = pred.args, wAICsum = wAICsum,
-                                        randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)
+                                        randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores)
     # mxnt.mdls.preds.lst[[i]]$pred.args <- pred.args
   }
   return(mxnt.mdls.preds.lst)
 }
 
 
-
+sendToCluster<-function(i) {
+  path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
+  filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+  # maxent models
+  set.seed(1)
+  resu<-dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+  return(resu)
+}
 
