@@ -3,7 +3,8 @@
 # 4. Model Fitting (Calibration) and Projection
 # 4.1 save rasters onto which the model will be projected in an elements called "area.proj"
 # 4.1.1 select area for projection based on the extent of occ points
-# "pred.a" names changed to "pred.a"
+
+# "f.a.proj" names changed to "pred.a"
 
 #' Select area for projection based on the extent of occ points
 #'
