@@ -18,6 +18,7 @@ install.packages("devtools")
 library(devtools)
 install_github("HemingNM/ENMwizard")
 library(ENMwizard)
+library(raster)
 ```
 
 
@@ -32,6 +33,7 @@ install.packages("devtools")
 library(devtools)
 install_local("PATH")
 library(ENMwizard)
+library(raster)
 ```
 
 
@@ -78,7 +80,7 @@ crs(occ.polys$Bvarieg) <- "+proj=longlat +ellps=WGS84"
 occ.b <- bffr.batch(occ.polys, bffr.width = 1.5)
 ```
 
-### ------- 1.3. Cut enviromental layers with occ.b and save in hardrive.
+### ------- 1.3. Cut enviromental layers with occ.b and save in hardrive. This environmental data will be used for model CALIBRATION
 Specify the path to the environmental variables
 it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
 here we will use variables available in dismo package
@@ -143,10 +145,17 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env)
 # 4. Model Fitting (Calibration) and Projection
 # 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
 # 4.1.1 select area for projection based on the extent of occ points
-area_projection <- pred.a.poly.batch(occ_polys, env_uncut, mult = .75, buffer=F)#
-plot(area_projection[[1]][[1]])
-plot(occ_polys[[1]], col="red", add=T)
+```r
+area.projection <- pred.a.poly.batch(occ.polys, env.uncut, mult = .75, buffer=F)#
+plot(area.projection[[1]][[1]])
+plot(occ.polys[[1]], col="red", add=T)
+```
 
-
+#### 4.3 Run top corresponding models and save predictions 
+#### 4.3.1 save maxent best models and predictions for each model
+```r
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,
+                                             a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99)
+```
 
 

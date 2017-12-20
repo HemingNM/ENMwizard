@@ -238,7 +238,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
-mxnt.cp.batch <- function(ENMeval.res, a.calib.l, a.proj.l, occ.l, formt = "raster",
+mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a.proj.l
                                   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                                   wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){
 
