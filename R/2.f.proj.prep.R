@@ -132,18 +132,22 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   if(dir.exists(path.proj)==F) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==F) dir.create(paste(path.proj, sp.nm, sep="/"))
 
-  ext.proj <- raster::extent(pred.poly)
+  # ext.proj <- raster::extent(pred.poly)
   # add polygon
-  x.min<-bbox(ext.proj)[1,1]
-  x.max<-bbox(ext.proj)[1,2]
-  y.min<-bbox(ext.proj)[2,1]
-  y.max<-bbox(ext.proj)[2,2]
-  x = c(x.min, x.min, x.max, x.max, x.min)
-  y = c(y.min, y.max, y.max, y.min, y.min)
-  # m <- matrix(c(x,y), ncol = 2, byrow = F)
-  # pm <- sapply(slot(pred.poly, "polygons"), function(x) lapply(slot(x,"Polygons"), function(y) slot(y, "coords")))[[1]]
-
-  p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
+  # x.min<-bbox(pred.poly)[1,1]
+  # x.max<-bbox(pred.poly)[1,2]
+  # y.min<-bbox(pred.poly)[2,1]
+  # y.max<-bbox(pred.poly)[2,2]
+  # x = c(x.min, x.min, x.max, x.max, x.min)
+  # y = c(y.min, y.max, y.max, y.min, y.min)
+  # # m <- matrix(c(x,y), ncol = 2, byrow = F)
+  # # pm <- sapply(slot(pred.poly, "polygons"), function(x) lapply(slot(x,"Polygons"), function(y) slot(y, "coords")))[[1]]
+  # p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
+  p <- Polygon(rbind(c(bbox(pred.poly)[1,1], bbox(pred.poly)[2,1]),
+                     c(bbox(pred.poly)[1,1], bbox(pred.poly)[2,2]),
+                     c(bbox(pred.poly)[1,2], bbox(pred.poly)[2,2]),
+                     c(bbox(pred.poly)[1,2], bbox(pred.poly)[2,1]),
+                     c(bbox(pred.poly)[1,1], bbox(pred.poly)[2,1])))
   p <- SpatialPolygons(list(Polygons(list(p), ID = 1)))
   # # p <- methods::as(ext.proj, "SpatialPolygons")
 
