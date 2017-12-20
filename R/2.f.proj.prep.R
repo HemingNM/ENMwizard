@@ -142,7 +142,7 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   y = c(y.min, y.max, y.max, y.min, y.min)
 
   p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
-  p <- SpatialPolygons(list(Polygons(list(p), ID = "a")))
+  p <- SpatialPolygons(list(Polygons(list(p), ID = 1)))
   # p <- methods::as(ext.proj, "SpatialPolygons")
 
   if(all.equal(pred.poly, p)){
@@ -170,7 +170,7 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
 #' @param pred.polys list of SpatialPolygons (usually of based on species occ points)
 #' @return  named list of cropped raster or brick
 #' @examples
-#' area.projection <- pred.ab(pred.polys, env.uncut, buffer=F)
+#' area.projection <- pred.a.batch(pred.polys, env.uncut)
 #' plot(area.projection[[1]][[1]])
 #' @export
 pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, prj.nm="", sp.nm="sp"
