@@ -193,35 +193,6 @@ mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "rast
 #' @examples
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
-# mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster"){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
-#                                    # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-#                                    # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
-#
-#   # path.res <- "4_ENMeval.results"
-#   # if(dir.exists(path.res)==F) dir.create(path.res)
-#   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
-#
-#   for(i in seq_along(mxnt.c.mdls.lst)){ # loop for each species
-#     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
-#     cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
-#     mxnt.preds.spi <- vector("list", length(a.proj.l[[i]]))
-#     # compute final models and predictions
-#     for(j in seq_along(mxnt.preds.spi)){
-#       cat(c("\n", paste0("mxnt.pred.", names(a.proj.l[[i]])[j]), "\n",
-#             "projection ", j, " of ", length(mxnt.preds.spi), "\n"))
-#       mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls.lst[[i]],
-#                                   sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = names(a.proj.l[[i]])[j],
-#                                   a.proj = a.proj.l[[i]][[j]],
-#                                   formt = formt)[length(mxnt.c.mdls.lst[[i]]) + 1] #, # pred.args = pred.args,
-#                                        # wAICsum = wAICsum,
-#                                        # randomseed = randomseed, responsecurves = responsecurves,
-#                                        # arg1 = arg1, arg2 = arg2)[length(mxnt.c.mdls.lst[[i]]) + 1]
-#       names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj.l[[i]])[j])
-#     }
-#     mxnt.c.mdls.lst[[i]] <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-#   }
-#   return(mxnt.c.mdls.lst)
-# }
 
 mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCores=1){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
@@ -233,7 +204,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
 
   if(numCores>1){
 
-    cl<-parallel::makeCluster(2)
+    cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.p"))
 
     mxnt.c.mdls.lst <- parallel::clusterApply(cl,seq_along(mxnt.c.mdls.lst),
@@ -264,25 +235,34 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
 
   }else{
 
-  for(i in seq_along(mxnt.c.mdls.lst)){ # loop for each species
-    # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
-    cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
-    mxnt.preds.spi <- vector("list", length(a.proj.l[[i]]))
-    # compute final models and predictions
-    for(j in seq_along(mxnt.preds.spi)){
-      cat(c("\n", paste0("mxnt.pred.", names(a.proj.l[[i]])[j]), "\n",
-            "projection ", j, " of ", length(mxnt.preds.spi), "\n"))
-      mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls.lst[[i]],
-                                  sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = names(a.proj.l[[i]])[j],
-                                  a.proj = a.proj.l[[i]][[j]],
-                                  formt = formt)[length(mxnt.c.mdls.lst[[i]]) + 1] #, # pred.args = pred.args,
-      # wAICsum = wAICsum,
-      # randomseed = randomseed, responsecurves = responsecurves,
-      # arg1 = arg1, arg2 = arg2)[length(mxnt.c.mdls.lst[[i]]) + 1]
-      names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj.l[[i]])[j])
-    }
-    mxnt.c.mdls.lst[[i]] <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-  }}
+
+    mxnt.c.mdls.lst <- lapply(seq_along(mxnt.c.mdls.lst),
+
+                              function(i,a.proj.l,mxnt.c.mdls.lst,formt){
+                                cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
+                                mxnt.preds.spi <- list()
+                                mxnt.c.mdls<- mxnt.c.mdls.lst[[i]]
+                                sp.nm<- names(mxnt.c.mdls.lst)[i]
+                                pred.nm<-names(a.proj.l[[i]])
+                                a.proj = a.proj.l[[i]]
+
+                                for(j in 1:length(a.proj)){
+                                  cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
+                                        "projection ", j, " of ", length(mxnt.preds.spi), "\n"))
+
+                                  mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
+                                                              sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                                              a.proj = a.proj[[j]],
+                                                              formt = formt)[length(mxnt.c.mdls) + 1]
+
+
+                                  names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
+                                }
+
+                                resu<-append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
+                                return(resu)},a.proj.l,mxnt.c.mdls.lst,formt)
+
+  }
 
   return(mxnt.c.mdls.lst)
 }

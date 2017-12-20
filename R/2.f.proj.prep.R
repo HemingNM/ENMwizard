@@ -259,13 +259,13 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
   ext.proj <- raster::extent(area.p)
   if(mask==F){
     area.p <- raster::crop(env.uncut, ext.proj,
-                   file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
-                   format="raster", overwrite=T)
+                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
+                           format="raster", overwrite=T)
   } else {
     env.crp <- raster::crop(env.uncut, ext.proj)
     area.p <- raster::mask(env.crp, area.p,
-                   file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
-                   format="raster", overwrite=T)
+                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
+                           format="raster", overwrite=T)
   }
   raster::projection(area.p) <- raster::projection(env.uncut)
   return(area.p)

@@ -207,9 +207,41 @@ plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
 
 ```
 
+#### 6. Using multiple cores (parallel processing)
 
 
+```r
+# Create projection with 2 species (same species repeated)
+poly.projection.multi<-append(poly.projection,poly.projection)
+
+pa.current.l.multi <- pred.a.batch.mscn(poly.projection.multi, current.l)
+pa.future.l.multi <- pred.a.batch.mscn(poly.projection.multi, future.l)
+
+mxnt.mdls.preds.lst.multi<-append(mxnt.mdls.preds.lst,mxnt.mdls.preds.lst)
 
 
+# Run without parallel processing
+{init.time<-Sys.time() # Record initial time
+
+mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi)
+
+end.time<-Sys.time() } # Record end time 
+
+no.par.time<-end.time-init.time # Calculate difference between initial and end time
+
+# Run with parallel processing
+{init.time<-Sys.time() # Record initial time
+
+mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi,numCores=2)
+
+end.time<-Sys.time()} # Record end time 
+
+par.time<-end.time-init.time # Calculate difference between initial and end time
+
+# Compare amount of time spent with parallel vs. witout parallel processing
+no.par.time
+par.time
+
+```
 
 
