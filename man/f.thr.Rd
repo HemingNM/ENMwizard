@@ -2,7 +2,7 @@
 % Please edit documentation in R/6.f.threshold.R
 \name{f.thr}
 \alias{f.thr}
-\title{Function Title (short description)}
+\title{Apply threshold for a prediction}
 \usage{
 f.thr(mmp.spi, pred.nm = "", thrshld.i = 4:6)
 }
@@ -20,5 +20,7 @@ Stack or brick of thresholded predictions
 General function description. A short paragraph (or more) describing what the function does.
 }
 \examples{
-plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+mods.thrshld <- f.thr(mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+plot(mods.thrshld[[1]][[2]]) # continuous
+plot(mods.thrshld[[2]][[2]]) # binary
 }

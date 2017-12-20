@@ -1,13 +1,13 @@
 #### 4.4 plot differences among model selection criteria predictions
 
 
-#' Format (underscript) selected texts
+#' Format (underscript) selected texts for plotting
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
 #' @param x list of text to be formatted
 #' @return list of formatted text
 #' @examples
-#' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+#' make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 #' @export
 make.underscript <- function(x) as.expression(lapply(x, function(y) {
   sp <- grepl("ORlpt", y)

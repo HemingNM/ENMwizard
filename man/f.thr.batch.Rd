@@ -2,7 +2,7 @@
 % Please edit documentation in R/6.f.threshold.R
 \name{f.thr.batch}
 \alias{f.thr.batch}
-\title{Function Title (short description)}
+\title{Apply threshold for all predictions}
 \usage{
 f.thr.batch(mmp.spl, pred.nm = "", thrshld.i = 4:6)
 }
@@ -20,5 +20,5 @@ List of stack or brick of thresholded predictions
 General function description. A short paragraph (or more) describing what the function does.
 }
 \examples{
-plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
 }

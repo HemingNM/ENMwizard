@@ -2,7 +2,7 @@
 % Please edit documentation in R/7.f.plot.mdl.sel.crit.diff.R
 \name{make.underscript}
 \alias{make.underscript}
-\title{Format (underscript) selected texts}
+\title{Format (underscript) selected texts for plotting}
 \usage{
 make.underscript(x)
 }
@@ -16,5 +16,5 @@ list of formatted text
 General function description. A short paragraph (or more) describing what the function does.
 }
 \examples{
-plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 }

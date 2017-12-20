@@ -1,7 +1,7 @@
 #### 4.3.3 aplicar threshold
-# TODO documentation
-# TODO shorten name of arg "mxnt.mdls.preds.sp[...]"
-#' Function Title (short description)
+# TODO examples
+# name of arg "mxnt.mdls.preds.sp[...]" shortened to "mmp.spi"
+#' Apply threshold for a prediction
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
 #' @param mmp.spi Stack or brick of predictions to apply the threshold
@@ -9,7 +9,9 @@
 #' @param thrshld.i List of threshold criteria to be applied
 #' @return Stack or brick of thresholded predictions
 #' @examples
-#' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+#' mods.thrshld <- f.thr(mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+#' plot(mods.thrshld[[1]][[2]]) # continuous
+#' plot(mods.thrshld[[2]][[2]]) # binary
 #' @export
 f.thr <- function(mmp.spi, pred.nm = "", thrshld.i = 4:6) {
   if(is.null(path.mdls)){
@@ -118,14 +120,15 @@ f.thr <- function(mmp.spi, pred.nm = "", thrshld.i = 4:6) {
 # plot(mods.thrshld[[1]][[2]]) # continuous
 # plot(mods.thrshld[[2]][[2]]) # binary
 
-#' Function Title (short description)
+#### 4.8.5 threshold for past and future pred
+#' Apply threshold for all predictions
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
 #' @param mmp.spl List of stack or brick of predictions to apply the threshold
 #' @inheritParams f.thr
 #' @return List of stack or brick of thresholded predictions
 #' @examples
-#' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+#' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
 #' @export
 f.thr.batch <- function(mmp.spl, pred.nm="", thrshld.i = 4:6){
   path.res <- "4_ENMeval.results"
@@ -153,7 +156,5 @@ f.thr.batch <- function(mmp.spl, pred.nm="", thrshld.i = 4:6){
 }
 
 
-#### 4.8.5 threshold for past and future pred
-# mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf, pred.nm="", thrshld.i = 4:6)
 
 
