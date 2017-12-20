@@ -80,7 +80,7 @@ crs(occ.polys$Bvarieg) <- "+proj=longlat +ellps=WGS84"
 occ.b <- bffr.batch(occ.polys, bffr.width = 1.5)
 ```
 
-### ------- 1.3. Cut enviromental layers with occ.b and save in hardrive. This environmental data will be used for model CALIBRATION
+### ------- 1.3. Cut enviromental layers with occ.b and save in hardrive.
 Specify the path to the environmental variables
 it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
 here we will use variables available in dismo package
@@ -92,6 +92,7 @@ pattern.env <- 'grd'
 
 Get uncut variables
 ```r
+library(raster)
 env.uncut <- list.files(path.env, full.names=TRUE)
 env.uncut <- env.uncut[grep(paste(paste0(biovars, ".", pattern.env), collapse = "|"), env.uncut)]
 env.uncut <- stack(env.uncut)
