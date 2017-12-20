@@ -153,8 +153,33 @@ area.projection <- pred.a.batch(poly.projection, env.uncut)
 #### 4.3 Run top corresponding models and save predictions 
 #### 4.3.1 save maxent best models and predictions for each model
 ```r
-mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99,numCores=3)
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99,numCores=7)
 ```
 
 ### 4.8 predictions for present, future, and/or past
+
+#### 5. Projecting
+
+```r
+
+dir.create("./rasters")
+
+# Download data for present
+current<-getData('worldclim', var='bio', res=10,path="rasters")
+
+# Download data for future projection (2050)
+futAC5085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
+
+# Download data for future projection (2070)
+futAC7085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
+
+current.l<-list(current=current)
+future.l<-list(futAC5085=futAC5085,futAC7085=futAC7085)
+
+
+```
+
+
+
+
 
