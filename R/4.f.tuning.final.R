@@ -148,11 +148,12 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 
     if(numCores>1){
 
-      require(parallel)
+      # require(parallel)
 
-      cl<-makeCluster(numCores)
+      cl<-parallel::makeCluster(numCores)
 
-      mxnt.mdls<-clusterApply(cl,seq_along(args.aicc), function(i,args.all,mod.nms,a.calib,occ) {
+      mxnt.mdls<-parallel::clusterApply(cl,seq_along(args.aicc), function(i,args.all,mod.nms,a.calib,occ) {
+        # require(rJava)
         path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
@@ -163,7 +164,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
         #                            file = filename, format = formt, overwrite=T)
       },args.all,mod.nms,a.calib,occ) #)
 
-      stopCluster(cl)
+      parallel::stopCluster(cl)
 
 
 
@@ -255,7 +256,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' predictor variables. These will be used to extract values from for the point locations. Can
 #' also be a data.frame, in which case each column should be a predictor variable and each row
 #' a presence or background record..
-#' @param a.proj.l List of projection areas. See argument "a.proj" in mxnt.cp.
+# #' @param a.proj.l List of projection areas. See argument "a.proj" in mxnt.cp.
 #' @param occ.l List of occurence data. See argument "occ" in mxnt.cp.
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.cp
@@ -294,12 +295,5 @@ mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a
 }
 
 
-sendToCluster<-function(i) {
-  path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
-  filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-  # maxent models
-  set.seed(1)
-  resu<-dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
-  return(resu)
-}
+
 

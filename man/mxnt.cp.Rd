@@ -7,7 +7,7 @@
 mxnt.cp(x, sp.nm, a.calib, occ, formt = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   wAICsum = 0.99, randomseed = F, responsecurves = T,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature")
+  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1)
 }
 \arguments{
 \item{x}{Slot "results" of object of class ENMevaluation}
@@ -45,7 +45,12 @@ function. Some other arguments do not apply at all to the R implementation. An e
 
 \item{arg1}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
-\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
+\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
+#' @examples
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
+f.args(ENMeval.res.lst[[1]]@results)}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 A list containing the models ('selected.mdls') used for model calibration and prediction,

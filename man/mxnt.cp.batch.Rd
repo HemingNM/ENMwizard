@@ -4,10 +4,10 @@
 \alias{mxnt.cp.batch}
 \title{Calibrating and predicting selected models for several species}
 \usage{
-mxnt.cp.batch(ENMeval.res, a.calib.l, a.proj.l, occ.l, formt = "raster",
+mxnt.cp.batch(ENMeval.res, a.calib.l, occ.l, formt = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   wAICsum = 0.99, randomseed = F, responsecurves = T,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature")
+  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1)
 }
 \arguments{
 \item{ENMeval.res}{List of objects of class ENMevaluation}
@@ -16,8 +16,6 @@ mxnt.cp.batch(ENMeval.res, a.calib.l, a.proj.l, occ.l, formt = "raster",
 predictor variables. These will be used to extract values from for the point locations. Can
 also be a data.frame, in which case each column should be a predictor variable and each row
 a presence or background record..}
-
-\item{a.proj.l}{List of projection areas. See argument "a.proj" in mxnt.cp.}
 
 \item{occ.l}{List of occurence data. See argument "occ" in mxnt.cp.}
 
@@ -38,7 +36,12 @@ function. Some other arguments do not apply at all to the R implementation. An e
 
 \item{arg1}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
-\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
+\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
+#' @examples
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
+f.args(ENMeval.res.lst[[1]]@results)}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 A list of objects returned from function "mxnt.cp"

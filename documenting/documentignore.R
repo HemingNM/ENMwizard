@@ -6,6 +6,8 @@
 devtools::document()
 # devtools::load_all()
 devtools::check()
+# roxygen2::roxygenise()
+
 # for building windows package
 devtools::build_win()
 

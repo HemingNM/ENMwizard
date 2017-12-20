@@ -4,7 +4,8 @@
 \alias{mxnt.p}
 \title{Projecting calibrated MaxEnt models}
 \usage{
-mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster")
+mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
+  numCores = 1)
 }
 \arguments{
 \item{mxnt.c.mdls}{Objects returned by "mxnt.cp", containing calibrated models.}
@@ -16,6 +17,8 @@ mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster")
 \item{a.proj}{A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict}
 
 \item{formt}{Character. Output file type. Argument 'format' of raster::writeRaster}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 A list containing all the items returned from function "mxnt.cp", plus the projection specified in a.proj.
