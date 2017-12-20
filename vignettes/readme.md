@@ -158,6 +158,8 @@ mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = o
 
 #### 5. Projecting
 
+For projection it is necessary to download raster files with the environmnetal variables of interest. In this example, a directory called 'rasters' is created. Then, rasters from current and future climatic conditions projected for 2050 and 2070 are downloaded and loaded. Finally, two lists are created, one for current conditions and another for the two future cenarios.
+
 ```r
 
 dir.create("./rasters")
@@ -173,7 +175,6 @@ futAC7085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path=
 
 current.l<-list(current=current)
 future.l<-list(futAC5085=futAC5085,futAC7085=futAC7085)
-
 
 ```
 
