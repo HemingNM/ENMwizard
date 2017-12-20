@@ -4,11 +4,13 @@
 \alias{mxnt.p}
 \title{Projecting calibrated MaxEnt models}
 \usage{
-mxnt.p(mxnt.c.mdls, pred.nm = "fut", a.proj, formt = "raster",
+mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
   numCores = 1)
 }
 \arguments{
 \item{mxnt.c.mdls}{Objects returned by "mxnt.cp", containing calibrated models.}
+
+\item{sp.nm}{Species name. Used to name the output folder}
 
 \item{pred.nm}{Character. Prefix to add to projection name (e.g. "fut" or "past")}
 

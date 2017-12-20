@@ -42,8 +42,6 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCore
 f.args(ENMeval.res.lst[[1]]@results)}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
-
-\item{a.proj.l}{List of projection areas. See argument "a.proj" in mxnt.cp.}
 }
 \value{
 A list of objects returned from function "mxnt.cp"

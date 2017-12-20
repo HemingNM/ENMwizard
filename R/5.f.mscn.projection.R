@@ -17,7 +17,7 @@
 #' @return A list containing all the items returned from function "mxnt.cp", plus the projection specified in a.proj.
 # #' @examples
 #' @export
-mxnt.p <- function(mxnt.c.mdls, pred.nm="fut", a.proj, formt = "raster",numCores=1){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
+mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=1){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
                         # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                         # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
 
@@ -62,15 +62,15 @@ mxnt.p <- function(mxnt.c.mdls, pred.nm="fut", a.proj, formt = "raster",numCores
 
   if(numCores>1){
 
-    require(parallel)
+    # require(parallel)
 
-    cl<-makeCluster(numCores)
+    cl<-parallel::makeCluster(numCores)
 
-    mod.avg.i<-clusterApply(cl,seq_along(args.aicc), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
+    mod.avg.i<-parallel::clusterApply(cl,seq_along(args.aicc), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
       resu<-dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
       return(resu)},mxnt.mdls,a.proj,pred.args,filename,formt) #) ## fecha for or lapply
 
-    stopCluster(cl)
+    parallel::stopCluster(cl)
 
 
   }else{

@@ -150,15 +150,16 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   #          78.46801, 19.53407),
   #        ncol = 2, byrow = TRUE)
   # if(all.equal(pred.poly, p)){
-  #   area.p <- raster::crop(env.uncut, ext.proj,
-  #                          file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
-  #                          format="raster", overwrite=T)
-  # } else {
+  if(mask==F){
+    area.p <- raster::crop(env.uncut, ext.proj,
+                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
+                           format="raster", overwrite=T)
+  } else {
     env.crp <- raster::crop(env.uncut, ext.proj)
     area.p <- raster::mask(env.crp, pred.poly,
                            file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
                            format="raster", overwrite=T)
-  # }
+  }
   return(area.p)
 }
 
@@ -195,16 +196,16 @@ pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.unc
 #' This function is a wrapper for "pred.a". See ?pred.a. This function delimitates the projection area for
 #'  each of the species contained in the pred.polys named list and crops
 #'  multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species
-#' @inheritParams pred.ab
+#' @inheritParams pred.a.batch
 #' @param env.uncut.l list of raster/brick of environmental variables to be cut
-#' @param cores specify number of cores if aim run in parallel
+#' @param numCores specify number of cores if aim run in parallel
 # #' @param ext.proj
 #' @return  named list of cropped list of raster/brick of environmental variables
 # TODO - examples
 # #' @examples
 #'
 #' @export
-pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", cores=1){ # , ext.proj=NULL
+pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ # , ext.proj=NULL
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==F) dir.create(path.proj)
@@ -214,8 +215,8 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", cores=1){ # , 
     area.p.spi <- vector("list", length(env.uncut.l))
     # names(area.p.spi) <- names(env.uncut.l)
     # for(j in seq_along(area.p.spi)){
-    if(cores>1){
-      area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
+    if(numCores>1){
+      area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
         prj.nm.j <- gsub("[..]",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
@@ -240,7 +241,7 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", cores=1){ # , 
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
 #' @inheritParams pred.a
-#' @inheritParams pred.ab
+#' @inheritParams pred.a.batch
 #' @param mask should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details
 #' @return environmental layers (raster/brick) cutted
 # TODO - examples
@@ -273,7 +274,7 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
 #' @inheritParams pred.a
-#' @inheritParams pred.ab
+#' @inheritParams pred.a.batch
 #' @inheritParams pred.a.poly.batch
 #' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p
 #' @return list of environmental layers (raster/brick) cutted
@@ -281,7 +282,7 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 # #' @examples
 #'
 #' @export
-pred.ab.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp"){
+pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp"){
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
@@ -311,15 +312,16 @@ pred.ab.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm =
 #'
 #' This function will use a single SpatialPolygon to crop/mask multiple raster/brick objects
 #' to be used on model projections.
-#' @inheritParams pred.ab.mscn
+#' @inheritParams pred.a.batch.mscn
 #' @inheritParams pred.a.poly.batch
-#' @inheritParams pred.ab.rst
+#' @inheritParams pred.a.batch.rst
+#' @inheritParams mxnt.cp.batch
 #' @return list of list with multiple environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples
 #'
 #' @export
-pred.ab.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp", cores=1){
+pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp", numCores=1){
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==F) dir.create(path.proj)
@@ -345,7 +347,7 @@ pred.ab.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm="", 
   cat(c("\n","Creating projection area","\n"))
   area.p.spi <- vector("list", length(env.uncut.l))
 
-  area.pl[[1]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
+  area.pl[[1]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
     prj.nm.j <- paste("", prj.nm, names(env.uncut.l)[j], sep=".")
     # area.p.spi[[j]] <- pred.a.rst(area.p, env.uncut.l[[j]], occ.polys[[1]], mask=mask, prj.nm = prj.nm.j, sp.nm = sp.nm)
     area.p.spi[[j]] <- pred.a(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
