@@ -148,11 +148,12 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 
     if(numCores>1){
 
-      require(parallel)
+      # require(parallel)
 
-      cl<-makeCluster(numCores)
+      cl<-parallel::makeCluster(numCores)
 
-      mxnt.mdls<-clusterApply(cl,seq_along(args.aicc), function(i,args.all,mod.nms,a.calib,occ) {
+      mxnt.mdls<-parallel::clusterApply(cl,seq_along(args.aicc), function(i,args.all,mod.nms,a.calib,occ) {
+        # require(rJava)
         path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
@@ -163,7 +164,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
         #                            file = filename, format = formt, overwrite=T)
       },args.all,mod.nms,a.calib,occ) #)
 
-      stopCluster(cl)
+      parallel::stopCluster(cl)
 
 
 

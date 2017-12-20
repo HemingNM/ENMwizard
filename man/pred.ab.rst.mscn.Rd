@@ -10,8 +10,6 @@ pred.ab.rst.mscn(area.p, env.uncut.l, occ.polys, mask = F, prj.nm = "",
 \arguments{
 \item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}
 
-\item{env.uncut.l}{list of raster/brick of environmental variables to be cut}
-
 \item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details}
 
 \item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p}
@@ -19,8 +17,6 @@ pred.ab.rst.mscn(area.p, env.uncut.l, occ.polys, mask = F, prj.nm = "",
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 
 \item{sp.nm}{name (of species) to give to saved object}
-
-\item{cores}{specify number of cores if aim run in parallel}
 }
 \value{
 list of list with multiple environmental layers (raster/brick) cutted
