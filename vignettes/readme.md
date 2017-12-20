@@ -140,25 +140,16 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 
 -----
 ### TODO
-# 4. Model Fitting (Calibration) and Projection
-# 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
-# 4.1.1 select area for projection based on the extent of occ points
-```r
-poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=F)#
-plot(poly.projection[[1]])
-plot(occ.polys[[1]], col="red", add=T)
-area.projection <- pred.a.batch(poly.projection, env.uncut)
-```
-
+# 4. Model Fitting (Calibration)
 #### 4.3 Run top corresponding models and save predictions 
 #### 4.3.1 save maxent best models and predictions for each model
 ```r
 mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99,numCores=7)
 ```
 
-### 4.8 predictions for present, future, and/or past
 
-#### 5. Projecting
+# 4.1 Projection
+#### 4.1. Downloading environmental data
 
 For projection it is necessary to download raster files with the environmnetal variables of interest. In this example, a directory called 'rasters' is created. Then, rasters from current and future climatic conditions projected for 2050 and 2070 are downloaded and loaded. Finally, two lists are created, one for current conditions and another for the two future cenarios.
 
@@ -180,7 +171,18 @@ future.l<-list(futAC5085=futAC5085,futAC7085=futAC7085)
 
 ```
 
+# 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
+# 4.1.1 select area for projection based on the extent of occ points
+```r
+poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=F)#
+plot(poly.projection[[1]])
+plot(occ.polys[[1]], col="red", add=T)
+# area.projection <- pred.a.batch(poly.projection, env.uncut)
+```
 
+
+
+### 4.8 predictions for present, future, and/or past
 
 
 
