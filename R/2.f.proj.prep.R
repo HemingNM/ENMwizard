@@ -132,25 +132,21 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   if(dir.exists(path.proj)==F) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==F) dir.create(paste(path.proj, sp.nm, sep="/"))
 
-  # ext.proj <- raster::extent(pred.poly)
-  # # p <- methods::as(ext.proj, "SpatialPolygons")
-  # # add polygon
-  # x.min<-bbox(ext.proj)[1,1]
-  # x.max<-bbox(ext.proj)[1,2]
-  # y.min<-bbox(ext.proj)[2,1]
-  # y.max<-bbox(ext.proj)[2,2]
-  # x = c(x.min, x.min, x.max, x.max, x.min)
-  # y = c(y.min, y.max, y.max, y.min, y.min)
-  #
-  # p <- Polygon(bbox(poly.projection[[1]]))
-  # matrix(c(78.46801, 19.53407,
-  #          78.46801, 19.74557,
-  #          78.83157, 19.74557,
-  #          78.83157, 19.53407,
-  #          78.46801, 19.53407),
-  #        ncol = 2, byrow = TRUE)
-  # if(all.equal(pred.poly, p)){
-  if(mask==F){
+  ext.proj <- raster::extent(pred.poly)
+  # add polygon
+  x.min<-bbox(ext.proj)[1,1]
+  x.max<-bbox(ext.proj)[1,2]
+  y.min<-bbox(ext.proj)[2,1]
+  y.max<-bbox(ext.proj)[2,2]
+  x = c(x.min, x.min, x.max, x.max, x.min)
+  y = c(y.min, y.max, y.max, y.min, y.min)
+
+  p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
+  p <- SpatialPolygons(list(Polygons(list(p), ID = "a")))
+  # p <- methods::as(ext.proj, "SpatialPolygons")
+
+  if(all.equal(pred.poly, p)){
+  # if(mask==F){
     area.p <- raster::crop(env.uncut, ext.proj,
                            file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
                            format="raster", overwrite=T)
