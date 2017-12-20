@@ -58,7 +58,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
   ##### list of models to average
   mod.avg.i <- vector("list")
-  filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, pred.nm, ".grd"), sep='/')
+  filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, pred.nm), sep='/')
 
   if(numCores>1){
 
@@ -89,13 +89,13 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
     ### stack prediction rasters (to create Average Model prediction)
     path2stk <- paste(avg.m.path, mod.nms[seq_along(args.aicc)], sep='/')
-    filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], pred.nm, ".grd"), sep='/')
+    filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], pred.nm), sep='/')
     Mod.AICc.stack <- raster::stack(filename)
 
     # create averaged prediction map
     print(mod.pred.nms[1])
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
-                                                 filename = paste(avg.m.path, paste0(mod.pred.nms[1], pred.nm, ".grd"), sep='/'),
+                                                 filename = paste(avg.m.path, paste0(mod.pred.nms[1], pred.nm), sep='/'),
                                                  format = formt, overwrite = T) )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
   }
@@ -104,7 +104,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   # if(i == 1) # usar if(low = T) pra escolher o low aic ou if(grep("low", Mod.pred))
   {
     path2file <- paste(path.mdls, outpt, mod.pred.nms[2], sep='/')
-    filename <- paste(path2file, paste0(mod.pred.nms[2], pred.nm, ".grd"), sep='/')
+    filename <- paste(path2file, paste0(mod.pred.nms[2], pred.nm), sep='/')
     if(dir.exists(path2file) == FALSE) dir.create(path2file)
 
     #### 4.3.2.1.1 create Low AIC model prediction on a specific path
@@ -124,7 +124,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
     for(i in (length(args.aicc)+1):length(args.all)){
       path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
-      filename <- paste(path2file, paste0(mod.nms[i], pred.nm, ".grd"), sep='/')
+      filename <- paste(path2file, paste0(mod.nms[i], pred.nm), sep='/')
       if(dir.exists(path2file) == FALSE) dir.create(path2file)
       # grep("Mod.Mean.ORmin", xsel.mdls$sel.cri)
       # m <-  grep(mod.nms[i], xsel.mdls$sel.cri)
