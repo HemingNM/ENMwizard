@@ -129,18 +129,18 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T
 #' @export
 pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   path.proj <- "2_envData/area.proj"
-  area.p <- pred.poly # TODO - change variable name below
   if(dir.exists(path.proj)==F) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==F) dir.create(paste(path.proj, sp.nm, sep="/"))
 
-  ext.proj <- raster::extent(area.p)
-  if(all.equal(area.p, methods::as(ext.proj, "SpatialPolygons"))){
+  ext.proj <- raster::extent(pred.poly)
+  p <- methods::as(ext.proj, "SpatialPolygons")
+  if(all.equal(pred.poly, p)){
     area.p <- raster::crop(env.uncut, ext.proj,
                            file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
                            format="raster", overwrite=T)
   } else {
     env.crp <- raster::crop(env.uncut, ext.proj)
-    area.p <- raster::mask(env.crp, area.p,
+    area.p <- raster::mask(env.crp, pred.poly,
                            file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
                            format="raster", overwrite=T)
   }
@@ -158,10 +158,10 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
 #' @param pred.polys list of SpatialPolygons (usually of based on species occ points)
 #' @return  named list of cropped raster or brick
 #' @examples
-#' area.projection <- pred.ab(pred.polys, env.uncut, mult=.55, buffer=F)
+#' area.projection <- pred.ab(pred.polys, env.uncut, buffer=F)
 #' plot(area.projection[[1]][[1]])
 #' @export
-pred.ab <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, prj.nm="", sp.nm="sp"
+pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, prj.nm="", sp.nm="sp"
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(pred.polys))
   names(area.pl) <- names(pred.polys)
@@ -189,7 +189,7 @@ pred.ab <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, p
 # #' @examples
 #'
 #' @export
-pred.ab.mscn <- function(pred.polys, env.uncut.l, prj.nm="", cores=1){ # , ext.proj=NULL
+pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", cores=1){ # , ext.proj=NULL
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==F) dir.create(path.proj)

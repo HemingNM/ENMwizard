@@ -147,8 +147,8 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env)
 # 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
 # 4.1.1 select area for projection based on the extent of occ points
 ```r
-area.projection <- pred.a.poly.batch(occ.polys, env.uncut, mult = .75, buffer=F)#
-plot(area.projection[[1]][[1]])
+area.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=F)#
+plot(area.projection[[1]])
 plot(occ.polys[[1]], col="red", add=T)
 ```
 
