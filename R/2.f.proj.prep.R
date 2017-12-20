@@ -220,13 +220,13 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ #
     # for(j in seq_along(area.p.spi)){
     if(numCores>1){
       area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
-        prj.nm.j <- gsub("[..]",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
+        prj.nm.j <- gsub("\\.\\.\\.|\\.\\.",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], prj.nm.j) # paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
     } else {
       area.pl[[i]] <- unlist(lapply(base::seq_along(area.p.spi), function(j){
-        prj.nm.j <- gsub("[..]",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
+        prj.nm.j <- gsub("\\.\\.\\.|\\.\\.",".",paste("", prj.nm, names(env.uncut.l)[j], sep="."))
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], prj.nm.j) #paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
