@@ -140,15 +140,15 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   y.max<-bbox(ext.proj)[2,2]
   x = c(x.min, x.min, x.max, x.max, x.min)
   y = c(y.min, y.max, y.max, y.min, y.min)
-  m <- matrix(c(x,y), ncol = 2, byrow = F)
-  pm <- sapply(slot(pred.poly, "polygons"), function(x) lapply(slot(x,"Polygons"), function(y) slot(y, "coords")))[[1]]
+  # m <- matrix(c(x,y), ncol = 2, byrow = F)
+  # pm <- sapply(slot(pred.poly, "polygons"), function(x) lapply(slot(x,"Polygons"), function(y) slot(y, "coords")))[[1]]
 
-  # p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
-  # p <- SpatialPolygons(list(Polygons(list(p), ID = 1)))
+  p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
+  p <- SpatialPolygons(list(Polygons(list(p), ID = 1)))
   # # p <- methods::as(ext.proj, "SpatialPolygons")
 
-  if(all.equal(pm, m)){
-  # if(all.equal(pred.poly, p)){
+  # if(all.equal(pm, m)){
+  if(identical(pred.poly, p)){
   # if(mask==F){
     area.p <- raster::crop(env.uncut, ext.proj,
                            file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
