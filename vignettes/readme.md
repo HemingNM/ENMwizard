@@ -166,8 +166,19 @@ futAC5085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path=
 # Download data for future projection (2070)
 futAC7085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
 
-current.l<-list(current=current)
-future.l<-list(futAC5085=futAC5085,futAC7085=futAC7085)
+
+current.l<-list(current=current[[c(1,12,16,17,5,6,7,8)]])
+future.l<-list(futAC5085=futAC5085[[c(1,12,16,17,5,6,7,8)]],futAC7085=futAC7085[[c(1,12,16,17,5,6,7,8)]])
+
+names(future.l[[1]])<-names(env.uncut)
+names(future.l[[2]])<-names(env.uncut)
+
+current.all<-lapply(mxnt.mdls.preds.lst,function(x)current.l)
+future.all<-lapply(mxnt.mdls.preds.lst,function(x)future.l)
+
+
+maxent.model.preds.c<-mxnt.p.batch.mscn(mxnt.mdls.preds.lst,current.all)
+maxent.model.preds.f<-mxnt.p.batch.mscn(mxnt.mdls.preds.lst,future.all)
 
 ```
 
