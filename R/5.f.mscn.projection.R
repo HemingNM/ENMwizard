@@ -205,9 +205,9 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
 
                                     function(i,a.proj.l,mxnt.c.mdls.lst,formt){
                                       mxnt.preds.spi <- list()
-                                      mxnt.c.mdls<- mxnt.c.mdls.lst[[i]]
-                                      sp.nm<- names(mxnt.c.mdls.lst)[i]
-                                      pred.nm<-names(a.proj.l[[i]])
+                                      mxnt.c.mdls <- mxnt.c.mdls.lst[[i]]
+                                      sp.nm <- names(mxnt.c.mdls.lst)[i]
+                                      pred.nm <- names(a.proj.l[[i]])
                                       a.proj = a.proj.l[[i]]
 
                                        for(j in 1:length(a.proj)){
@@ -220,8 +220,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
                                          names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
                                        }
 
-                   resu<-append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                   return(resu)},a.proj.l,mxnt.c.mdls.lst,formt)
+                   resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
+                   return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
 
     parallel::stopCluster(cl)
@@ -235,10 +235,10 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
                               function(i,a.proj.l,mxnt.c.mdls.lst,formt){
                                 cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
                                 mxnt.preds.spi <- list()
-                                mxnt.c.mdls<- mxnt.c.mdls.lst[[i]]
-                                sp.nm<- names(mxnt.c.mdls.lst)[i]
-                                pred.nm<-names(a.proj.l[[i]])
-                                a.proj = a.proj.l[[i]]
+                                mxnt.c.mdls <- mxnt.c.mdls.lst[[i]]
+                                sp.nm <- names(mxnt.c.mdls.lst)[i]
+                                pred.nm <- names(a.proj.l[[i]])
+                                a.proj <- a.proj.l[[i]]
 
                                 for(j in 1:length(a.proj)){
                                   cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
@@ -253,8 +253,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
                                   names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
                                 }
 
-                                resu<-append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                                return(resu)},a.proj.l,mxnt.c.mdls.lst,formt)
+                                resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
+                                return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
 

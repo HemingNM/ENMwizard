@@ -144,7 +144,7 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 #### 4.3 Run top corresponding models and save predictions 
 #### 4.3.1 save maxent best models and predictions for each model
 ```r
-mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99,numCores=7)
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=7)
 ```
 
 
@@ -201,7 +201,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.pred.current)
 
 # or
 
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.current.l)
+mxnt.mdls.preds.cf2 <- mxnt.p.batch(mxnt.mdls.preds.lst, a.proj.l = pa.current.l)
 mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf2, a.proj.l = pa.future.l)
 plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
 
@@ -212,11 +212,15 @@ plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
 
 ```r
 poly.projection.multi <- append(poly.projection, poly.projection)
+# names(poly.projection.multi) <- paste0(names(poly.projection.multi), 1:2)
 
 pa.current.l.multi <- pred.a.batch.mscn(poly.projection.multi, current.l)
 # pa.future.l.multi <- pred.a.batch.mscn(poly.projection.multi, future.l)
+# names(pa.current.l.multi) <- names(poly.projection.multi)
+# names(pa.future.l.multi) <- names(poly.projection.multi)
 
 mxnt.mdls.preds.lst.multi <- append(mxnt.mdls.preds.lst, mxnt.mdls.preds.lst)
+# names(mxnt.mdls.preds.lst.multi) <- names(poly.projection.multi)
 ```
 
 #### Run without parallel processing
