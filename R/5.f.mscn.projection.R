@@ -122,9 +122,6 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   #### AUC OmR models
   if(length(args.all) > length(args.aicc)){
 
-    ##### TODO # run predictions for each xsel.mdls$sel.cri [i > length(args.aicc)]
-    ## TODO # find sel.cri and run prediction; eliminate 'for', 'if's, and 'else's
-
     for(i in (length(args.aicc)+1):length(args.all)){
       # path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
       # filename <- paste(path2file, paste0(mod.nms[i], ".", pred.nm,".grd"), sep='/')
