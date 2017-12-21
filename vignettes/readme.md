@@ -262,9 +262,21 @@ mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = p
 ps. progress bars are not shown
 
 ```r
+# Using single core (default)
+system.time(
+mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi)
+)
+
+# Sending each model to one core (best if single or few species with complex models/heavy rasters)
 system.time(
 mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi, numCores=2)
 )
+
+# Sending each species to one core (best if multiple species)
+system.time(
+mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi, numCores=2,parallelTunning=FALSE)
+)
+
 ```
 
 
