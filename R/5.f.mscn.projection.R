@@ -200,14 +200,7 @@ mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "rast
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
 
-mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCores=1){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
-  # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
-
-  # path.res <- "4_ENMeval.results"
-  # if(dir.exists(path.res)==F) dir.create(path.res)
-  # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
-
+mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores=1){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   names<-names(mxnt.c.mdls.lst)
 
   if(numCores>1){
@@ -262,22 +255,22 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
                                   cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
                                         "projection ", j, " of ", length(mxnt.preds.spi), "\n"))
 
-                                  mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
-                                                              sp.nm = sp.nm, pred.nm = pred.nm[j],
-                                                              a.proj = a.proj[[j]],
-                                                              formt = formt)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
-                                  names(mxnt.preds.spi)[j] <- paste0(names(a.proj)[j])
-
                                   # mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
                                   #                             sp.nm = sp.nm, pred.nm = pred.nm[j],
                                   #                             a.proj = a.proj[[j]],
-                                  #                             formt = formt)[length(mxnt.c.mdls) + 1]
-                                  # names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
+                                  #                             formt = formt)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
+                                  # names(mxnt.preds.spi)[j] <- paste0(names(a.proj)[j])
+
+                                  mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
+                                                              sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                                              a.proj = a.proj[[j]],
+                                                              formt = formt)[length(mxnt.c.mdls) + 1]
+                                  names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
                                 }
 
-                                # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                                mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                                resu <- mxnt.c.mdls.lst[[i]]
+                                resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
+                                # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
+                                # resu <- mxnt.c.mdls.lst[[i]]
                                 return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
