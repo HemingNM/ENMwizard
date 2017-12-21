@@ -224,26 +224,20 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
                                                                      a.proj = a.proj[[j]],
                                                                      formt = formt,parallelTunning=parallelTunning,
                                                                      numCores = numCores)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
-
-                                         # mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
-                                         #                             sp.nm = sp.nm, pred.nm = pred.nm[j],
-                                         #                             a.proj = a.proj[[j]],
-                                         #                             formt = formt)[length(mxnt.c.mdls) + 1]
-                                         # names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
                                        }
                                       names(mxnt.preds.spi) <- paste0(names(a.proj))
 
                    # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                    # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
                    mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                   resu <- mxnt.c.mdls.lst[[i]]
-                   return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
+                   # resu <- mxnt.c.mdls.lst[[i]]
+                   return(mxnt.c.mdls.lst[[i]])}, a.proj.l, mxnt.c.mdls.lst, formt)
 
 
     parallel::stopCluster(cl)
 
-
   }else{
+
     mxnt.preds.lst <- lapply(seq_along(mxnt.c.mdls.lst),
 
                               function(i,a.proj.l,mxnt.c.mdls.lst,formt){
@@ -263,23 +257,18 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
                                                               a.proj = a.proj[[j]],
                                                               formt = formt,parallelTunning=parallelTunning,
                                                               numCores = numCores)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
-                                  # mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
-                                  #                             sp.nm = sp.nm, pred.nm = pred.nm[j],
-                                  #                             a.proj = a.proj[[j]],
-                                  #                             formt = formt)[length(mxnt.c.mdls) + 1]
-                                  # names(mxnt.preds.spi)[j] <- paste0("mxnt.pred.", names(a.proj)[j])
                                 }
                                 names(mxnt.preds.spi) <- paste0(names(a.proj))
 
                                 # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                                 # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
                                 mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                                resu <- mxnt.c.mdls.lst[[i]]
-                                return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
+                                # resu <- mxnt.c.mdls.lst[[i]]
+                                return(mxnt.c.mdls.lst[[i]])}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
 
-  names(mxnt.c.mdls.lst) <- mdl.names
+  # names(mxnt.c.mdls.lst) <- mdl.names
   names(mxnt.preds.lst) <- mdl.names
 
   # return(mxnt.c.mdls.lst)
