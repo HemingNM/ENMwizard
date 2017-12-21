@@ -130,7 +130,13 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
     }
   }
 
-  mxnt.c.mdls <- append(mxnt.c.mdls, stats::setNames(list(mod.preds) , paste0("mxnt.preds", pred.nm)))
+  # mxnt.c.mdls <- append(mxnt.c.mdls, stats::setNames(list(mod.preds) , paste0("mxnt.preds", pred.nm)))
+  if(is.null(mxnt.c.mdls$mxnt.preds)){
+    mxnt.c.mdls$mxnt.preds <- stats::setNames(list(mod.preds) , paste0(pred.nm))
+  } else {
+    mxnt.c.mdls$mxnt.preds <- append(mxnt.c.mdls$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))
+  }
+
   return(mxnt.c.mdls)
 }
 
