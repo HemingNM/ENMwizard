@@ -58,7 +58,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
   ##### list of models to PREDICT
   mod.all <- vector("list")
-  filename.aicc <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".", pred.nm,".grd"), sep='/')
+  filename.aicc <- paste(avg.m.path, mod.nms, paste0(mod.nms[1:length(args.aicc)], ".", pred.nm,".grd"), sep='/')
 
   # path2file <-paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)], sep='/')
   filename.au.om <- paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)],
