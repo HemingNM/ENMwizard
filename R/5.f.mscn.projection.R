@@ -56,15 +56,21 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
   if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
 
-  ##### list of models to average
-  mod.avg.i <- vector("list")
-  filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".", pred.nm,".grd"), sep='/')
+  ##### list of models to PREDICT
+  mod.all <- vector("list")
+  filename.aicc <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".", pred.nm,".grd"), sep='/')
+
+  # path2file <-paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)], sep='/')
+  filename.au.om <- paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)],
+                        paste0(mod.nms[(length(args.aicc)+1):length(args.all)], ".", pred.nm,".grd"), sep='/')
+
+  filename <- c(filename.aicc, filename.au.om)
 
   if(numCores>1){
 
     cl<-parallel::makeCluster(numCores)
 
-    mod.avg.i <- parallel::clusterApply(cl, seq_along(args.aicc), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
+    mod.all <- parallel::clusterApply(cl, seq_along(args.all), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
       resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
       return(resu)}, mxnt.mdls, a.proj, pred.args, filename, formt) #) ## fecha for or lapply
 
@@ -72,12 +78,13 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
   }else{
 
-    mod.avg.i <- lapply(seq_along(args.aicc), function(i) {
+    mod.all <- lapply(seq_along(args.all), function(i) {
       resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
       return(resu)}) #) ## fecha for or lapply
   }
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
+  #### AIC AVG model
   {
     #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
     # create vector of model weights
@@ -105,27 +112,25 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
     #### 4.3.2.1.1 create Low AIC model prediction on a specific path
     print(mod.pred.nms[2])
-    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.avg.i[[1]],
+    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.all[[1]],
                                                  filename = filename,
                                                  format = formt, overwrite = T) )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[2]
   }
 
 
-
+  #### AUC OmR models
   if(length(args.all) > length(args.aicc)){
 
     ##### TODO # run predictions for each xsel.mdls$sel.cri [i > length(args.aicc)]
     ## TODO # find sel.cri and run prediction; eliminate 'for', 'if's, and 'else's
 
     for(i in (length(args.aicc)+1):length(args.all)){
-      path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
-      filename <- paste(path2file, paste0(mod.nms[i], ".", pred.nm,".grd"), sep='/')
-      if(dir.exists(path2file) == FALSE) dir.create(path2file)
+      # path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
+      # filename <- paste(path2file, paste0(mod.nms[i], ".", pred.nm,".grd"), sep='/')
+      # if(dir.exists(path2file) == FALSE) dir.create(path2file)
       print(mod.nms[i])
-      mod.preds <- raster::addLayer(mod.preds, dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress = 'text',
-                                               file = filename,
-                                               format = formt, overwrite = TRUE) )
+      mod.preds <- raster::addLayer(mod.preds, mod.all[[i]] )
       names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms[i]
     }
   }
