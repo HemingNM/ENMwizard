@@ -203,6 +203,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
   # if(dir.exists(path.res)==F) dir.create(path.res)
   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
 
+  names<-names(mxnt.c.mdls.lst)
+
   if(numCores>1){
 
     cl<-parallel::makeCluster(numCores)
@@ -264,6 +266,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster",numCor
                                 return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
+
+  names(mxnt.c.mdls.lst) <- names
 
   return(mxnt.c.mdls.lst)
 }
