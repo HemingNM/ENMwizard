@@ -7,7 +7,8 @@
 mxnt.cp(x, sp.nm, a.calib, occ, formt = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   wAICsum = 0.99, randomseed = F, responsecurves = T,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1)
+  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1,
+  parallelTunning = TRUE)
 }
 \arguments{
 \item{x}{Slot "results" of object of class ENMevaluation}

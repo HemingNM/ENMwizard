@@ -12,7 +12,7 @@
 #' @param mxnt.c.mdls Objects returned by "mxnt.cp", containing calibrated models.
 #' @param pred.nm Character. Prefix to add to projection name (e.g. "fut" or "past")
 #' @param a.proj A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict
-#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
+# #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.cp
 #' @return A list containing all the items returned from function "mxnt.cp", plus the projection specified in a.proj.
 # #' @examples

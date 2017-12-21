@@ -7,7 +7,8 @@
 mxnt.cp.batch(ENMeval.res, a.calib.l, occ.l, formt = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   wAICsum = 0.99, randomseed = F, responsecurves = T,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1)
+  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1,
+  parallelTunning = TRUE)
 }
 \arguments{
 \item{ENMeval.res}{List of objects of class ENMevaluation}

@@ -237,7 +237,7 @@ mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.cp","f.args"))
 
-  mxnt.mdls.preds.lst <- clusterApply(cl,base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+  mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
       ENMeval.res[[i]] <- ENMeval.res[[i]]@results
       cat(c(names(ENMeval.res[i]), "\n"))
