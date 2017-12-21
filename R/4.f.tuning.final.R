@@ -195,61 +195,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
     } # closes else
 
 
-    #########################
-
-  #
-  #   if(numCores>1&parallelTunning){
-  #
-  #     # require(parallel)
-  #
-  #     cl<-parallel::makeCluster(numCores)
-  #
-  #     mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.aicc), function(i, args.all, mod.nms, a.calib, occ) {
-  #       path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
-  #       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-  #       # maxent models
-  #       set.seed(1)
-  #       resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
-  #       return(resu)
-  #       # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-  #       #                            file = filename, format = formt, overwrite=T)
-  #     },args.all,mod.nms,a.calib,occ) #)
-  #
-  #     parallel::stopCluster(cl)
-  #
-  #
-  #
-  #   }else{
-  #     mxnt.mdls<-lapply(seq_along(args.aicc), function(i) {
-  #       path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
-  #       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-  #       # maxent models
-  #       set.seed(1)
-  #       resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
-  #       return(resu)
-  #       # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-  #       #                            file = filename, format = formt, overwrite=T)
-  #     }) #) ## fecha for or lapply
-  #
-  #   } # closes else
-  #
-  #
-  #     #### other models
-  # if(length(args.all) > length(args.aicc)){
-  #
-  #   for(i in (length(args.aicc)+1):length(args.all)){
-  #     path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-  #     filename  <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-  #     if(dir.exists(path2file)==F) dir.create(path2file)
-  #     # maxent models
-  #     set.seed(1)
-  #     mxnt.mdls[[i]] <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]])
-  #
-  #   }
-  }
-
-    ###########################
-
+}
   return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 

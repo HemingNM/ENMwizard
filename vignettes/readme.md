@@ -2,7 +2,7 @@ ENMwizard
 ======================
 ### Advanced Tecniques for Ecological Niche Modeling Made Easy
 
-This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modeling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions for easier: 1. preparation of occurence and environmental data; 2. model tunning (thanks to the package ENMeval); 3. model fitting and projection. ENMwizard also implements methods described in Gutiérrez & Heming in prep.
+This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modeling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions for easier: 1. preparation of occurence and environmental data; 2. model tunning (thanks to the package ENMeval); 3. model fitting and projection. Tunning and projection can be peformed using a single or multiple cores to speed up processing for multiple species. ENMwizard also implements methods described in Gutiérrez & Heming in prep.
 
 -----
 
@@ -58,7 +58,7 @@ head(Bvarieg.occ)# Check first rows
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT") # Change column names
 ```
 
-Now we make it a named list, where names correspond to species names
+Now we make it a named list, where names correspond to species names.
 ```r
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 ```
@@ -143,16 +143,26 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 # 4. Model Fitting (Calibration)
 #### 4.3 Run top corresponding models and save predictions 
 #### 4.3.1 save maxent best models and predictions for each model
+
+Now, select maxent model calibrations and predictions using the function mxnt.cp.batch. This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
+
 ```r
 
-system.time(
-mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=1,parallelTunning=TRUE)
-)
+# Run model
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99)
 
+
+# Comparing single core processing and multiple core processing
+
+# Parallel processing forking models (best for small sets of species)
 system.time(
 mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3,parallelTunning=TRUE)
 )
 
+# Parallel processing forking species (best for large sets of species)
+system.time(
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3,parallelTunning=FALSE)
+)
 
 ```
 
@@ -164,6 +174,7 @@ For projection it is necessary to download raster files with the environmnetal v
 
 ```r
 
+# Create directory to store raster files
 dir.create("./rasters")
 
 # Download data for present
@@ -185,31 +196,39 @@ names(future.l[[2]])<-names(env.uncut)
 
 # 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
 # 4.1.1 select area for projection based on the extent of occ points
+
+Now it is time to define the projection area for each species. The projection area can be the same for all species (in this example) of be defined individually. Here, the projection area will be defined as an square area slightly larger than the original occurrence of the species. Then, a two lists with models will be created for a species. In the first list, the projection will be performed using current climatic conditions. In the second list, two cenarios of futurure climate (defined above) are created.
+
 ```r
-poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=F)#
+poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=FALSE)#
 plot(poly.projection[[1]])
 plot(occ.polys[[1]], col="red", add=T)
-# area.projection <- pred.a.batch(poly.projection, env.uncut)
 
 pa.current.l <- pred.a.batch.mscn(poly.projection, current.l)
 pa.future.l  <- pred.a.batch.mscn(poly.projection, future.l)
 ```
 
 ## 4.1.2 if the extent to project is the same for all species
+
+When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
+
 ```r
 current.all<-lapply(mxnt.mdls.preds.lst,function(x)current.l)
 future.all<-lapply(mxnt.mdls.preds.lst,function(x)future.l)
 ```
 
-
 ### 4.8 predictions for present, future, and/or past
+
+Finally, all species can be projected for all cenarios using all models. This is performed by `the mxnt.p.batch.mscn` function. The function has two arguments: 1) Model fit from maxent models within a list (see step 4.3 above) and 2) lists of rasters representing all cenarios to be projected. The last argument must be represented by a list of species. For each species, a list (within the first) is provided with all cenarios to be performed for each species (see last step above).
+
 ```r
+
+# For single or multiple species
 mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = current.all)
 mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf, a.proj.l = future.all)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.pred.current)
 
-# or
-
+# For single species
 mxnt.mdls.preds.cf2 <- mxnt.p.batch(mxnt.mdls.preds.lst, a.proj.l = pa.current.l)
 mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf2, a.proj.l = pa.future.l)
 plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
@@ -219,18 +238,17 @@ plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
 #### 6. Using multiple cores (parallel processing)
 #### Create projection with 2 species (same species repeated)
 
+The same process can be performed using parallel processing. This can dramatially increase processing speed when multiple species are modelled. To exemplify, the polygon with the projection area of a single species is duplicated using the append function. Then, the list of climatic conditions for projection is duplicated. Finally, the maxent model fitted for a single species above is also duplicated.
+
 ```r
 poly.projection.multi <- append(poly.projection, poly.projection)
-# names(poly.projection.multi) <- paste0(names(poly.projection.multi), 1:2)
 
 pa.current.l.multi <- pred.a.batch.mscn(poly.projection.multi, current.l)
-# pa.future.l.multi <- pred.a.batch.mscn(poly.projection.multi, future.l)
-# names(pa.current.l.multi) <- names(poly.projection.multi)
-# names(pa.future.l.multi) <- names(poly.projection.multi)
 
 mxnt.mdls.preds.lst.multi <- append(mxnt.mdls.preds.lst, mxnt.mdls.preds.lst)
-# names(mxnt.mdls.preds.lst.multi) <- names(poly.projection.multi)
 ```
+
+We can run the model for both species sequentially (without parallel processing) or simultaneously (parallel processing) and compare the amount of time required to run the model.
 
 #### Run without parallel processing
 ```r
@@ -240,6 +258,9 @@ mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = p
 ```
 
 #### Run with parallel processing
+
+ps. progress bars are not shown
+
 ```r
 system.time(
 mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi, numCores=2)
