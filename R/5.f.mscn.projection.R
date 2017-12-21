@@ -62,23 +62,19 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
   if(numCores>1){
 
-    # require(parallel)
-
     cl<-parallel::makeCluster(numCores)
 
-    mod.avg.i<-parallel::clusterApply(cl,seq_along(args.aicc), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
-      resu<-dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
-      return(resu)},mxnt.mdls,a.proj,pred.args,filename,formt) #) ## fecha for or lapply
+    mod.avg.i <- parallel::clusterApply(cl, seq_along(args.aicc), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
+      resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
+      return(resu)}, mxnt.mdls, a.proj, pred.args, filename, formt) #) ## fecha for or lapply
 
     parallel::stopCluster(cl)
 
-
   }else{
 
-    mod.avg.i<-lapply(seq_along(args.aicc), function(i) {
-      resu<-dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
+    mod.avg.i <- lapply(seq_along(args.aicc), function(i) {
+      resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
       return(resu)}) #) ## fecha for or lapply
-
   }
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
@@ -126,8 +122,6 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
       path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
       filename <- paste(path2file, paste0(mod.nms[i], pred.nm,".grd"), sep='/')
       if(dir.exists(path2file) == FALSE) dir.create(path2file)
-      # grep("Mod.Mean.ORmin", xsel.mdls$sel.cri)
-      # m <-  grep(mod.nms[i], xsel.mdls$sel.cri)
       print(mod.nms[i])
       mod.preds <- raster::addLayer(mod.preds, dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress = 'text',
                                                file = filename,
