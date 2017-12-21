@@ -144,7 +144,16 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 #### 4.3 Run top corresponding models and save predictions 
 #### 4.3.1 save maxent best models and predictions for each model
 ```r
-mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=7)
+
+system.time(
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=1,parallelTunning=TRUE)
+)
+
+system.time(
+mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3,parallelTunning=TRUE)
+)
+
+
 ```
 
 

@@ -107,9 +107,9 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
                             wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1,parallelTunning=TRUE){
 
   path.res <- "4_ENMeval.results"
-  if(dir.exists(path.res)==F) dir.create(path.res)
+  if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
-  if(dir.exists(path.mdls)==F) dir.create(path.mdls)
+  if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
 
   mdl.arg <- f.args(x, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
@@ -152,8 +152,15 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 
       cl<-parallel::makeCluster(numCores)
 
-      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.aicc), function(i, args.all, mod.nms, a.calib, occ) {
-        path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ) {
+
+        if(i<=length(args.aicc)){
+          path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+          }else{
+          path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
+          }
+
+
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
         set.seed(1)
@@ -168,8 +175,14 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 
 
     }else{
-      mxnt.mdls<-lapply(seq_along(args.aicc), function(i) {
-      path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
+      mxnt.mdls<-lapply(seq_along(args.all), function(i) {
+
+        if(i<=length(args.aicc)){
+          path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+        }else{
+          path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
+        }
+
       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
       # maxent models
       set.seed(1)
@@ -182,64 +195,61 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
     } # closes else
 
 
+    #########################
 
-
-    # mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
-    #
-    # #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
-    # # create vector of model weights
-    # wv <- xsel.mdls[order(xsel.mdls$delta.AICc),"w.AIC"][seq_along(args.aicc)]
-    #
-    # ### stack prediction rasters (to create Average Model prediction)
-    # path2stk <- paste(avg.m.path, mod.nms[seq_along(args.aicc)], sep='/')
-    # filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], ".grd"), sep='/')
-    # Mod.AICc.stack <- raster::stack(filename)
-    #
-    # # create averaged prediction map
-    # cat(c("\n",paste(mod.pred.nms[1]), "\n"))
-    # mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm=T)/sum(wv)), a.proj[[1]]),
-    #                                              filename = paste(avg.m.path, paste0(mod.pred.nms[1], ".grd"), sep='/'),
-    #                                              format = formt, overwrite = T) )
-    # names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
-  }
-
-  #### Low AIC
-  # if(i == 1) # usar if(low = T) pra escolher o low aic ou if(grep("low", Mod.pred))
-  # {
-  #   path2file <- paste(path.mdls, outpt, mod.pred.nms[2], sep='/')
-  #   filename <- paste(path2file, paste0(mod.pred.nms[2], ".grd"), sep='/')
-  #   if(dir.exists(path2file)==F) dir.create(path2file)
-  #   # print(mod.pred.nms[1])
   #
-  #   #### 4.3.2.1.1 create Low AIC model prediction on a specific path
-  #   cat(c(paste(mod.pred.nms[2]), "\n"))
-  #   mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.avg.i[[1]],
-  #                                                filename = filename,
-  #                                                format = formt, overwrite = T) )
-  #   names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[2]
-  # }
-
-
-  #### other models
-  if(length(args.all) > length(args.aicc)){
-
-    for(i in (length(args.aicc)+1):length(args.all)){
-      path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-      filename  <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-      if(dir.exists(path2file)==F) dir.create(path2file)
-      # maxent models
-      set.seed(1)
-      mxnt.mdls[[i]] <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]])
-
-      # # grep("Mod.Mean.ORmin", xsel.mdls$sel.cri)
-      # # m <-  grep(mod.nms[i], xsel.mdls$sel.cri)
-      # cat(c(paste(mod.nms[i]), "\n"))
-      # mod.preds <- raster::addLayer(mod.preds, dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-      #                                          file = filename,
-      #                                          format = formt, overwrite = T) )
-      # names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms[i]
-    }
+  #   if(numCores>1&parallelTunning){
+  #
+  #     # require(parallel)
+  #
+  #     cl<-parallel::makeCluster(numCores)
+  #
+  #     mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.aicc), function(i, args.all, mod.nms, a.calib, occ) {
+  #       path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+  #       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+  #       # maxent models
+  #       set.seed(1)
+  #       resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+  #       return(resu)
+  #       # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
+  #       #                            file = filename, format = formt, overwrite=T)
+  #     },args.all,mod.nms,a.calib,occ) #)
+  #
+  #     parallel::stopCluster(cl)
+  #
+  #
+  #
+  #   }else{
+  #     mxnt.mdls<-lapply(seq_along(args.aicc), function(i) {
+  #       path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
+  #       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+  #       # maxent models
+  #       set.seed(1)
+  #       resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+  #       return(resu)
+  #       # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
+  #       #                            file = filename, format = formt, overwrite=T)
+  #     }) #) ## fecha for or lapply
+  #
+  #   } # closes else
+  #
+  #
+  #     #### other models
+  # if(length(args.all) > length(args.aicc)){
+  #
+  #   for(i in (length(args.aicc)+1):length(args.all)){
+  #     path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
+  #     filename  <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+  #     if(dir.exists(path2file)==F) dir.create(path2file)
+  #     # maxent models
+  #     set.seed(1)
+  #     mxnt.mdls[[i]] <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]])
+  #
+  #   }
   }
+
+    ###########################
+
   return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 
@@ -276,19 +286,47 @@ mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a
   # if(dir.exists(path.res)==F) dir.create(path.res)
   # path.mdls <- paste(path.res, paste0("Mdls.", names(ENMeval.res)), sep="/")
 
-  mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
-    ENMeval.res.results <- ENMeval.res[[i]]@results
-    cat(c(names(ENMeval.res)[i], "\n"))
-    # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
-    # compute final models and predictions
-    resu <- mxnt.cp(x = ENMeval.res.results, sp.nm = names(ENMeval.res.results),
-                                        a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
-                                        occ = occ.l[[i]], formt = formt,
-                                        pred.args = pred.args, wAICsum = wAICsum,
-                                        randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
-    # mxnt.mdls.preds.lst[[i]]$pred.args <- pred.args
+  if(numCores>1 & parallelTunning==FALSE){
+
+    cl <- parallel::makeCluster(numCores)
+    parallel::clusterExport(cl,list("mxnt.cp","f.args"))
+
+  mxnt.mdls.preds.lst <- clusterApply(cl,base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+      ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
+      ENMeval.res[[i]] <- ENMeval.res[[i]]@results
+      cat(c(names(ENMeval.res[i]), "\n"))
+      # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+      # compute final models and predictions
+     resu <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+                                          a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
+                                          occ = occ.l[[i]], formt = formt,
+                                          pred.args = pred.args, wAICsum = wAICsum,
+                                          randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+
     return(resu)
   }, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+
+  parallel::stopCluster(cl)
+
+  }else{
+
+    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+      ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
+      ENMeval.res[[i]] <- ENMeval.res[[i]]@results
+      cat(c(names(ENMeval.res[i]), "\n"))
+      # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+      # compute final models and predictions
+      resu <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
+                      occ = occ.l[[i]], formt = formt,
+                      pred.args = pred.args, wAICsum = wAICsum,
+                      randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+
+      return(resu)
+    }, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+
+
+  }
 
   names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
 
