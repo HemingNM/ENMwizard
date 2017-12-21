@@ -209,7 +209,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.p"))
 
-    mxnt.c.mdls.lst <<- parallel::clusterApply(cl,seq_along(mxnt.c.mdls.lst),
+    mxnt.preds.lst <- parallel::clusterApply(cl,seq_along(mxnt.c.mdls.lst),
 
                                     function(i, a.proj.l, mxnt.c.mdls.lst, formt){
                                       mxnt.preds.spi <- list()
@@ -244,7 +244,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
 
   }else{
-    mxnt.c.mdls.lst <<- lapply(seq_along(mxnt.c.mdls.lst),
+    mxnt.preds.lst <- lapply(seq_along(mxnt.c.mdls.lst),
 
                               function(i,a.proj.l,mxnt.c.mdls.lst,formt){
                                 cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
@@ -279,8 +279,9 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
   }
 
-  names(mxnt.c.mdls.lst) <- mdl.names # names(mxnt.preds.lst) <- mdl.names
+  # names(mxnt.c.mdls.lst) <- mdl.names
+  names(mxnt.preds.lst) <- mdl.names
 
-  return(mxnt.c.mdls.lst)
-  # return(mxnt.preds.lst)
+  # return(mxnt.c.mdls.lst)
+  return(mxnt.preds.lst)
 }
