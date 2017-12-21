@@ -104,7 +104,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' @export
 mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
                             pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                            wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1){
+                            wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1,parallelTunning=TRUE){
 
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
@@ -146,19 +146,18 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
     mod.avg.i <- vector("list", length(args.aicc))
     # filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".grd"), sep='/')
 
-    if(numCores>1){
+    if(numCores>1&parallelTunning){
 
       # require(parallel)
 
       cl<-parallel::makeCluster(numCores)
 
-      mxnt.mdls<-parallel::clusterApply(cl,seq_along(args.aicc), function(i,args.all,mod.nms,a.calib,occ) {
-        # require(rJava)
-        path2file <- paste(getwd(),avg.m.path, mod.nms[i], sep='/')
+      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.aicc), function(i, args.all, mod.nms, a.calib, occ) {
+        path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
         set.seed(1)
-        resu<-dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+        resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
         return(resu)
         # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
         #                            file = filename, format = formt, overwrite=T)
@@ -174,7 +173,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
       filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
       # maxent models
       set.seed(1)
-      resu<-dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+      resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
       return(resu)
       # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
       #                            file = filename, format = formt, overwrite=T)
@@ -271,26 +270,45 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' @export
 mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a.proj.l
                                   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                                  wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1){
+                                  wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1,parallelTunning=TRUE){
 
   # path.res <- "4_ENMeval.results"
   # if(dir.exists(path.res)==F) dir.create(path.res)
   # path.mdls <- paste(path.res, paste0("Mdls.", names(ENMeval.res)), sep="/")
-  mxnt.mdls.preds.lst <- vector("list", length(ENMeval.res))
-  names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
-  for(i in base::seq_along(ENMeval.res)){
-    ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-    ENMeval.res[[i]] <- ENMeval.res[[i]]@results
-    cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
+
+  mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+    ENMeval.res.results <- ENMeval.res[[i]]@results
+    cat(c(names(ENMeval.res)[i], "\n"))
     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
     # compute final models and predictions
-    mxnt.mdls.preds.lst[[i]] <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+    resu <- mxnt.cp(x = ENMeval.res.results, sp.nm = names(ENMeval.res.results),
                                         a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                                         occ = occ.l[[i]], formt = formt,
                                         pred.args = pred.args, wAICsum = wAICsum,
-                                        randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores)
+                                        randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
     # mxnt.mdls.preds.lst[[i]]$pred.args <- pred.args
-  }
+    return(resu)
+  }, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+
+  names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
+
+  # mxnt.mdls.preds.lst <- vector("list", length(ENMeval.res))
+  # names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
+
+  # for(i in base::seq_along(ENMeval.res)){
+  #   ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
+  #   ENMeval.res[[i]] <- ENMeval.res[[i]]@results
+  #   cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
+  #   # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+  #   # compute final models and predictions
+  #   mxnt.mdls.preds.lst[[i]] <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+  #                                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
+  #                                       occ = occ.l[[i]], formt = formt,
+  #                                       pred.args = pred.args, wAICsum = wAICsum,
+  #                                       randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+  #   # mxnt.mdls.preds.lst[[i]]$pred.args <- pred.args
+  # }
+
   return(mxnt.mdls.preds.lst)
 }
 
