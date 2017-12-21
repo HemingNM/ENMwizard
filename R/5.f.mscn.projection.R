@@ -201,7 +201,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
 
-mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores=1,parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores=1, parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   mdl.names <- names(mxnt.c.mdls.lst)
 
   if(numCores>1&parallelTunning==FALSE){
@@ -235,7 +235,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                    # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                    # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                   mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
+                   mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
                    resu <- mxnt.c.mdls.lst[[i]]
                    return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
@@ -273,13 +273,13 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                                 # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                                 # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                                mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
+                                mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
                                 resu <- mxnt.c.mdls.lst[[i]]
                                 return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
 
-  # names(mxnt.c.mdls.lst) <- mdl.names
+  names(mxnt.c.mdls.lst) <- mdl.names
   names(mxnt.preds.lst) <- mdl.names
 
   # return(mxnt.c.mdls.lst)
