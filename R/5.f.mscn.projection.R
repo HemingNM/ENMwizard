@@ -205,7 +205,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 #' @export
 
 mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores=1,parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
-  names<-names(mxnt.c.mdls.lst)
+  mdl.names <- names(mxnt.c.mdls.lst)
 
   if(numCores>1&parallelTunning==FALSE){
 
@@ -282,8 +282,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
   }
 
-  names(mxnt.c.mdls.lst) <- names
-  # names(mxnt.preds.lst) <- names
+  names(mxnt.c.mdls.lst) <- mdl.names
+  # names(mxnt.preds.lst) <- mdl.names
 
   return(mxnt.c.mdls.lst)
   # return(mxnt.preds.lst)
