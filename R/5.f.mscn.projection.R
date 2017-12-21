@@ -233,7 +233,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
                                        }
 
                    # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                   mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
+                   # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
+                   mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
                    resu <- mxnt.c.mdls.lst[[i]]
                    return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
@@ -259,7 +260,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
                                   mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
                                                               sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                               a.proj = a.proj[[j]],
-                                                              formt = formt,parallelTunning=parallelTunning,numCores = numCores)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
+                                                              formt = formt,parallelTunning=parallelTunning,
+                                                              numCores = numCores)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
                                   names(mxnt.preds.spi)[j] <- paste0(names(a.proj)[j])
 
                                   # mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
@@ -270,7 +272,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
                                 }
 
                                 # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                                mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
+                                # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
+                                mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
                                 resu <- mxnt.c.mdls.lst[[i]]
                                 return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
