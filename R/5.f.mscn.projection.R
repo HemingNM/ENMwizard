@@ -195,7 +195,10 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 #' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
 #' several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
 #' each element (species) the original object.
-#' @inheritParams mxnt.p.batch
+#' @param mxnt.c.mdls.lst A list of objects returned by "mxnt.cp", containing calibrated models.
+#' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
+#' @inheritParams mxnt.p
+#' @inheritParams mxnt.cp.batch
 #' @return A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
 #' @examples
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)

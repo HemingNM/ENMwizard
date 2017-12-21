@@ -43,6 +43,8 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCore
 f.args(ENMeval.res.lst[[1]]@results)}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+
+\item{parallelTunning}{Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)}
 }
 \value{
 A list of objects returned from function "mxnt.cp"

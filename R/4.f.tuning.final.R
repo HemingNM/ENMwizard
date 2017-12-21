@@ -96,6 +96,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' function. Some other arguments do not apply at all to the R implementation. An example is
 #' 'outputfiletype', because the 'predict' function has its own 'filename' argument for that.
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
+#' @param parallelTunning Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)
 #' @inheritParams f.args
 #' @return A list containing the models ('selected.mdls') used for model calibration and prediction,
 #' calibrated maxent models ('mxnt.mdls'), arguments used for prediction/calibration ('pred.args'), and
@@ -103,8 +104,9 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
 #' @export
 mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
-                            pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                            wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1,parallelTunning=TRUE){
+                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+                    wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',
+                    numCores = 1, parallelTunning = TRUE){
 
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
@@ -225,8 +227,9 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
 mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a.proj.l
-                                  pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                                  wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',numCores=1,parallelTunning=TRUE){
+                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+                          wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',
+                          numCores = 1, parallelTunning = TRUE){
 
   # path.res <- "4_ENMeval.results"
   # if(dir.exists(path.res)==F) dir.create(path.res)
