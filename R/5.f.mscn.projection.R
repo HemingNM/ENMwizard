@@ -235,8 +235,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                    # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                    # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                   mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                   resu <- mxnt.c.mdls.lst[[i]]
+                   # mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
+                   resu <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi) #<- mxnt.c.mdls.lst[[i]]
                    return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
 
@@ -273,8 +273,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                                 # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                                 # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                                mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                                resu <- mxnt.c.mdls.lst[[i]]
+                                # mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
+                                resu <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi) #<- mxnt.c.mdls.lst[[i]]
                                 return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
