@@ -147,46 +147,46 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   return(mxnt.c.mdls)
 }
 
-#' #### for several species
-#' #' Projecting calibrated MaxEnt models for several species
-#' #'
-#' #' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
-#' #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
-#' #' each element (species) the original object
-#' #' @param mxnt.c.mdls.lst A list of objects returned by "mxnt.cp", containing calibrated models.
-#' #' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
-#' #' @inheritParams mxnt.p
-#' #' @inheritParams mxnt.cp.batch
-#' #' @return A list of objects returned from function "mxnt.p"
-#' #' @examples
-#' #' mxnt.mdls.preds <- mxnt.p.batch(mxnt.c.mdls.lst = mxnt.mdls.preds.lst[1],
-#' #                                     pred.nm ="fut", a.proj.l = areas.projection)
-#' #' @export
-#' mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "raster",numCores=1){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
-#'                               # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-#'                               # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
+# #### for several species
+# #' Projecting calibrated MaxEnt models for several species
+# #'
+# #' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
+# #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
+# #' each element (species) the original object
+# #' @param mxnt.c.mdls.lst A list of objects returned by "mxnt.cp", containing calibrated models.
+# #' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
+# #' @inheritParams mxnt.p
+# #' @inheritParams mxnt.cp.batch
+# #' @return A list of objects returned from function "mxnt.p"
+# #' @examples
+# #' mxnt.mdls.preds <- mxnt.p.batch(mxnt.c.mdls.lst = mxnt.mdls.preds.lst[1],
+# #                                     pred.nm ="fut", a.proj.l = areas.projection)
+# #' @export
+# mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "raster",numCores=1){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+#                               # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+#                               # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 #'
-#'   # path.res <- "4_ENMeval.results"
-#'   # if(dir.exists(path.res)==F) dir.create(path.res)
-#'   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
-#'   mxnt.preds.lst <- vector("list", length(mxnt.c.mdls.lst))
-#'   names(mxnt.preds.lst) <- names(mxnt.c.mdls.lst)
-#'   for(i in 1:length(mxnt.preds.lst)){
-#'     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
-#'     cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
-#'     # print(paste(names(mxnt.c.mdls.lst)[i]))
-#'     # compute final models and predictions
-#'     mxnt.preds.lst[[i]] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls.lst[[i]], #ENMeval.occ.results = ENMeval.occ.results.lst[[i]],
-#'                                   sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = pred.nm, a.proj = a.proj.l[[i]],
-#'                                        # occ.b.env = occ.b.env.lst[[i]], occ.locs = occ.locs.lst[[i]],
-#'                                   formt = formt,
-#'                                   numCores=numCores) # , #pred.args = pred.args,
-#'                                        # wAICsum = wAICsum,
-#'                                        # randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)
-#'     # mxnt.c.mdls.lst[[i]]$pred.args <- pred.args
-#'   }
-#'   return(mxnt.preds.lst)
-#' }
+#   # path.res <- "4_ENMeval.results"
+#   # if(dir.exists(path.res)==F) dir.create(path.res)
+#   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
+#   mxnt.preds.lst <- vector("list", length(mxnt.c.mdls.lst))
+#   names(mxnt.preds.lst) <- names(mxnt.c.mdls.lst)
+#   for(i in 1:length(mxnt.preds.lst)){
+#     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+#     cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
+#     # print(paste(names(mxnt.c.mdls.lst)[i]))
+#     # compute final models and predictions
+#     mxnt.preds.lst[[i]] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls.lst[[i]], #ENMeval.occ.results = ENMeval.occ.results.lst[[i]],
+#                                   sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = pred.nm, a.proj = a.proj.l[[i]],
+#                                        # occ.b.env = occ.b.env.lst[[i]], occ.locs = occ.locs.lst[[i]],
+#                                   formt = formt,
+#                                   numCores=numCores) # , #pred.args = pred.args,
+#                                        # wAICsum = wAICsum,
+#                                        # randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)
+#     # mxnt.c.mdls.lst[[i]]$pred.args <- pred.args
+#   }
+#   return(mxnt.preds.lst)
+#   }
 
 
 
