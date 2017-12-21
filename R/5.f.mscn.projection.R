@@ -209,7 +209,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.p"))
 
-    mxnt.c.mdls.lst <- parallel::clusterApply(cl,seq_along(mxnt.c.mdls.lst),
+    mxnt.c.mdls.lst <<- parallel::clusterApply(cl,seq_along(mxnt.c.mdls.lst),
 
                                     function(i, a.proj.l, mxnt.c.mdls.lst, formt){
                                       mxnt.preds.spi <- list()
@@ -235,8 +235,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                    # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                    # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                   mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                   resu <- mxnt.c.mdls.lst[[i]]
+                   # mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
+                   resu <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi) #<- mxnt.c.mdls.lst[[i]]
                    return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
 
@@ -244,7 +244,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
 
   }else{
-    mxnt.c.mdls.lst <- lapply(seq_along(mxnt.c.mdls.lst),
+    mxnt.c.mdls.lst <<- lapply(seq_along(mxnt.c.mdls.lst),
 
                               function(i,a.proj.l,mxnt.c.mdls.lst,formt){
                                 cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
@@ -273,8 +273,8 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                                 # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
                                 # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                                mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                                resu <- mxnt.c.mdls.lst[[i]]
+                                # mxnt.c.mdls.lst[[i]]$mxnt.preds <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
+                                resu <<- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi) #<- mxnt.c.mdls.lst[[i]]
                                 return(resu)}, a.proj.l, mxnt.c.mdls.lst, formt)
 
   }
