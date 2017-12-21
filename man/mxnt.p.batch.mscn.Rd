@@ -4,7 +4,7 @@
 \alias{mxnt.p.batch.mscn}
 \title{Projecting calibrated MaxEnt models for several species onto multiple environmental scenarios}
 \usage{
-mxnt.p.batch.mscn(mxnt.c.mdls.lst, a.proj.l, formt = "raster")
+mxnt.p.batch.mscn(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores = 1)
 }
 \arguments{
 \item{mxnt.c.mdls.lst}{A list of objects returned by "mxnt.cp", containing calibrated models.}
@@ -12,6 +12,8 @@ mxnt.p.batch.mscn(mxnt.c.mdls.lst, a.proj.l, formt = "raster")
 \item{a.proj.l}{A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict}
 
 \item{formt}{Character. Output file type. Argument 'format' of raster::writeRaster}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list

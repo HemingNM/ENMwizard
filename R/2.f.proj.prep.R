@@ -143,12 +143,12 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   # # m <- matrix(c(x,y), ncol = 2, byrow = F)
   # # pm <- sapply(slot(pred.poly, "polygons"), function(x) lapply(slot(x,"Polygons"), function(y) slot(y, "coords")))[[1]]
   # p <- Polygon(matrix(c(x,y), ncol = 2, byrow = F))
-  p <- Polygon(rbind(c(bbox(pred.poly)[1,1], bbox(pred.poly)[2,1]),
-                     c(bbox(pred.poly)[1,1], bbox(pred.poly)[2,2]),
-                     c(bbox(pred.poly)[1,2], bbox(pred.poly)[2,2]),
-                     c(bbox(pred.poly)[1,2], bbox(pred.poly)[2,1]),
-                     c(bbox(pred.poly)[1,1], bbox(pred.poly)[2,1])))
-  p <- SpatialPolygons(list(Polygons(list(p), ID = 1)))
+  p <- sp::Polygon(rbind(c(sp::bbox(pred.poly)[1,1], sp::bbox(pred.poly)[2,1]),
+                     c(sp::bbox(pred.poly)[1,1], sp::bbox(pred.poly)[2,2]),
+                     c(sp::bbox(pred.poly)[1,2], sp::bbox(pred.poly)[2,2]),
+                     c(sp::bbox(pred.poly)[1,2], sp::bbox(pred.poly)[2,1]),
+                     c(sp::bbox(pred.poly)[1,1], sp::bbox(pred.poly)[2,1])))
+  p <- sp::SpatialPolygons(list(sp::Polygons(list(p), ID = 1)))
   # # p <- methods::as(ext.proj, "SpatialPolygons")
 
   # if(all.equal(pm, m)){
