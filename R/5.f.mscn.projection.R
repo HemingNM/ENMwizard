@@ -283,7 +283,11 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
   }
 
   names(mxnt.c.mdls.lst) <- names
+<<<<<<< HEAD
   # names(mxnt.preds.lst) <- names
+=======
+  names(mxnt.preds.lst) <- names
+>>>>>>> b11de9a1f89affbd5146377b927b075f7a4c24ad
 
   return(mxnt.c.mdls.lst)
   # return(mxnt.preds.lst)
