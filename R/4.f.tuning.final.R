@@ -170,7 +170,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
         return(resu)
         # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
         #                            file = filename, format = formt, overwrite=T)
-      },args.all,mod.nms,a.calib,occ) #)
+      }, args.all, mod.nms, a.calib, occ) #)
 
       parallel::stopCluster(cl)
 

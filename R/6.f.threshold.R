@@ -58,7 +58,6 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   # thrshld.mod.crt <- thrshld.crit.v[1]
   # grep("LowAICc", names(pred.r))
 
-  ## TO DO - change order of all stacks to c("Mod.AvgAICc", "Mod.LowAICc", "Mod.Mean.ORmin", "Mod.Mean.OR10", "Mod.Mean.AUCmin", "Mod.Mean.AUC10")
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
       apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mmp.spi[[1]]$sel.cri),]), 2, function(x) stats::weighted.mean(x, wv)) ### check if is raster
@@ -87,43 +86,65 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
   brick.nms.t.b <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms, ".b")
 
-  for(t in base::seq_along(thrshld.crit)){
-    mod.sel.crit.t <- paste(paste0(mod.sel.crit, ".", scn.nm), thrshld.nms[t], sep=".")
-    mod.sel.crit.b <- paste(paste0(mod.sel.crit, ".", scn.nm, ".b"), thrshld.nms[t], sep=".")
 
-    pred.t <- pred.r
+  mt.lst <- vector("list", length = length(thrshld.nms))
+  names(mt.lst) <- thrshld.nms
+  mt <- list(continuous=mt.lst, binary=mt.lst)
 
-    pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
-      pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
-      return(pred.t[[m]])
-    }))
-    # for(m in base::seq_along(mod.sel.crit)){
-    #   pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
-    # }
-    names(pred.t) <- mod.sel.crit.t
-    assign(brick.nms.t[t],
-           raster::writeRaster(x = pred.t,
-                               filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
-                               format = "raster", overwrite = T))
+  # mt2 <-
+  lapply(base::seq_along(thrshld.crit),
+         function(t, mod.sel.crit, scn.nm, thrshld.nms, thrshld.path, thrshld.mod.crt,
+                  pred.r, brick.nms.t, brick.nms.t.b, mt){
 
-    # create presence only raster
-    pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
-      pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
-      return(pred.t[[m]])
-    }))
-    # for(m in base::seq_along(mod.sel.crit)){
-    #   pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
-    # }
-    assign(brick.nms.t.b[t],
-           raster::writeRaster(x = pred.t,
-                               filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".b", ".grd"), sep='/'),
-                               format = "raster", overwrite = T))
-  }
-  mods.t <- lapply(brick.nms.t, function(x) get(x))
-  mods.t.b <- lapply(brick.nms.t.b, function(x) get(x))
-  names(mods.t) <- thrshld.nms
-  names(mods.t.b) <- thrshld.nms
-  return(list(continuous=mods.t, binary=mods.t.b))
+
+           # for(t in base::seq_along(thrshld.crit)){
+           mod.sel.crit.t <- paste(paste0(mod.sel.crit, ".", scn.nm), thrshld.nms[t], sep=".")
+           mod.sel.crit.b <- paste(paste0(mod.sel.crit, ".", scn.nm, ".b"), thrshld.nms[t], sep=".")
+
+           pred.t <- pred.r
+
+           pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
+             pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
+             return(pred.t[[m]])
+           }))
+           # for(m in base::seq_along(mod.sel.crit)){
+           #   pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
+           # }
+           names(pred.t) <- mod.sel.crit.t
+           # assign(brick.nms.t[t],
+           mt$continuous[[thrshld.nms[t]]] <<- #continuous <-
+             raster::writeRaster(x = pred.t,
+                                 filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
+                                 format = "raster", overwrite = T) #)
+
+           # create presence only raster
+           pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
+             pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
+             return(pred.t[[m]])
+           }))
+           # for(m in base::seq_along(mod.sel.crit)){
+           #   pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
+           # }
+           # assign(brick.nms.t.b[t],
+           mt$binary[[thrshld.nms[t]]] <<- #binary <-
+             raster::writeRaster(x = pred.t,
+                                 filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".b", ".grd"), sep='/'),
+                                 format = "raster", overwrite = T) #)
+           # }
+           # return(list(continuous=continuous, binary=binary))
+           # return(mt)
+           return(thrshld.nms[t])
+
+         }, mod.sel.crit, scn.nm, thrshld.nms, thrshld.path, thrshld.mod.crt,
+         pred.r, brick.nms.t, brick.nms.t.b, mt)
+
+  # mods.t <- lapply(brick.nms.t, function(x) get(x))
+  # mods.t.b <- lapply(brick.nms.t.b, function(x) get(x))
+  # names(mods.t) <- thrshld.nms
+  # names(mods.t.b) <- thrshld.nms
+  # return(list(continuous=mods.t, binary=mods.t.b))
+
+  return(mt)
 }
 
 # mods.thrshld <- f.thr(mmp.spi, thrshld.i = 4:6, pred.args, path.mdls)
@@ -163,21 +184,25 @@ f.thr.batch <- function(mmp.spl, thrshld.i = 4:6, numCores=1) {
     if(numCores>1){
 
       cl <- parallel::makeCluster(numCores)
-      parallel::clusterExport(cl,list("mxnt.cp","f.args"))
+      parallel::clusterExport(cl, list("f.thr"))
 
       mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms),
                                                  function(j, mmp.spi, scn.nms, thrshld.i, path.mdls.i){
+
                                                    resu <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
                                                    return(resu)
-                                                 }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
+
+                                                   }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
       parallel::stopCluster(cl)
 
     }else{
       mods.thrshld.spi <- lapply(base::seq_along(scn.nms),
                                  function(j, mmp.spi, scn.nms, thrshld.i, path.mdls.i){
+
                                    resu <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
                                    return(resu)
-                                 }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
+
+                                    }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
 
       # mods.thrshld.spi <- stats::setNames(vector("list", length(scn.nms)), scn.nms)
       # for(j in base::seq_along(scn.nms)){ # climatic scenario

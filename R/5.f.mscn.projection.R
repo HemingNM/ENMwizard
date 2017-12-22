@@ -209,7 +209,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.p"))
 
-    mxnt.preds.lst <- parallel::clusterApply(cl,seq_along(mxnt.c.mdls.lst),
+    mxnt.preds.lst <- parallel::clusterApply(cl, seq_along(mxnt.c.mdls.lst),
 
                                     function(i, a.proj.l, mxnt.c.mdls.lst, formt){
                                       mxnt.preds.spi <- list()
