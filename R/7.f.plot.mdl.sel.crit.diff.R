@@ -37,7 +37,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 #' @export
-f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap, pred.nm=""){
+f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL, pred.nm=""){
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mmp.spl))
@@ -58,16 +58,16 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap, pred.nm=""){
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
   pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
-  for(i in 1:length(mtp.spl)){
+  for(i in 1:length(mtp.spl)){ # species
     thrshld.path <- paste(path.mdls[i], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
 
     mods.thrshld <- mtp.spl[[i]]
 
-    for(l in 1:length(mods.thrshld$binary)){
+    for(l in 1:length(mods.thrshld$binary)){ # threshold criteria
       thr.crt <- grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=T)
       grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin", pred.nm, ".", thr.crt, ".pdf"), sep='/'),
-          width = 20, height = 10)
+                     width = 20, height = 10)
       graphics::par(mfrow=c(3,5), mar=c(2,1,2,1), oma = c(1, 1, 4, 1))
 
       for(j in 1:ncol(comb.plots)){ #ncol(comb.plots)
@@ -78,17 +78,17 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap, pred.nm=""){
         main.nms <- paste0(n1, " vs. ", n2)
         # r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red")
         raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red"),# col=c("blue", "blue","white", "red", "red"), # smallplot=c(0.01, .81, 0.01, .99),
-             main= main.nms, legend=FALSE)
+                     main= main.nms, legend=FALSE)
         if(j==1){
           graphics::title(paste("Threshold criteria:", thr.crt), line = 2, outer = T, cex.main=2)
         }
         raster::plot(r.dif,  legend.only=TRUE, smallplot=c(.78, .79, .2, .8),  #horiz=T,#  c(.79, .80, .2, .8)
-             breaks= c(-1, -.34, .34, 1), col=c("blue", "white", "red"),
-             # bg = "white",
-             #col=c("blue", "blue","white", "red", "red"),
-             axis.args=list(at=seq(-1, 1),
-                            labels=c(n2, "equal", n1)))
-        sp::plot(basemap, add= T)
+                     breaks= c(-1, -.34, .34, 1), col=c("blue", "white", "red"),
+                     # bg = "white",
+                     #col=c("blue", "blue","white", "red", "red"),
+                     axis.args=list(at=seq(-1, 1),
+                                    labels=c(n2, "equal", n1)))
+        if(!is.null(basemap)) sp::plot(basemap, add= T)
       }
 
       grDevices::dev.off()
@@ -99,18 +99,18 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap, pred.nm=""){
 }
 
 
-
 #### 4.8.6 plot prediction diff between models
 #' Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria
 #'
 #' Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria
 #' @inheritParams f.plot.mxnt.preds
+#' @inheritParams mxnt.cp
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
 #' @export
-f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap){
+f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mmp.spl))
@@ -125,7 +125,7 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap){
            "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
            "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 
-  comb.plots <- utils::combn(raster::nlayers(mtp.spl[[1]]$mxnt.preds$binary[[1]]), 2)
+  comb.plots <- utils::combn(raster::nlayers(mtp.spl[[1]][[1]]$binary[[1]]), 2)
 
   # unlist(strsplit(names(mods.thrshld$binary[[2]]), "."))
 
@@ -147,7 +147,10 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap){
     cat(c("\n", "Species: " , names(mtp.spl)[sp]))
     # cat(c("\n", "Climatic Scenario:"))
     ## TODO use mclapply
-    for(sc in names(mtp.spl[[sp]])){ # climatic scenario
+
+    f.plot <- function(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                       comb.plots, thrshld.nms.mod, basemap, make.underscript) {
+      # for(sc in names(mtp.spl[[sp]])){ # climatic scenario
       mods.thrshld <- mtp.spl[[sp]][[sc]]
       cat(c("\n", "Climatic Scenario: ", sc))
       cat(c("\n", "Threshold Criterion: "))
@@ -157,10 +160,10 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap){
         #### TODO
         # if(l %in% ta) {
         thr.CRT <- t.NMS[which(t.nms %in% l)] #}
-        cat(paste0(thr.CRT, ", "))
+        cat(paste0(" - ", thr.CRT)) # cat(paste0(thr.CRT))
 
         grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin.", sc, ".", thr.crt, ".pdf"), sep='/'),
-            width = 20, height = 10)
+                       width = 20, height = 10)
         # par(mfrow=c(3,5), mar=c(2,1,2,1), oma = c(1, 1, 4, 1))
         graphics::par(mfrow=c(3,5), mar=c(2,4,2,5), oma = c(3.5, 0, 5.5, 2))
 
@@ -178,7 +181,7 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap){
           # r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red")
           graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
           raster::plot(mods.thrshld$binary[[l]][[comb.plots[1,j]]], breaks= c(0, .5, 1), col=c("white", "gray90"),
-               legend=FALSE) # main= main.nms,
+                       legend=FALSE) # main= main.nms,
           if(j==1){
             # title(paste0("Climatic scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "present", sc)), ".  Threshold criteria: ", thr.crt), line = 2, outer = T, cex.main=2)
 
@@ -188,19 +191,50 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap){
             graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
             graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
           }
-          raster::plot(basemap, border="gray50", add= T)
+          if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
           raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
-               legend=FALSE, add=T) # main= main.nms,
+                       legend=FALSE, add=T) # main= main.nms,
 
           graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
           raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=T,#  c(.79, .80, .2, .8)
-               xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
-               breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
-               axis.args=list(at=seq(-1, 1), labels=c(make.underscript(n2), "equal", make.underscript(n1) )))
+                       xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
+                       breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
+                       axis.args=list(at=seq(-1, 1), labels=c(make.underscript(n2), "equal", make.underscript(n1) )))
         }
         grDevices::dev.off()
       }
+      # }
     }
+
+    if(numCores>1){
+
+      cl<-parallel::makeCluster(numCores)
+
+      parallel::clusterApply(cl, names(mtp.spl[[sp]]), # climatic scenario
+                             function(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                                      comb.plots, thrshld.nms.mod, basemap, make.underscript){
+
+                               f.plot(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                                      comb.plots, thrshld.nms.mod, basemap, make.underscript)
+
+                             }, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                             comb.plots, thrshld.nms.mod, basemap, make.underscript)
+
+      parallel::stopCluster(cl)
+
+    }else{
+      lapply(names(mtp.spl[[sp]]), # climatic scenario
+             function(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                      comb.plots, thrshld.nms.mod, basemap, make.underscript){
+
+               f.plot(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                      comb.plots, thrshld.nms.mod, basemap)
+
+             }, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+             comb.plots, thrshld.nms.mod, basemap, make.underscript)
+
+    }
+
   }
 }
 

@@ -204,7 +204,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores=1, parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   mdl.names <- names(mxnt.c.mdls.lst)
 
-  if(numCores>1&parallelTunning==FALSE){
+  if(numCores>1 & parallelTunning==FALSE){
 
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.p"))

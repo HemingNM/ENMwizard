@@ -148,9 +148,7 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
     mod.avg.i <- vector("list", length(args.aicc))
     # filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".grd"), sep='/')
 
-    if(numCores>1&parallelTunning){
-
-      # require(parallel)
+    if(numCores>1 & parallelTunning){
 
       cl<-parallel::makeCluster(numCores)
 
