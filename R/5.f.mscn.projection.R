@@ -250,7 +250,7 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
 
                                 for(j in 1:length(a.proj)){
                                   cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
-                                        "projection ", j, " of ", length(mxnt.preds.spi), "\n"))
+                                        "projection ", j, " of ", length(a.proj), "\n"))
 
                                   mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
                                                               sp.nm = sp.nm, pred.nm = pred.nm[j],
