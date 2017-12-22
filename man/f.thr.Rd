@@ -4,14 +4,16 @@
 \alias{f.thr}
 \title{Apply threshold for a prediction}
 \usage{
-f.thr(mmp.spi, pred.nm = "", thrshld.i = 4:6)
+f.thr(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL)
 }
 \arguments{
 \item{mmp.spi}{Stack or brick of predictions to apply the threshold}
 
-\item{pred.nm}{name of prediction to be appended to the final name. Usually "pres", "past" or "fut".}
+\item{scn.nm}{Name of climatic scenario to be looked for}
 
 \item{thrshld.i}{List of threshold criteria to be applied}
+
+\item{path.mdls}{Path where thresholded rasters will be saved}
 }
 \value{
 Stack or brick of thresholded predictions

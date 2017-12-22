@@ -4,7 +4,7 @@
 \alias{f.plot.mxnt.preds}
 \title{Plot differences among model predictions selected from several criteria}
 \usage{
-f.plot.mxnt.preds(mmp.spl, mtp.spl, basemap, pred.nm = "")
+f.plot.mxnt.preds(mmp.spl, mtp.spl, basemap = NULL)
 }
 \arguments{
 \item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
@@ -12,8 +12,6 @@ f.plot.mxnt.preds(mmp.spl, mtp.spl, basemap, pred.nm = "")
 \item{mtp.spl}{List of stack or brick of thresholded predictions}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
-
-\item{pred.nm}{name of prediction to be appended to the final name. Usually "pres", "past" or "fut".}
 }
 \value{
 won't return any object. Will save pdf's with differences among model predictions

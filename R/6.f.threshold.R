@@ -5,7 +5,9 @@
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
 #' @param mmp.spi Stack or brick of predictions to apply the threshold
-#' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
+#' @param scn.nm Name of climatic scenario to be looked for
+#' @param path.mdls Path where thresholded rasters will be saved
+# #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param thrshld.i List of threshold criteria to be applied
 #' @return Stack or brick of thresholded predictions
 #' @examples
@@ -103,7 +105,7 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
            pred.t <- pred.r
 
-           pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
+           pred.t <- raster::stack(lapply(seq_along(mod.sel.crit), function(m) {
              pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
              return(pred.t[[m]])
            }))
@@ -118,7 +120,7 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
                                  format = "raster", overwrite = T) #)
 
            # create presence only raster
-           pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
+           pred.t <- raster::stack(lapply(seq_along(mod.sel.crit), function(m) {
              pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
              return(pred.t[[m]])
            }))

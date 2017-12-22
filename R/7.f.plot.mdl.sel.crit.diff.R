@@ -31,13 +31,14 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
 #' @inheritParams f.thr.batch
+# #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param mtp.spl List of stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
 #' @return won't return any object. Will save pdf's with differences among model predictions
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 #' @export
-f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL, pred.nm=""){
+f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL){ #, pred.nm=""
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mmp.spl))
@@ -57,7 +58,7 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL, pred.nm=""){
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
-  pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
+  # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
   for(i in 1:length(mtp.spl)){ # species
     thrshld.path <- paste(path.mdls[i], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
@@ -66,7 +67,7 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL, pred.nm=""){
 
     for(l in 1:length(mods.thrshld$binary)){ # threshold criteria
       thr.crt <- grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=T)
-      grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin", pred.nm, ".", thr.crt, ".pdf"), sep='/'),
+      grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin", ".", thr.crt, ".pdf"), sep='/'), # , pred.nm
                      width = 20, height = 10)
       graphics::par(mfrow=c(3,5), mar=c(2,1,2,1), oma = c(1, 1, 4, 1))
 
@@ -148,7 +149,7 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
     # cat(c("\n", "Climatic Scenario:"))
     ## TODO use mclapply
 
-    f.plot <- function(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+    f.plot <- function(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
                        comb.plots, thrshld.nms.mod, basemap, make.underscript) {
       # for(sc in names(mtp.spl[[sp]])){ # climatic scenario
       mods.thrshld <- mtp.spl[[sp]][[sc]]
@@ -211,26 +212,26 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
       cl<-parallel::makeCluster(numCores)
 
       parallel::clusterApply(cl, names(mtp.spl[[sp]]), # climatic scenario
-                             function(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                             function(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
                                       comb.plots, thrshld.nms.mod, basemap, make.underscript){
 
-                               f.plot(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                               f.plot(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
                                       comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
-                             }, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+                             }, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
                              comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
       parallel::stopCluster(cl)
 
     }else{
       lapply(names(mtp.spl[[sp]]), # climatic scenario
-             function(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+             function(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
                       comb.plots, thrshld.nms.mod, basemap, make.underscript){
 
-               f.plot(sc, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+               f.plot(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
                       comb.plots, thrshld.nms.mod, basemap)
 
-             }, sp, mtp.spl, mods.thrshld, t.NMS, t.nms, thrshld.path,
+             }, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
              comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
     }

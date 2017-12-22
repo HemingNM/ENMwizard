@@ -4,14 +4,14 @@
 \alias{f.thr.batch}
 \title{Apply threshold for all predictions}
 \usage{
-f.thr.batch(mmp.spl, pred.nm = "", thrshld.i = 4:6)
+f.thr.batch(mmp.spl, thrshld.i = 4:6, numCores = 1)
 }
 \arguments{
 \item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
 
-\item{pred.nm}{name of prediction to be appended to the final name. Usually "pres", "past" or "fut".}
-
 \item{thrshld.i}{List of threshold criteria to be applied}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 List of stack or brick of thresholded predictions

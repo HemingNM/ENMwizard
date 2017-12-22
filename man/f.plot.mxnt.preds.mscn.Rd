@@ -4,7 +4,7 @@
 \alias{f.plot.mxnt.preds.mscn}
 \title{Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria}
 \usage{
-f.plot.mxnt.preds.mscn(mmp.spl, mtp.spl, basemap)
+f.plot.mxnt.preds.mscn(mmp.spl, mtp.spl, basemap = NULL, numCores = 1)
 }
 \arguments{
 \item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
@@ -12,6 +12,8 @@ f.plot.mxnt.preds.mscn(mmp.spl, mtp.spl, basemap)
 \item{mtp.spl}{List of stack or brick of thresholded predictions}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
