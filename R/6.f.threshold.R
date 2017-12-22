@@ -13,28 +13,29 @@
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
 #' @export
-f.thr <- function(mmp.spi, pred.nm = "", thrshld.i = 4:6) {
+f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
-    path.mdls <- "4_ENMeval.results"
-    if(dir.exists(path.mdls)==F) dir.create(path.mdls)
+    path.mdls <- paste("4_ENMeval.results", "sp", sep = "/")
   }
+  if(dir.exists(path.mdls)==F) dir.create(path.mdls)
   # args <- 1:length(mmp.spi[["mxnt.mdls"]])
   mxnt.mdls <- mmp.spi[["mxnt.mdls"]]
 
   # pred.nm <- ifelse(pred.nm == "", pred.nm, paste0(".", pred.nm))
   # m.pred.n <- ifelse(pred.nm == "", "mxnt.pred", paste0("mxnt.pred", pred.nm))
-  m.pred.n <- ifelse(pred.nm == "", "mxnt.pred", paste0(pred.nm))
-  print(paste("pred.nm is ", pred.nm))
-  print(paste("m.pred.n is ", m.pred.n))
+  # m.pred.n <- ifelse(pred.nm == "", "mxnt.pred", paste0(pred.nm))
+  # print(paste("pred.nm is ", pred.nm))
+  # print(paste("m.pred.n is ", m.pred.n))
 
+  #### TODO use the "slot" to find and loop through predictions
   ##  wrong here
-  pred.r <- mmp.spi[[match(m.pred.n, names(mmp.spi))]] # , fixed=T # [pred.i]
+  pred.r <- mmp.spi$mxnt.preds[[scn.nm]] # mmp.spi[[match(pred.nm, names(mmp.spi))]] # , fixed=T # [pred.i]
   pred.args <- mmp.spi$pred.args
-  mod.pred.nms <- names(pred.r)
+  mod.sel.crit <- names(pred.r)
 
-  if(sum(grepl("AvgAICc", mod.pred.nms))>0) {
+  if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
     # args.aicc <- 1:(length(args)-4)
-    wv <- mmp.spi[[1]][order(mmp.spi[[1]]$delta.AICc[grep("Mod.AICc", mmp.spi[[1]]$sel.cri)]),"w.AIC"]
+    wv <- mmp.spi[["selected.mdls"]][order(mmp.spi[["selected.mdls"]]$delta.AICc[grep("Mod.AICc", mmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
   } # else {wv <- rep(0, max(grep("Mod.AICc", mmp.spi[[1]]$sel.cri))) }
 
 
@@ -60,7 +61,7 @@ f.thr <- function(mmp.spi, pred.nm = "", thrshld.i = 4:6) {
   ## TO DO - change order of all stacks to c("Mod.AvgAICc", "Mod.LowAICc", "Mod.Mean.ORmin", "Mod.Mean.OR10", "Mod.Mean.AUCmin", "Mod.Mean.AUC10")
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
-      apply(thrshld.crit.v[grep("Mod.AICc", mmp.spi[[1]]$sel.cri),], 2, function(x) stats::weighted.mean(x, wv)) ### check if is raster
+      apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mmp.spi[[1]]$sel.cri),]), 2, function(x) stats::weighted.mean(x, wv)) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
       thrshld.crit.v[grep("Mod.AICc_1$", mmp.spi[[1]]$sel.cri),]
@@ -80,34 +81,43 @@ f.thr <- function(mmp.spi, pred.nm = "", thrshld.i = 4:6) {
 
   # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
   thrshld.mod.crt <- as.data.frame(thrshld.mod.crt[!is.na(thrshld.mod.crt[,1]),])
-  row.names(thrshld.mod.crt) <- mod.pred.nms
-  # col.names(thrshld.mod.crt) <- thrshld.nms
+  row.names(thrshld.mod.crt) <- mod.sel.crit
+  colnames(thrshld.mod.crt) <- paste0("thrshld.", thrshld.nms)
 
-  brick.nms.t <- paste0("mxnt.pred", pred.nm, ".", thrshld.nms)
-  brick.nms.t.b <- paste0("mxnt.pred", pred.nm, ".b.", thrshld.nms)
+  brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
+  brick.nms.t.b <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms, ".b")
 
-  for(t in 1:length(thrshld.crit)){
-    mod.pred.nms.t <- paste(paste0(mod.pred.nms, ".", pred.nm), thrshld.nms[t], sep=".")
-    mod.pred.nms.b <- paste(paste0(mod.pred.nms, ".", pred.nm, ".b"), thrshld.nms[t], sep=".")
+  for(t in base::seq_along(thrshld.crit)){
+    mod.sel.crit.t <- paste(paste0(mod.sel.crit, ".", scn.nm), thrshld.nms[t], sep=".")
+    mod.sel.crit.b <- paste(paste0(mod.sel.crit, ".", scn.nm, ".b"), thrshld.nms[t], sep=".")
 
     pred.t <- pred.r
 
-    for(m in 1:length(mod.pred.nms)){
+    pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
       pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
-    }
-    names(pred.t) <- mod.pred.nms.t
+      return(pred.t[[m]])
+    }))
+    # for(m in base::seq_along(mod.sel.crit)){
+    #   pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
+    # }
+    names(pred.t) <- mod.sel.crit.t
     assign(brick.nms.t[t],
            raster::writeRaster(x = pred.t,
-                       filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",pred.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
-                       format = "raster", overwrite = T))
+                               filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
+                               format = "raster", overwrite = T))
+
     # create presence only raster
-    for(m in 1:length(mod.pred.nms)){
+    pred.t <- stack(lapply(seq_along(mod.sel.crit), function(m) {
       pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
-    }
+      return(pred.t[[m]])
+    }))
+    # for(m in base::seq_along(mod.sel.crit)){
+    #   pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
+    # }
     assign(brick.nms.t.b[t],
            raster::writeRaster(x = pred.t,
-                       filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",pred.nm)), ".b.", thrshld.nms[t], ".grd"), sep='/'),
-                       format = "raster", overwrite = T))
+                               filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".b", ".grd"), sep='/'),
+                               format = "raster", overwrite = T))
   }
   mods.t <- lapply(brick.nms.t, function(x) get(x))
   mods.t.b <- lapply(brick.nms.t.b, function(x) get(x))
@@ -126,11 +136,12 @@ f.thr <- function(mmp.spi, pred.nm = "", thrshld.i = 4:6) {
 #' General function description. A short paragraph (or more) describing what the function does.
 #' @param mmp.spl List of stack or brick of predictions to apply the threshold
 #' @inheritParams f.thr
+#' @inheritParams mxnt.cp
 #' @return List of stack or brick of thresholded predictions
 #' @examples
 #' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
 #' @export
-f.thr.batch <- function(mmp.spl, pred.nm="", thrshld.i = 4:6){
+f.thr.batch <- function(mmp.spl, thrshld.i = 4:6, numCores=1) {
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mmp.spl))
@@ -139,17 +150,42 @@ f.thr.batch <- function(mmp.spl, pred.nm="", thrshld.i = 4:6){
   # thrshld for each species
   mods.thrshld <- vector("list", length(mmp.spl))
   names(mods.thrshld) <- names(mmp.spl)
-  pred.nm <- ifelse(pred.nm == "", "mxnt.pred", pred.nm)
+  # pred.nm <- ifelse(pred.nm == "", "mxnt.pred", pred.nm)
 
-  for(i in 1:length(mmp.spl)){ # species i
-    if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+  for(i in base::seq_along(mmp.spl)){ # species i
+    path.mdls.i <- path.mdls[i]
+    if(dir.exists(path.mdls.i)==F) dir.create(path.mdls.i)
     #scn.ind <- grep(n.pred.nm, names(mmp.spl[[i]]))
-    scn.ind <- grep(pred.nm, names(mmp.spl[[i]]))
-    scn.nms <- names(mmp.spl[[i]])[scn.ind]
-    mods.thrshld.spi <- stats::setNames(vector("list", length(scn.nms)), scn.nms)
-    for(j in seq_along(scn.ind)){ # climatic scenario
-      mods.thrshld.spi[[j]] <- f.thr(mmp.spl[[i]], pred.nm = scn.nms[j], thrshld.i) # , path.mdls[i]
+    mmp.spi <- mmp.spl[[i]]
+    # scn.ind <- grep(pred.nm, names(mmp.spl[[i]]))
+    scn.nms <- names(mmp.spl[[i]]$mxnt.preds)
+
+    if(numCores>1){
+
+      cl <- parallel::makeCluster(numCores)
+      parallel::clusterExport(cl,list("mxnt.cp","f.args"))
+
+      mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms),
+                                                 function(j, mmp.spi, scn.nms, thrshld.i, path.mdls.i){
+                                                   resu <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+                                                   return(resu)
+                                                 }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
+      parallel::stopCluster(cl)
+
+    }else{
+      mods.thrshld.spi <- lapply(base::seq_along(scn.nms),
+                                 function(j, mmp.spi, scn.nms, thrshld.i, path.mdls.i){
+                                   resu <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+                                   return(resu)
+                                 }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
+
+      # mods.thrshld.spi <- stats::setNames(vector("list", length(scn.nms)), scn.nms)
+      # for(j in base::seq_along(scn.nms)){ # climatic scenario
+      #   mods.thrshld.spi[[j]] <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+      # }
     }
+    names(mods.thrshld.spi) <- scn.nms
+
     mods.thrshld[[i]] <- append(mods.thrshld[[i]], mods.thrshld.spi)
   }
   return(mods.thrshld)
