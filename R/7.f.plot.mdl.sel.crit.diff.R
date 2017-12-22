@@ -229,7 +229,7 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
                       comb.plots, thrshld.nms.mod, basemap, make.underscript){
 
                f.plot(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
-                      comb.plots, thrshld.nms.mod, basemap)
+                      comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
              }, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
              comb.plots, thrshld.nms.mod, basemap, make.underscript)
