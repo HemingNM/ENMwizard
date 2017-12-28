@@ -1,9 +1,7 @@
 #### 4.4 plot differences among model selection criteria predictions
-
-
 #' Format (underscript) selected texts for plotting
 #'
-#' General function description. A short paragraph (or more) describing what the function does.
+#' Format (underscript) selected texts (criteria used to select models) to be used on plotting
 #' @param x list of text to be formatted
 #' @return list of formatted text
 #' @examples
@@ -27,9 +25,10 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 
 
 #### 4.4 plot differences among model selection criteria predictions
-#' Plot differences among model predictions selected from several criteria
+#' Plot differences among predictions of models selected from several criteria
 #'
-#' General function description. A short paragraph (or more) describing what the function does.
+#' Plot differences among predictions of models selected from several criteria.
+#' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
 #' @inheritParams f.thr.batch
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param mtp.spl List of stack or brick of thresholded predictions
@@ -103,7 +102,8 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL){ #, pred.nm=""
 #### 4.8.6 plot prediction diff between models
 #' Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria
 #'
-#' Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria
+#' Plot differences (for multiple climatic scenarios) among predictions of models selected from several criteria.
+#' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
 #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams mxnt.cp
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
