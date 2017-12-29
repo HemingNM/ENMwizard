@@ -7,7 +7,8 @@
 f.plot.mxnt.preds.mscn(mmp.spl, mtp.spl, basemap = NULL, numCores = 1)
 }
 \arguments{
-\item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
+\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+and model projections for each species.}
 
 \item{mtp.spl}{List of stack or brick of thresholded predictions}
 
@@ -19,7 +20,8 @@ f.plot.mxnt.preds.mscn(mmp.spl, mtp.spl, basemap = NULL, numCores = 1)
 won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 }
 \description{
-Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria
+Plot differences (for multiple climatic scenarios) among predictions of models selected from several criteria.
+This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
 }
 \examples{
 f.plot.mxnt.preds.mscn(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)

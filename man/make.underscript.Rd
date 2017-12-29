@@ -13,7 +13,7 @@ make.underscript(x)
 list of formatted text
 }
 \description{
-General function description. A short paragraph (or more) describing what the function does.
+Format (underscript) selected texts (criteria used to select models) to be used on plotting
 }
 \examples{
 make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))

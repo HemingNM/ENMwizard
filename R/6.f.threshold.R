@@ -4,7 +4,8 @@
 #' Apply threshold for a prediction
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
-#' @param mmp.spi Stack or brick of predictions to apply the threshold
+#' @param mmp.spi Species "i" of a object returned by "mxnt.p.batch.mscn", containing a list of
+#' calibrated models and model projections for each species
 #' @param scn.nm Name of climatic scenario to be looked for
 #' @param path.mdls Path where thresholded rasters will be saved
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
@@ -30,7 +31,7 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   # print(paste("m.pred.n is ", m.pred.n))
 
   #### TODO use the "slot" to find and loop through predictions
-  ##  wrong here
+  ##  check here
   pred.r <- mmp.spi$mxnt.preds[[scn.nm]] # mmp.spi[[match(pred.nm, names(mmp.spi))]] # , fixed=T # [pred.i]
   pred.args <- mmp.spi$pred.args
   mod.sel.crit <- names(pred.r)
@@ -157,7 +158,8 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' Apply threshold for all predictions
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
-#' @param mmp.spl List of stack or brick of predictions to apply the threshold
+#' @param mmp.spl Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+#' and model projections for each species.
 #' @inheritParams f.thr
 #' @inheritParams mxnt.cp
 #' @return List of stack or brick of thresholded predictions

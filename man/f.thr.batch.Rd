@@ -7,7 +7,8 @@
 f.thr.batch(mmp.spl, thrshld.i = 4:6, numCores = 1)
 }
 \arguments{
-\item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
+\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+and model projections for each species.}
 
 \item{thrshld.i}{List of threshold criteria to be applied}
 

@@ -7,7 +7,8 @@
 f.thr(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL)
 }
 \arguments{
-\item{mmp.spi}{Stack or brick of predictions to apply the threshold}
+\item{mmp.spi}{Species "i" of a object returned by "mxnt.p.batch.mscn", containing a list of
+calibrated models and model projections for each species}
 
 \item{scn.nm}{Name of climatic scenario to be looked for}
 

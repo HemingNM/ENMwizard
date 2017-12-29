@@ -2,12 +2,13 @@
 % Please edit documentation in R/7.f.plot.mdl.sel.crit.diff.R
 \name{f.plot.mxnt.preds}
 \alias{f.plot.mxnt.preds}
-\title{Plot differences among model predictions selected from several criteria}
+\title{Plot differences among predictions of models selected from several criteria}
 \usage{
 f.plot.mxnt.preds(mmp.spl, mtp.spl, basemap = NULL)
 }
 \arguments{
-\item{mmp.spl}{List of stack or brick of predictions to apply the threshold}
+\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+and model projections for each species.}
 
 \item{mtp.spl}{List of stack or brick of thresholded predictions}
 
@@ -17,7 +18,8 @@ f.plot.mxnt.preds(mmp.spl, mtp.spl, basemap = NULL)
 won't return any object. Will save pdf's with differences among model predictions
 }
 \description{
-General function description. A short paragraph (or more) describing what the function does.
+Plot differences among predictions of models selected from several criteria.
+This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
 }
 \examples{
 f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
