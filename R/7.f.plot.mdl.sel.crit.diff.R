@@ -241,3 +241,119 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
 
 
 
+
+
+#' Plot differences between climatic scenarios
+#'
+#' Plot differences between a selected climatic scenario and all other climatic scenarios.
+#' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs"
+#' @inheritParams f.plot.mxnt.preds
+#' @inheritParams mxnt.cp
+#' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
+#' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
+#' @examples
+#' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
+#' @export
+f.plot.scn.diff <- function(mmp.spl, mtp.spl, sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
+  { path.res <- "4_ENMeval.results"
+  if(dir.exists(path.res)==F) dir.create(path.res)
+  path.sp.m <- paste0("Mdls.", names(mmp.spl))
+  path.mdls <- paste(path.res, path.sp.m, sep="/")
+  pred.args <- mmp.spl[[1]]$pred.args}
+
+  a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
+  b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
+  sca <- c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70", "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_", "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds")
+  scb <- c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
+           "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
+           "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
+           "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
+
+  comb.plots <- utils::combn(length(mtp.spl[[1]]), 2)
+  cli.scn.pres <- which(names(mtp.spl[[1]]) == sel.clim.scn)
+  sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==T # rowsum(comb.plots == cli.scn.pres)==T # comb.plots[, ]
+  comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
+  comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
+
+  t.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
+  t.NMS <- c("FCV1", "FCV5", "FCV10", "LPT (mtp)", "10P (x10ptp)", "ETSS (etss)", "MTSS", "BTO", "EETD")
+  thrshld.nms.mod <- paste(c("Mod.", paste0(".",t.nms)), collapse ="|")
+  thrshld.nms <- paste(t.nms, collapse = "|")
+
+  outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
+                  ifelse(grep("logistic", pred.args)==1, 'logistic',
+                         ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
+
+
+  f.plot <- function(sp, mtp.spl, mdl.crit=1, t.NMS, t.nms, thrshld.path,
+                     comb.plots, thrshld.nms.mod, basemap, make.underscript) { # climatic scenario
+    # for(sc in names(mtp.spl[[sp]])){ # climatic scenario
+    mods.thrshld <- mtp.spl[[sp]][[comb.plots[1,1]]]
+
+    n.t <- length(mods.thrshld$binary)
+    n.scn <- ncol(comb.plots)
+    if(save){
+      grDevices::pdf(paste(thrshld.path, paste0("Mod.clim.scn.diff.bin", ".pdf"), sep='/'),
+                     width = n.scn*5+2, height = n.t*5)
+    }
+    graphics::par(mfcol=c(n.t, n.scn), oma = c(3.5, 0, 5.5, 2)) # , mar=c(2,4,2,5)
+
+    for(tc in names(mods.thrshld$binary)){ # threshold criteria
+      thr.CRT <- t.NMS[which(t.nms %in% tc)] #}
+      cat(paste0(" - ", thr.CRT)) # cat(paste0(thr.CRT))
+
+      for(j in 1:n.scn){ # climatic scenario
+
+        mod.sc1 <- mtp.spl[[sp]][[comb.plots[1,j]]]$binary[[tc]][[mdl.crit]]
+        mod.sc2 <- mtp.spl[[sp]][[comb.plots[2,j]]]$binary[[tc]][[mdl.crit]]
+
+        r.dif <- raster::overlay(mod.sc1, mod.sc2, fun=function(r1, r2) {r1-r2})
+        thr.CRT <- t.NMS[which(t.nms %in% t.crit)] #}
+
+        # clim.scn name
+        n1 <- names(mtp.spl[[sp]])[comb.plots[1,j]]
+        n2 <- names(mtp.spl[[sp]])[comb.plots[2,j]]
+        main.nms <- paste0("Thres. crit.: ", thr.CRT, ". Clim. scen.: ", n1, " vs. ", n2)
+
+        #   # r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red")
+        graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
+        raster::plot(mod.sc1, breaks= c(0, .5, 1), col=c("white", "gray90"),
+                     main= main.nms, legend=FALSE) #
+        #   if(j==1){
+        #     # title(paste0("Climatic scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "present", sc)), ".  Threshold criteria: ", tc), line = 2, outer = T, cex.main=2)
+        #
+        #     sc1 <- gsub("mxnt.pred.fut.|mxnt.pred.past.", "", sc)
+        #     if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] } # {paste0(scb[which(sca %in% sc1)], " (", sc, ")")} else {sc1 <- sc1}
+        #     # title(paste0("Species: " , names(mtp.spl)[sp]), line = 3.5, outer = T, cex.main=2)
+        #     graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
+        #     graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
+        #   }
+        if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
+        raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
+                     legend=FALSE, add=T) # main= main.nms,
+        #
+        graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
+        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=T,#  c(.79, .80, .2, .8)
+                     xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
+                     breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
+                     axis.args=list(at=seq(-1, 1), labels=c(n2, "equal", n1 )))
+      }  # climatic scenario
+
+    }
+    if(save){
+      grDevices::dev.off()
+    }
+    # }
+  }
+
+  for(sp in 1:length(mtp.spl)){ # species
+    thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
+    if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
+    cat(c("\n", "Species: " , names(mtp.spl)[sp]))
+
+    f.plot(sp, mtp.spl, mdl.crit=mdl.crit, t.NMS, t.nms, thrshld.path,
+           comb.plots, thrshld.nms.mod, basemap, make.underscript)
+  }
+}
+
+

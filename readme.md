@@ -139,10 +139,9 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 ```
 
 -----
-### TODO
-# 4. Model Fitting (Calibration)
-#### 4.3 Run top corresponding models and save predictions 
-#### 4.3.1 save maxent best models and predictions for each model
+## ------- 4. Model Fitting (Calibration)
+### ------- 4.3 Run top corresponding models and save predictions 
+#### ------- 4.3.1 save maxent best models and predictions for each model
 
 Now, select maxent model calibrations and predictions using the function mxnt.cp.batch. This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
 
@@ -167,8 +166,8 @@ mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = o
 ```
 
 
-# 4.1 Projection
-#### 4.1. Downloading environmental data
+## -------  4.1 Projection
+### ------- 4.1. Downloading environmental data
 
 For projection it is necessary to download raster files with the environmnetal variables of interest. In this example, a directory called 'rasters' is created. Then, rasters from current and future climatic conditions projected for 2050 and 2070 are downloaded and loaded. Finally, two lists are created, one for current conditions and another for the two future cenarios.
 
@@ -213,70 +212,44 @@ pa.future.l  <- pred.a.batch.mscn(poly.projection, future.l)
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
-current.all<-lapply(mxnt.mdls.preds.lst,function(x)current.l)
-future.all<-lapply(mxnt.mdls.preds.lst,function(x)future.l)
+current.all <- lapply(mxnt.mdls.preds.lst,function(x)current.l)
+future.all <- lapply(mxnt.mdls.preds.lst,function(x)future.l)
 ```
 
-### 4.8 predictions for present, future, and/or past
+### 4.8 projections for present, future, and/or past
 
 Finally, all species can be projected for all cenarios using all models. This is performed by `the mxnt.p.batch.mscn` function. The function has two arguments: 1) Model fit from maxent models within a list (see step 4.3 above) and 2) lists of rasters representing all cenarios to be projected. The last argument must be represented by a list of species. For each species, a list (within the first) is provided with all cenarios to be performed for each species (see last step above).
 
 ```r
-
 # For single or multiple species
-mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = current.all)
-mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf, a.proj.l = future.all)
-plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.pred.current)
+mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.current.l)
+# using a single core (default)
+mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf, a.proj.l = pa.future.l)
+# or using multiple cores
+mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf, a.proj.l = pa.future.l, numCores=2)
 
-# For single species
-mxnt.mdls.preds.cf2 <- mxnt.p.batch(mxnt.mdls.preds.lst, a.proj.l = pa.current.l)
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf2, a.proj.l = pa.future.l)
-plot(mxnt.mdls.preds.cf2$Bvarieg$mxnt.pred.current)
-
+# plot projections
+plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
+plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-#### 6. Using multiple cores (parallel processing)
-#### Create projection with 2 species (same species repeated)
+###  4.8.5 threshold for past and future pred
 
-The same process can be performed using parallel processing. This can dramatially increase processing speed when multiple species are modelled. To exemplify, the polygon with the projection area of a single species is duplicated using the append function. Then, the list of climatic conditions for projection is duplicated. Finally, the maxent model fitted for a single species above is also duplicated.
+We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and 
+apply on the projections.
 
 ```r
-poly.projection.multi <- append(poly.projection, poly.projection)
-
-pa.current.l.multi <- pred.a.batch.mscn(poly.projection.multi, current.l)
-
-mxnt.mdls.preds.lst.multi <- append(mxnt.mdls.preds.lst, mxnt.mdls.preds.lst)
+mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
 ```
 
-We can run the model for both species sequentially (without parallel processing) or simultaneously (parallel processing) and compare the amount of time required to run the model.
-
-#### Run without parallel processing
+#### Plotting one projection for current climate and another for a future climatic scenario
 ```r
-system.time(
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi)
-)
+par(mfrow=c(1,2))
+plot(mods.thrshld.lst$Bvarieg$current$binary$mtp[[1]])
+plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$mtp[[1]])
 ```
 
-#### Run with parallel processing
-
-ps. progress bars are not shown
-
+#### Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-# Using single core (default)
-system.time(
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi)
-)
-
-# Sending each model to one core (best if single or few species with complex models/heavy rasters)
-system.time(
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi, numCores=2)
-)
-
-# Sending each species to one core (best if multiple species)
-system.time(
-mxnt.mdls.preds.cf2 <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst.multi, a.proj.l = pa.current.l.multi, numCores=2,parallelTunning=FALSE)
-)
-
+f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 ```
-
-
