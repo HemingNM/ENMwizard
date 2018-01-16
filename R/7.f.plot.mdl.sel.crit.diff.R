@@ -250,16 +250,21 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
 #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams mxnt.cp
 #' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
+#' @param mod.sel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
+#' Mean.OR10, Mean.ORmin
+#' @param save Export to pdf or not?
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
 #' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 #' @export
-f.plot.scn.diff <- function(mmp.spl, mtp.spl, sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
+f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mmp.spl))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mmp.spl[[1]]$pred.args}
+
+  mdl.crit <- grep(mod.sel, names(mtp.spl[[1]][[1]]$binary[[1]]))
 
   a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
@@ -308,7 +313,7 @@ f.plot.scn.diff <- function(mmp.spl, mtp.spl, sel.clim.scn="current", basemap=NU
         mod.sc2 <- mtp.spl[[sp]][[comb.plots[2,j]]]$binary[[tc]][[mdl.crit]]
 
         r.dif <- raster::overlay(mod.sc1, mod.sc2, fun=function(r1, r2) {r1-r2})
-        thr.CRT <- t.NMS[which(t.nms %in% t.crit)] #}
+        # thr.CRT <- t.NMS[which(t.nms %in% t.crit)] #}
 
         # clim.scn name
         n1 <- names(mtp.spl[[sp]])[comb.plots[1,j]]

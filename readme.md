@@ -12,7 +12,6 @@ ENMwizard is downloadable from https://github.com/HemingNM/ENMwizard. You can do
 ### Installing from GitHub using devtools
 Run the following code from your R console:
 
-
 ```r
 install.packages("devtools")
 library(devtools)
@@ -21,6 +20,11 @@ library(ENMwizard)
 library(raster)
 ```
 
+You also need to install ENMTools from GitHub.
+
+```r
+install_github("danlwarren/ENMTools")
+```
 
 
 ### Install from zip file

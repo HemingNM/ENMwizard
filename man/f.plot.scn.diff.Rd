@@ -4,8 +4,8 @@
 \alias{f.plot.scn.diff}
 \title{Plot differences between climatic scenarios}
 \usage{
-f.plot.scn.diff(mmp.spl, mtp.spl, sel.clim.scn = "current", basemap = NULL,
-  save = F, numCores = 1)
+f.plot.scn.diff(mmp.spl, mtp.spl, mod.sel = "AvgAICc",
+  sel.clim.scn = "current", basemap = NULL, save = F, numCores = 1)
 }
 \arguments{
 \item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
@@ -13,9 +13,14 @@ and model projections for each species.}
 
 \item{mtp.spl}{List of stack or brick of thresholded predictions}
 
+\item{mod.sel}{Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
+Mean.OR10, Mean.ORmin}
+
 \item{sel.clim.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
+
+\item{save}{Export to pdf or not?}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }

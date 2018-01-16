@@ -121,11 +121,12 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 
   # exportar planilha de resultados
   # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
-  xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
+  # xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
+  utils::write.csv(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".csv"))
   res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
   colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAICc", "NP", "Rank", "OR10", "ORLPT", "AUC")
-  xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
-
+  # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
+  utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".csv"))
 
   mod.nms <- paste(xsel.mdls[,"sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])

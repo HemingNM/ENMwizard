@@ -131,8 +131,8 @@ f.area.occ.mscn <- function(mtp.spl, restrict=NULL, digits=0){
     # sp.nm <- names(mtp.spl)[sp]
     areas.occ.df[[sp]] <- as.data.frame(area.occ.spp[[sp]]) #
     colnames(areas.occ.df[[sp]]) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
-    xlsx::write.xlsx(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".xlsx"))
-
+    # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".xlsx"))
+    utils::write.csv(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".csv"))
     # } # species
     return(area.occ.spp[[sp]]) }, mtp.spl, areas, restrict, digits) # species
 
@@ -190,9 +190,12 @@ f.var.ci <- function(mmp.spl){
     # var.cont.df <- var.cont.df[c(1,2,(nrow(var.cont.df)-3):nrow(var.cont.df)),]
     # var.permImp.df <- var.permImp.df[c(1,2,(nrow(var.permImp.df)-3):nrow(var.permImp.df)),]
     var.contPermImp[[sp]] <- array(c(var.cont.df,var.permImp.df), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
-    xlsx::write.xlsx(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.contPermImp.", names((mmp.spl)[sp]), ".xlsx"), sheetName="contribution")
-    xlsx::write.xlsx(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.contPermImp.", names((mmp.spl)[sp]), ".xlsx"), append=T, sheetName="permutation.importance")
+    # xlsx::write.xlsx(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.contPermImp.", names((mmp.spl)[sp]), ".xlsx"), sheetName="contribution")
+    # xlsx::write.xlsx(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.contPermImp.", names((mmp.spl)[sp]), ".xlsx"), append=T, sheetName="permutation.importance")
+    utils::write.csv(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.Contribution.", names((mmp.spl)[sp]), ".csv"))
+    utils::write.csv(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.PermImportance", names((mmp.spl)[sp]), ".csv"))
   }
+
   # var.cont.df
   # var.permImp.df
 
@@ -244,7 +247,8 @@ f.OR <- function(mtp.spl, occ.l, current.pred.nm = "current", digits = 3){ # , s
       } # model criteria
     } # threshold criteria
 
-    xlsx::write.xlsx(round(df.OmR[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/OmRate", sp, ".xlsx")) # reorder ds
+    # xlsx::write.xlsx(round(df.OmR[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/OmRate", sp, ".xlsx")) # reorder ds
+    utils::write.csv(round(df.OmR[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/OmRate", sp, ".csv")) # reorder ds
     # write.xlsx(round(df.FPA[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea", sp, ".xlsx")) # reorder ds
   }
   # if(save){
@@ -253,7 +257,8 @@ f.OR <- function(mtp.spl, occ.l, current.pred.nm = "current", digits = 3){ # , s
     colnames(df.OmR.c)[1:2] <- c("sp", "Model")
     # colnames(df.FPA.c)[1:2] <- c("sp", "Model")
 
-    xlsx::write.xlsx(df.OmR.c, paste0("4_ENMeval.results/OmRate.xlsx")) # reorder ds
+    # xlsx::write.xlsx(df.OmR.c, paste0("4_ENMeval.results/OmRate.xlsx")) # reorder ds
+    utils::write.csv(df.OmR.c, paste0("4_ENMeval.results/OmRate.csv")) # reorder ds
     # xlsx::write.xlsx(df.FPA.c, paste0("4_ENMeval.results/FracPredArea.xlsx")) # reorder ds
   # }
   return(OmR = df.OmR)
@@ -325,8 +330,8 @@ f.FPA <- function(mtp.spl, digits = 3){
       return(fpa.mods.t) }, mtp.spl.sp, sp, digits, df.FPA) # pred.scenario
 
     df.FPA[[sp]][] <- round(array(aperm(simplify2array(fpa.mods.t.p), c(3,2,1))), digits = digits) #,
-    xlsx::write.xlsx(df.FPA[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
-
+    # xlsx::write.xlsx(df.FPA[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
+    utils::write.csv(df.FPA[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea.", sp, ".csv")) # reorder ds
     # areas.occ.df[[sp]] <- as.data.frame(df.FPA[[sp]]) #
     # colnames(areas.occ.df[[sp]]) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
     # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".xlsx"))
