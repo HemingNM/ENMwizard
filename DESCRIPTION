@@ -21,8 +21,6 @@ Imports:
   rgeos,
   maptools,
   fields,
-  xlsx,
-  readxl,
   alphahull,
   igraph,
   methods
