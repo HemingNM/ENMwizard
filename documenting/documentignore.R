@@ -3,9 +3,12 @@
 # devtools::use_vignette("introduction")
 # senha Git: GT!he36
 ## Wickham 2015 R packages (pg 98) Documenting package
+# ?devtools::use_package()
+# devtools::create()
+devtools::use_build_ignore(c("documenting"))
 devtools::document()
-# devtools::load_all()
 devtools::check()
+# devtools::load_all()
 # roxygen2::roxygenise()
 
 # for building windows package

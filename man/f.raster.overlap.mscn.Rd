@@ -25,5 +25,4 @@ See ?ENMTools::raster.overlap for details.
 }
 \examples{
 mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf, scn.nm="current", 1)
-#' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf, scn.nm=c("futAC5085", "futAC7085"), 3)
 }

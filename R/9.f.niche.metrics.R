@@ -13,7 +13,8 @@
 #' for each climatic scenario
 #' @examples
 #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf, scn.nm="current", 1)
-#' #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf, scn.nm=c("futAC5085", "futAC7085"), 3)
+# #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf,
+# #' scn.nm=c("futAC5085", "futAC7085"), 3)
 #' @export
 f.raster.overlap.mscn <- function(mmp.spl, scn.nm="current", model.compare=1){
   clim.scn <- grep(paste(scn.nm, collapse = "|"), names(mmp.spl[[1]]$mxnt.preds))
