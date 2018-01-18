@@ -4,6 +4,7 @@
 # @param o.path Output path
 #' @param lr.nm Polygon output name
 #' @param convex Concave or convex polygon (T or F)
+#' @param save Should save polygons on disk?
 # #' @param alpha see ?alphahull::ashape
 #' @param crs.set set the coordinate reference system (CRS) of the polygons
 #' @inheritParams alphahull::ashape
@@ -12,7 +13,7 @@
 #' occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
 #' plot(occ.poly)
 #' @export
-poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ # , o.path = NULL
+poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, save=T, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
@@ -24,7 +25,7 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
 
     ch <- alphahull::ashape(unique(sp::coordinates(occ.spdf)), alpha=alpha)
     chg <- igraph::graph.edgelist(cbind(as.character(ch$edges[, "ind1"]),
-                               as.character(ch$edges[, "ind2"])), directed = FALSE)
+                                        as.character(ch$edges[, "ind2"])), directed = FALSE)
     if (!igraph::is.connected(chg)) {
       stop("Graph not connected")
     } else if (any(igraph::degree(chg) != 2)) {
@@ -56,7 +57,9 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
   raster::crs(occ.poly) <- raster::crs(crs.set)
   # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
+  if(save){
     raster::shapefile(occ.poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
+  }
   # }
   return(occ.poly)
 }
@@ -76,7 +79,7 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, crs.set = "+proj
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ #, o.path=NULL
+poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, save=T, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ #, o.path=NULL
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   lr.nm <- paste(names(spp.occ.list), "occ.poly", sep = ".")
 
@@ -87,10 +90,14 @@ poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, crs.set = "+p
   for(i in 1:length(spp.occ.list)){
     occ.spdf <- data.frame(spp.occ.list[[i]])
     sp::coordinates(occ.spdf) <- ~LONG+LAT
-    raster::shapefile(occ.spdf , filename = paste(o.path.pts, paste0(paste(names(spp.occ.list), "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
+    if(save){
+      raster::shapefile(occ.spdf, filename = paste(o.path.pts, paste0(paste(names(spp.occ.list)[i], "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
+    }# else {
+    #   raster::shapefile(occ.spdf)
+    # }
     # raster::crs(occ.spdf) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
-    occ.pgns[[i]] <- poly.c(occ.spdf, lr.nm=lr.nm[i], convex=convex, alpha=alpha, crs.set=crs.set) # , o.path=o.path
+    occ.pgns[[i]] <- poly.c(occ.spdf, lr.nm=lr.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
     if(plot){
       sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
       sp::plot(occ.spdf, col="red", add=T)
@@ -167,7 +174,8 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
 
   # create one polygon for each set of points
   spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
-  occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F)
+  names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
+  occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F, save=F)
   occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
   # raster::crs(occ.polys.sp) <- crs.set
   # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
@@ -207,9 +215,9 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
   occ.b <- vector("list", length(occ.polys))
   names(occ.b) <- names(occ.polys)
-  if(dir.exists(o.path)==F) dir.create(o.path)
-  bf.path <- paste(o.path,"bffr", sep = "/" )
-  if(dir.exists(bf.path)==F) dir.create(bf.path)
+  # if(dir.exists(o.path)==F) dir.create(o.path)
+  # bf.path <- paste(o.path,"bffr", sep = "/" )
+  # if(dir.exists(bf.path)==F) dir.create(bf.path)
 
   if(length(mult)==1){ mult <- rep(mult, length(occ.polys))}
   TF.b.w <- is.null(bffr.width)
@@ -271,8 +279,8 @@ env.cut <- function(occ.b, env.uncut){
     # raster::crs(occ.b.env[[i]]) <- raster::crs(env.uncut)
     # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
     occ.b.env[[i]] <- raster::writeRaster(occ.b.env[[i]],
-                                  filename = paste(path.env.out, paste("envData.", names(occ.b.env)[i], ".grd", sep=''), sep='/'),
-                                  format = "raster", overwrite = T)
+                                          filename = paste(path.env.out, paste("envData.", names(occ.b.env)[i], ".grd", sep=''), sep='/'),
+                                          format = "raster", overwrite = T)
     # plot(occ.b.env[[i]])
   }
 
@@ -351,7 +359,7 @@ loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
     out.dir <- "1_sppData/occ.thinned.full"
     for(i in 1:length(occ.list.thin)){
       occ.l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ.thinned", ".thin1.csv"),
-                             header=TRUE, sep=',', stringsAsFactors=F)[2:3]
+                                    header=TRUE, sep=',', stringsAsFactors=F)[2:3]
     }
   } else { # retrieve from thinned obj
     for(i in 1:length(occ.list.thin)){
