@@ -4,7 +4,7 @@
 \alias{poly.c}
 \title{Create polygon based on species occurence coordinates}
 \usage{
-poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10,
+poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10, save = T,
   crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
 }
 \arguments{
@@ -15,6 +15,8 @@ poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10,
 \item{convex}{Concave or convex polygon (T or F)}
 
 \item{alpha}{Value of \eqn{\alpha}.}
+
+\item{save}{Should save polygons on disk?}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }

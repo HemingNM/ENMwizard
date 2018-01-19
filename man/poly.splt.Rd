@@ -4,13 +4,15 @@
 \alias{poly.splt}
 \title{split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
-poly.splt(spp.occ, k = 2, convex = T, alpha = 10, sp.nm = "sp1",
-  crs.set = NULL)
+poly.splt(spp.occ, k = NULL, c.m = "AP", convex = T, alpha = 10,
+  sp.nm = "sp1", crs.set = NULL)
 }
 \arguments{
 \item{spp.occ}{species occurence coordinates}
 
 \item{k}{number of polygons to create based on coordinates}
+
+\item{c.m}{clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).}
 
 \item{convex}{Concave or convex polygon (T or F)}
 

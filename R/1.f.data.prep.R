@@ -173,14 +173,13 @@ poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp
     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
     d <- cbind(spp.occ$LONG, spp.occ$LAT)
     if(c.m == "E"){ ## ELBOW method
-      dist.obj <- dist(d)
-      hclust.obj <- hclust(dist.obj)
+      dist.obj <- stats::dist(d)
+      hclust.obj <- stats::hclust(dist.obj)
       css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
       elbow.obj <- GMD::elbow.batch(css.obj)
       k <- elbow.obj$k
-      clust <- cutree(hclust.obj, k)
+      clust <- stats::cutree(hclust.obj, k)
     } else if (c.m == "AP") { # Affinity Propagation (AP)
-      hclust.obj <- hclust(dist(d))
       apclus <- apcluster::apcluster(apcluster::negDistMat(r=2), d)
       k <- length(apclus@clusters)
       clust <- apclus@idx
@@ -198,8 +197,8 @@ poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp
   } else { # Hierarchical Clustering
     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
     d <- cbind(spp.occ$LONG, spp.occ$LAT)
-    hclust.obj <- hclust(dist(d))
-    clust <- cutree(hclust.obj, k)
+    hclust.obj <- stats::hclust(stats::dist(d))
+    clust <- stats::cutree(hclust.obj, k)
   }
 
   # create one polygon for each set of points

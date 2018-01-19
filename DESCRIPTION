@@ -23,6 +23,8 @@ Imports:
   fields,
   alphahull,
   igraph,
+  GMD,
+  apcluster,
   methods,
   data.table
 Suggests:
@@ -30,7 +32,8 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    parallel
+    parallel,
+    devtools
 Remotes:
     github::danlwarren/ENMTools
 VignetteBuilder: knitr

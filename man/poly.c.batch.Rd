@@ -4,7 +4,7 @@
 \alias{poly.c.batch}
 \title{Create occ polygon for several species}
 \usage{
-poly.c.batch(spp.occ.list, convex = T, alpha = 10, plot = T,
+poly.c.batch(spp.occ.list, convex = T, alpha = 10, plot = T, save = T,
   crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
 }
 \arguments{
@@ -15,6 +15,8 @@ poly.c.batch(spp.occ.list, convex = T, alpha = 10, plot = T,
 \item{alpha}{Value of \eqn{\alpha}.}
 
 \item{plot}{logical. Plot results or not?}
+
+\item{save}{Should save polygons on disk?}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
