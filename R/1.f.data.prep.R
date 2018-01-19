@@ -152,6 +152,7 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
 #'
 #' @param spp.occ species occurence coordinates
 #' @param k number of polygons to create based on coordinates
+#' @param c.m clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).
 #' @inheritParams poly.c
 #' @inheritParams bind.shp
 #' @return spatial polygons built using coordinates
@@ -163,14 +164,43 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys$Bvarieg <- poly.splt(spp.occ = spp.occ.list$Bvarieg, k=5)
 #' @export
-poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL){ # , o.path = "occ.poly"
-  # o.path <- "1_sppData/occ.poly"
-  # if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  # if(dir.exists(o.path)==F) dir.create(o.path)
+poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL){ # , o.path = "occ.poly"
 
-  hc <- stats::hclust(stats::dist(cbind(spp.occ$LONG, spp.occ$LAT)))
-  # plot(hc)
-  clust <- stats::cutree(hc, k)
+  if(is.null(k)){
+    # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
+    # https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
+    # for a package for further improvements see:
+    # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
+    d <- cbind(spp.occ$LONG, spp.occ$LAT)
+    if(c.m == "E"){ ## ELBOW method
+      dist.obj <- dist(d)
+      hclust.obj <- hclust(dist.obj)
+      css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
+      elbow.obj <- GMD::elbow.batch(css.obj)
+      k <- elbow.obj$k
+      clust <- cutree(hclust.obj, k)
+    } else if (c.m == "AP") { # Affinity Propagation (AP)
+      hclust.obj <- hclust(dist(d))
+      apclus <- apcluster::apcluster(apcluster::negDistMat(r=2), d)
+      k <- length(apclus@clusters)
+      clust <- apclus@idx
+      clust <- as.factor(clust)
+      levels(clust) <- 1:k
+      clust <- as.numeric(clust)
+    } else if (c.m == "NB") {
+      stop("Not implemented yet")
+      # nb <- NbClust::NbClust(cbind(spp.occ$LONG, spp.occ$LAT), diss=NULL, distance = "euclidean",
+      #                        min.nc=2, max.nc=15, method = "kmeans",
+      #                        index = "ball", alphaBeale = 0.1)
+      # k <- nb$Best.nc[1]
+      # clust <- nb$Best.partition
+    }
+  } else { # Hierarchical Clustering
+    # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
+    d <- cbind(spp.occ$LONG, spp.occ$LAT)
+    hclust.obj <- hclust(dist(d))
+    clust <- cutree(hclust.obj, k)
+  }
 
   # create one polygon for each set of points
   spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
@@ -186,9 +216,91 @@ poly.splt <- function(spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set =
   return(occ.polys.sp)
 }
 
-
-
-
+# ## for a package see:
+# # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
+#
+# # for methods
+# # nb <- NbClust::NbClust(cbind(spp.occ$LONG, spp.occ$LAT), diss=NULL, distance = "euclidean",
+# #                        min.nc=2, max.nc=15, method = "kmeans",
+# #                        index = "ball", alphaBeale = 0.1)
+# # k <- nb$Best.nc[1]
+# # clust <- nb$Best.partition
+#
+# # elbow.k <- function(mydata){
+# #   dist.obj <- dist(mydata)
+# #   hclust.obj <- hclust(dist.obj)
+# #   css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
+# #   elbow.obj <- GMD::elbow.batch(css.obj)
+# #   k <- elbow.obj$k
+# #   return(k)
+# # }
+# #
+# # elbow.k(cbind(spp.occ.list$Bvarieg$LONG, spp.occ.list$Bvarieg$LAT))
+#
+#
+# d <- cbind(spp.occ.list$Bvarieg$LONG, spp.occ.list$Bvarieg$LAT)
+# apclus <- apcluster::apcluster(apcluster::negDistMat(r=2), d)
+# plot(apclus, d)
+# k <- length(apclus@clusters)
+# clust <- apclus@idx
+#
+# # d <- cbind(spp.occ.list$Bvarieg$LONG, spp.occ.list$Bvarieg$LAT)
+# # hclust.obj <- hclust(dist(d))
+# # clust <- cutree(hclust.obj, k)
+#
+#
+#
+# # function to create N polygons for a species (whenever distribution seems disjoint) and save in a single .shp
+#                       (spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL)
+# poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp1", crs.set = NA){
+#   # We need to create separated polygons, because we don't want such large area without points.
+#
+#   if(is.null(k)){
+#     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
+#     # https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
+#     # for a package for further improvements see:
+#     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
+#     d <- cbind(spp.occ$LONG, spp.occ$LAT)
+#     if(c.m = "E"){ ## ELBOW method
+#       dist.obj <- dist(d)
+#       hclust.obj <- hclust(dist.obj)
+#       css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
+#       elbow.obj <- GMD::elbow.batch(css.obj)
+#       k <- elbow.obj$k
+#       clust <- cutree(hclust.obj, k)
+#     } else if (c.m = "AP") { # Affinity Propagation (AP)
+#       hclust.obj <- hclust(dist(d))
+#       apclus <- apcluster::apcluster(apcluster::negDistMat(r=2), d)
+#       k <- length(apclus@clusters)
+#       clust <- apclus@idx
+#       clust <- as.factor(clust)
+#       levels(clust) <- 1:k
+#       clust <- as.numeric(clust)
+#     }
+#   } else { # Hierarchical Clustering
+#     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
+#     d <- cbind(spp.occ$LONG, spp.occ$LAT)
+#     hclust.obj <- hclust(dist(d))
+#     clust <- cutree(hclust.obj, k)
+#   }
+#
+#
+#   # create one polygon for each set of points
+# spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
+# names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
+# occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F, save=F)
+# occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
+# # raster::crs(occ.polys.sp) <- crs.set
+# # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
+# sp::plot(occ.polys.sp)
+# spp.occ <- as.data.frame(spp.occ)
+# sp::coordinates(spp.occ) <- ~LONG+LAT
+# sp::plot(spp.occ, col="red", add=T)
+# return(occ.polys.sp)
+# }
+#
+#
+#
 
 #' Create buffer based on species polygons
 #'
