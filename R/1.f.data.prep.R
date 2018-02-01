@@ -171,7 +171,11 @@ poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp
     # https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
     # for a package for further improvements see:
     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
-    d <- cbind(spp.occ$LONG, spp.occ$LAT)
+	lon.col <- grep("^lon$|^long$|^longitude$", colnames(spp.occ), ignore.case = T, fixed = F)
+	lon.col <- colnames(spp.occ)[lon.col][1]
+	lat.col <- grep("^lat$|^latitude$", colnames(spp.occ), ignore.case = T)
+	lat.col <- colnames(spp.occ)[lat.col][1]
+    d <- setNames(data.frame(spp.occ[, lon.col], spp.occ[, lat.col]), c(lon.col, lat.col))
     if(c.m == "E"){ ## ELBOW method
       dist.obj <- stats::dist(d)
       hclust.obj <- stats::hclust(dist.obj)
@@ -196,7 +200,7 @@ poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp
     }
   } else { # Hierarchical Clustering
     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
-    d <- cbind(spp.occ$LONG, spp.occ$LAT)
+    # d <- cbind(spp.occ$LONG, spp.occ$LAT)
     hclust.obj <- stats::hclust(stats::dist(d))
     clust <- stats::cutree(hclust.obj, k)
   }
@@ -418,7 +422,7 @@ env.cut <- function(occ.b, env.uncut){
 #' plotThin(thinned.dataset.batch[[1]])
 #' length(thinned.dataset.batch[[1]])
 #' @export
-thin.batch <- function(loc.data.lst, lat.col = "LAT", long.col = "LONG", spec.col = "SPEC",
+thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col = "species",
                        thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
                        write.files = TRUE, max.files = 1, write.log.file = TRUE) {
 
