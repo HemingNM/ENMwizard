@@ -354,7 +354,8 @@ pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm
     prj.nm.j <- paste("", prj.nm, names(env.uncut.l)[j], sep=".")
     # area.p.spi[[j]] <- pred.a.rst(area.p, env.uncut.l[[j]], occ.polys[[1]], mask=mask, prj.nm = prj.nm.j, sp.nm = sp.nm)
     area.p.spi[[j]] <- pred.a(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
-    area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
+    # area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
+    area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(prj.nm, ".", names(env.uncut.l)[j])) )
   } ) )
 
   for(i in 2:length(occ.polys)){

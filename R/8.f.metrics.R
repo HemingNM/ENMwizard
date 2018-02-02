@@ -177,12 +177,12 @@ f.var.ci <- function(mmp.spl){
       var.permImp.df[i,] <- mxnt.mdls[[i]]@results[grepl("permutation.importance", rownames(mxnt.mdls[[i]]@results))]
     }
 
-    var.cont.df <- rbind(Mod.Avg.AICc = apply(var.cont.df[grep("Mod.AICc",mod.nms),], 2,
+    var.cont.df <- rbind(Mod.Avg.AICc = apply(data.frame(var.cont.df[grep("Mod.AICc",mod.nms),]), 2,
                                               function(x) sum(x*w.mdls[grep("Mod.AICc",mod.nms)])),
                          var.cont.df[grep("Mod.Mean.ORmin|Mod.Mean.OR10|Mod.Mean.AUCmin|Mod.Mean.AUC10",mod.nms),],
                          var.cont.df[grep("Mod.AICc",mod.nms),])
 
-    var.permImp.df <- rbind(Mod.Avg.AICc = apply(var.permImp.df[grep("Mod.AICc",mod.nms),], 2,
+    var.permImp.df <- rbind(Mod.Avg.AICc = apply(data.frame(var.permImp.df[grep("Mod.AICc",mod.nms),]), 2,
                                                  function(x) sum(x*w.mdls[grep("Mod.AICc",mod.nms)])),
                             var.permImp.df[grep("Mod.Mean.ORmin|Mod.Mean.OR10|Mod.Mean.AUCmin|Mod.Mean.AUC10",mod.nms),],
                             var.permImp.df[grep("Mod.AICc",mod.nms),])
