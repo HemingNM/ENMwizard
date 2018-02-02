@@ -4,11 +4,11 @@
 \alias{poly.splt}
 \title{split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
-poly.splt(spp.occ, k = NULL, c.m = "AP", convex = T, alpha = 10,
-  sp.nm = "sp1", crs.set = NULL)
+poly.splt(occ.spdf, k = NULL, c.m = "AP", convex = T, alpha = 10,
+  sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
-\item{spp.occ}{species occurence coordinates}
+\item{occ.spdf}{species occurence coordinates}
 
 \item{k}{number of polygons to create based on coordinates}
 
@@ -18,7 +18,9 @@ poly.splt(spp.occ, k = NULL, c.m = "AP", convex = T, alpha = 10,
 
 \item{alpha}{Value of \eqn{\alpha}.}
 
-\item{sp.nm}{name used to save file}
+\item{sp.nm}{Species name, used on saving shapefile}
+
+\item{save}{Should save polygons on disk?}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
@@ -34,5 +36,5 @@ Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)
-occ.polys$Bvarieg <- poly.splt(spp.occ = spp.occ.list$Bvarieg, k=5)
+occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 }

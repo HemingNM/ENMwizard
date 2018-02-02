@@ -4,8 +4,8 @@
 \alias{thin.batch}
 \title{Filter each species' occurence dataset}
 \usage{
-thin.batch(loc.data.lst, lat.col = "LAT", long.col = "LONG",
-  spec.col = "SPEC", thin.par = 10, reps = 10,
+thin.batch(loc.data.lst, lat.col = "lat", long.col = "lon",
+  spec.col = "species", thin.par = 10, reps = 10,
   locs.thinned.list.return = TRUE, write.files = TRUE, max.files = 1,
   write.log.file = TRUE)
 }

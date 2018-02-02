@@ -2,14 +2,17 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{bind.shp}
 \alias{bind.shp}
-\title{bind list of SpatialPolygons into a single SpatialPolygon}
+\title{Bind list of SpatialPolygons into a single SpatialPolygon object}
 \usage{
-bind.shp(files, sp.nm = "sp", crs.set = NULL)
+bind.shp(occ.polys, sp.nm = "sp.nm", save = T,
+  crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
-\item{files}{??}
+\item{occ.polys}{list of SpatialPolygons to bind}
 
-\item{sp.nm}{name used to save file}
+\item{sp.nm}{Species name, used on saving shapefile}
+
+\item{save}{Should save polygons on disk?}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
@@ -17,5 +20,5 @@ bind.shp(files, sp.nm = "sp", crs.set = NULL)
 shapefile with binded polygons
 }
 \description{
-bind list of SpatialPolygons into a single SpatialPolygon
+Bind list of SpatialPolygons into a single SpatialPolygon object
 }

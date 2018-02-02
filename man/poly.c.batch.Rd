@@ -4,11 +4,15 @@
 \alias{poly.c.batch}
 \title{Create occ polygon for several species}
 \usage{
-poly.c.batch(spp.occ.list, convex = T, alpha = 10, plot = T, save = T,
-  crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+poly.c.batch(spp.occ.list, k = 1, c.m = "AP", convex = T, alpha = 10,
+  plot = T, save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
-\item{spp.occ.list}{A named list of spatial data.frame of species occurence points}
+\item{spp.occ.list}{A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"}
+
+\item{k}{number of polygons to create based on coordinates}
+
+\item{c.m}{clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).}
 
 \item{convex}{Concave or convex polygon (T or F)}
 

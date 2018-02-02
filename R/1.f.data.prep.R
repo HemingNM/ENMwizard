@@ -181,7 +181,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @export
 poly.splt <- function(occ.spdf, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
-  d <- coordinates(occ.spdf)
+  d <- sp::coordinates(occ.spdf)
 
   if(k == 0){
     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/

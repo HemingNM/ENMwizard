@@ -4,13 +4,13 @@
 \alias{poly.c}
 \title{Create polygon based on species occurence coordinates}
 \usage{
-poly.c(occ.spdf, lr.nm = "sp.nm", convex = T, alpha = 10, save = T,
-  crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+poly.c(occ.spdf, sp.nm = "sp.nm", convex = T, alpha = 10, save = T,
+  crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
 \item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
 
-\item{lr.nm}{Polygon output name}
+\item{sp.nm}{Species name, used on saving shapefile}
 
 \item{convex}{Concave or convex polygon (T or F)}
 
@@ -27,6 +27,6 @@ spatial polygon of occurencies built using coordinates
 Create polygon based on species occurence coordinates
 }
 \examples{
-occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
+occ.poly <- poly.c(occ.spdf, sp.nm="occ.poly")
 plot(occ.poly)
 }
