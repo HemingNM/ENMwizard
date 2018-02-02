@@ -2,18 +2,18 @@
 #'
 #' @param occ.spdf A spatial data.frame of coordinates, usually species occurence coordinates
 # @param o.path Output path
-#' @param lr.nm Polygon output name
+#' @param sp.nm Species name, used on saving shapefile
 #' @param convex Concave or convex polygon (T or F)
-#' @param save Should save polygons on disk?
-# #' @param alpha see ?alphahull::ashape
-#' @param crs.set set the coordinate reference system (CRS) of the polygons
 #' @inheritParams alphahull::ashape
+# #' @param alpha see ?alphahull::ashape
+#' @param save Should save polygons on disk?
+#' @param crs.set set the coordinate reference system (CRS) of the polygons
 #' @return spatial polygon of occurencies built using coordinates
 #' @examples
-#' occ.poly <- poly.c(occ.spdf, lr.nm="occ.poly")
+#' occ.poly <- poly.c(occ.spdf, sp.nm="occ.poly")
 #' plot(occ.poly)
 #' @export
-poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, save=T, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ # , o.path = NULL
+poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
@@ -57,8 +57,10 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
   raster::crs(occ.poly) <- raster::crs(crs.set)
   # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
+  # sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
+  filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
   if(save){
-    raster::shapefile(occ.poly, filename = paste(o.path, paste0(lr.nm,".shp"), sep = "/" ), overwrite=TRUE)
+    raster::shapefile(occ.poly, filename = filename, overwrite=TRUE)
   }
   # }
   return(occ.poly)
@@ -67,8 +69,9 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 
 #' Create occ polygon for several species
 #'
-#' @param spp.occ.list A named list of spatial data.frame of species occurence points
+#' @param spp.occ.list A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"
 #' @inheritParams poly.c
+#' @inheritParams poly.splt
 #' @param plot logical. Plot results or not?
 #' @return A named list of spatial polygons built using coordinates
 #' @examples
@@ -79,17 +82,24 @@ poly.c <- function(occ.spdf, lr.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, save=T, crs.set = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"){ #, o.path=NULL
+poly.c.batch <- function(spp.occ.list, k=1, c.m="AP", convex=T, alpha=10, plot=T, save=T, crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
-  lr.nm <- paste(names(spp.occ.list), "occ.poly", sep = ".")
+  sp.nm <- names(spp.occ.list)
+  sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
 
   o.path.pts <- "1_sppData/occ.pts"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
   #
   for(i in 1:length(spp.occ.list)){
-    occ.spdf <- data.frame(spp.occ.list[[i]])
-    sp::coordinates(occ.spdf) <- ~LONG+LAT
+    occ.spdf <- spp.occ.list[[i]]
+    if(!class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
+      lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
+      lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
+      sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
+    }
+    # occ.spdf <- data.frame(spp.occ.list[[i]])
+    # sp::coordinates(occ.spdf) <- ~LONG+LAT
     if(save){
       raster::shapefile(occ.spdf, filename = paste(o.path.pts, paste0(paste(names(spp.occ.list)[i], "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
     }# else {
@@ -97,7 +107,12 @@ poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, save=T, crs.s
     # }
     # raster::crs(occ.spdf) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
-    occ.pgns[[i]] <- poly.c(occ.spdf, lr.nm=lr.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
+    if(k == 1){
+      occ.pgns[[i]] <- poly.c(occ.spdf, sp.nm=sp.nm2[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
+    } else if (k != 1) {
+      occ.pgns[[i]] <-  poly.splt(occ.spdf, k=k, c.m=c.m, convex=convex, alpha=alpha, sp.nm=sp.nm2[i], save=save, crs.set=crs.set)
+    }
+
     if(plot){
       sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
       sp::plot(occ.spdf, col="red", add=T)
@@ -108,14 +123,13 @@ poly.c.batch <- function(spp.occ.list, convex=T, alpha=10, plot=T, save=T, crs.s
 }
 
 
-#' bind list of SpatialPolygons into a single SpatialPolygon
+#' Bind list of SpatialPolygons into a single SpatialPolygon object
 #'
-#' @param files ??
-#' @param sp.nm name used to save file
+#' @param occ.polys list of SpatialPolygons to bind
 #' @inheritParams poly.c
 #' @return shapefile with binded polygons
 #' @export
-bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
+bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
@@ -123,9 +137,9 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Get polygons and change IDs
   uid<-1
-  poly.l <- vector("list", length(files))
-  for (i in 1:length(files)) {
-    temp.data <- files[[i]]
+  poly.l <- vector("list", length(occ.polys))
+  for (i in 1:length(occ.polys)) {
+    temp.data <- occ.polys[[i]]
     n <- length(methods::slot(temp.data, "polygons"))
     temp.data <- sp::spChFIDs(temp.data, as.character(uid:(uid+n-1)))
     uid <- uid + n
@@ -138,19 +152,21 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
   # names(poly.data)
   # raster::crs(poly.data) <- crs.set
   # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
-  sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
+  # sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
 
   # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
   # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
-  raster::shapefile(poly.data, filename = filename, overwrite=TRUE)
+  if(save){
+    raster::shapefile(poly.data, filename = filename, overwrite=TRUE)
+   }
   # return(raster::shapefile(x = filename))
   return(poly.data)
 }
 
 #' split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
 #'
-#' @param spp.occ species occurence coordinates
+#' @param occ.spdf species occurence coordinates
 #' @param k number of polygons to create based on coordinates
 #' @param c.m clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).
 #' @inheritParams poly.c
@@ -162,20 +178,21 @@ bind.shp <- function(files, sp.nm="sp", crs.set = NULL){ # , o.path = "occ.poly"
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.polys$Bvarieg <- poly.splt(spp.occ = spp.occ.list$Bvarieg, k=5)
+#' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @export
-poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL){ # , o.path = "occ.poly"
+poly.splt <- function(occ.spdf, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
+  d <- coordinates(occ.spdf)
 
-  if(is.null(k)){
+  if(k == 0){
     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
     # https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
     # for a package for further improvements see:
     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
-	lon.col <- grep("^lon$|^long$|^longitude$", colnames(spp.occ), ignore.case = T, fixed = F)
-	lon.col <- colnames(spp.occ)[lon.col][1]
-	lat.col <- grep("^lat$|^latitude$", colnames(spp.occ), ignore.case = T)
-	lat.col <- colnames(spp.occ)[lat.col][1]
-    d <- setNames(data.frame(spp.occ[, lon.col], spp.occ[, lat.col]), c(lon.col, lat.col))
+    # 	lon.col <- grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)
+    # 	lon.col <- colnames(occ.spdf)[lon.col][1]
+    # 	lat.col <- grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)
+    # 	lat.col <- colnames(occ.spdf)[lat.col][1]
+    #     d <- setNames(data.frame(occ.spdf[, lon.col], occ.spdf[, lat.col]), c(lon.col, lat.col))
     if(c.m == "E"){ ## ELBOW method
       dist.obj <- stats::dist(d)
       hclust.obj <- stats::hclust(dist.obj)
@@ -192,7 +209,7 @@ poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp
       clust <- as.numeric(clust)
     } else if (c.m == "NB") {
       stop("Not implemented yet")
-      # nb <- NbClust::NbClust(cbind(spp.occ$LONG, spp.occ$LAT), diss=NULL, distance = "euclidean",
+      # nb <- NbClust::NbClust(cbind(occ.spdf$LONG, occ.spdf$LAT), diss=NULL, distance = "euclidean",
       #                        min.nc=2, max.nc=15, method = "kmeans",
       #                        index = "ball", alphaBeale = 0.1)
       # k <- nb$Best.nc[1]
@@ -200,22 +217,22 @@ poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp
     }
   } else { # Hierarchical Clustering
     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
-    # d <- cbind(spp.occ$LONG, spp.occ$LAT)
+    # d <- cbind(occ.spdf$LONG, occ.spdf$LAT)
     hclust.obj <- stats::hclust(stats::dist(d))
     clust <- stats::cutree(hclust.obj, k)
   }
 
   # create one polygon for each set of points
-  spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
+  spp.k.list <- lapply(1:k, function(i){occ.spdf[clust==i,]})
   names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
-  occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F, save=F)
-  occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
+  occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=F, save=F)
+  occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
   # raster::crs(occ.polys.sp) <- crs.set
   # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
-  sp::plot(occ.polys.sp)
-  spp.occ <- as.data.frame(spp.occ)
-  sp::coordinates(spp.occ) <- ~LONG+LAT
-  sp::plot(spp.occ, col="red", add=T)
+  #  sp::plot(occ.polys.sp)
+  # occ.spdf <- as.data.frame(occ.spdf)
+  # sp::coordinates(occ.spdf) <- ~LONG+LAT
+  #  sp::plot(occ.spdf, col="red", add=T)
   return(occ.polys.sp)
 }
 
