@@ -227,9 +227,16 @@ f.OR <- function(mtp.spl, occ.l, current.pred.nm = "current", digits = 3){ # , s
   df.OmR <- vector("list")
   # df.FPA <- df.OmR
   for(sp in names(mtp.spl)){ # species
-    extr.OBS <- as.data.frame(occ.l[[sp]])
-    N.pts <- nrow(extr.OBS)
-    sp::coordinates(extr.OBS) <- ~LONG+LAT
+    occ.spdf <- occ.l[[sp]]
+    if(!class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
+      lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
+      lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
+      sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
+    }
+    N.pts <- length(occ.spdf)
+    # occ.spdf <- as.data.frame(occ.l[[sp]])
+    # N.pts <- nrow(occ.spdf)
+    # sp::coordinates(occ.spdf) <- ~LONG+LAT
     ci <- grep(current.pred.nm, names(mtp.spl[[sp]]))
     trlds <- names(mtp.spl[[sp]][[ci]]$binary)
     thrshld.nms <- paste0(".", trlds, collapse = "|") # c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
@@ -243,7 +250,7 @@ f.OR <- function(mtp.spl, occ.l, current.pred.nm = "current", digits = 3){ # , s
 
     for(t in names(mtp.spl[[sp]][[ci]]$binary)){ # threshold criteria
       for(m in 1:raster::nlayers(mtp.spl[[sp]][[ci]]$binary[[t]])){ # model criteria
-        df.OmR[[sp]][m, t] <- (1-(sum(raster::extract(mtp.spl[[sp]][[ci]]$binary[[t]][[m]], extr.OBS), na.rm = T)/N.pts) )
+        df.OmR[[sp]][m, t] <- (1-(sum(raster::extract(mtp.spl[[sp]][[ci]]$binary[[t]][[m]], occ.spdf), na.rm = T)/N.pts) )
       } # model criteria
     } # threshold criteria
 
