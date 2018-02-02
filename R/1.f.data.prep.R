@@ -57,7 +57,7 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
   raster::crs(occ.poly) <- raster::crs(crs.set)
   # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
-  # sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
+  sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
   if(save){
     raster::shapefile(occ.poly, filename = filename, overwrite=TRUE)
@@ -85,7 +85,7 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 poly.c.batch <- function(spp.occ.list, k=1, c.m="AP", convex=T, alpha=10, plot=T, save=T, crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   sp.nm <- names(spp.occ.list)
-  sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
+  # sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
 
   o.path.pts <- "1_sppData/occ.pts"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
@@ -108,9 +108,9 @@ poly.c.batch <- function(spp.occ.list, k=1, c.m="AP", convex=T, alpha=10, plot=T
     # raster::crs(occ.spdf) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
     if(k == 1){
-      occ.pgns[[i]] <- poly.c(occ.spdf, sp.nm=sp.nm2[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
+      occ.pgns[[i]] <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
     } else if (k != 1) {
-      occ.pgns[[i]] <-  poly.splt(occ.spdf, k=k, c.m=c.m, convex=convex, alpha=alpha, sp.nm=sp.nm2[i], save=save, crs.set=crs.set)
+      occ.pgns[[i]] <-  poly.splt(occ.spdf, k=k, c.m=c.m, convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
     }
 
     if(plot){
@@ -152,7 +152,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
   # names(poly.data)
   # raster::crs(poly.data) <- crs.set
   # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
-  # sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
+  sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
 
   # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
