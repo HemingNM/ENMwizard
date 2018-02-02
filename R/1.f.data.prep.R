@@ -450,7 +450,7 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
   spp <- names(loc.data.lst)
 
   t.loc <- function(i, loc.data.lst,  spp, ...){
-    spThin::thin(loc.data.lst[[i]],
+    spThin::thin(as.data.frame(loc.data.lst[[i]]),
                  lat.col = lat.col, long.col = long.col,
                  spec.col = spec.col,
                  thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
