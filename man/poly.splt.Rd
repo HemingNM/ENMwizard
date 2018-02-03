@@ -4,7 +4,9 @@
 \alias{poly.splt}
 \title{split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
-poly.splt(occ.spdf, k = NULL, c.m = "AP", convex = T, alpha = 10,
+poly.splt(occ.spdf, k = NULL, c.m = "AP", r = 2, q = 0.3,
+  distance = "euclidean", min.nc = 2, max.nc = 20, method = "mcquitty",
+  index = "all", alphaBeale = 0.1, convex = T, alpha = 10,
   sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
@@ -13,6 +15,33 @@ poly.splt(occ.spdf, k = NULL, c.m = "AP", convex = T, alpha = 10,
 \item{k}{number of polygons to create based on coordinates}
 
 \item{c.m}{clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).}
+
+\item{r}{exponent (see details below)}
+
+\item{q}{if \code{p=NA}, exemplar preferences are initialized
+    according to the distribution of non-Inf values in \code{s}.
+    If \code{q=NA}, exemplar preferences are set to the median
+    of non-Inf values in \code{s}. If \code{q} is a value
+    between 0 and 1, the sample quantile with threshold
+    \code{q} is used, whereas \code{q=0.5} again results in
+    the median.}
+
+\item{distance}{the distance measure to be used to compute the dissimilarity matrix. This must be one of: "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski" or "NULL". By default, distance="euclidean". 
+If the distance is "NULL", the dissimilarity matrix (diss) should be given by the user. If distance is not "NULL", the dissimilarity matrix should be "NULL".}
+
+\item{min.nc}{minimal number of clusters, between 1  and (number of objects - 1)}
+
+\item{max.nc}{maximal number of clusters, between 2 and (number of objects - 1), greater or equal to min.nc. By default, max.nc=15.}
+
+\item{method}{type of distance measure to be used; for \code{negDistMat},
+    \code{expSimMat} and \code{linSimMat}, this argument is analogous to the
+    \code{method} argument of \code{\link[stats:dist]{dist}}.
+    For \code{corSimMat}, this argument is analogous to the \code{method}
+    argument of \code{\link[stats:cor]{cor}}.}
+
+\item{index}{the index to be calculated. This should be one of : "kl", "ch", "hartigan", "ccc", "scott", "marriot", "trcovw", "tracew", "friedman",  "rubin", "cindex",  "db", "silhouette", "duda", "pseudot2", "beale",  "ratkowsky", "ball", "ptbiserial", "gap", "frey", "mcclain", "gamma", "gplus", "tau", "dunn", "hubert", "sdindex", "dindex", "sdbw", "all" (all indices except GAP, Gamma, Gplus and Tau), "alllong" (all indices with Gap, Gamma, Gplus and Tau included).}
+
+\item{alphaBeale}{significance value for Beale's index.}
 
 \item{convex}{Concave or convex polygon (T or F)}
 

@@ -25,6 +25,7 @@ Imports:
   igraph,
   GMD,
   apcluster,
+  NbClust,
   methods,
   data.table
 Suggests:

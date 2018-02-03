@@ -82,7 +82,11 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, k=1, c.m="AP", convex=T, alpha=10, plot=T, save=T, crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
+poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
+                         distance = "euclidean", min.nc = 2, max.nc = 20,
+                         method = "mcquitty", index = "all", alphaBeale = 0.1,
+                         convex = T, alpha = 10, plot = T, save = T, crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
+
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   sp.nm <- names(spp.occ.list)
   # sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
@@ -110,7 +114,10 @@ poly.c.batch <- function(spp.occ.list, k=1, c.m="AP", convex=T, alpha=10, plot=T
     if(k == 1){
       occ.pgns[[i]] <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
     } else if (k != 1) {
-      occ.pgns[[i]] <-  poly.splt(occ.spdf, k=k, c.m=c.m, convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
+      occ.pgns[[i]] <-  poly.splt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
+                                  distance = distance, min.nc = min.nc, max.nc = max.nc,
+                                  method = method, index = index, alphaBeale = alphaBeale,
+                                  convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
     }
 
     if(plot){
@@ -171,6 +178,9 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' @param c.m clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).
 #' @inheritParams poly.c
 #' @inheritParams bind.shp
+#' @inheritParams apcluster::negDistMat
+#' @inheritParams apcluster::apcluster
+#' @inheritParams NbClust::NbClust
 #' @return spatial polygons built using coordinates
 #' @examples
 #' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
@@ -180,7 +190,10 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @export
-poly.splt <- function(occ.spdf, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
+poly.splt <- function(occ.spdf, k=NULL, c.m = "AP", r = 2, q = 0.3,
+                      distance = "euclidean", min.nc = 2, max.nc = 20,
+                      method = "mcquitty", index = "all", alphaBeale = 0.1,
+                      convex=T, alpha=10, sp.nm = "sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   d <- sp::coordinates(occ.spdf)
 
   if(k == 0){
@@ -188,11 +201,7 @@ poly.splt <- function(occ.spdf, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "s
     # https://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
     # for a package for further improvements see:
     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
-    # 	lon.col <- grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)
-    # 	lon.col <- colnames(occ.spdf)[lon.col][1]
-    # 	lat.col <- grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)
-    # 	lat.col <- colnames(occ.spdf)[lat.col][1]
-    #     d <- setNames(data.frame(occ.spdf[, lon.col], occ.spdf[, lat.col]), c(lon.col, lat.col))
+
     if(c.m == "E"){ ## ELBOW method
       dist.obj <- stats::dist(d)
       hclust.obj <- stats::hclust(dist.obj)
@@ -201,19 +210,21 @@ poly.splt <- function(occ.spdf, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "s
       k <- elbow.obj$k
       clust <- stats::cutree(hclust.obj, k)
     } else if (c.m == "AP") { # Affinity Propagation (AP)
-      apclus <- apcluster::apcluster(apcluster::negDistMat(r=2), d)
+      apclus <- apcluster::apcluster(apcluster::negDistMat(r=r), d)
+      # apclus <- apcluster::apcluster(apcluster::expSimMat(r=2, w=10), d)
+      apclus <- apcluster::apcluster(apclus@sim, q=q)
+      length(apclus@clusters)
       k <- length(apclus@clusters)
       clust <- apclus@idx
       clust <- as.factor(clust)
       levels(clust) <- 1:k
       clust <- as.numeric(clust)
     } else if (c.m == "NB") {
-      stop("Not implemented yet")
-      # nb <- NbClust::NbClust(cbind(occ.spdf$LONG, occ.spdf$LAT), diss=NULL, distance = "euclidean",
-      #                        min.nc=2, max.nc=15, method = "kmeans",
-      #                        index = "ball", alphaBeale = 0.1)
-      # k <- nb$Best.nc[1]
-      # clust <- nb$Best.partition
+      # stop("Not implemented yet")
+      nb <- NbClust::NbClust(d, distance = distance, min.nc = min.nc, max.nc = max.nc,
+                             method = method, index = index, alphaBeale = 0.1)
+      clust <- nb$Best.partition
+      k <- length(unique(clust))
     }
   } else { # Hierarchical Clustering
     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
