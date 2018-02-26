@@ -1,23 +1,25 @@
 ### 4.8 predictions for future and past
 ### functions to predict areas based on fitted models
-## TODO remove arg "pred.args", replace by mxnt.c.mdls$pred.args
+## TODO remove arg "pred.args", replace by mcm$pred.args
 ## TODO remove args "wAICsum", "randomseed", "responsecurves", "arg1", and "arg2", by storing it on
-# replace by mxnt.c.mdls$pred.args
+# replace by mcm$pred.args
 
-#' Projecting calibrated MaxEnt models
+#' Projecting Calibrated MaxEnt Models
 #'
 #' This function will read an object returned by "mxnt.cp", read the calibrated models and project into
 #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
 #' the original object
-#' @param mxnt.c.mdls Objects returned by "mxnt.cp", containing calibrated models.
+#' @param mcm Objects returned by "mxnt.cp", containing calibrated models.
 #' @param pred.nm Character. Prefix to add to projection name (e.g. "fut" or "past")
 #' @param a.proj A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict
 # #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.cp
 #' @return A list containing all the items returned from function "mxnt.cp", plus the projection specified in a.proj.
+#' Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
+#' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
 # #' @examples
 #' @export
-mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=1,parallelTunning=TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
+mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=1,parallelTunning=TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
                         # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                         # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
 
@@ -25,12 +27,12 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
-  pred.args <- mxnt.c.mdls$pred.args
+  pred.args <- mcm$pred.args
 
-  xsel.mdls <- mxnt.c.mdls$selected.mdls # mdl.arg[[2]]
+  xsel.mdls <- mcm$selected.mdls # mdl.arg[[2]]
   f <- factor(xsel.mdls$features)
   beta <- xsel.mdls$rm
-  args.all <- mxnt.c.mdls$mxnt.args
+  args.all <- mcm$mxnt.args
   args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
   print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
 
@@ -46,7 +48,7 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 
   if(dir.exists(paste(path.mdls, outpt, sep='/'))==FALSE) dir.create(paste(path.mdls, outpt, sep='/'))
 
-  mxnt.mdls <- mxnt.c.mdls$mxnt.mdls
+  mxnt.mdls <- mcm$mxnt.mdls
 
   # if(pred.nm != "") {pred.nm <- paste0(".", pred.nm)}
 
@@ -133,15 +135,15 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
   }
 
   # also changed line 51
-  # mxnt.c.mdls <- append(mxnt.c.mdls, stats::setNames(list(mod.preds) , paste0("mxnt.preds", pred.nm)))
+  # mcm <- append(mcm, stats::setNames(list(mod.preds) , paste0("mxnt.preds", pred.nm)))
 
-  # if(is.null(mxnt.c.mdls$mxnt.preds)){
-  #   mxnt.c.mdls$mxnt.preds <- stats::setNames(list(mod.preds) , paste0(pred.nm))
+  # if(is.null(mcm$mxnt.preds)){
+  #   mcm$mxnt.preds <- stats::setNames(list(mod.preds) , paste0(pred.nm))
   # } else {
-    mxnt.c.mdls$mxnt.preds <- append(mxnt.c.mdls$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))
+    mcm$mxnt.preds <- append(mcm$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))
   # }
 
-  return(mxnt.c.mdls)
+  return(mcm)
 }
 
 # #### for several species
@@ -150,39 +152,39 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 # #' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
 # #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
 # #' each element (species) the original object
-# #' @param mxnt.c.mdls.lst A list of objects returned by "mxnt.cp", containing calibrated models.
+# #' @param mcm.l A list of objects returned by "mxnt.cp", containing calibrated models.
 # #' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
 # #' @inheritParams mxnt.p
 # #' @inheritParams mxnt.cp.batch
 # #' @return A list of objects returned from function "mxnt.p"
 # #' @examples
-# #' mxnt.mdls.preds <- mxnt.p.batch(mxnt.c.mdls.lst = mxnt.mdls.preds.lst[1],
+# #' mxnt.mdls.preds <- mxnt.p.batch(mcm.l = mxnt.mdls.preds.lst[1],
 # #                                     pred.nm ="fut", a.proj.l = areas.projection)
 # #' @export
-# mxnt.p.batch <- function(mxnt.c.mdls.lst, pred.nm="fut", a.proj.l, formt = "raster",numCores=1){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+# mxnt.p.batch <- function(mcm.l, pred.nm="fut", a.proj.l, formt = "raster",numCores=1){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
 #                               # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
 #                               # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 #'
 #   # path.res <- "4_ENMeval.results"
 #   # if(dir.exists(path.res)==F) dir.create(path.res)
-#   # path.mdls <- paste(path.res, paste0("Mdls.", names(mxnt.c.mdls.lst)), sep="/")
-#   mxnt.preds.lst <- vector("list", length(mxnt.c.mdls.lst))
-#   names(mxnt.preds.lst) <- names(mxnt.c.mdls.lst)
-#   for(i in 1:length(mxnt.preds.lst)){
+#   # path.mdls <- paste(path.res, paste0("Mdls.", names(mcm.l)), sep="/")
+#   mcmp.l <- vector("list", length(mcm.l))
+#   names(mcmp.l) <- names(mcm.l)
+#   for(i in 1:length(mcmp.l)){
 #     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
-#     cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
-#     # print(paste(names(mxnt.c.mdls.lst)[i]))
+#     cat(c(names(mcm.l)[i], "\n"))
+#     # print(paste(names(mcm.l)[i]))
 #     # compute final models and predictions
-#     mxnt.preds.lst[[i]] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls.lst[[i]], #ENMeval.occ.results = ENMeval.occ.results.lst[[i]],
-#                                   sp.nm = names(mxnt.c.mdls.lst)[i], pred.nm = pred.nm, a.proj = a.proj.l[[i]],
+#     mcmp.l[[i]] <- mxnt.p(mcm = mcm.l[[i]], #ENMeval.occ.results = ENMeval.occ.results.lst[[i]],
+#                                   sp.nm = names(mcm.l)[i], pred.nm = pred.nm, a.proj = a.proj.l[[i]],
 #                                        # occ.b.env = occ.b.env.lst[[i]], occ.locs = occ.locs.lst[[i]],
 #                                   formt = formt,
 #                                   numCores=numCores) # , #pred.args = pred.args,
 #                                        # wAICsum = wAICsum,
 #                                        # randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2)
-#     # mxnt.c.mdls.lst[[i]]$pred.args <- pred.args
+#     # mcm.l[[i]]$pred.args <- pred.args
 #   }
-#   return(mxnt.preds.lst)
+#   return(mcmp.l)
 #   }
 
 
@@ -192,59 +194,59 @@ mxnt.p <- function(mxnt.c.mdls, sp.nm, pred.nm="fut", a.proj, formt = "raster",n
 #' This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
 #' several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
 #' each element (species) the original object.
-#' @param mxnt.c.mdls.lst A list of objects returned by "mxnt.cp", containing calibrated models.
+#' @param mcm.l A list of objects returned by "mxnt.cp", containing calibrated models.
 #' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
 #' @inheritParams mxnt.p
 #' @inheritParams mxnt.cp.batch
-#' @return A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
+#' @return A 'mcmp.spl' object. A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
 #' @examples
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
 
-mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores=1, parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
-  mdl.names <- names(mxnt.c.mdls.lst)
+mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores=1, parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+  mdl.names <- names(mcm.l)
 
   if(numCores>1 & parallelTunning==FALSE){
 
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.p"))
 
-    mxnt.preds.lst <- parallel::clusterApply(cl, seq_along(mxnt.c.mdls.lst),
+    mcmp.l <- parallel::clusterApply(cl, seq_along(mcm.l),
 
-                                    function(i, a.proj.l, mxnt.c.mdls.lst, formt){
+                                    function(i, a.proj.l, mcm.l, formt){
                                       mxnt.preds.spi <- list()
-                                      mxnt.c.mdls <- mxnt.c.mdls.lst[[i]]
-                                      sp.nm <- names(mxnt.c.mdls.lst)[i]
+                                      mcm <- mcm.l[[i]]
+                                      sp.nm <- names(mcm.l)[i]
                                       pred.nm <- names(a.proj.l[[i]])
                                       a.proj = a.proj.l[[i]]
 
                                        for(j in 1:length(a.proj)){
-                                         mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
+                                         mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                                      sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                                      a.proj = a.proj[[j]],
                                                                      formt = formt,parallelTunning=parallelTunning,
-                                                                     numCores = numCores)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
+                                                                     numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                                        }
                                       names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                   # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                   # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                   mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                   # resu <- mxnt.c.mdls.lst[[i]]
-                   return(mxnt.c.mdls.lst[[i]])}, a.proj.l, mxnt.c.mdls.lst, formt)
+                   # resu <- append(mcm.l[[i]], mxnt.preds.spi)
+                   # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
+                   mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+                   # resu <- mcm.l[[i]]
+                   return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
 
 
     parallel::stopCluster(cl)
 
   }else{
 
-    mxnt.preds.lst <- lapply(seq_along(mxnt.c.mdls.lst),
+    mcmp.l <- lapply(seq_along(mcm.l),
 
-                              function(i,a.proj.l,mxnt.c.mdls.lst,formt){
-                                cat(c(names(mxnt.c.mdls.lst)[i], "\n"))
+                              function(i,a.proj.l,mcm.l,formt){
+                                cat(c(names(mcm.l)[i], "\n"))
                                 mxnt.preds.spi <- list()
-                                mxnt.c.mdls <- mxnt.c.mdls.lst[[i]]
-                                sp.nm <- names(mxnt.c.mdls.lst)[i]
+                                mcm <- mcm.l[[i]]
+                                sp.nm <- names(mcm.l)[i]
                                 pred.nm <- names(a.proj.l[[i]])
                                 a.proj <- a.proj.l[[i]]
 
@@ -252,25 +254,25 @@ mxnt.p.batch.mscn <- function(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCo
                                   cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
                                         "projection ", j, " of ", length(a.proj), "\n"))
 
-                                  mxnt.preds.spi[j] <- mxnt.p(mxnt.c.mdls = mxnt.c.mdls,
+                                  mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                               sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                               a.proj = a.proj[[j]],
                                                               formt = formt,parallelTunning=parallelTunning,
-                                                              numCores = numCores)$mxnt.preds[length(mxnt.c.mdls$mxnt.preds) + 1]
+                                                              numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                                 }
                                 names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                                # resu <- append(mxnt.c.mdls.lst[[i]], mxnt.preds.spi)
-                                # mxnt.c.mdls.lst[[i]]$mxnt.preds <- mxnt.preds.spi
-                                mxnt.c.mdls.lst[[i]]$mxnt.preds <- append(mxnt.c.mdls.lst[[i]]$mxnt.preds, mxnt.preds.spi)
-                                # resu <- mxnt.c.mdls.lst[[i]]
-                                return(mxnt.c.mdls.lst[[i]])}, a.proj.l, mxnt.c.mdls.lst, formt)
+                                # resu <- append(mcm.l[[i]], mxnt.preds.spi)
+                                # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
+                                mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+                                # resu <- mcm.l[[i]]
+                                return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
 
   }
 
-  # names(mxnt.c.mdls.lst) <- mdl.names
-  names(mxnt.preds.lst) <- mdl.names
+  # names(mcm.l) <- mdl.names
+  names(mcmp.l) <- mdl.names
 
-  # return(mxnt.c.mdls.lst)
-  return(mxnt.preds.lst)
+  # return(mcm.l)
+  return(mcmp.l)
 }

@@ -130,50 +130,8 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 }
 
 
-#' Bind list of SpatialPolygons into a single SpatialPolygon object
+#' Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
 #'
-#' @param occ.polys list of SpatialPolygons to bind
-#' @inheritParams poly.c
-#' @return shapefile with binded polygons
-#' @export
-bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
-  o.path <- "1_sppData/occ.poly"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  if(dir.exists(o.path)==F) dir.create(o.path)
-
-  # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
-  # Get polygons and change IDs
-  uid<-1
-  poly.l <- vector("list", length(occ.polys))
-  for (i in 1:length(occ.polys)) {
-    temp.data <- occ.polys[[i]]
-    n <- length(methods::slot(temp.data, "polygons"))
-    temp.data <- sp::spChFIDs(temp.data, as.character(uid:(uid+n-1)))
-    uid <- uid + n
-    poly.l[[i]] <- temp.data
-    # poly.data <- spRbind(poly.data,temp.data)
-  }
-
-  # mapunit polygoan: combin remaining  polygons with first polygoan
-  poly.data <- do.call(raster::bind, poly.l)
-  # names(poly.data)
-  # raster::crs(poly.data) <- crs.set
-  # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
-  sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
-  filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
-
-  # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
-  # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
-  if(save){
-    raster::shapefile(poly.data, filename = filename, overwrite=TRUE)
-   }
-  # return(raster::shapefile(x = filename))
-  return(poly.data)
-}
-
-#' split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
-#'
-#' @param occ.spdf species occurence coordinates
 #' @param k number of polygons to create based on coordinates
 #' @param c.m clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).
 #' @inheritParams poly.c
@@ -330,8 +288,49 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "AP", r = 2, q = 0.3,
 # return(occ.polys.sp)
 # }
 #
-#
-#
+
+
+#' Bind list of SpatialPolygons into a single SpatialPolygon object
+#'
+#' @param occ.polys list of SpatialPolygons to bind
+#' @inheritParams poly.c
+#' @return shapefile with binded polygons
+#' @export
+bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
+  o.path <- "1_sppData/occ.poly"
+  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
+  if(dir.exists(o.path)==F) dir.create(o.path)
+
+  # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
+  # Get polygons and change IDs
+  uid<-1
+  poly.l <- vector("list", length(occ.polys))
+  for (i in 1:length(occ.polys)) {
+    temp.data <- occ.polys[[i]]
+    n <- length(methods::slot(temp.data, "polygons"))
+    temp.data <- sp::spChFIDs(temp.data, as.character(uid:(uid+n-1)))
+    uid <- uid + n
+    poly.l[[i]] <- temp.data
+    # poly.data <- spRbind(poly.data,temp.data)
+  }
+
+  # mapunit polygoan: combin remaining  polygons with first polygoan
+  poly.data <- do.call(raster::bind, poly.l)
+  # names(poly.data)
+  # raster::crs(poly.data) <- crs.set
+  # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
+  sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
+  filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
+
+  # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
+  # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
+  if(save){
+    raster::shapefile(poly.data, filename = filename, overwrite=TRUE)
+  }
+  # return(raster::shapefile(x = filename))
+  return(poly.data)
+}
+
 
 #' Create buffer based on species polygons
 #'
@@ -434,16 +433,10 @@ env.cut <- function(occ.b, env.uncut){
 
 #' Filter each species' occurence dataset
 #'
-#' @param loc.data.lst Named list containing species occ data
-#' @param lat.col See ?thin of spThin package
-#' @param long.col See ?thin of spThin package
-#' @param spec.col See ?thin of spThin package
-#' @param thin.par See ?thin of spThin package
-#' @param reps See ?thin of spThin package
-#' @param locs.thinned.list.return See ?thin of spThin package
-#' @param write.files See ?thin of spThin package
-#' @param max.files See ?thin of spThin package
-#' @param write.log.file See ?thin of spThin package
+#' @param loc.data.lst Named list containing data.frames of species occurence locations.
+#' Each data.frame can include several columnns, but must include at minimum a column
+#' of latitude and a column of longitude values
+#' @inheritParams spThin::thin
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
 #' thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)

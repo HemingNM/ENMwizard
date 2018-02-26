@@ -31,20 +31,20 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
 #' @inheritParams f.thr.batch
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
-#' @param mtp.spl List of stack or brick of thresholded predictions
+#' @param mtp.l List of stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
 #' @return won't return any object. Will save pdf's with differences among model predictions
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 #' @export
-f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL){ #, pred.nm=""
+f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
-  path.sp.m <- paste0("Mdls.", names(mmp.spl))
+  path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
-  pred.args <- mmp.spl[[1]]$pred.args}
+  pred.args <- mcmp.l[[1]]$pred.args}
 
-  comb.plots <- utils::combn(raster::nlayers(mtp.spl[[1]]$continuous[[2]]), 2)
+  comb.plots <- utils::combn(raster::nlayers(mtp.l[[1]]$continuous[[2]]), 2)
 
   # unlist(strsplit(names(mods.thrshld$binary[[2]]), "."))
 
@@ -58,11 +58,11 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL){ #, pred.nm=""
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
   # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
-  for(i in 1:length(mtp.spl)){ # species
+  for(i in 1:length(mtp.l)){ # species
     thrshld.path <- paste(path.mdls[i], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
 
-    mods.thrshld <- mtp.spl[[i]]
+    mods.thrshld <- mtp.l[[i]]
 
     for(l in 1:length(mods.thrshld$binary)){ # threshold criteria
       thr.crt <- grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=T)
@@ -111,12 +111,12 @@ f.plot.mxnt.preds <- function(mmp.spl, mtp.spl, basemap=NULL){ #, pred.nm=""
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
 #' @export
-f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
+f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
-  path.sp.m <- paste0("Mdls.", names(mmp.spl))
+  path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
-  pred.args <- mmp.spl[[1]]$pred.args}
+  pred.args <- mcmp.l[[1]]$pred.args}
 
   a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
@@ -126,7 +126,7 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
            "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
            "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 
-  comb.plots <- utils::combn(raster::nlayers(mtp.spl[[1]][[1]]$binary[[1]]), 2)
+  comb.plots <- utils::combn(raster::nlayers(mtp.l[[1]][[1]]$binary[[1]]), 2)
 
   # unlist(strsplit(names(mods.thrshld$binary[[2]]), "."))
 
@@ -142,17 +142,17 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
   # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
   # cat(c("\n"))
-  for(sp in 1:length(mtp.spl)){ # species
+  for(sp in 1:length(mtp.l)){ # species
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
-    cat(c("\n", "Species: " , names(mtp.spl)[sp]))
+    cat(c("\n", "Species: " , names(mtp.l)[sp]))
     # cat(c("\n", "Climatic Scenario:"))
     ## TODO use mclapply
 
-    f.plot <- function(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+    f.plot <- function(sc, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                        comb.plots, thrshld.nms.mod, basemap, make.underscript) {
-      # for(sc in names(mtp.spl[[sp]])){ # climatic scenario
-      mods.thrshld <- mtp.spl[[sp]][[sc]]
+      # for(sc in names(mtp.l[[sp]])){ # climatic scenario
+      mods.thrshld <- mtp.l[[sp]][[sc]]
       cat(c("\n", "Climatic Scenario: ", sc))
       cat(c("\n", "Threshold Criterion: "))
 
@@ -188,7 +188,7 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
 
             sc1 <- gsub("mxnt.pred.fut.|mxnt.pred.past.", "", sc)
             if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] } # {paste0(scb[which(sca %in% sc1)], " (", sc, ")")} else {sc1 <- sc1}
-            # title(paste0("Species: " , names(mtp.spl)[sp]), line = 3.5, outer = T, cex.main=2)
+            # title(paste0("Species: " , names(mtp.l)[sp]), line = 3.5, outer = T, cex.main=2)
             graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
             graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
           }
@@ -211,27 +211,27 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
 
       cl<-parallel::makeCluster(numCores)
 
-      parallel::clusterApply(cl, names(mtp.spl[[sp]]), # climatic scenario
-                             function(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+      parallel::clusterApply(cl, names(mtp.l[[sp]]), # climatic scenario
+                             function(sc, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                                       comb.plots, thrshld.nms.mod, basemap, make.underscript){
 
-                               f.plot(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+                               f.plot(sc, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                                       comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
-                             }, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+                             }, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                              comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
       parallel::stopCluster(cl)
 
     }else{
-      lapply(names(mtp.spl[[sp]]), # climatic scenario
-             function(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+      lapply(names(mtp.l[[sp]]), # climatic scenario
+             function(sc, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                       comb.plots, thrshld.nms.mod, basemap, make.underscript){
 
-               f.plot(sc, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+               f.plot(sc, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                       comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
-             }, sp, mtp.spl, t.NMS, t.nms, thrshld.path,
+             }, sp, mtp.l, t.NMS, t.nms, thrshld.path,
              comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
     }
@@ -257,14 +257,14 @@ f.plot.mxnt.preds.mscn <- function(mmp.spl, mtp.spl, basemap=NULL, numCores=1){
 #' @examples
 #' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 #' @export
-f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
+f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
   { path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
-  path.sp.m <- paste0("Mdls.", names(mmp.spl))
+  path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
-  pred.args <- mmp.spl[[1]]$pred.args}
+  pred.args <- mcmp.l[[1]]$pred.args}
 
-  mdl.crit <- grep(mod.sel, names(mtp.spl[[1]][[1]]$binary[[1]]))
+  mdl.crit <- grep(mod.sel, names(mtp.l[[1]][[1]]$binary[[1]]))
 
   a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
@@ -274,8 +274,8 @@ f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="c
            "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
            "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 
-  comb.plots <- utils::combn(length(mtp.spl[[1]]), 2)
-  cli.scn.pres <- which(names(mtp.spl[[1]]) == sel.clim.scn)
+  comb.plots <- utils::combn(length(mtp.l[[1]]), 2)
+  cli.scn.pres <- which(names(mtp.l[[1]]) == sel.clim.scn)
   sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==T # rowsum(comb.plots == cli.scn.pres)==T # comb.plots[, ]
   comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
   comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
@@ -290,10 +290,10 @@ f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="c
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
 
 
-  f.plot <- function(sp, mtp.spl, mdl.crit=1, t.NMS, t.nms, thrshld.path,
+  f.plot <- function(sp, mtp.l, mdl.crit=1, t.NMS, t.nms, thrshld.path,
                      comb.plots, thrshld.nms.mod, basemap, make.underscript) { # climatic scenario
-    # for(sc in names(mtp.spl[[sp]])){ # climatic scenario
-    mods.thrshld <- mtp.spl[[sp]][[comb.plots[1,1]]]
+    # for(sc in names(mtp.l[[sp]])){ # climatic scenario
+    mods.thrshld <- mtp.l[[sp]][[comb.plots[1,1]]]
 
     n.t <- length(mods.thrshld$binary)
     n.scn <- ncol(comb.plots)
@@ -309,15 +309,15 @@ f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="c
 
       for(j in 1:n.scn){ # climatic scenario
 
-        mod.sc1 <- mtp.spl[[sp]][[comb.plots[1,j]]]$binary[[tc]][[mdl.crit]]
-        mod.sc2 <- mtp.spl[[sp]][[comb.plots[2,j]]]$binary[[tc]][[mdl.crit]]
+        mod.sc1 <- mtp.l[[sp]][[comb.plots[1,j]]]$binary[[tc]][[mdl.crit]]
+        mod.sc2 <- mtp.l[[sp]][[comb.plots[2,j]]]$binary[[tc]][[mdl.crit]]
 
         r.dif <- raster::overlay(mod.sc1, mod.sc2, fun=function(r1, r2) {r1-r2})
         # thr.CRT <- t.NMS[which(t.nms %in% t.crit)] #}
 
         # clim.scn name
-        n1 <- names(mtp.spl[[sp]])[comb.plots[1,j]]
-        n2 <- names(mtp.spl[[sp]])[comb.plots[2,j]]
+        n1 <- names(mtp.l[[sp]])[comb.plots[1,j]]
+        n2 <- names(mtp.l[[sp]])[comb.plots[2,j]]
         main.nms <- paste0("Thres. crit.: ", thr.CRT, ". Clim. scen.: ", n1, " vs. ", n2)
 
         #   # r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red")
@@ -329,7 +329,7 @@ f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="c
         #
         #     sc1 <- gsub("mxnt.pred.fut.|mxnt.pred.past.", "", sc)
         #     if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] } # {paste0(scb[which(sca %in% sc1)], " (", sc, ")")} else {sc1 <- sc1}
-        #     # title(paste0("Species: " , names(mtp.spl)[sp]), line = 3.5, outer = T, cex.main=2)
+        #     # title(paste0("Species: " , names(mtp.l)[sp]), line = 3.5, outer = T, cex.main=2)
         #     graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
         #     graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
         #   }
@@ -351,12 +351,12 @@ f.plot.scn.diff <- function(mmp.spl, mtp.spl, mod.sel="AvgAICc", sel.clim.scn="c
     # }
   }
 
-  for(sp in 1:length(mtp.spl)){ # species
+  for(sp in 1:length(mtp.l)){ # species
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
-    cat(c("\n", "Species: " , names(mtp.spl)[sp]))
+    cat(c("\n", "Species: " , names(mtp.l)[sp]))
 
-    f.plot(sp, mtp.spl, mdl.crit=mdl.crit, t.NMS, t.nms, thrshld.path,
+    f.plot(sp, mtp.l, mdl.crit=mdl.crit, t.NMS, t.nms, thrshld.path,
            comb.plots, thrshld.nms.mod, basemap, make.underscript)
   }
 }

@@ -18,7 +18,7 @@
 #' calculated in the same way as "extent increase", using "max(abs(ext.proj[1]-ext.proj[2]), abs(ext.proj[3]-ext.proj[4]))".
 #' But the exact value can be defined through "deg.incr" and "mult". This method takes longer to run.
 #'
-#' @param occ.poly list of species occurencies SpatialPolygons
+#' @param occ.poly list of species SpatialPolygons
 #' @param sp.nm name (of species) to give to saved object
 # @param o.path Output path
 #' @param deg.incr used to manually set the increase in prediction area, relative to occ.poly

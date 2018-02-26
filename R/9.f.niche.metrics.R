@@ -16,31 +16,31 @@
 # #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf,
 # #' scn.nm=c("futAC5085", "futAC7085"), 3)
 #' @export
-f.raster.overlap.mscn <- function(mmp.spl, scn.nm="current", model.compare=1){
-  clim.scn <- grep(paste(scn.nm, collapse = "|"), names(mmp.spl[[1]]$mxnt.preds))
-  comb.plots <- utils::combn(raster::nlayers(mmp.spl[[1]]$mxnt.preds[[scn.nm[1]]]), 2)
+f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){
+  clim.scn <- grep(paste(scn.nm, collapse = "|"), names(mcmp.l[[1]]$mxnt.preds))
+  comb.plots <- utils::combn(raster::nlayers(mcmp.l[[1]]$mxnt.preds[[scn.nm[1]]]), 2)
   comb.plots <- comb.plots[,comb.plots[1,]==model.compare| comb.plots[2,]==model.compare]
   comb.plots[,comb.plots[2,]==model.compare] <- comb.plots[c(2,1),comb.plots[2,]==model.compare]
   # comb.plots[,comb.plots[2,]==model.compare]<- rev(comb.plots[,comb.plots[2,]==model.compare])
 
-  # ovr.spp <- vector("list", length = length(mmp.spl))
-  # names(ovr.spp) <- names(mmp.spl)
-  names(area.occ.spp) <- names(mmp.spl)
+  # ovr.spp <- vector("list", length = length(mcmp.l))
+  # names(ovr.spp) <- names(mcmp.l)
+  names(area.occ.spp) <- names(mcmp.l)
   ovr.vl <- array(dim= c(length(clim.scn), # rows for pred.scenario
                          ncol(comb.plots), # cols for combinations among model selection criteria
                          3),  # sheets for metrics
-                  dimnames = list(names(mmp.spl[[1]]$mxnt.preds[clim.scn]),
-                                  gsub("Mod.", "", paste0(names(mmp.spl[[1]]$mxnt.preds[[clim.scn[1]]])[comb.plots[1,]],".vs.",
-                                                          names(mmp.spl[[1]]$mxnt.preds[[clim.scn[1]]])[comb.plots[2,]])),
+                  dimnames = list(names(mcmp.l[[1]]$mxnt.preds[clim.scn]),
+                                  gsub("Mod.", "", paste0(names(mcmp.l[[1]]$mxnt.preds[[clim.scn[1]]])[comb.plots[1,]],".vs.",
+                                                          names(mcmp.l[[1]]$mxnt.preds[[clim.scn[1]]])[comb.plots[2,]])),
                                   c("D", "I", "rank.cor"))) #, # sheet (3rd dim) for model criteria
 
-  ovr.spp <- lapply(names(mmp.spl), function(sp, mmp.spl, comb.plots, ovr.vl){
-    # for(sp in names(mmp.spl)){ # species
+  ovr.spp <- lapply(names(mcmp.l), function(sp, mcmp.l, comb.plots, ovr.vl){
+    # for(sp in names(mcmp.l)){ # species
     # ovr.spp[[sp]] <- ovr.vl
 
-    r.o.l <- lapply(scn.nm, function(sc, mmp.spl, comb.plots, ovr.vl, sp){
-      # for(sc in scn.nm){ # climatic scenari0 # names(mmp.spl[[sp]]$mxnt.preds[clim.scn])
-      mods.comp <- mmp.spl[[sp]]$mxnt.preds[[sc]]
+    r.o.l <- lapply(scn.nm, function(sc, mcmp.l, comb.plots, ovr.vl, sp){
+      # for(sc in scn.nm){ # climatic scenari0 # names(mcmp.l[[sp]]$mxnt.preds[clim.scn])
+      mods.comp <- mcmp.l[[sp]]$mxnt.preds[[sc]]
 
       ## TODO use mclapply
       r.o.s <- sapply(1:ncol(comb.plots), function(j, mods.comp, comb.plots, sp,sc){
@@ -53,7 +53,7 @@ f.raster.overlap.mscn <- function(mmp.spl, scn.nm="current", model.compare=1){
         return(r.o)}, mods.comp, comb.plots, sp,sc)
 
       # }  # climatic scenario
-      return(r.o.s)}, mmp.spl, comb.plots, ovr.vl, sp)
+      return(r.o.s)}, mcmp.l, comb.plots, ovr.vl, sp)
 
     r.o.l <- array(simplify2array(r.o.l), dim= dim(ovr.vl), dimnames = dimnames(ovr.vl))
 
@@ -65,11 +65,11 @@ f.raster.overlap.mscn <- function(mmp.spl, scn.nm="current", model.compare=1){
     utils::write.csv(r.o.l[,,"I"], paste0("4_ENMeval.results/Mdls.", sp, "/Raster.ovrlp.I", sp, ".csv"))
     utils::write.csv(r.o.l[,,"rank.cor"], paste0("4_ENMeval.results/Mdls.", sp, "/Raster.ovrlp.rank.cor", sp, ".csv"))
     # } # species
-    return(r.o.l)}, mmp.spl, comb.plots, ovr.vl)
+    return(r.o.l)}, mcmp.l, comb.plots, ovr.vl)
 
-  names(ovr.spp) <- names(mmp.spl)
+  names(ovr.spp) <- names(mcmp.l)
   return(ovr.spp)
 }
 
-# f.raster.overlap.mscn(mmp.spl, scn.nm=c("futAC5085", "futAC7085"), 3)
+# f.raster.overlap.mscn(mcmp.l, scn.nm=c("futAC5085", "futAC7085"), 3)
 

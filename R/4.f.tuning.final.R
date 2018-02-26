@@ -3,7 +3,7 @@
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return the necessary arguments for final model calibration and predictions.
-#' @param x object of class ENMevaluation
+#' @param x Slot "results" of object of class ENMevaluation
 #' @param wAICsum cumulative sum of top ranked models for which arguments will be created
 #' @param save should save args only ("A"), selected models only ("M") or both ("B")?
 #' @param randomseed logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
@@ -19,7 +19,7 @@
 f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2= 'noautofeature'){ # , seq=T
   # AICc
   x <- x[order(x$delta.AICc),]
-  if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.cp, check this line
+  if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
   # seq
   x.m <- x[order(x$Mean.ORmin, -x$Mean.AUC),][1,]
   # seqOr10
@@ -68,12 +68,12 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 
 #### 4.3 Run top corresponding models and save predictions
 #### 4.3.1 save maxent best models and predictions for each model
-# "f.mxnt.mdl.pred" renamed to "mxnt.cp"
-#' Calibrating and predicting selected models
+# "f.mxnt.mdl.pred" renamed to "mxnt.c"
+#' Calibrating selected models
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
-#' return selected maxent model calibrations and predictions.
-#' @param x Slot "results" of object of class ENMevaluation
+#' return selected maxent models calibrated.
+#' @param ENMeval.o Object of class ENMevaluation
 #' @param sp.nm Species name. Used to name the output folder
 #' @param a.calib Predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
 #' predictor variables. These will be used to extract values from for the point locations. Can
@@ -98,12 +98,10 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @param parallelTunning Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)
 #' @inheritParams f.args
-#' @return A list containing the models ('selected.mdls') used for model calibration and prediction,
-#' calibrated maxent models ('mxnt.mdls'), arguments used for prediction/calibration ('pred.args'), and
-#' a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
-#' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
+#' @return A 'mcm' (mxnt.c.mdls, Maxent Calibrated Models). A list containing the models ('selected.mdls') used for model calibration,
+#' calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pred.args').
 #' @export
-mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
+mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
                     pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                     wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',
                     numCores = 1, parallelTunning = TRUE){
@@ -113,7 +111,10 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
 
-  mdl.arg <- f.args(x, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
+  ENMeval.r <- ENMeval.o@results
+  # cat(c(names(ENMeval.r[i]), "\n"))
+
+  mdl.arg <- f.args(ENMeval.r, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
 
   args.all <- mdl.arg[[1]]
@@ -200,32 +201,32 @@ mxnt.cp <- function(x, sp.nm, a.calib, occ, formt = "raster", # , a.proj
   return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 
-# "f.mxnt.mdl.pred.batch" renamed to "mxnt.cp.batch"
+# "f.mxnt.mdl.pred.batch" renamed to "mxnt.c.batch"
 #' Calibrating and predicting selected models for several species
 #'
 #' This function will read a list of objects of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return selected maxent model calibrations and predictions. Each element on the list is usually a species.
 #' a.proj.l, a.calib.l, occ.l are lists with occurence data, projection and calibration/predictor data.
-#' Species in these lists must all be in the same order of species in ENMeval.res.
-#' @param ENMeval.res List of objects of class ENMevaluation
+#' Species in these lists must all be in the same order of species in ENMeval.o.
+#' @param ENMeval.o.l List of objects of class ENMevaluation
 #' @param a.calib.l List of predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
 #' predictor variables. These will be used to extract values from for the point locations. Can
 #' also be a data.frame, in which case each column should be a predictor variable and each row
 #' a presence or background record..
-# #' @param a.proj.l List of projection areas. See argument "a.proj" in mxnt.cp.
-#' @param occ.l List of occurence data. See argument "occ" in mxnt.cp.
+# #' @param a.proj.l List of projection areas. See argument "a.proj" in mxnt.c.
+#' @param occ.l List of occurence data. See argument "occ" in mxnt.c.
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
-#' @inheritParams mxnt.cp
-#' @return A list of objects returned from function "mxnt.cp"
+#' @inheritParams mxnt.c
+#' @return A 'mcm.l' object. A list of 'mcm' (mxnt.c.mdls, Maxent Calibrated Models), returned from function "mxnt.c"
 #' @examples
-#' mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res=ENMeval.res.lst,
+#' mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o=ENMeval.res.lst,
 #' a.calib.l=occ.b.env, a.proj.l=areas.projection, occ.l=occ, wAICsum=0.99)
 #' mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of wAICc
 #' mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models
 #' mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
-mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a.proj.l
+mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l, formt = "raster", # , a.proj.l
                           pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                           wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',
                           numCores = 1, parallelTunning = TRUE){
@@ -237,57 +238,57 @@ mxnt.cp.batch <- function(ENMeval.res, a.calib.l, occ.l, formt = "raster", # , a
   if(numCores>1 & parallelTunning==FALSE){
 
     cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl,list("mxnt.cp","f.args"))
+    parallel::clusterExport(cl,list("mxnt.c","f.args"))
 
-  mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+  mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-      ENMeval.res[[i]] <- ENMeval.res[[i]]@results
-      cat(c(names(ENMeval.res[i]), "\n"))
+    # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
+    cat(c(names(ENMeval.o.l[i]), "\n"))
       # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
       # compute final models and predictions
-     resu <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+     resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                                           a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                                           occ = occ.l[[i]], formt = formt,
                                           pred.args = pred.args, wAICsum = wAICsum,
                                           randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
 
     return(resu)
-  }, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+  }, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
 
   parallel::stopCluster(cl)
 
   }else{
 
-    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.res), function(i, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-      ENMeval.res[[i]] <- ENMeval.res[[i]]@results
-      cat(c(names(ENMeval.res[i]), "\n"))
+    # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
+    cat(c(names(ENMeval.o.l[i]), "\n"))
       # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
       # compute final models and predictions
-      resu <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+      resu <- mxnt.c(x = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                       occ = occ.l[[i]], formt = formt,
                       pred.args = pred.args, wAICsum = wAICsum,
                       randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
 
       return(resu)
-    }, ENMeval.res, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+    }, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
 
 
   }
 
-  names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
+  names(mxnt.mdls.preds.lst) <- names(ENMeval.o.l)
 
-  # mxnt.mdls.preds.lst <- vector("list", length(ENMeval.res))
-  # names(mxnt.mdls.preds.lst) <- names(ENMeval.res)
+  # mxnt.mdls.preds.lst <- vector("list", length(ENMeval.o.l))
+  # names(mxnt.mdls.preds.lst) <- names(ENMeval.o.l)
 
-  # for(i in base::seq_along(ENMeval.res)){
+  # for(i in base::seq_along(ENMeval.o.l)){
   #   ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-  #   ENMeval.res[[i]] <- ENMeval.res[[i]]@results
+  #   ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
   #   cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
   #   # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
   #   # compute final models and predictions
-  #   mxnt.mdls.preds.lst[[i]] <- mxnt.cp(x = ENMeval.res[[i]], sp.nm = names(ENMeval.res[i]),
+  #   mxnt.mdls.preds.lst[[i]] <- mxnt.c(x = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
   #                                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
   #                                       occ = occ.l[[i]], formt = formt,
   #                                       pred.args = pred.args, wAICsum = wAICsum,

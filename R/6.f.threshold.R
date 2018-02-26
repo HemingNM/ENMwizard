@@ -1,28 +1,37 @@
 #### 4.3.3 aplicar threshold
 # TODO examples
-# name of arg "mxnt.mdls.preds.sp[...]" shortened to "mmp.spi"
+# name of arg "mxnt.mdls.preds.sp[...]" shortened to "mcmp.spi"
 #' Apply threshold for a prediction
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
-#' @param mmp.spi Species "i" of a object returned by "mxnt.p.batch.mscn", containing a list of
+#' @param mcmp.spi Species "i" of a object returned by "mxnt.p.batch.mscn", containing a list of
 #' calibrated models and model projections for each species
 #' @param scn.nm Name of climatic scenario to be looked for
 #' @param path.mdls Path where thresholded rasters will be saved
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
-#' @param thrshld.i List of threshold criteria to be applied
+#' @param thrshld.i List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
+#' 1 - Fixed.cumulative.value.1 (fcv1),
+#' 2 - Fixed.cumulative.value.5 (fcv5),
+#' 3 - Fixed.cumulative.value.10 (fcv10),
+#' 4 - Minimum.training.presence (mtp),
+#' 5 - 10.percentile.training.presence (x10ptp),
+#' 6 - Equal.training.sensitivity.and.specificity (etss),
+#' 7 - Maximum.training.sensitivity.plus.specificity (mtss),
+#' 8 - Balance.training.omission.predicted.area.and.threshold.value (bto),
+#' 9 - Equate.entropy.of.thresholded.and.original.distributions (eetd)
 #' @return Stack or brick of thresholded predictions
 #' @examples
 #' mods.thrshld <- f.thr(mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
 #' @export
-f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
+f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
     path.mdls <- paste("4_ENMeval.results", "sp", sep = "/")
   }
   if(dir.exists(path.mdls)==F) dir.create(path.mdls)
-  # args <- 1:length(mmp.spi[["mxnt.mdls"]])
-  mxnt.mdls <- mmp.spi[["mxnt.mdls"]]
+  # args <- 1:length(mcmp.spi[["mxnt.mdls"]])
+  mxnt.mdls <- mcmp.spi[["mxnt.mdls"]]
 
   # pred.nm <- ifelse(pred.nm == "", pred.nm, paste0(".", pred.nm))
   # m.pred.n <- ifelse(pred.nm == "", "mxnt.pred", paste0("mxnt.pred", pred.nm))
@@ -32,14 +41,14 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   #### TODO use the "slot" to find and loop through predictions
   ##  check here
-  pred.r <- mmp.spi$mxnt.preds[[scn.nm]] # mmp.spi[[match(pred.nm, names(mmp.spi))]] # , fixed=T # [pred.i]
-  pred.args <- mmp.spi$pred.args
+  pred.r <- mcmp.spi$mxnt.preds[[scn.nm]] # mcmp.spi[[match(pred.nm, names(mcmp.spi))]] # , fixed=T # [pred.i]
+  pred.args <- mcmp.spi$pred.args
   mod.sel.crit <- names(pred.r)
 
   if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
     # args.aicc <- 1:(length(args)-4)
-    wv <- mmp.spi[["selected.mdls"]][order(mmp.spi[["selected.mdls"]]$delta.AICc[grep("Mod.AICc", mmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
-  } # else {wv <- rep(0, max(grep("Mod.AICc", mmp.spi[[1]]$sel.cri))) }
+    wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
+  } # else {wv <- rep(0, max(grep("Mod.AICc", mcmp.spi[[1]]$sel.cri))) }
 
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -51,7 +60,7 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
 
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
-  thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl("Cloglog", rownames(mxnt.mdls[[1]]@results)) &
+  thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl("Cloglog", rownames(mxnt.mdls[[1]]@results)) & # TODO use "outpt" variable
                                                      grepl("threshold", rownames(mxnt.mdls[[1]]@results))][thrshld.i]
 
   ## extract values of threshold from each model and criteria # sapply(mxnt.mdls[1:length(args)]
@@ -63,22 +72,22 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
-      apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mmp.spi[[1]]$sel.cri),]), 2, function(x, wv) {stats::weighted.mean(x, wv)}, wv) ### check if is raster
+      apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[[1]]$sel.cri),]), 2, function(x, wv) {stats::weighted.mean(x, wv)}, wv) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mod.AICc_1$", mmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mod.AICc_1$", mcmp.spi[[1]]$sel.cri),]
     } else {NA},
     if(sum(grepl("Mean.ORmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.ORmin", mmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.ORmin", mcmp.spi[[1]]$sel.cri),]
     }else {NA},
     if(sum(grepl("Mean.OR10", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.OR10", mmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.OR10", mcmp.spi[[1]]$sel.cri),]
     } else {NA},
     if(sum(grepl("Mean.AUCmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.AUCmin", mmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.AUCmin", mcmp.spi[[1]]$sel.cri),]
     } else {NA},
     if(sum(grepl("Mean.AUC10", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.AUC10", mmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.AUC10", mcmp.spi[[1]]$sel.cri),]
     } else {NA} ) )
 
   # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
@@ -150,7 +159,7 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   return(mt)
 }
 
-# mods.thrshld <- f.thr(mmp.spi, thrshld.i = 4:6, pred.args, path.mdls)
+# mods.thrshld <- f.thr(mcmp.spi, thrshld.i = 4:6, pred.args, path.mdls)
 # plot(mods.thrshld[[1]][[2]]) # continuous
 # plot(mods.thrshld[[2]][[2]]) # binary
 
@@ -158,7 +167,7 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' Apply threshold for all predictions
 #'
 #' General function description. A short paragraph (or more) describing what the function does.
-#' @param mmp.spl Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+#' @param mcmp.l Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 #' and model projections for each species.
 #' @inheritParams f.thr
 #' @inheritParams mxnt.cp
@@ -166,24 +175,24 @@ f.thr <- function(mmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' @examples
 #' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
 #' @export
-f.thr.batch <- function(mmp.spl, thrshld.i = 4:6, numCores=1) {
+f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores=1) {
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
-  path.sp.m <- paste0("Mdls.", names(mmp.spl))
+  path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
 
   # thrshld for each species
-  mods.thrshld <- vector("list", length(mmp.spl))
-  names(mods.thrshld) <- names(mmp.spl)
+  mods.thrshld <- vector("list", length(mcmp.l))
+  names(mods.thrshld) <- names(mcmp.l)
   # pred.nm <- ifelse(pred.nm == "", "mxnt.pred", pred.nm)
 
-  for(i in base::seq_along(mmp.spl)){ # species i
+  for(i in base::seq_along(mcmp.l)){ # species i
     path.mdls.i <- path.mdls[i]
     if(dir.exists(path.mdls.i)==F) dir.create(path.mdls.i)
-    #scn.ind <- grep(n.pred.nm, names(mmp.spl[[i]]))
-    mmp.spi <- mmp.spl[[i]]
-    # scn.ind <- grep(pred.nm, names(mmp.spl[[i]]))
-    scn.nms <- names(mmp.spl[[i]]$mxnt.preds)
+    #scn.ind <- grep(n.pred.nm, names(mcmp.l[[i]]))
+    mcmp.spi <- mcmp.l[[i]]
+    # scn.ind <- grep(pred.nm, names(mcmp.l[[i]]))
+    scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
 
     if(numCores>1){
 
@@ -191,26 +200,26 @@ f.thr.batch <- function(mmp.spl, thrshld.i = 4:6, numCores=1) {
       parallel::clusterExport(cl, list("f.thr"))
 
       mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms),
-                                                 function(j, mmp.spi, scn.nms, thrshld.i, path.mdls.i){
+                                                 function(j, mcmp.spi, scn.nms, thrshld.i, path.mdls.i){
 
-                                                   resu <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+                                                   resu <- f.thr(mcmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
                                                    return(resu)
 
-                                                   }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
+                                                   }, mcmp.spi, scn.nms, thrshld.i, path.mdls.i)
       parallel::stopCluster(cl)
 
     }else{
       mods.thrshld.spi <- lapply(base::seq_along(scn.nms),
-                                 function(j, mmp.spi, scn.nms, thrshld.i, path.mdls.i){
+                                 function(j, mcmp.spi, scn.nms, thrshld.i, path.mdls.i){
 
-                                   resu <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+                                   resu <- f.thr(mcmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
                                    return(resu)
 
-                                    }, mmp.spi, scn.nms, thrshld.i, path.mdls.i)
+                                    }, mcmp.spi, scn.nms, thrshld.i, path.mdls.i)
 
       # mods.thrshld.spi <- stats::setNames(vector("list", length(scn.nms)), scn.nms)
       # for(j in base::seq_along(scn.nms)){ # climatic scenario
-      #   mods.thrshld.spi[[j]] <- f.thr(mmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+      #   mods.thrshld.spi[[j]] <- f.thr(mcmp.spi, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
       # }
     }
     names(mods.thrshld.spi) <- scn.nms
