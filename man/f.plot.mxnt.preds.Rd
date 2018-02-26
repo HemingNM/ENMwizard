@@ -4,13 +4,13 @@
 \alias{f.plot.mxnt.preds}
 \title{Plot differences among predictions of models selected from several criteria}
 \usage{
-f.plot.mxnt.preds(mmp.spl, mtp.spl, basemap = NULL)
+f.plot.mxnt.preds(mcmp.l, mtp.l, basemap = NULL)
 }
 \arguments{
-\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+\item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 and model projections for each species.}
 
-\item{mtp.spl}{List of stack or brick of thresholded predictions}
+\item{mtp.l}{List of stack or brick of thresholded predictions}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 }

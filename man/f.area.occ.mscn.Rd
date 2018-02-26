@@ -4,10 +4,10 @@
 \alias{f.area.occ.mscn}
 \title{Compute species' total suitable area}
 \usage{
-f.area.occ.mscn(mtp.spl, restrict = NULL, digits = 0)
+f.area.occ.mscn(mtp.l, restrict = NULL, digits = 0)
 }
 \arguments{
-\item{mtp.spl}{List of stack or brick of thresholded predictions}
+\item{mtp.l}{List of stack or brick of thresholded predictions}
 
 \item{restrict}{a raster to select a region to compute area.}
 

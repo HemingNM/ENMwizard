@@ -8,7 +8,7 @@ pred.a.poly(occ.poly, sp.nm = "sp", deg.incr = NULL, mult = 1,
   buffer = F, same = T)
 }
 \arguments{
-\item{occ.poly}{list of species occurencies SpatialPolygons}
+\item{occ.poly}{list of species SpatialPolygons}
 
 \item{sp.nm}{name (of species) to give to saved object}
 

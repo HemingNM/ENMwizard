@@ -4,10 +4,10 @@
 \alias{f.raster.overlap.mscn}
 \title{Raster overlap between models selected using different criteria}
 \usage{
-f.raster.overlap.mscn(mmp.spl, scn.nm = "current", model.compare = 1)
+f.raster.overlap.mscn(mcmp.l, scn.nm = "current", model.compare = 1)
 }
 \arguments{
-\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+\item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 and model projections for each species.}
 
 \item{scn.nm}{name of climatic scenarios to compute overlap.}

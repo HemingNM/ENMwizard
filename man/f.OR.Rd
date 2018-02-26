@@ -4,10 +4,10 @@
 \alias{f.OR}
 \title{Compute "Fractional predicted area" ('n of occupied pixels'/n)}
 \usage{
-f.OR(mtp.spl, occ.l, current.pred.nm = "current", digits = 3)
+f.OR(mtp.l, occ.l, current.pred.nm = "current", digits = 3)
 }
 \arguments{
-\item{mtp.spl}{List of stack or brick of thresholded predictions}
+\item{mtp.l}{List of stack or brick of thresholded predictions}
 
 \item{occ.l}{list of species occurrence data.}
 

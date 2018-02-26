@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{poly.splt}
 \alias{poly.splt}
-\title{split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
+\title{Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
 poly.splt(occ.spdf, k = NULL, c.m = "AP", r = 2, q = 0.3,
   distance = "euclidean", min.nc = 2, max.nc = 20, method = "mcquitty",
@@ -10,7 +10,7 @@ poly.splt(occ.spdf, k = NULL, c.m = "AP", r = 2, q = 0.3,
   sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
-\item{occ.spdf}{species occurence coordinates}
+\item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
 
 \item{k}{number of polygons to create based on coordinates}
 
@@ -57,7 +57,7 @@ If the distance is "NULL", the dissimilarity matrix (diss) should be given by th
 spatial polygons built using coordinates
 }
 \description{
-split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
+Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
 }
 \examples{
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),

@@ -2,13 +2,13 @@
 % Please edit documentation in R/5.f.mscn.projection.R
 \name{mxnt.p}
 \alias{mxnt.p}
-\title{Projecting calibrated MaxEnt models}
+\title{Projecting Calibrated MaxEnt Models}
 \usage{
-mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
+mxnt.p(mcm, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
   numCores = 1, parallelTunning = TRUE)
 }
 \arguments{
-\item{mxnt.c.mdls}{Objects returned by "mxnt.cp", containing calibrated models.}
+\item{mcm}{Objects returned by "mxnt.c", containing calibrated models.}
 
 \item{sp.nm}{Species name. Used to name the output folder}
 
@@ -23,10 +23,12 @@ mxnt.p(mxnt.c.mdls, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
 \item{parallelTunning}{Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)}
 }
 \value{
-A list containing all the items returned from function "mxnt.cp", plus the projection specified in a.proj.
+A list containing all the items returned from function "mxnt.c", plus the projection specified in a.proj.
+Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
+a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
 }
 \description{
-This function will read an object returned by "mxnt.cp", read the calibrated models and project into
+This function will read an object returned by "mxnt.c", read the calibrated models and project into
 new areas/climatic scenarios. These new projections will be returned together with (appended to)
 the original object
 }

@@ -9,7 +9,7 @@ f.args(x, wAICsum = 0.99, save = "B", randomseed = F,
   arg2 = "noautofeature")
 }
 \arguments{
-\item{x}{object of class ENMevaluation}
+\item{x}{Slot "results" of object of class ENMevaluation}
 
 \item{wAICsum}{cumulative sum of top ranked models for which arguments will be created}
 

@@ -4,11 +4,11 @@
 \alias{mxnt.p.batch.mscn}
 \title{Projecting calibrated MaxEnt models for several species onto multiple environmental scenarios}
 \usage{
-mxnt.p.batch.mscn(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores = 1,
+mxnt.p.batch.mscn(mcm.l, a.proj.l, formt = "raster", numCores = 1,
   parallelTunning = TRUE)
 }
 \arguments{
-\item{mxnt.c.mdls.lst}{A list of objects returned by "mxnt.cp", containing calibrated models.}
+\item{mcm.l}{A list of objects returned by "mxnt.c", containing calibrated models.}
 
 \item{a.proj.l}{A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict}
 
@@ -19,10 +19,10 @@ mxnt.p.batch.mscn(mxnt.c.mdls.lst, a.proj.l, formt = "raster", numCores = 1,
 \item{parallelTunning}{Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)}
 }
 \value{
-A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
+A 'mcmp.spl' object. A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
 }
 \description{
-This function will read an object returned by "mxnt.cp.batch", read the calibrated models and project into
+This function will read an object returned by "mxnt.c.batch", read the calibrated models and project into
 several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
 each element (species) the original object.
 }

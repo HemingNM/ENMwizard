@@ -105,7 +105,7 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
 #' Plot differences (for multiple climatic scenarios) among predictions of models selected from several criteria.
 #' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
 #' @inheritParams f.plot.mxnt.preds
-#' @inheritParams mxnt.cp
+#' @inheritParams mxnt.c
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
@@ -248,7 +248,7 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
 #' Plot differences between a selected climatic scenario and all other climatic scenarios.
 #' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs"
 #' @inheritParams f.plot.mxnt.preds
-#' @inheritParams mxnt.cp
+#' @inheritParams mxnt.c
 #' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
 #' @param mod.sel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
 #' Mean.OR10, Mean.ORmin

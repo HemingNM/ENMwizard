@@ -318,7 +318,7 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp
 #' @inheritParams pred.a.batch.mscn
 #' @inheritParams pred.a.poly.batch
 #' @inheritParams pred.a.batch.rst
-#' @inheritParams mxnt.cp.batch
+#' @inheritParams mxnt.c.batch
 #' @return list of list with multiple environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples

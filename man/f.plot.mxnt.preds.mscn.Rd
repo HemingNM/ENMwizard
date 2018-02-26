@@ -4,13 +4,13 @@
 \alias{f.plot.mxnt.preds.mscn}
 \title{Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria}
 \usage{
-f.plot.mxnt.preds.mscn(mmp.spl, mtp.spl, basemap = NULL, numCores = 1)
+f.plot.mxnt.preds.mscn(mcmp.l, mtp.l, basemap = NULL, numCores = 1)
 }
 \arguments{
-\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+\item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 and model projections for each species.}
 
-\item{mtp.spl}{List of stack or brick of thresholded predictions}
+\item{mtp.l}{List of stack or brick of thresholded predictions}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 

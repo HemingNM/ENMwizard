@@ -10,25 +10,34 @@ thin.batch(loc.data.lst, lat.col = "lat", long.col = "lon",
   write.log.file = TRUE)
 }
 \arguments{
-\item{loc.data.lst}{Named list containing species occ data}
+\item{loc.data.lst}{Named list containing data.frames of species occurence locations.
+Each data.frame can include several columnns, but must include at minimum a column
+of latitude and a column of longitude values}
 
-\item{lat.col}{See ?thin of spThin package}
+\item{lat.col}{Name of column of latitude values. Caps sensitive.}
 
-\item{long.col}{See ?thin of spThin package}
+\item{long.col}{Name of column of longitude values. Caps sensitive.}
 
-\item{spec.col}{See ?thin of spThin package}
+\item{spec.col}{Name of column of species name. Caps sensitive.}
 
-\item{thin.par}{See ?thin of spThin package}
+\item{thin.par}{Thinning parameter - the distance (in kilometers) that you want
+records to be separated by.}
 
-\item{reps}{See ?thin of spThin package}
+\item{reps}{The number of times to repete the thinning process. Given the random
+process of removing nearest-neighbors there should be 'rep' number of different
+sets of coordinates.}
 
-\item{locs.thinned.list.return}{See ?thin of spThin package}
+\item{locs.thinned.list.return}{TRUE/FALSE - If true, the `list` of
+the data.frame of thinned locs resulting from each replication
+is returned (see Returns below).}
 
-\item{write.files}{See ?thin of spThin package}
+\item{write.files}{TRUE/FALSE - If true, new *.csv files will be
+written with the thinned locs data}
 
-\item{max.files}{See ?thin of spThin package}
+\item{max.files}{The maximum number of *csv files to be written based on the
+thinned data}
 
-\item{write.log.file}{See ?thin of spThin package}
+\item{write.log.file}{TRUE/FALSE create/append log file of thinning run}
 }
 \value{
 Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".

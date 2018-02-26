@@ -4,10 +4,10 @@
 \alias{f.var.ci}
 \title{Compute variable contribution and importance}
 \usage{
-f.var.ci(mmp.spl)
+f.var.ci(mcmp.l)
 }
 \arguments{
-\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+\item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 and model projections for each species.}
 }
 \value{

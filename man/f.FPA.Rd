@@ -4,10 +4,10 @@
 \alias{f.FPA}
 \title{Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios}
 \usage{
-f.FPA(mtp.spl, digits = 3)
+f.FPA(mtp.l, digits = 3)
 }
 \arguments{
-\item{mtp.spl}{List of stack or brick of thresholded predictions}
+\item{mtp.l}{List of stack or brick of thresholded predictions}
 
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}
 }
@@ -18,5 +18,5 @@ A list of species' FPAs computed for each climatic scenario, threshold and model
 General function description. A short paragraph (or more) describing what the function does.
 }
 \examples{
-f.FPA.mscn(mtp.spl)
+f.FPA.mscn(mtp.l)
 }

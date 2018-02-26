@@ -265,7 +265,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l, formt = "raster", # , a.
     cat(c(names(ENMeval.o.l[i]), "\n"))
       # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
       # compute final models and predictions
-      resu <- mxnt.c(x = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
+      resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                       occ = occ.l[[i]], formt = formt,
                       pred.args = pred.args, wAICsum = wAICsum,

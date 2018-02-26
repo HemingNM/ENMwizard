@@ -4,13 +4,22 @@
 \alias{f.thr.batch}
 \title{Apply threshold for all predictions}
 \usage{
-f.thr.batch(mmp.spl, thrshld.i = 4:6, numCores = 1)
+f.thr.batch(mcmp.l, thrshld.i = 4:6, numCores = 1)
 }
 \arguments{
-\item{mmp.spl}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
+\item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 and model projections for each species.}
 
-\item{thrshld.i}{List of threshold criteria to be applied}
+\item{thrshld.i}{List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
+1 - Fixed.cumulative.value.1 (fcv1),
+2 - Fixed.cumulative.value.5 (fcv5),
+3 - Fixed.cumulative.value.10 (fcv10),
+4 - Minimum.training.presence (mtp),
+5 - 10.percentile.training.presence (x10ptp),
+6 - Equal.training.sensitivity.and.specificity (etss),
+7 - Maximum.training.sensitivity.plus.specificity (mtss),
+8 - Balance.training.omission.predicted.area.and.threshold.value (bto),
+9 - Equate.entropy.of.thresholded.and.original.distributions (eetd)}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }

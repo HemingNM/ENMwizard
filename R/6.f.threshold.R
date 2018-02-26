@@ -170,7 +170,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' @param mcmp.l Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 #' and model projections for each species.
 #' @inheritParams f.thr
-#' @inheritParams mxnt.cp
+#' @inheritParams mxnt.c
 #' @return List of stack or brick of thresholded predictions
 #' @examples
 #' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
