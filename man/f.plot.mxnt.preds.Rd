@@ -18,9 +18,12 @@ and model projections for each species.}
 won't return any object. Will save pdf's with differences among model predictions
 }
 \description{
-Plot differences among predictions of models selected from several criteria.
-This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
+Plot differences among predictions of species model projetions selected using distinct criteria.
+This function will save the figures on pdf files in the folder "Mdls.thrshld/figs".
 }
 \examples{
 f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
+}
+\seealso{
+\code{\link{f.plot.mxnt.preds.mscn}}, \code{\link{f.plot.scn.diff}}
 }

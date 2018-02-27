@@ -66,3 +66,6 @@ cropped environmental variables (a.calib.l) for model tuning.
 \examples{
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 }
+\seealso{
+\code{\link[ENMeval]{ENMevaluate}}
+}

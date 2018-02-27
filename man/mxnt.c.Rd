@@ -46,10 +46,7 @@ function. Some other arguments do not apply at all to the R implementation. An e
 
 \item{arg1}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
-\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
-#' @examples
-ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
-f.args(ENMeval.res.lst[[1]]@results)}
+\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
@@ -62,4 +59,8 @@ calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pre
 \description{
 This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 return selected maxent models calibrated.
+}
+\seealso{
+\code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
+\code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }

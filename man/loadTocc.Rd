@@ -22,3 +22,6 @@ Load "thin.batch" filtered occurrence data
 \examples{
 occ.locs <- loadTocc(thinned.dataset.batch)
 }
+\seealso{
+\code{\link[spThin]{thin}}, \code{\link{thin.batch}}
+}

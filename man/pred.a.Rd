@@ -21,3 +21,8 @@ raster or brick cropped based on SpatialPolygons
 \description{
 This function will use SpatialPolygons to crop/mask raster/brick objects to be used on model projections.
 }
+\seealso{
+\code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+\code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+\code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+}

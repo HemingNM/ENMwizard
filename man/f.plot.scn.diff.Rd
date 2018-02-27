@@ -28,9 +28,12 @@ Mean.OR10, Mean.ORmin}
 won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 }
 \description{
-Plot differences between a selected climatic scenario and all other climatic scenarios.
-This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs"
+Plot differences between a selected climatic scenario and all other climatic scenarios for each species.
+This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
 }
 \examples{
 f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
+}
+\seealso{
+\code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.mxnt.preds.mscn}}
 }

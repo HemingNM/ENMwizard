@@ -7,15 +7,15 @@
 env.cut(occ.b, env.uncut)
 }
 \arguments{
-\item{occ.b}{polygon, usually a buffer}
+\item{occ.b}{list of SpatialPolygons, usually returned from "bffr.batch" function}
 
 \item{env.uncut}{raster brick or stack to be cropped}
 }
 \value{
-list [for each species] of cropped environmental variables. Details in ?raster::crop
+list [one element for each species] of cropped environmental variables. Details in ?raster::crop
 }
 \description{
-Crop environmental variables for each species
+Use a list of SpatialPolygons to crop environmental variables for each species.
 }
 \examples{
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
@@ -30,4 +30,7 @@ for(i in 1:length(occ.b.env)){
    plot(occ.b.env[[i]][[1]])
    plot(occ.b[[i]], add=T)
 }
+}
+\seealso{
+\code{\link[raster]{crop}}, \code{\link{bffr.batch}}
 }

@@ -7,7 +7,10 @@
 pred.a.batch.mscn(pred.polys, env.uncut.l, prj.nm = "", numCores = 1)
 }
 \arguments{
-\item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)}
+\item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+\code{\link{pred.a}}, \code{\link{pred.a.batch.mscn}},
+\code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}}
 
 \item{env.uncut.l}{list of raster/brick of environmental variables to be cut}
 
@@ -20,6 +23,11 @@ named list of cropped list of raster/brick of environmental variables
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a. This function delimitates the projection area for
- each of the species contained in the pred.polys named list and crops
- multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species
+each of the species contained in the pred.polys named list and crops
+multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species.
+}
+\seealso{
+\code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+\code{\link{pred.a}}, \code{\link{pred.a.batch}},
+\code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 }

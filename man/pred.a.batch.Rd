@@ -7,7 +7,10 @@
 pred.a.batch(pred.polys, env.uncut, prj.nm = "")
 }
 \arguments{
-\item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)}
+\item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+\code{\link{pred.a}}, \code{\link{pred.a.batch.mscn}},
+\code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}}
 
 \item{env.uncut}{raster/brick of environmental variables to be cut}
 
@@ -18,7 +21,7 @@ named list of cropped raster or brick
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a
-It works with a named list of pred.poly to delimitate the projection area for each of the species
+It works with a named list of pred.poly to delimitate the projection area for each of the species.
 }
 \examples{
 area.projection <- pred.a.batch(pred.polys, env.uncut)

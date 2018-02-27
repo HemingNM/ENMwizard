@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{bind.shp}
 \alias{bind.shp}
-\title{Bind list of SpatialPolygons into a single SpatialPolygon object}
+\title{Bind list of SpatialPolygons into a single SpatialPolygons object}
 \usage{
 bind.shp(occ.polys, sp.nm = "sp.nm", save = T,
   crs.set = "+proj=longlat +datum=WGS84")
@@ -20,5 +20,8 @@ bind.shp(occ.polys, sp.nm = "sp.nm", save = T,
 shapefile with binded polygons
 }
 \description{
-Bind list of SpatialPolygons into a single SpatialPolygon object
+This function will bind a list of splitted polygons (from poly.splt()) into a single SpatialPolygons object.
+}
+\seealso{
+\code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 }

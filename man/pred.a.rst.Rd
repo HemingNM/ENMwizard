@@ -23,3 +23,8 @@ environmental layers (raster/brick) cutted
 \description{
 This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 }
+\seealso{
+\code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+\code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+\code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+}

@@ -30,5 +30,9 @@ a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR1
 \description{
 This function will read an object returned by "mxnt.c", read the calibrated models and project into
 new areas/climatic scenarios. These new projections will be returned together with (appended to)
-the original object
+the original object.
+}
+\seealso{
+\code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
+\code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p.batch.mscn}}
 }

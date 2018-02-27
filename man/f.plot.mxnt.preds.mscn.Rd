@@ -20,10 +20,13 @@ and model projections for each species.}
 won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 }
 \description{
-Plot differences (for multiple climatic scenarios) among predictions of models selected from several criteria.
-This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
+Plot differences (for multiple climatic scenarios) among predictions of species model projetions
+selected using distinct criteria. This function will save the figures on pdf files in the folder "Mdls.thrshld/figs".
 }
 \examples{
 f.plot.mxnt.preds.mscn(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 f.plot.mxnt.preds.mscn(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
+}
+\seealso{
+\code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.scn.diff}}
 }

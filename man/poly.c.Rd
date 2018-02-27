@@ -2,17 +2,17 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{poly.c}
 \alias{poly.c}
-\title{Create polygon based on species occurence coordinates}
+\title{Create minimum convex polygon based on species occurence data}
 \usage{
 poly.c(occ.spdf, sp.nm = "sp.nm", convex = T, alpha = 10, save = T,
   crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
-\item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
+\item{occ.spdf}{An object of class SpatialPoints or SpatialPointsDataFrame (e.g. species occurence coordinates)}
 
 \item{sp.nm}{Species name, used on saving shapefile}
 
-\item{convex}{Concave or convex polygon (T or F)}
+\item{convex}{Logical. Convex (T) or concave (F) polygon}
 
 \item{alpha}{Value of \eqn{\alpha}.}
 
@@ -21,12 +21,15 @@ poly.c(occ.spdf, sp.nm = "sp.nm", convex = T, alpha = 10, save = T,
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
 \value{
-spatial polygon of occurencies built using coordinates
+An object of class SpatialPolygons or SpatialPolygonsDataFrame. Polygon built using coordinates of species occurence data
 }
 \description{
-Create polygon based on species occurence coordinates
+This function will create minimum convex polygon based on coordinates of species occurence data.
 }
 \examples{
 occ.poly <- poly.c(occ.spdf, sp.nm="occ.poly")
 plot(occ.poly)
+}
+\seealso{
+\code{\link{poly.c.batch}}, \code{\link{poly.splt}}
 }

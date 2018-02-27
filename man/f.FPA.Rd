@@ -15,8 +15,11 @@ f.FPA(mtp.l, digits = 3)
 A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 }
 \description{
-General function description. A short paragraph (or more) describing what the function does.
+Compute "Fractional predicted area" ('n of occupied pixels'/total n) or ('area of occupied pixels'/total area)
 }
 \examples{
 f.FPA.mscn(mtp.l)
+}
+\seealso{
+\code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/8.f.metrics.R
 \name{f.OR}
 \alias{f.OR}
-\title{Compute "Fractional predicted area" ('n of occupied pixels'/n)}
+\title{Compute "Omission Rate"}
 \usage{
 f.OR(mtp.l, occ.l, current.pred.nm = "current", digits = 3)
 }
@@ -20,8 +20,11 @@ A list of species' ORs computed for the selected (current) climatic scenario and
 each threshold and model criteria
 }
 \description{
-Compute "Fractional predicted area" ('n of occupied pixels'/total n) or  ('area of occupied pixels'/total area)
+Compute "Omission Rate" of species occurence points for a climatic scenario (usually "current")
 }
 \examples{
 f.OR(mods.thrshld.lst, occ.locs, "current")
+}
+\seealso{
+\code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 }

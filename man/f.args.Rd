@@ -21,10 +21,7 @@ f.args(x, wAICsum = 0.99, save = "B", randomseed = F,
 
 \item{arg1}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
-\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
-#' @examples
-ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
-f.args(ENMeval.res.lst[[1]]@results)}
+\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 }
 \value{
 A vector of args (if save="A"), data.frame of selected models (if save="M") or
@@ -33,4 +30,11 @@ a list with both, args and selected models, (if save="B")
 \description{
 This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 return the necessary arguments for final model calibration and predictions.
+}
+\seealso{
+\code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
+\code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
+#' @examples
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
+f.args(ENMeval.res.lst[[1]]@results)
 }

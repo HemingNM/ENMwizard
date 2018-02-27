@@ -10,7 +10,7 @@ poly.splt(occ.spdf, k = NULL, c.m = "AP", r = 2, q = 0.3,
   sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
-\item{occ.spdf}{A spatial data.frame of coordinates, usually species occurence coordinates}
+\item{occ.spdf}{An object of class SpatialPoints or SpatialPointsDataFrame (e.g. species occurence coordinates)}
 
 \item{k}{number of polygons to create based on coordinates}
 
@@ -43,7 +43,7 @@ If the distance is "NULL", the dissimilarity matrix (diss) should be given by th
 
 \item{alphaBeale}{significance value for Beale's index.}
 
-\item{convex}{Concave or convex polygon (T or F)}
+\item{convex}{Logical. Convex (T) or concave (F) polygon}
 
 \item{alpha}{Value of \eqn{\alpha}.}
 
@@ -57,7 +57,10 @@ If the distance is "NULL", the dissimilarity matrix (diss) should be given by th
 spatial polygons built using coordinates
 }
 \description{
-Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
+Cluster points and create several small polygons. Implemented methods are 'Hierarchical Clustering' (when 'k'
+number of clusters is defined 'k > 0'), 'Elbow' (c.m = "E"), 'Affinity Propagation' (c.m = AP), and several methods
+implemented in function NbClust of NbClust package (c.m = "NB"). To use NbClust package, check arguments 'distance',
+'min.nc', 'max.nc', 'method', and 'index' in ?NbClust::NbClust.
 }
 \examples{
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
@@ -66,4 +69,7 @@ colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)
 occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
+}
+\seealso{
+\code{\link{poly.c}}, \code{\link{poly.c.batch}}, \code{\link[NbClust]{NbClust}}
 }

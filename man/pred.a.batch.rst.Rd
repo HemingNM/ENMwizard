@@ -12,9 +12,12 @@ pred.a.batch.rst(area.p, env.uncut, occ.polys, mask = F, prj.nm = "",
 
 \item{env.uncut}{raster/brick of environmental variables to be cut}
 
-\item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details}
+\item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.}
 
-\item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p}
+\item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+\code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+\code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst.mscn}}}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 

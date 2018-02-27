@@ -37,10 +37,7 @@ function. Some other arguments do not apply at all to the R implementation. An e
 
 \item{arg1}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
-\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
-#' @examples
-ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
-f.args(ENMeval.res.lst[[1]]@results)}
+\item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
@@ -62,4 +59,8 @@ mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of 
 mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models
 mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
+}
+\seealso{
+\code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
+\code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }

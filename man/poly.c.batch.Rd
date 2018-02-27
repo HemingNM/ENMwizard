@@ -43,7 +43,7 @@ If the distance is "NULL", the dissimilarity matrix (diss) should be given by th
 
 \item{alphaBeale}{significance value for Beale's index.}
 
-\item{convex}{Concave or convex polygon (T or F)}
+\item{convex}{Logical. Convex (T) or concave (F) polygon}
 
 \item{alpha}{Value of \eqn{\alpha}.}
 
@@ -53,11 +53,11 @@ If the distance is "NULL", the dissimilarity matrix (diss) should be given by th
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
-\value{
-A named list of spatial polygons built using coordinates
-}
 \description{
-Create occ polygon for several species
+This function will use a list of coordinates of species occurence data and create minimum convex polygons
+for each element in the list.
+It is possible to create concave or convex polygons, create several small polygons based on clusters
+of points.
 }
 \examples{
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
@@ -66,4 +66,8 @@ colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)
 occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
+}
+\seealso{
+\code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
+#' @return A named list of spatial polygons built using coordinates
 }

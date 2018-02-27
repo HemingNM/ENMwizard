@@ -29,3 +29,7 @@ each element (species) the original object.
 \examples{
 mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 }
+\seealso{
+\code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
+\code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p}}
+}

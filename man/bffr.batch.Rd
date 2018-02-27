@@ -14,7 +14,7 @@ bffr.batch(occ.polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 
 \item{mult}{How much expand bffr.width}
 
-\item{quadsegs}{see ?rgeos::gBuffer}
+\item{quadsegs}{Number of line segments to use to approximate a quarter circle.}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 
@@ -24,7 +24,10 @@ bffr.batch(occ.polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 A named list of SpatialPolygons
 }
 \description{
-Create buffer based on species polygons
+This funcion will create a buffer using species polygons. Buffer width may be manually specified or
+calculated based on the extent of the SpatialPolygons object (i.e. mean of latitudinal and longitudinal extent).
+If width is calculated based on the extent of the SpatialPolygons object, it can be adjusted (enlarged or reduced)
+using 'mult' argument.
 }
 \examples{
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
@@ -33,4 +36,7 @@ colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)
 occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
+}
+\seealso{
+\code{\link[rgeos]{gBuffer}}, \code{\link{poly.c.batch}}
 }

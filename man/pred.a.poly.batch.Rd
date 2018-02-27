@@ -8,7 +8,7 @@ pred.a.poly.batch(occ.polys, deg.incr = NULL, mult = 1, buffer = F,
   same = T)
 }
 \arguments{
-\item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details}
+\item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.}
 
 \item{deg.incr}{used to manually set the increase in prediction area, relative to occ.poly}
 
@@ -23,9 +23,12 @@ named list of SpatialPolygons (enlarged occ.poly)
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a
-It works with a named list of occ.polys to delimitate the projection area for each of the species
+It works with a named list of occ.polys to delimitate the projection area for each of the species.
 }
 \examples{
 area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=F)
 plot(area.projection[[1]][[1]])
+}
+\seealso{
+\code{\link{pred.a.poly}}
 }

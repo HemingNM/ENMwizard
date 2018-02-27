@@ -50,3 +50,6 @@ thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
 plotThin(thinned.dataset.batch[[1]])
 length(thinned.dataset.batch[[1]])
 }
+\seealso{
+\code{\link[spThin]{thin}}, \code{\link{loadTocc}}
+}
