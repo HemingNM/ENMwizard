@@ -8,12 +8,15 @@
 #'
 #' This function will read an object returned by "mxnt.c", read the calibrated models and project into
 #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
-#' the original object
+#' the original object.
+#'
 #' @param mcm Objects returned by "mxnt.c", containing calibrated models.
 #' @param pred.nm Character. Prefix to add to projection name (e.g. "fut" or "past")
 #' @param a.proj A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict
 # #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.c
+#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
+#' \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A list containing all the items returned from function "mxnt.c", plus the projection specified in a.proj.
 #' Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
 #' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
@@ -194,15 +197,17 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=
 #' This function will read an object returned by "mxnt.c.batch", read the calibrated models and project into
 #' several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
 #' each element (species) the original object.
+#'
 #' @param mcm.l A list of objects returned by "mxnt.c", containing calibrated models.
 #' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
 #' @inheritParams mxnt.p
 #' @inheritParams mxnt.c.batch
+#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
+#' \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p}}
 #' @return A 'mcmp.spl' object. A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
 #' @examples
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
-
 mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores=1, parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   mdl.names <- names(mcm.l)
 

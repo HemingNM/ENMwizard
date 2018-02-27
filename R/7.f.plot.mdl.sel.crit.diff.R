@@ -1,8 +1,10 @@
 #### 4.4 plot differences among model selection criteria predictions
 #' Format (underscript) selected texts for plotting
 #'
-#' Format (underscript) selected texts (criteria used to select models) to be used on plotting
+#' Format (underscript) selected texts (criteria used to select models) to be used on plotting.
+#'
 #' @param x list of text to be formatted
+#' @seealso \code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.mxnt.preds.mscn}}, \code{\link{f.plot.scn.diff}}
 #' @return list of formatted text
 #' @examples
 #' make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
@@ -27,12 +29,14 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #### 4.4 plot differences among model selection criteria predictions
 #' Plot differences among predictions of models selected from several criteria
 #'
-#' Plot differences among predictions of models selected from several criteria.
-#' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
+#' Plot differences among predictions of species model projetions selected using distinct criteria.
+#' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs".
+#'
 #' @inheritParams f.thr.batch
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param mtp.l List of stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
+#' @seealso \code{\link{f.plot.mxnt.preds.mscn}}, \code{\link{f.plot.scn.diff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
@@ -102,10 +106,12 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
 #### 4.8.6 plot prediction diff between models
 #' Plot differences (for multiple climatic scenarios) among model predictions selected from several criteria
 #'
-#' Plot differences (for multiple climatic scenarios) among predictions of models selected from several criteria.
-#' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs"
+#' Plot differences (for multiple climatic scenarios) among predictions of species model projetions
+#' selected using distinct criteria. This function will save the figures on pdf files in the folder "Mdls.thrshld/figs".
+#'
 #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams mxnt.c
+#' @seealso \code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.scn.diff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
@@ -245,14 +251,16 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
 
 #' Plot differences between climatic scenarios
 #'
-#' Plot differences between a selected climatic scenario and all other climatic scenarios.
-#' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs"
+#' Plot differences between a selected climatic scenario and all other climatic scenarios for each species.
+#' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
+#'
 #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams mxnt.c
 #' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
 #' @param mod.sel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
 #' Mean.OR10, Mean.ORmin
 #' @param save Export to pdf or not?
+#' @seealso \code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.mxnt.preds.mscn}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
 #' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)

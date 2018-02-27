@@ -5,10 +5,12 @@
 #'
 #' Measures overlap between two ENMs. Used to compare differences among model selection criteria.
 #' See ?ENMTools::raster.overlap for details.
+#'
 #' @inheritParams f.thr.batch
 #' @param scn.nm name of climatic scenarios to compute overlap.
 #' @param model.compare Reference model to be compared (AvgAICc, LowAICc, Mean.ORmin,
 #'  Mean.OR10, Mean.AUCmin, Mean.AUC10)
+#' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}
 #' @return A list of matrices containing the three metrics (I, D, and Spearman rank correlation)
 #' for each climatic scenario
 #' @examples

@@ -3,6 +3,7 @@
 #' This function is a wrapper for ENMeval::ENMevaluate. See ?ENMeval::ENMevaluate for details
 #' It works with a named list of species occurrence data (occ.l) and a list of
 #' cropped environmental variables (a.calib.l) for model tuning.
+#'
 #' @param occ.l list of species occurrence data
 #' @param a.calib.l list of predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
 #' predictor variables. These will be used to extract values from for the point locations. Can
@@ -10,6 +11,7 @@
 #' a presence or background record.
 #' @param bg.coords.l list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).
 #' @inheritParams  ENMeval::ENMevaluate
+#' @seealso \code{\link[ENMeval]{ENMevaluate}}
 #' @examples
 #' ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 #' @export

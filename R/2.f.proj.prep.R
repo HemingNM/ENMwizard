@@ -25,6 +25,7 @@
 #' @param mult how much increase or decrease buffer
 #' @param buffer should the area be cut using a buffer around occ.poly?
 #' @param same should latitudinal and longitudinal increase vary independently?
+#' @seealso \code{\link{pred.a.poly.batch}}
 #' @return  SpatialPolygons (enlarged occ.poly)
 # #' @examples
 #'
@@ -86,9 +87,11 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=F, s
 #' Select area for projection based on the extent of occ points
 #'
 #' This function is a wrapper for "pred.a". See ?pred.a
-#' It works with a named list of occ.polys to delimitate the projection area for each of the species
-#' @param occ.polys list of occ.poly SpatialPolygons.  see ?pred.a.poly for details
+#' It works with a named list of occ.polys to delimitate the projection area for each of the species.
+#'
+#' @param occ.polys list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.
 #' @inheritParams pred.a.poly
+#' @seealso \code{\link{pred.a.poly}}
 #' @return  named list of SpatialPolygons (enlarged occ.poly)
 # TODO - examples
 #' @examples
@@ -118,10 +121,14 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T
 #' Cut area for projection based on SpatialPolygons
 #'
 #' This function will use SpatialPolygons to crop/mask raster/brick objects to be used on model projections.
+#'
 #' @param pred.poly list of SpatialPolygons (usually of based on species occ points)
 #' @param env.uncut raster/brick of environmental variables to be cut
 #' @param prj.nm climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario
 #' @param sp.nm name (of species) to give to saved object
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+#' \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 #' @return  raster or brick cropped based on SpatialPolygons
 # TODO - examples
 # #' @examples
@@ -172,9 +179,13 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
 #' Cut area for projection based on a list of SpatialPolygons
 #'
 #' This function is a wrapper for "pred.a". See ?pred.a
-#' It works with a named list of pred.poly to delimitate the projection area for each of the species
+#' It works with a named list of pred.poly to delimitate the projection area for each of the species.
+#'
 #' @inheritParams pred.a
 #' @param pred.polys list of SpatialPolygons (usually of based on species occ points)
+#' #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+#' \code{\link{pred.a}}, \code{\link{pred.a.batch.mscn}},
+#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 #' @return  named list of cropped raster or brick
 #' @examples
 #' area.projection <- pred.a.batch(pred.polys, env.uncut)
@@ -197,11 +208,15 @@ pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.unc
 #' Cut multiple projection areas (climatic scenarios) for multiple species (list of SpatialPolygons)
 #'
 #' This function is a wrapper for "pred.a". See ?pred.a. This function delimitates the projection area for
-#'  each of the species contained in the pred.polys named list and crops
-#'  multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species
+#' each of the species contained in the pred.polys named list and crops
+#' multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species.
+#'
 #' @inheritParams pred.a.batch
 #' @param env.uncut.l list of raster/brick of environmental variables to be cut
 #' @param numCores specify number of cores if aim run in parallel
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+#' \code{\link{pred.a}}, \code{\link{pred.a.batch}},
+#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 # #' @param ext.proj
 #' @return  named list of cropped list of raster/brick of environmental variables
 # TODO - examples
@@ -242,10 +257,14 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ #
 #' Cut a projection area based on a SpatialPolygon (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
+#'
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
 #' @inheritParams pred.a
 #' @inheritParams pred.a.batch
 #' @param mask should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+#' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+#' \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 #' @return environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples
@@ -275,11 +294,15 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 #' Cut projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
+#'
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
 #' @inheritParams pred.a
 #' @inheritParams pred.a.batch
 #' @inheritParams pred.a.poly.batch
 #' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p
+#' #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+#' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 #' @return list of environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples
@@ -315,10 +338,14 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp
 #'
 #' This function will use a single SpatialPolygon to crop/mask multiple raster/brick objects
 #' to be used on model projections.
+#'
 #' @inheritParams pred.a.batch.mscn
 #' @inheritParams pred.a.poly.batch
 #' @inheritParams pred.a.batch.rst
 #' @inheritParams mxnt.c.batch
+#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
+#' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
+#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}
 #' @return list of list with multiple environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples

@@ -40,10 +40,12 @@
 
 #' Compute species' total suitable area
 #'
-#' Compute total suitable area for multiple climatic scenario, threshold and model criteria
+#' Compute total suitable area for multiple climatic scenario, threshold and model criteria.
+#'
 #' @inheritParams f.plot.mxnt.preds
 #' @param digits integer indicating the number of decimal places. see ?round for details.
 #' @param restrict a raster to select a region to compute area.
+#' @seealso \code{\link[raster]{area}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 #' @examples
 #' areas.occ.lst <- f.area.occ.mscn(mods.thrshld.lst)
@@ -144,11 +146,14 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 
 # #### 4.7 extract model results
 # ### 4.7.1 variable contribution and importance
+
 #' Compute variable contribution and importance
 #'
-#' General function description. A short paragraph (or more) describing what the function does.
+#' Compute variable contribution and importance for each model
+#'
 # #' @param mcmp.l Stack or brick of predictions to apply the threshold
 #' @inheritParams f.thr.batch
+#' @seealso \code{\link[dismo]{maxent}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return List of arrays containing variable contribution and importance for each species
 #' @examples
 #' f.var.ci(mxnt.mdls.preds.lst)
@@ -210,13 +215,14 @@ f.var.ci <- function(mcmp.l){
 
 
 
-# #### 5.2 calcular "Fractional predicted area" (n de pixels ocupados/n)
-#' Compute "Fractional predicted area" ('n of occupied pixels'/n)
+#' Compute "Omission Rate"
 #'
-#' Compute "Fractional predicted area" ('n of occupied pixels'/total n) or  ('area of occupied pixels'/total area)
+#' Compute "Omission Rate" of species occurence points for a climatic scenario (usually "current")
+#'
 #' @inheritParams f.area.occ.mscn
 #' @param occ.l list of species occurrence data.
 #' @param current.pred.nm name to locate climatic scenario (usually "current") used to calibrate maxent models
+#' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return A list of species' ORs computed for the selected (current) climatic scenario and
 #' each threshold and model criteria
 #' @examples
@@ -275,8 +281,10 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
 
 #' Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
 #'
-#' General function description. A short paragraph (or more) describing what the function does.
+#' Compute "Fractional predicted area" ('n of occupied pixels'/total n) or ('area of occupied pixels'/total area)
+#'
 #' @inheritParams f.OR
+#' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}
 #' @return A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 #' @examples
 #' f.FPA.mscn(mtp.l)

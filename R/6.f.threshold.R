@@ -3,7 +3,10 @@
 # name of arg "mxnt.mdls.preds.sp[...]" shortened to "mcmp.spi"
 #' Apply threshold for a prediction
 #'
-#' General function description. A short paragraph (or more) describing what the function does.
+#' This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp' object
+#' and save on the folder "4_ENMeval.results/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
+#' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
+#'
 #' @param mcmp.spi Species "i" of a object returned by "mxnt.p.batch.mscn", containing a list of
 #' calibrated models and model projections for each species
 #' @param scn.nm Name of climatic scenario to be looked for
@@ -19,6 +22,7 @@
 #' 7 - Maximum.training.sensitivity.plus.specificity (mtss),
 #' 8 - Balance.training.omission.predicted.area.and.threshold.value (bto),
 #' 9 - Equate.entropy.of.thresholded.and.original.distributions (eetd)
+#' @seealso \code{\link{f.thr.batch}}
 #' @return Stack or brick of thresholded predictions
 #' @examples
 #' mods.thrshld <- f.thr(mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
@@ -27,7 +31,7 @@
 #' @export
 f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
-    path.mdls <- paste("4_ENMeval.results", "sp", sep = "/")
+    path.mdls <- paste("4_ENMeval.results", "Mdls.sp", sep = "/")
   }
   if(dir.exists(path.mdls)==F) dir.create(path.mdls)
   # args <- 1:length(mcmp.spi[["mxnt.mdls"]])
@@ -166,11 +170,15 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #### 4.8.5 threshold for past and future pred
 #' Apply threshold for all predictions
 #'
-#' General function description. A short paragraph (or more) describing what the function does.
+#' This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp.l' object
+#' and save on the folder "4_ENMeval.results/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
+#' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
+#'
 #' @param mcmp.l Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 #' and model projections for each species.
 #' @inheritParams f.thr
 #' @inheritParams mxnt.c
+#' @seealso \code{\link{f.thr}}
 #' @return List of stack or brick of thresholded predictions
 #' @examples
 #' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)

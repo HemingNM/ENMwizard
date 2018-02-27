@@ -3,13 +3,17 @@
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return the necessary arguments for final model calibration and predictions.
+#'
 #' @param x Slot "results" of object of class ENMevaluation
 #' @param wAICsum cumulative sum of top ranked models for which arguments will be created
 #' @param save should save args only ("A"), selected models only ("M") or both ("B")?
+#' @inheritParams dismo::maxent
 #' @param randomseed logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param responsecurves logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param arg1 charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param arg2 charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
+#' @seealso \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
+#' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' #' @examples
 #' ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 #' f.args(ENMeval.res.lst[[1]]@results)
@@ -73,6 +77,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return selected maxent models calibrated.
+#'
 #' @param ENMeval.o Object of class ENMevaluation
 #' @param sp.nm Species name. Used to name the output folder
 #' @param a.calib Predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with
@@ -98,6 +103,8 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @param parallelTunning Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)
 #' @inheritParams f.args
+#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
+#' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm' (mxnt.c.mdls, Maxent Calibrated Models). A list containing the models ('selected.mdls') used for model calibration,
 #' calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pred.args').
 #' @export
@@ -217,6 +224,8 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' @param occ.l List of occurence data. See argument "occ" in mxnt.c.
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.c
+#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
+#' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm.l' object. A list of 'mcm' (mxnt.c.mdls, Maxent Calibrated Models), returned from function "mxnt.c"
 #' @examples
 #' mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o=ENMeval.res.lst,
