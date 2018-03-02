@@ -76,9 +76,11 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 #' of points.
 #'
 #' @param spp.occ.list A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"
+#' @param plot logical. Plot results or not?
+#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams poly.c
 #' @inheritParams poly.splt
-#' @param plot logical. Plot results or not?
+# #' @inheritParams mxnt.c.batch
 #' @seealso \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 #' #' @return A named list of spatial polygons built using coordinates
 #' @examples
@@ -92,7 +94,9 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
                          distance = "euclidean", min.nc = 2, max.nc = 20,
                          method = "mcquitty", index = "all", alphaBeale = 0.1,
-                         convex = T, alpha = 10, plot = T, save = T, crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
+                         convex = T, alpha = 10,
+                         plot = T, save = T, numCores = 1,
+                         crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
 
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
   sp.nm <- names(spp.occ.list)
@@ -102,7 +106,11 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
   #
-  for(i in 1:length(spp.occ.list)){
+  # for(i in 1:length(spp.occ.list)){
+  f.poly <- function(i, spp.occ.list, o.path.pts, k,
+                     sp.nm, convex, alpha, save, crs.set,
+                     c.m, r, q, distance, min.nc, max.nc,
+                     method, index, alphaBeale, plot){
     occ.spdf <- spp.occ.list[[i]]
     if(!class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
       lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
@@ -119,19 +127,62 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
     # raster::crs(occ.spdf) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
     if(k == 1){
-      occ.pgns[[i]] <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
+      resu <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
     } else if (k != 1) {
-      occ.pgns[[i]] <-  poly.splt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
+      resu <-  poly.splt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
                                   distance = distance, min.nc = min.nc, max.nc = max.nc,
                                   method = method, index = index, alphaBeale = alphaBeale,
                                   convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
     }
 
     if(plot){
-      sp::plot(occ.pgns[[i]], main=names(spp.occ.list)[i])
+      sp::plot(resu, main=names(spp.occ.list)[i])
       sp::plot(occ.spdf, col="red", add=T)
     }
+    return(resu)
   }
+
+  if(numCores>1){
+
+    cl<-parallel::makeCluster(numCores)
+
+    occ.pgns <- parallel::clusterApply(cl, base::seq_along(spp.occ.list),
+                                       function(i, spp.occ.list, o.path.pts, k,
+                                                sp.nm, convex, alpha, save, crs.set,
+                                                c.m, r, q, distance, min.nc, max.nc,
+                                                method, index, alphaBeale, plot){
+
+                                         f.poly(i, spp.occ.list, o.path.pts, k,
+                                                sp.nm, convex, alpha, save, crs.set,
+                                                c.m, r, q, distance, min.nc, max.nc,
+                                                method, index, alphaBeale, plot)
+
+                                       }, spp.occ.list, o.path.pts, k,
+                                       sp.nm, convex, alpha, save, crs.set,
+                                       c.m, r, q, distance, min.nc, max.nc,
+                                       method, index, alphaBeale, plot)
+
+    parallel::stopCluster(cl)
+
+  } else {
+    occ.pgns <- lapply(base::seq_along(spp.occ.list),
+                       function(i, spp.occ.list, o.path.pts, k,
+                                sp.nm, convex, alpha, save, crs.set,
+                                c.m, r, q, distance, min.nc, max.nc,
+                                method, index, alphaBeale, plot){
+
+                         f.poly(i, spp.occ.list, o.path.pts, k,
+                                sp.nm, convex, alpha, save, crs.set,
+                                c.m, r, q, distance, min.nc, max.nc,
+                                method, index, alphaBeale, plot)
+
+                       }, spp.occ.list, o.path.pts, k,
+                       sp.nm, convex, alpha, save, crs.set,
+                       c.m, r, q, distance, min.nc, max.nc,
+                       method, index, alphaBeale, plot)
+
+  }
+
   names(occ.pgns) <- names(spp.occ.list)
   return(occ.pgns)
 }
@@ -164,7 +215,8 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 poly.splt <- function(occ.spdf, k=NULL, c.m = "AP", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 2, max.nc = 20,
                       method = "mcquitty", index = "all", alphaBeale = 0.1,
-                      convex=T, alpha=10, sp.nm = "sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
+                      convex=T, alpha=10, sp.nm = "sp.nm", save=T,
+                      crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   d <- sp::coordinates(occ.spdf)
 
   if(k == 0 | is.null(k)){
@@ -362,6 +414,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 # #' @param quadsegs see ?rgeos::gBuffer
 #' @inheritParams rgeos::gBuffer
 #' @inheritParams poly.c
+#' @inheritParams poly.c.batch
 #' @seealso \code{\link[rgeos]{gBuffer}}, \code{\link{poly.c.batch}}
 #' @return A named list of SpatialPolygons
 #' @examples
@@ -372,38 +425,75 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
 #' @export
-bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
+bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.bffr"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
 
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
-  occ.b <- vector("list", length(occ.polys))
-  names(occ.b) <- names(occ.polys)
+  # occ.b <- vector("list", length(occ.polys))
+  occ.b <- vector("list")
+  # names(occ.b) <- names(occ.polys)
   # if(dir.exists(o.path)==F) dir.create(o.path)
   # bf.path <- paste(o.path,"bffr", sep = "/" )
   # if(dir.exists(bf.path)==F) dir.create(bf.path)
 
   if(length(mult)==1){ mult <- rep(mult, length(occ.polys))}
   TF.b.w <- is.null(bffr.width)
-  for(i in 1:length(occ.polys)){
-    if(!is.null(crs.set) & is.null(raster::projection(occ.polys[[i]]))){raster::projection(occ.polys[[i]]) <- crs.set}
+
+  # for(i in 1:length(occ.polys)){
+  f.bffr <- function(i, occ.polys, crs.set, TF.b.w, bffr.width,
+                     quadsegs, mult, o.path){
+    n.occp.i <- names(occ.polys)[i]
+    occ.polys.i <- occ.polys[[i]]
+    if(!is.null(crs.set) & is.null(raster::projection(occ.polys.i))){raster::projection(occ.polys.i) <- crs.set}
     if(TF.b.w){
-      ext.proj <- raster::extent(occ.polys[[i]])
+      ext.proj <- raster::extent(occ.polys.i)
       bffr.width <- mean(c(abs(ext.proj[1]-ext.proj[2]), abs(ext.proj[3]-ext.proj[4])))*mult[i]
     }
-    cat(c("Buffer width for", names(occ.b)[i], "is", bffr.width, "\n"))
-    occ.b[[i]] <- rgeos::gBuffer(occ.polys[[i]], width=bffr.width, quadsegs=quadsegs)
+    cat(c("Buffer width for", n.occp.i, "is", bffr.width, "\n"))
+    occ.b.i <- rgeos::gBuffer(occ.polys.i, width=bffr.width, quadsegs=quadsegs)
     # raster::crs(occ.b[[i]]) <- crs.set
     # if(!is.null(crs.set)){raster::projection(occ.b[[i]]) <- crs.set}
-    raster::shapefile(occ.b[[i]], filename = paste(o.path, paste0(names(occ.b)[i], ".bffr", ".shp"), sep = "/" ), overwrite=TRUE)
-    occ.b[[i]] <- raster::shapefile(paste(o.path, paste0(names(occ.b)[i], ".bffr", ".shp"), sep = "/" ))
+    raster::shapefile(occ.b.i, filename = paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ), overwrite=TRUE)
+    occ.b.i <- raster::shapefile(paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ))
 
     if(plot == T){
-      sp::plot(occ.b[[i]], col="green", main=names(occ.b)[i])
-      sp::plot(occ.polys[[i]], border="red", add=T)
+      sp::plot(occ.b.i, col="green", main=n.occp.i)
+      sp::plot(occ.polys.i, border="red", add=T)
     }
+    return(occ.b.i)
   }
+
+  if(numCores>1){
+
+    cl<-parallel::makeCluster(numCores)
+
+    occ.b <- parallel::clusterApply(cl, base::seq_along(occ.polys),
+                                       function(i, occ.polys, crs.set, TF.b.w, bffr.width,
+                                                quadsegs, mult, o.path){
+
+                                         f.bffr(i, occ.polys, crs.set, TF.b.w, bffr.width,
+                                                quadsegs, mult, o.path)
+
+                                       }, occ.polys, crs.set, TF.b.w, bffr.width,
+                                    quadsegs, mult, o.path)
+
+    parallel::stopCluster(cl)
+
+  } else {
+    occ.b <- lapply(base::seq_along(occ.polys),
+                    function(i, occ.polys, crs.set, TF.b.w, bffr.width,
+                             quadsegs, mult, o.path){
+
+                      f.bffr(i, occ.polys, crs.set, TF.b.w, bffr.width,
+                             quadsegs, mult, o.path)
+
+                    }, occ.polys, crs.set, TF.b.w, bffr.width,
+                    quadsegs, mult, o.path)
+
+  }
+  names(occ.b) <- names(occ.polys)
   return(occ.b)
 }
 
@@ -416,6 +506,7 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 #'
 #' @param occ.b list of SpatialPolygons, usually returned from "bffr.batch" function
 #' @param env.uncut raster brick or stack to be cropped
+#' @inheritParams poly.c.batch
 #' @seealso \code{\link[raster]{crop}}, \code{\link{bffr.batch}}
 #' @return list [one element for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
@@ -432,25 +523,54 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 #'    plot(occ.b[[i]], add=T)
 #' }
 #' @export
-env.cut <- function(occ.b, env.uncut){
+env.cut <- function(occ.b, env.uncut, numCores = 1){
   path.env.out <- "2_envData"
   if(dir.exists(path.env.out)==F) dir.create(path.env.out)
   ## Clipping rasters for each species
-  occ.b.env <- vector("list", length(occ.b))
-  names(occ.b.env) <- names(occ.b)
+  occ.b.env <- vector("list")
+  # occ.b.env <- vector("list", length(occ.b))
+  # names(occ.b.env) <- names(occ.b)
 
-  for(i in 1:length(occ.b)){
+  # for(i in 1:length(occ.b)){
+  f.cut <- function(i, occ.b, env.uncut, path.env.out){
+    n.occ.b.i <- names(occ.b)[i]
+    occ.b.i <- occ.b[[i]]
     cat(c("Cutting environmental variables of species", i, "of", length(occ.b), "\n"))
     # occ.b[[i]] <- sp::spTransform(occ.b[[i]], raster::crs(env.uncut))
-    occ.b.env[[i]] <- raster::crop(env.uncut, raster::extent(occ.b[[i]]))
-    occ.b.env[[i]] <- raster::mask(occ.b.env[[i]], occ.b[[i]])
-    # raster::crs(occ.b.env[[i]]) <- raster::crs(env.uncut)
+    env.i <- raster::crop(env.uncut, raster::extent(occ.b.i))
+    env.i <- raster::mask(env.i, occ.b.i)
+    # raster::crs(env.i) <- raster::crs(env.uncut)
     # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
-    occ.b.env[[i]] <- raster::writeRaster(occ.b.env[[i]],
-                                          filename = paste(path.env.out, paste("envData.", names(occ.b.env)[i], ".grd", sep=''), sep='/'),
+    env.i <- raster::writeRaster(env.i,
+                                          filename = paste(path.env.out, paste("envData.", n.occ.b.i, ".grd", sep=''), sep='/'),
                                           format = "raster", overwrite = T)
-    # plot(occ.b.env[[i]])
+    return(env.i)
   }
+
+  if(numCores>1){
+
+    cl<-parallel::makeCluster(numCores)
+
+    occ.b.env <- parallel::clusterApply(cl, base::seq_along(occ.b),
+                                    function(i, occ.b, env.uncut, path.env.out){
+
+                                      f.cut(i, occ.b, env.uncut, path.env.out)
+
+                                    }, occ.b, env.uncut, path.env.out)
+
+    parallel::stopCluster(cl)
+
+  } else {
+    occ.b.env <- lapply(base::seq_along(occ.b),
+                        function(i, occ.b, env.uncut, path.env.out){
+
+                          f.cut(i, occ.b, env.uncut, path.env.out)
+
+                        }, occ.b, env.uncut, path.env.out)
+
+  }
+
+  names(occ.b.env) <- names(occ.b)
 
   return(occ.b.env)
 }

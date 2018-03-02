@@ -222,8 +222,9 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' a presence or background record..
 # #' @param a.proj.l List of projection areas. See argument "a.proj" in mxnt.c.
 #' @param occ.l List of occurence data. See argument "occ" in mxnt.c.
-#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
+# #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.c
+#' @inheritParams poly.c.batch
 #' @seealso \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
 #' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm.l' object. A list of 'mcm' (mxnt.c.mdls, Maxent Calibrated Models), returned from function "mxnt.c"

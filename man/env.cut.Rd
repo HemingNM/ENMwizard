@@ -4,12 +4,14 @@
 \alias{env.cut}
 \title{Crop environmental variables for each species}
 \usage{
-env.cut(occ.b, env.uncut)
+env.cut(occ.b, env.uncut, numCores = 1)
 }
 \arguments{
 \item{occ.b}{list of SpatialPolygons, usually returned from "bffr.batch" function}
 
 \item{env.uncut}{raster brick or stack to be cropped}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 list [one element for each species] of cropped environmental variables. Details in ?raster::crop

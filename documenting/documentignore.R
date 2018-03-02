@@ -1,4 +1,4 @@
-library(devtools)
+# library(devtools)
 # devtools::use_testthat()
 # devtools::use_vignette("introduction")
 # senha Git: GT!he36

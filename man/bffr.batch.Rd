@@ -5,7 +5,7 @@
 \title{Create buffer based on species polygons}
 \usage{
 bffr.batch(occ.polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
-  crs.set = NULL, plot = T)
+  numCores = 1, crs.set = NULL, plot = T)
 }
 \arguments{
 \item{occ.polys}{list of SpatialPolygons, usually obj returned from poly.c.batch()}
@@ -15,6 +15,8 @@ bffr.batch(occ.polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 \item{mult}{How much expand bffr.width}
 
 \item{quadsegs}{Number of line segments to use to approximate a quarter circle.}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 

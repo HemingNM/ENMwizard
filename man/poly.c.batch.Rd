@@ -7,7 +7,7 @@
 poly.c.batch(spp.occ.list, k = 1, c.m = "AP", r = 2, q = 0.3,
   distance = "euclidean", min.nc = 2, max.nc = 20, method = "mcquitty",
   index = "all", alphaBeale = 0.1, convex = T, alpha = 10, plot = T,
-  save = T, crs.set = "+proj=longlat +datum=WGS84")
+  save = T, numCores = 1, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
 \item{spp.occ.list}{A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"}
@@ -50,6 +50,8 @@ If the distance is "NULL", the dissimilarity matrix (diss) should be given by th
 \item{plot}{logical. Plot results or not?}
 
 \item{save}{Should save polygons on disk?}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 }
