@@ -415,7 +415,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' @param occ.polys list of SpatialPolygons, usually obj returned from poly.c.batch()
 #' @param bffr.width Buffer width. See 'width' of ?rgeos::gBuffer
 #' @param mult How much expand bffr.width
-#' @param plot Boolean, to draw plots or not
+# #' @param plot Boolean, to draw plots or not
 # #' @param quadsegs see ?rgeos::gBuffer
 #' @inheritParams rgeos::gBuffer
 #' @inheritParams poly.c

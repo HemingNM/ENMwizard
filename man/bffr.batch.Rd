@@ -20,7 +20,7 @@ bffr.batch(occ.polys, bffr.width = NULL, mult = 0.2, quadsegs = 100,
 
 \item{crs.set}{set the coordinate reference system (CRS) of the polygons}
 
-\item{plot}{Boolean, to draw plots or not}
+\item{plot}{logical. Plot results or not?}
 }
 \value{
 A named list of SpatialPolygons
