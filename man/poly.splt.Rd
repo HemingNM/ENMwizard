@@ -4,9 +4,9 @@
 \alias{poly.splt}
 \title{Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
-poly.splt(occ.spdf, k = NULL, c.m = "AP", r = 2, q = 0.3,
-  distance = "euclidean", min.nc = 2, max.nc = 20, method = "mcquitty",
-  index = "all", alphaBeale = 0.1, convex = T, alpha = 10,
+poly.splt(occ.spdf, k = NULL, c.m = "NB", r = 2, q = 0.3,
+  distance = "euclidean", min.nc = 2, max.nc = 20, method = "centroid",
+  index = "kl", alphaBeale = 0.1, convex = T, alpha = 10,
   sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{

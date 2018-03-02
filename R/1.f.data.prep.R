@@ -217,9 +217,9 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @export
-poly.splt <- function(occ.spdf, k=NULL, c.m = "AP", r = 2, q = 0.3,
+poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 2, max.nc = 20,
-                      method = "mcquitty", index = "all", alphaBeale = 0.1,
+                      method = "centroid", index = "kl", alphaBeale = 0.1,
                       convex=T, alpha=10, sp.nm = "sp.nm", save=T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   d <- unique(sp::coordinates(occ.spdf))
