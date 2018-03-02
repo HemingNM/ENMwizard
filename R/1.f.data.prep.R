@@ -50,8 +50,8 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
     # lines(ch$x[pathX, ], lwd = 2)
     coords <- ch$x[pathX, ]
   } else {
-    ch <- grDevices::chull(sp::coordinates(occ.spdf))
-    coords <- sp::coordinates(occ.spdf)[c(ch, ch[1]),]
+    ch <- grDevices::chull(unique(sp::coordinates(occ.spdf)))
+    coords <- unique(sp::coordinates(occ.spdf))[c(ch, ch[1]),]
   }
   occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
@@ -103,9 +103,12 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
   sp.nm <- names(spp.occ.list)
   # sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
 
-  o.path.pts <- "1_sppData/occ.pts"
+
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
+  if(save.pts){
+    o.path.pts <- "1_sppData/occ.pts"
+    if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
+  }
   #
   # for(i in 1:length(spp.occ.list)){
   f.poly <- function(i, spp.occ.list, o.path.pts, k,
@@ -219,7 +222,7 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "AP", r = 2, q = 0.3,
                       method = "mcquitty", index = "all", alphaBeale = 0.1,
                       convex=T, alpha=10, sp.nm = "sp.nm", save=T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
-  d <- sp::coordinates(occ.spdf)
+  d <- unique(sp::coordinates(occ.spdf))
 
   if(k == 0 | is.null(k)){
     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
