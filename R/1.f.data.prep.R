@@ -77,6 +77,7 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 #'
 #' @param spp.occ.list A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"
 #' @param plot logical. Plot results or not?
+#' @param save.pts logical. Save each species' occurence points as shapefile?
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams poly.c
 #' @inheritParams poly.splt
@@ -95,7 +96,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
                          distance = "euclidean", min.nc = 2, max.nc = 20,
                          method = "mcquitty", index = "all", alphaBeale = 0.1,
                          convex = T, alpha = 10,
-                         plot = T, save = T, numCores = 1,
+                         plot = T, save = T, save.pts = F, numCores = 1,
                          crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
 
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
@@ -108,7 +109,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
   #
   # for(i in 1:length(spp.occ.list)){
   f.poly <- function(i, spp.occ.list, o.path.pts, k,
-                     sp.nm, convex, alpha, save, crs.set,
+                     sp.nm, convex, alpha, save, save.pts, crs.set,
                      c.m, r, q, distance, min.nc, max.nc,
                      method, index, alphaBeale, plot){
     occ.spdf <- spp.occ.list[[i]]
@@ -119,7 +120,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
     }
     # occ.spdf <- data.frame(spp.occ.list[[i]])
     # sp::coordinates(occ.spdf) <- ~LONG+LAT
-    if(save){
+    if(save.pts){
       raster::shapefile(occ.spdf, filename = paste(o.path.pts, paste0(paste(names(spp.occ.list)[i], "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
     }# else {
     #   raster::shapefile(occ.spdf)
@@ -143,22 +144,23 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
   }
 
   if(numCores>1){
+    plot <- F
 
     cl<-parallel::makeCluster(numCores)
 
     occ.pgns <- parallel::clusterApply(cl, base::seq_along(spp.occ.list),
                                        function(i, spp.occ.list, o.path.pts, k,
-                                                sp.nm, convex, alpha, save, crs.set,
+                                                sp.nm, convex, alpha, save, save.pts, crs.set,
                                                 c.m, r, q, distance, min.nc, max.nc,
                                                 method, index, alphaBeale, plot){
 
                                          f.poly(i, spp.occ.list, o.path.pts, k,
-                                                sp.nm, convex, alpha, save, crs.set,
+                                                sp.nm, convex, alpha, save, save.pts, crs.set,
                                                 c.m, r, q, distance, min.nc, max.nc,
                                                 method, index, alphaBeale, plot)
 
                                        }, spp.occ.list, o.path.pts, k,
-                                       sp.nm, convex, alpha, save, crs.set,
+                                       sp.nm, convex, alpha, save, save.pts, crs.set,
                                        c.m, r, q, distance, min.nc, max.nc,
                                        method, index, alphaBeale, plot)
 
@@ -167,17 +169,17 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
   } else {
     occ.pgns <- lapply(base::seq_along(spp.occ.list),
                        function(i, spp.occ.list, o.path.pts, k,
-                                sp.nm, convex, alpha, save, crs.set,
+                                sp.nm, convex, alpha, save, save.pts, crs.set,
                                 c.m, r, q, distance, min.nc, max.nc,
                                 method, index, alphaBeale, plot){
 
                          f.poly(i, spp.occ.list, o.path.pts, k,
-                                sp.nm, convex, alpha, save, crs.set,
+                                sp.nm, convex, alpha, save, save.pts, crs.set,
                                 c.m, r, q, distance, min.nc, max.nc,
                                 method, index, alphaBeale, plot)
 
                        }, spp.occ.list, o.path.pts, k,
-                       sp.nm, convex, alpha, save, crs.set,
+                       sp.nm, convex, alpha, save, save.pts, crs.set,
                        c.m, r, q, distance, min.nc, max.nc,
                        method, index, alphaBeale, plot)
 
@@ -466,6 +468,7 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
   }
 
   if(numCores>1){
+    plot <- F
 
     cl<-parallel::makeCluster(numCores)
 
@@ -542,8 +545,8 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
     # raster::crs(env.i) <- raster::crs(env.uncut)
     # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
     env.i <- raster::writeRaster(env.i,
-                                          filename = paste(path.env.out, paste("envData.", n.occ.b.i, ".grd", sep=''), sep='/'),
-                                          format = "raster", overwrite = T)
+                                 filename = paste(path.env.out, paste("envData.", n.occ.b.i, ".grd", sep=''), sep='/'),
+                                 format = "raster", overwrite = T)
     return(env.i)
   }
 
