@@ -104,9 +104,9 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
   # sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
 
 
+  o.path.pts <- "1_sppData/occ.pts"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(save.pts){
-    o.path.pts <- "1_sppData/occ.pts"
     if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
   }
   #
