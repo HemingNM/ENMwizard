@@ -251,7 +251,9 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
       levels(clust) <- 1:k
       clust <- as.numeric(clust)
     } else if (c.m == "NB") {
-      # stop("Not implemented yet")
+      if(nrow(u.pts)<max.nc){
+        max.nc <- nrow(u.pts)-1
+      }
       nb <- NbClust::NbClust(u.pts, distance = distance, min.nc = min.nc, max.nc = max.nc,
                              method = method, index = index, alphaBeale = 0.1)
       clust <- nb$Best.partition
