@@ -19,12 +19,13 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
   if(dir.exists(o.path)==F) dir.create(o.path)
 
+  u.pts <- unique(sp::coordinates(occ.spdf))
 
   if(convex==F){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
 
-    ch <- alphahull::ashape(unique(sp::coordinates(occ.spdf)), alpha=alpha)
+    ch <- alphahull::ashape(u.pts, alpha=alpha)
     chg <- igraph::graph.edgelist(cbind(as.character(ch$edges[, "ind1"]),
                                         as.character(ch$edges[, "ind2"])), directed = FALSE)
     if (!igraph::is.connected(chg)) {
@@ -50,8 +51,8 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
     # lines(ch$x[pathX, ], lwd = 2)
     coords <- ch$x[pathX, ]
   } else {
-    ch <- grDevices::chull(sp::coordinates(occ.spdf))
-    coords <- sp::coordinates(occ.spdf)[c(ch, ch[1]),]
+    ch <- grDevices::chull(u.pts)
+    coords <- u.pts[c(ch, ch[1]),]
   }
   occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
@@ -222,7 +223,9 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
                       method = "centroid", index = "kl", alphaBeale = 0.1,
                       convex=T, alpha=10, sp.nm = "sp.nm", save=T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
-  d <- sp::coordinates(occ.spdf)
+
+  # u.pts <- sp::coordinates(occ.spdf)
+  u.pts <- unique(sp::coordinates(occ.spdf))
 
   if(k == 0 | is.null(k)){
     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
@@ -231,15 +234,15 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
 
     if(c.m == "E"){ ## ELBOW method
-      dist.obj <- stats::dist(d)
+      dist.obj <- stats::dist(u.pts)
       hclust.obj <- stats::hclust(dist.obj)
       css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
       elbow.obj <- GMD::elbow.batch(css.obj)
       k <- elbow.obj$k
       clust <- stats::cutree(hclust.obj, k)
     } else if (c.m == "AP") { # Affinity Propagation (AP)
-      apclus <- apcluster::apcluster(apcluster::negDistMat(r=r), d)
-      # apclus <- apcluster::apcluster(apcluster::expSimMat(r=2, w=10), d)
+      apclus <- apcluster::apcluster(apcluster::negDistMat(r=r), u.pts)
+      # apclus <- apcluster::apcluster(apcluster::expSimMat(r=2, w=10), u.pts)
       apclus <- apcluster::apcluster(apclus@sim, q=q)
       length(apclus@clusters)
       k <- length(apclus@clusters)
@@ -249,20 +252,20 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
       clust <- as.numeric(clust)
     } else if (c.m == "NB") {
       # stop("Not implemented yet")
-      nb <- NbClust::NbClust(d, distance = distance, min.nc = min.nc, max.nc = max.nc,
+      nb <- NbClust::NbClust(u.pts, distance = distance, min.nc = min.nc, max.nc = max.nc,
                              method = method, index = index, alphaBeale = 0.1)
       clust <- nb$Best.partition
       k <- length(unique(clust))
     }
   } else { # Hierarchical Clustering
     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
-    # d <- cbind(occ.spdf$LONG, occ.spdf$LAT)
-    hclust.obj <- stats::hclust(stats::dist(d))
+    # u.pts <- cbind(occ.spdf$LONG, occ.spdf$LAT)
+    hclust.obj <- stats::hclust(stats::dist(u.pts))
     clust <- stats::cutree(hclust.obj, k)
   }
 
   # create one polygon for each set of points
-  spp.k.list <- lapply(1:k, function(i){occ.spdf[clust==i,]})
+  spp.k.list <- lapply(1:k, function(i){u.pts[clust==i,]})
   names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
   occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=F, save=F)
   if(length(occ.polys.lst)>1){
@@ -381,7 +384,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Get polygons and change IDs
-  uid<-1
+  uid <- 1
   poly.l <- vector("list", length(occ.polys))
   for (i in 1:length(occ.polys)) {
     temp.data <- occ.polys[[i]]
