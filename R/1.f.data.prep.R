@@ -221,7 +221,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 1, max.nc = 20,
                       method = "centroid", index = "trcovw", alphaBeale = 0.1,
-                      convex=T, alpha=10, sp.nm = "sp.nm", save=T,
+                      convex=T, alpha=10, sp.nm = "sp.nm", save = T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
 
   # u.pts <- sp::coordinates(occ.spdf)
@@ -601,6 +601,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' Each data.frame can include several columnns, but must include at minimum a column
 #' of latitude and a column of longitude values
 #' @inheritParams spThin::thin
+#' @inheritParams poly.c.batch
 #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
@@ -610,7 +611,8 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' @export
 thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col = "species",
                        thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
-                       write.files = TRUE, max.files = 1, write.log.file = TRUE) {
+                       write.files = TRUE, max.files = 1, write.log.file = TRUE,
+                       numCores = 1) {
 
   out.dir <- "1_sppData/occ.thinned.full"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
@@ -618,7 +620,10 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
 
   spp <- names(loc.data.lst)
 
-  t.loc <- function(i, loc.data.lst,  spp, ...){
+  t.loc <- function(i, loc.data.lst, spp,
+                    lat.col, long.col, spec.col,
+                    thin.par, reps, locs.thinned.list.return,
+                    write.files, max.files, out.dir, write.log.file){
     spThin::thin(as.data.frame(loc.data.lst[[i]]),
                  lat.col = lat.col, long.col = long.col,
                  spec.col = spec.col,
@@ -632,8 +637,49 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
                  write.log.file = write.log.file)
   }
 
-  thinned.dataset.full <- vector(mode = "list", length = length(loc.data.lst))
-  thinned.dataset.full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
+  # thinned.dataset.full <- vector(mode = "list", length = length(loc.data.lst))
+  # thinned.dataset.full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
+  if(numCores>1){
+
+    cl<-parallel::makeCluster(numCores)
+
+    thinned.dataset.full <- parallel::clusterApply(cl, base::seq_along(loc.data.lst),
+                                    function(i, loc.data.lst, spp,
+                                             lat.col, long.col, spec.col,
+                                             thin.par, reps, locs.thinned.list.return,
+                                             write.files, max.files, out.dir, write.log.file){
+
+                                      t.loc(i, loc.data.lst, spp,
+                                            lat.col, long.col, spec.col,
+                                            thin.par, reps, locs.thinned.list.return,
+                                            write.files, max.files, out.dir, write.log.file)
+
+                                    }, loc.data.lst, spp,
+                                    lat.col, long.col, spec.col,
+                                    thin.par, reps, locs.thinned.list.return,
+                                    write.files, max.files, out.dir, write.log.file)
+
+    parallel::stopCluster(cl)
+
+  } else {
+    thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
+                                   function(i, loc.data.lst, spp,
+                                            lat.col, long.col, spec.col,
+                                            thin.par, reps, locs.thinned.list.return,
+                                            write.files, max.files, out.dir, write.log.file){
+
+                                     t.loc(i, loc.data.lst, spp,
+                                           lat.col, long.col, spec.col,
+                                           thin.par, reps, locs.thinned.list.return,
+                                           write.files, max.files, out.dir, write.log.file)
+
+                                   }, loc.data.lst, spp,
+                                   lat.col, long.col, spec.col,
+                                   thin.par, reps, locs.thinned.list.return,
+                                   write.files, max.files, out.dir, write.log.file)
+
+  }
+  # names(occ.b) <- names(occ.polys)
 
   names(thinned.dataset.full) <- spp
 

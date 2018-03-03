@@ -6,7 +6,7 @@
 \usage{
 poly.splt(occ.spdf, k = NULL, c.m = "NB", r = 2, q = 0.3,
   distance = "euclidean", min.nc = 1, max.nc = 20, method = "centroid",
-  index = "kl", alphaBeale = 0.1, convex = T, alpha = 10,
+  index = "trcovw", alphaBeale = 0.1, convex = T, alpha = 10,
   sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{

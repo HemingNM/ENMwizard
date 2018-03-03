@@ -7,7 +7,7 @@
 thin.batch(loc.data.lst, lat.col = "lat", long.col = "lon",
   spec.col = "species", thin.par = 10, reps = 10,
   locs.thinned.list.return = TRUE, write.files = TRUE, max.files = 1,
-  write.log.file = TRUE)
+  write.log.file = TRUE, numCores = 1)
 }
 \arguments{
 \item{loc.data.lst}{Named list containing data.frames of species occurence locations.
@@ -38,6 +38,8 @@ written with the thinned locs data}
 thinned data}
 
 \item{write.log.file}{TRUE/FALSE create/append log file of thinning run}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
