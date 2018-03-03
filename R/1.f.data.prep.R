@@ -265,6 +265,12 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
   }
 
   # create one polygon for each set of points
+  coordinates(u.pts) <- cbind(u.pts[,1], u.pts[,2])
+    # if(!class(u.pts) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
+    #   lon.col <- colnames(u.pts)[grep("^lon$|^long$|^longitude$", colnames(u.pts), ignore.case = T, fixed = F)][1]
+    #   lat.col <- colnames(u.pts)[grep("^lat$|^latitude$", colnames(u.pts), ignore.case = T)][1]
+    #   sp::coordinates(u.pts) <- c(lon.col, lat.col)
+    # }
   spp.k.list <- lapply(1:k, function(i){u.pts[clust==i,]})
   names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
   occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=F, save=F)
