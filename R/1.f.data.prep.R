@@ -50,8 +50,8 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
     # lines(ch$x[pathX, ], lwd = 2)
     coords <- ch$x[pathX, ]
   } else {
-    ch <- grDevices::chull(unique(sp::coordinates(occ.spdf)))
-    coords <- unique(sp::coordinates(occ.spdf))[c(ch, ch[1]),]
+    ch <- grDevices::chull(sp::coordinates(occ.spdf))
+    coords <- sp::coordinates(occ.spdf)[c(ch, ch[1]),]
   }
   occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
   occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
@@ -222,7 +222,7 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
                       method = "centroid", index = "kl", alphaBeale = 0.1,
                       convex=T, alpha=10, sp.nm = "sp.nm", save=T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
-  d <- unique(sp::coordinates(occ.spdf))
+  d <- sp::coordinates(occ.spdf)
 
   if(k == 0 | is.null(k)){
     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
@@ -265,7 +265,12 @@ poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
   spp.k.list <- lapply(1:k, function(i){occ.spdf[clust==i,]})
   names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
   occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=F, save=F)
-  occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
+  if(length(occ.polys.lst)>1){
+    occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
+  } else {
+    occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
+    # occ.polys.sp  <- occ.polys.lst
+  }
   # raster::crs(occ.polys.sp) <- crs.set
   # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
   #  sp::plot(occ.polys.sp)
