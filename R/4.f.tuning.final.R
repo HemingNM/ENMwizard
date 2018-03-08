@@ -214,7 +214,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
 
   }
-  return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls,
+  return(list(ENMeval.results = ENMeval.r, selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls,
               occ.pts = occ, bg.pts = a,
               mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
