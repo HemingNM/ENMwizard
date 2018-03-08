@@ -101,7 +101,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=
     Mod.AICc.stack <- raster::stack(filename)
 
     # create averaged prediction map
-    print(mod.pred.nms[1])
+    # print(mod.pred.nms[1])
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
                                                  filename = paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/'),
                                                  format = formt, overwrite = T) )
@@ -116,7 +116,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=
     if(dir.exists(path2file) == FALSE) dir.create(path2file)
 
     #### 4.3.2.1.1 create Low AIC model prediction on a specific path
-    print(mod.pred.nms[2])
+    # print(mod.pred.nms[2])
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.all[[1]],
                                                  filename = filename,
                                                  format = formt, overwrite = T) )
@@ -131,7 +131,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=
       # path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
       # filename <- paste(path2file, paste0(mod.nms[i], ".", pred.nm,".grd"), sep='/')
       # if(dir.exists(path2file) == FALSE) dir.create(path2file)
-      print(mod.nms[i])
+      # print(mod.nms[i])
       mod.preds <- raster::addLayer(mod.preds, mod.all[[i]] )
       names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms[i]
     }
