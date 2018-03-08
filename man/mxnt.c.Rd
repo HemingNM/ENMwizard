@@ -4,11 +4,11 @@
 \alias{mxnt.c}
 \title{Calibrating selected models}
 \usage{
-mxnt.c(ENMeval.o, sp.nm, a.calib, occ, formt = "raster",
-  pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  wAICsum = 0.99, randomseed = F, responsecurves = T,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1,
-  parallelTunning = TRUE)
+mxnt.c(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE,
+  nbg = 10000, formt = "raster", pred.args = c("outputformat=cloglog",
+  "doclamp=true", "pictures=true"), wAICsum = 0.99, randomseed = FALSE,
+  responsecurves = TRUE, arg1 = "noaddsamplestobackground",
+  arg2 = "noautofeature", numCores = 1, parallelTunning = TRUE)
 }
 \arguments{
 \item{ENMeval.o}{Object of class ENMevaluation}
@@ -28,6 +28,10 @@ object
 If x is a data.frame, p should be a vector with a length equal to nrow(x) and contain 0
 (background) and 1 (presence) values, to indicate which records (rows) in data.frame x are
 presence records, and which are background records}
+
+\item{use.ENMeval.bgpts}{Logical. Use background points from ENMeval or sample new ones?}
+
+\item{nbg}{Number of background points to use. These are sampled randomly from the cells that are not \code{NA} in the first predictor variable. Ignored if background points are specified with argument \code{a}}
 
 \item{formt}{Character. Output file type. Argument 'format' of raster::writeRaster}
 

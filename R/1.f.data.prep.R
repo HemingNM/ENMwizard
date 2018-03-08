@@ -518,8 +518,8 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 
 
 
-#' Crop environmental variables for each species
-#'
+#' Cut calibration area based on a list of SpatialPolygons
+## #' Crop environmental variables for each species
 #' Use a list of SpatialPolygons to crop environmental variables for each species.
 #'
 #' @param occ.b list of SpatialPolygons, usually returned from "bffr.batch" function
@@ -542,7 +542,8 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 #' }
 #' @export
 env.cut <- function(occ.b, env.uncut, numCores = 1){
-  path.env.out <- "2_envData"
+  path.env.out <- "2_envData/area.calib"
+  if(dir.exists("2_envData")==F) dir.create("2_envData")
   if(dir.exists(path.env.out)==F) dir.create(path.env.out)
   ## Clipping rasters for each species
   occ.b.env <- vector("list")
@@ -601,6 +602,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' Each data.frame can include several columnns, but must include at minimum a column
 #' of latitude and a column of longitude values
 #' @inheritParams spThin::thin
+#' @inheritParams spThin::spThin
 #' @inheritParams poly.c.batch
 #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
@@ -624,6 +626,20 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
                     lat.col, long.col, spec.col,
                     thin.par, reps, locs.thinned.list.return,
                     write.files, max.files, out.dir, write.log.file){
+
+    if(utils::packageVersion("spThin")>=1.0){
+      spThin::spThin(as.data.frame(loc.data.lst[[i]]),
+                   lat.col = lat.col, long.col = long.col,
+                   spec.col = spec.col,
+                   thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
+                   locs.thinned.list.return = locs.thinned.list.return,
+                   write.files = write.files,
+                   max.files = max.files,
+                   out.dir = out.dir,
+                   out.base = paste0(spp[i], ".occ.thinned"),
+                   log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
+                   write.log.file = write.log.file)
+    } else {
     spThin::thin(as.data.frame(loc.data.lst[[i]]),
                  lat.col = lat.col, long.col = long.col,
                  spec.col = spec.col,
@@ -635,6 +651,8 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
                  out.base = paste0(spp[i], ".occ.thinned"),
                  log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
                  write.log.file = write.log.file)
+      }
+
   }
 
   # thinned.dataset.full <- vector(mode = "list", length = length(loc.data.lst))

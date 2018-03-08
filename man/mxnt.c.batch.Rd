@@ -4,11 +4,11 @@
 \alias{mxnt.c.batch}
 \title{Calibrating and predicting selected models for several species}
 \usage{
-mxnt.c.batch(ENMeval.o.l, a.calib.l, occ.l, formt = "raster",
-  pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  wAICsum = 0.99, randomseed = F, responsecurves = T,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1,
-  parallelTunning = TRUE)
+mxnt.c.batch(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE,
+  formt = "raster", pred.args = c("outputformat=cloglog", "doclamp=true",
+  "pictures=true"), wAICsum = 0.99, randomseed = FALSE,
+  responsecurves = TRUE, arg1 = "noaddsamplestobackground",
+  arg2 = "noautofeature", numCores = 1, parallelTunning = TRUE)
 }
 \arguments{
 \item{ENMeval.o.l}{List of objects of class ENMevaluation}
@@ -19,6 +19,8 @@ also be a data.frame, in which case each column should be a predictor variable a
 a presence or background record..}
 
 \item{occ.l}{List of occurence data. See argument "occ" in mxnt.c.}
+
+\item{use.ENMeval.bgpts}{Logical. Use background points from ENMeval or sample new ones?}
 
 \item{formt}{Character. Output file type. Argument 'format' of raster::writeRaster}
 

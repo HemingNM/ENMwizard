@@ -2,7 +2,8 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{env.cut}
 \alias{env.cut}
-\title{Crop environmental variables for each species}
+\title{Cut calibration area based on a list of SpatialPolygons
+Use a list of SpatialPolygons to crop environmental variables for each species.}
 \usage{
 env.cut(occ.b, env.uncut, numCores = 1)
 }
@@ -17,6 +18,7 @@ env.cut(occ.b, env.uncut, numCores = 1)
 list [one element for each species] of cropped environmental variables. Details in ?raster::crop
 }
 \description{
+Cut calibration area based on a list of SpatialPolygons
 Use a list of SpatialPolygons to crop environmental variables for each species.
 }
 \examples{

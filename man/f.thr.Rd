@@ -13,15 +13,15 @@ calibrated models and model projections for each species}
 \item{scn.nm}{Name of climatic scenario to be looked for}
 
 \item{thrshld.i}{List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
-1 - Fixed.cumulative.value.1 (fcv1),
-2 - Fixed.cumulative.value.5 (fcv5),
-3 - Fixed.cumulative.value.10 (fcv10),
-4 - Minimum.training.presence (mtp),
-5 - 10.percentile.training.presence (x10ptp),
-6 - Equal.training.sensitivity.and.specificity (etss),
-7 - Maximum.training.sensitivity.plus.specificity (mtss),
-8 - Balance.training.omission.predicted.area.and.threshold.value (bto),
-9 - Equate.entropy.of.thresholded.and.original.distributions (eetd)}
+1. Fixed.cumulative.value.1 (fcv1);
+2. Fixed.cumulative.value.5 (fcv5);
+3. Fixed.cumulative.value.10 (fcv10);
+4. Minimum.training.presence (mtp);
+5. 10.percentile.training.presence (x10ptp);
+6. Equal.training.sensitivity.and.specificity (etss);
+7. Maximum.training.sensitivity.plus.specificity (mtss);
+8. Balance.training.omission.predicted.area.and.threshold.value (bto);
+9. Equate.entropy.of.thresholded.and.original.distributions (eetd).}
 
 \item{path.mdls}{Path where thresholded rasters will be saved}
 }

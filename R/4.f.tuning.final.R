@@ -102,21 +102,31 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' 'outputfiletype', because the 'predict' function has its own 'filename' argument for that.
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @param parallelTunning Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)
+#' @param use.ENMeval.bgpts Logical. Use background points from ENMeval or sample new ones?
 #' @inheritParams f.args
+#' @inheritParams dismo::maxent
 #' @seealso \code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
 #' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm' (mxnt.c.mdls, Maxent Calibrated Models). A list containing the models ('selected.mdls') used for model calibration,
 #' calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pred.args').
 #' @export
-mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
-                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                    wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',
-                    numCores = 1, parallelTunning = TRUE){
+mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, formt = "raster", # , a.proj
+                   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+                   wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
+                   numCores = 1, parallelTunning = TRUE){
 
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
+
+  if(is.null(occ)){ occ <- ENMeval.o@occ.pts }
+
+  if(use.ENMeval.bgpts){
+    a <- ENMeval.o@bg.pts
+  } else {
+    a <- dismo::randomPoints(a.calib, nbg, occ)
+  }
 
   ENMeval.r <- ENMeval.o@results
   # cat(c(names(ENMeval.r[i]), "\n"))
@@ -161,30 +171,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 
       cl<-parallel::makeCluster(numCores)
 
-      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ) {
-
-        if(i<=length(args.aicc)){
-          path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
-          }else{
-          path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-          }
-
-
-        filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-        # maxent models
-        set.seed(1)
-        resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
-        return(resu)
-        # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-        #                            file = filename, format = formt, overwrite=T)
-      }, args.all, mod.nms, a.calib, occ) #)
-
-      parallel::stopCluster(cl)
-
-
-
-    }else{
-      mxnt.mdls<-lapply(seq_along(args.all), function(i) {
+      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
         if(i<=length(args.aicc)){
           path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
@@ -192,20 +179,44 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
           path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
         }
 
-      filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
-      # maxent models
-      set.seed(1)
-      resu <- dismo::maxent(a.calib, occ, path=path2file, args=args.all[[i]]) # final model fitting/calibration
-      return(resu)
-      # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-      #                            file = filename, format = formt, overwrite=T)
-    }) #) ## fecha for or lapply
+        filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+        # maxent models
+        set.seed(1)
+        resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+        return(resu)
+        # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
+        #                            file = filename, format = formt, overwrite=T)
+      }, args.all, mod.nms, a.calib, occ, a) #)
+
+      parallel::stopCluster(cl)
+
+
+
+    }else{
+      mxnt.mdls <- lapply(seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
+
+        if(i<=length(args.aicc)){
+          path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+        }else{
+          path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
+        }
+
+        filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
+        # maxent models
+        set.seed(1)
+        resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+        return(resu)
+        # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
+        #                            file = filename, format = formt, overwrite=T)
+      }, args.all, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
 
     } # closes else
 
 
-}
-  return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls, mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
+  }
+  return(list(selected.mdls = xsel.mdls, mxnt.mdls=mxnt.mdls,
+              occ.pts = occ, bg.pts = a,
+              mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 
 # "f.mxnt.mdl.pred.batch" renamed to "mxnt.c.batch"
@@ -236,9 +247,9 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ, formt = "raster", # , a.proj
 #' mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
-mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l, formt = "raster", # , a.proj.l
+mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE, formt = "raster", # , a.proj.l
                           pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                          wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature',
+                          wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                           numCores = 1, parallelTunning = TRUE){
 
   # path.res <- "4_ENMeval.results"
@@ -250,26 +261,31 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l, formt = "raster", # , a.
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.c","f.args"))
 
-  mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+  mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
     # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
+
+    # a <- NULL
+    # if(use.ENMeval.bgpts){ a <- ENMeval.o.l[[i]]@bg.pts }
+
     cat(c(names(ENMeval.o.l[i]), "\n"))
       # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
       # compute final models and predictions
      resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                                           a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
-                                          occ = occ.l[[i]], formt = formt,
+                                          occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, # a=ENMeval.o.l[[i]]@bg.pts,
+                                          formt = formt,
                                           pred.args = pred.args, wAICsum = wAICsum,
                                           randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
 
     return(resu)
-  }, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+  }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
 
   parallel::stopCluster(cl)
 
   }else{
 
-    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
     # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
     cat(c(names(ENMeval.o.l[i]), "\n"))
@@ -277,12 +293,12 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l, formt = "raster", # , a.
       # compute final models and predictions
       resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
-                      occ = occ.l[[i]], formt = formt,
+                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, formt = formt,
                       pred.args = pred.args, wAICsum = wAICsum,
                       randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
 
       return(resu)
-    }, ENMeval.o.l, a.calib.l, occ.l, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+    }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
 
 
   }
