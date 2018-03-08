@@ -229,7 +229,7 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores=1, par
                                          mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                                      sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                                      a.proj = a.proj[[j]],
-                                                                     formt = formt,parallelTunning=parallelTunning,
+                                                                     formt = formt, parallelTunning=parallelTunning,
                                                                      numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                                        }
                                       names(mxnt.preds.spi) <- paste0(names(a.proj))
@@ -248,7 +248,7 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores=1, par
     mcmp.l <- lapply(seq_along(mcm.l),
 
                               function(i,a.proj.l,mcm.l,formt){
-                                cat(c(names(mcm.l)[i], "\n"))
+                                cat(c("\n", names(mcm.l)[i], "\n"))
                                 mxnt.preds.spi <- list()
                                 mcm <- mcm.l[[i]]
                                 sp.nm <- names(mcm.l)[i]
@@ -262,7 +262,7 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores=1, par
                                   mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                               sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                               a.proj = a.proj[[j]],
-                                                              formt = formt,parallelTunning=parallelTunning,
+                                                              formt = formt, parallelTunning=parallelTunning,
                                                               numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                                 }
                                 names(mxnt.preds.spi) <- paste0(names(a.proj))
