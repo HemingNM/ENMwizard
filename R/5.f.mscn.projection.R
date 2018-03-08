@@ -22,7 +22,7 @@
 #' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
 # #' @examples
 #' @export
-mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=1,parallelTunning=TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
+mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
                         # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                         # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
 
@@ -208,7 +208,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",numCores=
 #' @examples
 #' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
-mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores=1, parallelTunning=TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, parallelTunning = TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   mdl.names <- names(mcm.l)
 
   if(numCores>1 & parallelTunning==FALSE){

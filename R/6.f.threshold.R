@@ -76,7 +76,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
-      apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[[1]]$sel.cri),]), 2, function(x, wv) {stats::weighted.mean(x, wv)}, wv) ### check if is raster
+      apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[[1]]$sel.cri),]), 2, function(x, w) {stats::weighted.mean(x, w)}, w=wv) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
       thrshld.crit.v[grep("Mod.AICc_1$", mcmp.spi[[1]]$sel.cri),]
@@ -183,7 +183,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' @examples
 #' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
 #' @export
-f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores=1) {
+f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
   path.res <- "4_ENMeval.results"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
