@@ -52,7 +52,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
     # args.aicc <- 1:(length(args)-4)
     wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
-  } # else {wv <- rep(0, max(grep("Mod.AICc", mcmp.spi[[1]]$sel.cri))) }
+  } else { wv <- rep(1, length(grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri, invert = T))) } # else {wv <- rep(0, max(grep("Mod.AICc", mcmp.spi[[1]]$sel.cri))) }
 
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
