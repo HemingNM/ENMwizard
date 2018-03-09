@@ -76,25 +76,25 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
-      apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[[1]]$sel.cri),]), 2, function(x, wv) {
+      apply(data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
         # if(length(x) != length(w) & length(w) == 1) {w <- rep(1, length(x))}
         return(stats::weighted.mean(x, wv))
         }, wv) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mod.AICc_1$", mcmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mod.AICc_1$", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
     if(sum(grepl("Mean.ORmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.ORmin", mcmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
     }else {NA},
     if(sum(grepl("Mean.OR10", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.OR10", mcmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.OR10", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
     if(sum(grepl("Mean.AUCmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.AUCmin", mcmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.AUCmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
     if(sum(grepl("Mean.AUC10", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.AUC10", mcmp.spi[[1]]$sel.cri),]
+      thrshld.crit.v[grep("Mean.AUC10", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA} ) )
 
   # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
