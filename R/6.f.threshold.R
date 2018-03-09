@@ -52,7 +52,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
     # args.aicc <- 1:(length(args)-4)
     wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
-  }  else { wv <- 1 } # rep(1, 1+length(grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri, invert = T))) } # else {wv <- rep(0, max(grep("Mod.AICc", mcmp.spi[[1]]$sel.cri))) }
+  } # else { wv <- 1 } # rep(1, 1+length(grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri, invert = T))) } # else {wv <- rep(0, max(grep("Mod.AICc", mcmp.spi[[1]]$sel.cri))) }
 
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -77,7 +77,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
       apply(as.data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[[1]]$sel.cri),]), 2, function(x, w) {
-        if(length(x) != length(w) & length(w) == 1) {w <- rep(1, length(x))}
+        # if(length(x) != length(w) & length(w) == 1) {w <- rep(1, length(x))}
         return(stats::weighted.mean(x, w))
         }, w=wv) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
