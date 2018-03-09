@@ -77,8 +77,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   thrshld.mod.crt <- data.frame(rbind(
     if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
       apply(data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
-        # if(length(x) != length(w) & length(w) == 1) {w <- rep(1, length(x))}
-        return(stats::weighted.mean(x, wv))
+        stats::weighted.mean(x, wv)
         }, wv) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
