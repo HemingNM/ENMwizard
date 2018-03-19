@@ -40,7 +40,6 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                                         bg.pts="data.frame"),
                               package = "ENMwizard")
 
-
   if(resultsOnly){
     for(i in 1:length(occ.l)){
       cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
@@ -84,15 +83,21 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
 #' @seealso \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 #' @export
 ENMevaluate.l.opt <- function (ENMeval.o.l) {
-  ENMeval.o.l2 <- list()
+  ENMevaluate.opt <- setClass("ENMevaluate.opt",
+                              slots = c(results="data.frame",
+                                        occ.pts="data.frame",
+                                        bg.pts="data.frame"),
+                              package = "ENMwizard")
+
+  ENMeval.res <- vector("list", length(ENMeval.o.l))
+  names(ENMeval.res) <- names(ENMeval.o.l)
   for (i in seq_along(ENMeval.o.l)) {
-    ENMeval.o.l2[[i]] <- new("ENMevaluate.opt",
+    ENMeval.res[[i]] <- new("ENMevaluate.opt",
                              results = ENMeval.o.l[[i]]@results,
                              occ.pts = ENMeval.o.l[[i]]@occ.pts,
                              bg.pts = ENMeval.o.l[[i]]@bg.pts)
   }
-  names(ENMeval.o.l2) <- names(ENMeval.o.l)
-  return(ENMeval.o.l2)
+  return(ENMeval.res)
 }
 
 
