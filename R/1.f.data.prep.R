@@ -627,19 +627,19 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
                     thin.par, reps, locs.thinned.list.return,
                     write.files, max.files, out.dir, write.log.file){
 
-    if(utils::packageVersion("spThin")>=1.0){
-      spThin::spThin(as.data.frame(loc.data.lst[[i]]),
-                   lat.col = lat.col, long.col = long.col,
-                   spec.col = spec.col,
-                   thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
-                   locs.thinned.list.return = locs.thinned.list.return,
-                   write.files = write.files,
-                   max.files = max.files,
-                   out.dir = out.dir,
-                   out.base = paste0(spp[i], ".occ.thinned"),
-                   log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
-                   write.log.file = write.log.file)
-    } else {
+    # if(utils::packageVersion("spThin")>=1.0){
+    #   spThin::spThin(as.data.frame(loc.data.lst[[i]]),
+    #                lat.col = lat.col, long.col = long.col,
+    #                spec.col = spec.col,
+    #                thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
+    #                locs.thinned.list.return = locs.thinned.list.return,
+    #                write.files = write.files,
+    #                max.files = max.files,
+    #                out.dir = out.dir,
+    #                out.base = paste0(spp[i], ".occ.thinned"),
+    #                log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
+    #                write.log.file = write.log.file)
+    # } else {
     spThin::thin(as.data.frame(loc.data.lst[[i]]),
                  lat.col = lat.col, long.col = long.col,
                  spec.col = spec.col,
@@ -651,7 +651,7 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
                  out.base = paste0(spp[i], ".occ.thinned"),
                  log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
                  write.log.file = write.log.file)
-      }
+      # }
 
   }
 
