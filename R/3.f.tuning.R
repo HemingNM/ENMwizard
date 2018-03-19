@@ -10,6 +10,10 @@
 #' also be a data.frame, in which case each column should be a predictor variable and each row
 #' a presence or background record.
 #' @param bg.coords.l list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).
+#' @param resultsOnly logical; If TRUE, only results, occ.pts, and bg.pts are returned.
+#' 'predictions', 'models', 'occ.grp', and 'bg.grp' are set to NULL.
+#' It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
+#' Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
 #' @inheritParams  ENMeval::ENMevaluate
 #' @seealso \code{\link[ENMeval]{ENMevaluate}}
 #' @examples
@@ -22,7 +26,8 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                               overlap = FALSE, aggregation.factor = c(2, 2),
                               kfolds = NA, bin.output = FALSE, clamp = TRUE,
                               rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
-                              progbar = TRUE, updateProgress = FALSE, ...){
+                              progbar = TRUE, updateProgress = FALSE,
+                              resultsOnly = F, ...){
 
   if(is.null(bg.coords.l)) bg.coords.l <- vector("list", length(occ.l))
   if(length(bg.coords.l)!=length(occ.l)){ stop("bg.coords.l must contain one dataset of 'bg.coords' for each species")}
@@ -38,7 +43,37 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                                     kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                     rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                     progbar = progbar, updateProgress = updateProgress)
+    if(resultsOnly){
+      ENMeval.res[[i]]@predictions <- NULL
+      ENMeval.res[[i]]@models <- NULL
+      ENMeval.res[[i]]@occ.grp <- NULL
+      ENMeval.res[[i]]@bg.grp <- NULL
+    }
     # ENMeval.occ.results[[i]] <- ENMeval.res[[i]]@results
   }
   return(ENMeval.res)
 }
+
+
+
+#' Optimize the size of ENMevaluate.batch objects
+#'
+#' This function will set to NULL (erase) the largest slots ('predictions', 'models', 'occ.grp', and 'bg.grp')
+#' of ENMeval::ENMevaluate objects. Only results, occ.pts, and bg.pts are returned.
+#' Use with care. It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
+#' Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
+#'
+#' @inheritParams mxnt.c.batch
+#' @seealso \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
+#' @export
+ENMevaluate.l.opt <- function(ENMeval.o.l){
+  for(i in seq_along(ENMeval.o.l)){
+    ENMeval.o.l[[i]]@predictions <- NULL
+    ENMeval.o.l[[i]]@models <- NULL
+    ENMeval.o.l[[i]]@occ.grp <- NULL
+    ENMeval.o.l[[i]]@bg.grp <- NULL
+  }
+  return(ENMeval.o.l)
+}
+
+

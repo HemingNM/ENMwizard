@@ -65,6 +65,6 @@ This function will read an object of class ENMevaluation (See ?ENMeval::ENMevalu
 return selected maxent models calibrated.
 }
 \seealso{
-\code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
-\code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
+\code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
+\code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }

@@ -10,7 +10,7 @@ ENMevaluate.batch(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
   method = "block", overlap = FALSE, aggregation.factor = c(2, 2),
   kfolds = NA, bin.output = FALSE, clamp = TRUE, rasterPreds = TRUE,
   parallel = FALSE, numCores = NULL, progbar = TRUE,
-  updateProgress = FALSE, ...)
+  updateProgress = FALSE, resultsOnly = F, ...)
 }
 \arguments{
 \item{occ.l}{list of species occurrence data}
@@ -55,6 +55,11 @@ a presence or background record.}
 \item{progbar}{  logical; used internally. }
 
 \item{updateProgress}{ logical; used internally. }
+
+\item{resultsOnly}{logical; If TRUE, only results, occ.pts, and bg.pts are returned.
+'predictions', 'models', 'occ.grp', and 'bg.grp' are set to NULL.
+It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
+Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.}
 
 \item{...}{ character vector; use this to pass other arguments (e.g., prevalence) to the `maxent` call.  Note that not all options are functional or relevant.}
 }

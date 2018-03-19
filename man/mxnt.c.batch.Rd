@@ -63,6 +63,6 @@ mxnt.mdls.preds.lst[[1]][[3]] # used prediction arguments
 plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 }
 \seealso{
-\code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
-\code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
+\code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
+\code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }

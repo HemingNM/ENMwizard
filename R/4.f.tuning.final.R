@@ -105,8 +105,8 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' @param use.ENMeval.bgpts Logical. Use background points from ENMeval or sample new ones?
 #' @inheritParams f.args
 #' @inheritParams dismo::maxent
-#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
-#' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
+#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c.batch}}, \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
+#' \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm' (mxnt.c.mdls, Maxent Calibrated Models). A list containing the models ('selected.mdls') used for model calibration,
 #' calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pred.args').
 #' @export
@@ -236,8 +236,8 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 # #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
 #' @inheritParams mxnt.c
 #' @inheritParams poly.c.batch
-#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},
-#' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
+#' @seealso \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
+#' \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm.l' object. A list of 'mcm' (mxnt.c.mdls, Maxent Calibrated Models), returned from function "mxnt.c"
 #' @examples
 #' mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o=ENMeval.res.lst,
