@@ -34,20 +34,37 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
   ENMeval.res <- vector("list", length(occ.l))
   names(ENMeval.res) <- names(occ.l)
   # ENMeval.occ.results <- ENMeval.res
-  for(i in 1:length(occ.l)){
-    cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
-    ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
-                                             occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
-                                    fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
-                                    overlap = overlap, aggregation.factor = aggregation.factor,
-                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
-                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
-                                    progbar = progbar, updateProgress = updateProgress)
-    if(resultsOnly){
-      ENMeval.res[[i]]@predictions <- NULL
-      ENMeval.res[[i]]@models <- NULL
-      ENMeval.res[[i]]@occ.grp <- NULL
-      ENMeval.res[[i]]@bg.grp <- NULL
+  ENMevaluate.opt <- setClass("ENMevaluate.opt",
+                              slots = c(results="data.frame",
+                                        occ.pts="data.frame",
+                                        bg.pts="data.frame"),
+                              package = "ENMwizard")
+
+
+  if(resultsOnly){
+    for(i in 1:length(occ.l)){
+      cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
+      eval <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
+                                   occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
+                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
+                                   overlap = overlap, aggregation.factor = aggregation.factor,
+                                   kfolds = kfolds, bin.output = bin.output, clamp = clamp,
+                                   rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
+                                   progbar = progbar, updateProgress = updateProgress)
+      ENMeval.res[[i]] <- new("ENMevaluate.opt",
+                              results = eval@results,
+                              occ.pts = eval@occ.pts,
+                              bg.pts = eval@bg.pts)
+    } else {
+      for(i in 1:length(occ.l)){
+        ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
+                                                 occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
+                                                 fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
+                                                 overlap = overlap, aggregation.factor = aggregation.factor,
+                                                 kfolds = kfolds, bin.output = bin.output, clamp = clamp,
+                                                 rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
+                                                 progbar = progbar, updateProgress = updateProgress)
+      }
     }
     # ENMeval.occ.results[[i]] <- ENMeval.res[[i]]@results
   }
@@ -67,12 +84,6 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
 #' @seealso \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 #' @export
 ENMevaluate.l.opt <- function (ENMeval.o.l) {
-  ENMevaluate.opt <- setClass("ENMevaluate.opt",
-                              slots = c(results="data.frame",
-                                        occ.pts="data.frame",
-                                        bg.pts="data.frame"),
-                              package = "ENMwizard")
-
   ENMeval.o.l2 <- list()
   for (i in seq_along(ENMeval.o.l)) {
     ENMeval.o.l2[[i]] <- new("ENMevaluate.opt",
