@@ -66,14 +66,22 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
 #' @inheritParams mxnt.c.batch
 #' @seealso \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 #' @export
-ENMevaluate.l.opt <- function(ENMeval.o.l){
-  for(i in seq_along(ENMeval.o.l)){
-    ENMeval.o.l[[i]]@predictions <- NULL
-    ENMeval.o.l[[i]]@models <- NULL
-    ENMeval.o.l[[i]]@occ.grp <- NULL
-    ENMeval.o.l[[i]]@bg.grp <- NULL
+ENMevaluate.l.opt <- function (ENMeval.o.l) {
+  ENMevaluate.opt <- setClass("ENMevaluate.opt",
+                              slots = c(results="data.frame",
+                                        occ.pts="data.frame",
+                                        bg.pts="data.frame"),
+                              package = "ENMwizard")
+
+  ENMeval.o.l2 <- list()
+  for (i in seq_along(ENMeval.o.l)) {
+    ENMeval.o.l2[[i]] <- new("ENMevaluate.opt",
+                             results = ENMeval.o.l[[i]]@results,
+                             occ.pts = ENMeval.o.l[[i]]@occ.pts,
+                             bg.pts = ENMeval.o.l[[i]]@bg.pts)
   }
-  return(ENMeval.o.l)
+  names(ENMeval.o.l2) <- names(ENMeval.o.l)
+  return(ENMeval.o.l2)
 }
 
 
