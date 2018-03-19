@@ -602,7 +602,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' Each data.frame can include several columnns, but must include at minimum a column
 #' of latitude and a column of longitude values
 #' @inheritParams spThin::thin
-#' @inheritParams spThin::spThin
+# #' @inheritParams spThin::spThin
 #' @inheritParams poly.c.batch
 #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
