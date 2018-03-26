@@ -203,6 +203,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 #'
 #' @param k number of polygons to create based on coordinates
 #' @param c.m clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).
+#' @param nm.col.dt "character". Name of a numeric column to use as grouping variable in addition to coordinates.
 #' @inheritParams poly.c
 #' @inheritParams bind.shp
 #' @inheritParams apcluster::negDistMat
@@ -218,14 +219,21 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @export
-poly.splt <- function(occ.spdf, k=NULL, c.m = "NB", r = 2, q = 0.3,
+poly.splt <- function(occ.spdf, nm.col.dt=NULL, k=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 1, max.nc = 20,
                       method = "centroid", index = "trcovw", alphaBeale = 0.1,
                       convex=T, alpha=10, sp.nm = "sp.nm", save = T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
 
   # u.pts <- sp::coordinates(occ.spdf)
-  u.pts <- as.data.frame(unique(sp::coordinates(occ.spdf)))
+  if(is.null(nm.col.dt)){
+    u.pts <- as.data.frame(unique(sp::coordinates(occ.spdf)))
+  } else {
+    if(!is.numeric(occ.spdf@data[,nm.col.dt])){
+      stop(paste(nm.col.dt, "must be numeric!"))
+    }
+    u.pts <- as.data.frame(unique(cbind(sp::coordinates(occ.spdf), occ.spdf@data[,nm.col.dt])))
+  }
 
   if(k == 0 | is.null(k)){
     # http://www.sthda.com/english/articles/29-cluster-validation-essentials/96-determining-the-optimal-number-of-clusters-3-must-know-methods/
@@ -396,24 +404,32 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
     temp.data <- sp::spChFIDs(temp.data, as.character(uid:(uid+n-1)))
     uid <- uid + n
     poly.l[[i]] <- temp.data
-    # poly.data <- spRbind(poly.data,temp.data)
   }
 
-  # mapunit polygoan: combin remaining  polygons with first polygoan
-  poly.data <- do.call(raster::bind, poly.l)
-  # names(poly.data)
+  # mapunit polygon: combin remaining  polygons with first polygoan
+  p <- do.call(raster::bind, poly.l)
+
+  { ## Convert to "SpatialPolygonsDataFrame"
+    # poly.data@data$ID <- seq_along(poly.data@data$ID)
+    # Extract polygon ID's
+    pid <- sapply(methods::slot(p, "polygons"), function(x) methods::slot(x, "ID"))
+    # Create dataframe with correct rownames
+    p.df <- data.frame(ID=1:length(p), row.names = pid)
+    # Coersion
+    p <- SpatialPolygonsDataFrame(p, p.df)
+  }
   # raster::crs(poly.data) <- crs.set
   # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
   sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
 
-  # writeOGR(poly.data, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
+  # writeOGR(p, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
   # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
   if(save){
-    raster::shapefile(poly.data, filename = filename, overwrite=TRUE)
+    raster::shapefile(p, filename = filename, overwrite=TRUE)
   }
   # return(raster::shapefile(x = filename))
-  return(poly.data)
+  return(p)
 }
 
 

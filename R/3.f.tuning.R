@@ -54,7 +54,8 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                               results = eval@results,
                               occ.pts = eval@occ.pts,
                               bg.pts = eval@bg.pts)
-    } else {
+    }
+  } else {
       for(i in 1:length(occ.l)){
         ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                                  occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
@@ -63,10 +64,9 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                                                  kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                                  rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                                  progbar = progbar, updateProgress = updateProgress)
+        # ENMeval.occ.results[[i]] <- ENMeval.res[[i]]@results
       }
     }
-    # ENMeval.occ.results[[i]] <- ENMeval.res[[i]]@results
-  }
   return(ENMeval.res)
 }
 

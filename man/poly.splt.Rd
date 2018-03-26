@@ -4,13 +4,16 @@
 \alias{poly.splt}
 \title{Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp}
 \usage{
-poly.splt(occ.spdf, k = NULL, c.m = "NB", r = 2, q = 0.3,
-  distance = "euclidean", min.nc = 1, max.nc = 20, method = "centroid",
-  index = "trcovw", alphaBeale = 0.1, convex = T, alpha = 10,
-  sp.nm = "sp.nm", save = T, crs.set = "+proj=longlat +datum=WGS84")
+poly.splt(occ.spdf, nm.col.dt = NULL, k = NULL, c.m = "NB", r = 2,
+  q = 0.3, distance = "euclidean", min.nc = 1, max.nc = 20,
+  method = "centroid", index = "trcovw", alphaBeale = 0.1, convex = T,
+  alpha = 10, sp.nm = "sp.nm", save = T,
+  crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
 \item{occ.spdf}{An object of class SpatialPoints or SpatialPointsDataFrame (e.g. species occurence coordinates)}
+
+\item{nm.col.dt}{"character". Name of a numeric column to use as grouping variable in addition to coordinates.}
 
 \item{k}{number of polygons to create based on coordinates}
 
