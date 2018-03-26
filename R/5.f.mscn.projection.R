@@ -36,13 +36,18 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   f <- factor(xsel.mdls$features)
   beta <- xsel.mdls$rm
   args.all <- mcm$mxnt.args
-  args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
+  # args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
+  args.aicc <- grep("Mod.AIC", xsel.mdls$sel.cri)
+  args.or.auc <- grep("Mod.AIC", xsel.mdls$sel.cri, invert=T)
   print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
 
-  mod.nms <- paste(xsel.mdls[,"sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
 
   ## TO DO - change order of all stacks to c("Mod.AvgAICc", "Mod.LowAICc", "Mod.Mean.ORmin", "Mod.Mean.OR10", "Mod.Mean.AUCmin", "Mod.Mean.AUC10")
-  mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
+  # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
+  mod.pred.nms <- c(if(length(args.aicc)>0){
+    c("Mod.AvgAICc", "Mod.LowAICc")
+  }, mod.nms[(length(args.aicc)+1):length(args.all)])
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -58,39 +63,42 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   #### 4.3.2 predictions
 
   # AIC AVG model
-  avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
-  if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
-
+  if(length(args.aicc)>0) {
+    avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
+    if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
+    filename.aicc <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".", pred.nm,".grd"), sep='/')[1:length(args.aicc)]
+  } else {
+    filename.aicc <- NULL
+  }
   ##### list of models to PREDICT
   mod.all <- vector("list")
-  filename.aicc <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".", pred.nm,".grd"), sep='/')[1:length(args.aicc)]
 
   # path2file <-paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)], sep='/')
   filename.au.om <- paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)],
-                        paste0(mod.nms[(length(args.aicc)+1):length(args.all)], ".", pred.nm,".grd"), sep='/')
+                          paste0(mod.nms[(length(args.aicc)+1):length(args.all)], ".", pred.nm,".grd"), sep='/')
 
   filename <- c(filename.aicc, filename.au.om)
 
-  if(numCores>1&parallelTunning){
+  if(numCores>1 & parallelTunning){
 
-    cl<-parallel::makeCluster(numCores)
+    cl <- parallel::makeCluster(numCores)
 
-    mod.all <- parallel::clusterApply(cl, seq_along(args.all), function(i,mxnt.mdls,a.proj,pred.args,filename,formt) {
-      resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
+    mod.all <- parallel::clusterApply(cl, seq_along(args.all), function(i, mxnt.mdls, a.proj, pred.args, filename, formt) {
+      resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text', file = filename[i], format = formt, overwrite = TRUE)
       return(resu)}, mxnt.mdls, a.proj, pred.args, filename, formt) #) ## fecha for or lapply
 
     parallel::stopCluster(cl)
 
-  }else{
+  } else {
 
     mod.all <- lapply(seq_along(args.all), function(i) {
-      resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text',file = filename[i], format = formt, overwrite = TRUE)
+      resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text', file = filename[i], format = formt, overwrite = TRUE)
       return(resu)}) #) ## fecha for or lapply
   }
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
   #### AIC AVG model
-  {
+  if(length(args.aicc)>1) {
     #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
     # create vector of model weights
     wv <- xsel.mdls[order(xsel.mdls$delta.AICc),"w.AIC"][seq_along(args.aicc)]
@@ -103,14 +111,14 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
     # create averaged prediction map
     # print(mod.pred.nms[1])
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
-                                                 filename = paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/'),
-                                                 format = formt, overwrite = T) )
+                                                                 filename = paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/'),
+                                                                 format = formt, overwrite = T) )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
   }
 
   #### Low AIC
   # if(i == 1) # usar if(low = T) pra escolher o low aic ou if(grep("low", Mod.pred))
-  {
+  if(length(args.aicc)>0) {
     path2file <- paste(path.mdls, outpt, mod.pred.nms[2], sep='/')
     filename <- paste(path2file, paste0(mod.pred.nms[2], ".", pred.nm,".grd"), sep='/')
     if(dir.exists(path2file) == FALSE) dir.create(path2file)
@@ -118,16 +126,16 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
     #### 4.3.2.1.1 create Low AIC model prediction on a specific path
     # print(mod.pred.nms[2])
     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.all[[1]],
-                                                 filename = filename,
-                                                 format = formt, overwrite = T) )
+                                                                 filename = filename,
+                                                                 format = formt, overwrite = T) )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[2]
   }
 
 
   #### AUC OmR models
-  if(length(args.all) > length(args.aicc)){
+  if(length(args.or.auc) > 0){
 
-    for(i in (length(args.aicc)+1):length(args.all)){
+    for(i in args.or.auc){
       # path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
       # filename <- paste(path2file, paste0(mod.nms[i], ".", pred.nm,".grd"), sep='/')
       # if(dir.exists(path2file) == FALSE) dir.create(path2file)
@@ -143,7 +151,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   # if(is.null(mcm$mxnt.preds)){
   #   mcm$mxnt.preds <- stats::setNames(list(mod.preds) , paste0(pred.nm))
   # } else {
-    mcm$mxnt.preds <- append(mcm$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))
+  mcm$mxnt.preds <- append(mcm$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))
   # }
 
   return(mcm)
@@ -218,12 +226,12 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
 
     mcmp.l <- parallel::clusterApply(cl, seq_along(mcm.l),
 
-                                    function(i, a.proj.l, mcm.l, formt){
-                                      mxnt.preds.spi <- list()
-                                      mcm <- mcm.l[[i]]
-                                      sp.nm <- names(mcm.l)[i]
-                                      pred.nm <- names(a.proj.l[[i]])
-                                      a.proj = a.proj.l[[i]]
+                                     function(i, a.proj.l, mcm.l, formt){
+                                       mxnt.preds.spi <- list()
+                                       mcm <- mcm.l[[i]]
+                                       sp.nm <- names(mcm.l)[i]
+                                       pred.nm <- names(a.proj.l[[i]])
+                                       a.proj = a.proj.l[[i]]
 
                                        for(j in 1:length(a.proj)){
                                          mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
@@ -232,13 +240,13 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                                                                      formt = formt, parallelTunning=parallelTunning,
                                                                      numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                                        }
-                                      names(mxnt.preds.spi) <- paste0(names(a.proj))
+                                       names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                   # resu <- append(mcm.l[[i]], mxnt.preds.spi)
-                   # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
-                   mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-                   # resu <- mcm.l[[i]]
-                   return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
+                                       # resu <- append(mcm.l[[i]], mxnt.preds.spi)
+                                       # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
+                                       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+                                       # resu <- mcm.l[[i]]
+                                       return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
 
 
     parallel::stopCluster(cl)
@@ -247,31 +255,31 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
 
     mcmp.l <- lapply(seq_along(mcm.l),
 
-                              function(i,a.proj.l,mcm.l,formt){
-                                cat(c("\n", names(mcm.l)[i], "\n"))
-                                mxnt.preds.spi <- list()
-                                mcm <- mcm.l[[i]]
-                                sp.nm <- names(mcm.l)[i]
-                                pred.nm <- names(a.proj.l[[i]])
-                                a.proj <- a.proj.l[[i]]
+                     function(i,a.proj.l,mcm.l,formt){
+                       cat(c("\n", names(mcm.l)[i], "\n"))
+                       mxnt.preds.spi <- list()
+                       mcm <- mcm.l[[i]]
+                       sp.nm <- names(mcm.l)[i]
+                       pred.nm <- names(a.proj.l[[i]])
+                       a.proj <- a.proj.l[[i]]
 
-                                for(j in 1:length(a.proj)){
-                                  cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
-                                        "projection ", j, " of ", length(a.proj), "\n"))
+                       for(j in 1:length(a.proj)){
+                         cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
+                               "projection ", j, " of ", length(a.proj), "\n"))
 
-                                  mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
-                                                              sp.nm = sp.nm, pred.nm = pred.nm[j],
-                                                              a.proj = a.proj[[j]],
-                                                              formt = formt, parallelTunning=parallelTunning,
-                                                              numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
-                                }
-                                names(mxnt.preds.spi) <- paste0(names(a.proj))
+                         mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
+                                                     sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                                     a.proj = a.proj[[j]],
+                                                     formt = formt, parallelTunning=parallelTunning,
+                                                     numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
+                       }
+                       names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                                # resu <- append(mcm.l[[i]], mxnt.preds.spi)
-                                # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
-                                mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-                                # resu <- mcm.l[[i]]
-                                return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
+                       # resu <- append(mcm.l[[i]], mxnt.preds.spi)
+                       # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
+                       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+                       # resu <- mcm.l[[i]]
+                       return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
 
   }
 

@@ -6,9 +6,10 @@
 \usage{
 mxnt.c(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE,
   nbg = 10000, formt = "raster", pred.args = c("outputformat=cloglog",
-  "doclamp=true", "pictures=true"), wAICsum = 0.99, randomseed = FALSE,
-  responsecurves = TRUE, arg1 = "noaddsamplestobackground",
-  arg2 = "noautofeature", numCores = 1, parallelTunning = TRUE)
+  "doclamp=true", "pictures=true"), mSel = c("AICavg", "LowAIC", "OR", "AUC"),
+  wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE,
+  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1,
+  parallelTunning = TRUE)
 }
 \arguments{
 \item{ENMeval.o}{Object of class ENMevaluation}
@@ -41,6 +42,9 @@ arguments relevant to model fitting. There is no point in using args='outputform
 *fitting* the model; but you can use arguments relevant for *prediction* when using the predict
 function. Some other arguments do not apply at all to the R implementation. An example is
 'outputfiletype', because the 'predict' function has its own 'filename' argument for that.}
+
+\item{mSel}{character vector. Which criteria to use when selecting model(s). Currently implemented:
+"AICavg", "LowAIC", "OR", "AUC"}
 
 \item{wAICsum}{cumulative sum of top ranked models for which arguments will be created}
 

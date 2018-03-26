@@ -5,6 +5,8 @@
 #' return the necessary arguments for final model calibration and predictions.
 #'
 #' @param x Slot "results" of object of class ENMevaluation
+#' @param mSel character vector. Which criteria to use when selecting model(s). Currently implemented:
+#' "AICavg", "LowAIC", "OR", "AUC"
 #' @param wAICsum cumulative sum of top ranked models for which arguments will be created
 #' @param save should save args only ("A"), selected models only ("M") or both ("B")?
 #' @inheritParams dismo::maxent
@@ -20,35 +22,88 @@
 #' @return A vector of args (if save="A"), data.frame of selected models (if save="M") or
 #' a list with both, args and selected models, (if save="B")
 #' @export
-f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2= 'noautofeature'){ # , seq=T
-  # AICc
-  x <- x[order(x$delta.AICc),]
+f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=T
+
+  x.a.i <- order(x$delta.AICc)
+  x <- x[x.a.i,]
   if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
-  # seq
-  x.m <- x[order(x$Mean.ORmin, -x$Mean.AUC),][1,]
-  # seqOr10
-  x.10 <- x[order(x$Mean.OR10, -x$Mean.AUC),][1,]
-  #AUCmin
-  x.AUCmin <- x[order(-x$Mean.AUC, x$Mean.ORmin),][1,]
-  # AUC10
-  x.AUC10 <- x[order(-x$Mean.AUC, x$Mean.OR10),][1,]
 
-  wsum <- 1:(which(cumsum(x$w.AIC) >= wAICsum)[1])
-  cat("\n", paste(length(wsum)), "of",nrow(x), "models selected using AICc")# from a total of", "models")
-  cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
-  x <- x[wsum,]
+  # AICcAvg
+  if("AICavg" %in% mSel){
+    wsum <- 1:(which(cumsum(x$w.AIC) >= wAICsum)[1])
+    cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
+    cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
+    x.a <- x[wsum,]
+    x.a$sel.cri <- paste0("Mod.AICc_", 1:length(wsum))
+  } else {
+    x.a <- NULL
+  }
+
+  # LowAIC
+  if(("LowAIC" %in% mSel) & (!"AICavg" %in% mSel)){
+    x.la.i <- order(x$delta.AICc)[1]
+    x.a <- x[x.la.i,]
+    x.a$sel.cri <- paste0("Mod.AICc_", 1)
+  } else if ((!"LowAIC" %in% mSel) & (!"AICavg" %in% mSel)){
+    x.a <- NULL
+  }
+
+  # OR
+  if("OR" %in% mSel){
+    # seq
+    x.m.i <- order(x$Mean.ORmin, -x$Mean.AUC)[1]
+    x.m <- x[x.m.i,]
+    x.m$sel.cri <- "Mod.Mean.ORmin"
+    # seqOr10
+    x.10.i <- order(x$Mean.OR10, -x$Mean.AUC)[1]
+    x.10 <- x[x.10.i,]
+    x.10$sel.cri <- "Mod.Mean.OR10"
+  } else {
+    x.m <- NULL
+    x.10 <- NULL
+  }
+
+  # AUC
+  if("AUC" %in% mSel){
+    #AUCmin
+    x.AUCmin.i <- order(-x$Mean.AUC, x$Mean.ORmin)[1]
+    x.AUCmin <- x[x.AUCmin.i,]
+    x.AUCmin$sel.cri <- "Mod.Mean.AUCmin"
+    # AUC10
+    x.AUC10.i <- order(-x$Mean.AUC, x$Mean.OR10)[1]
+    x.AUC10 <- x[x.AUC10.i,]
+    x.AUC10$sel.cri <- "Mod.Mean.AUC10"
+  } else {
+    x.AUCmin <- NULL
+    x.AUC10 <- NULL
+  }
+
+  ### TO DO - remove repeated models and put their names in x.mdls
+  # # combn(c(x.a.i, x.m.i, x.10.i, x.AUCmin.i, x.AUC10.i), 2)
+  # combn(1:5, 2)
+  # x.a.i %in% x.m.i
+  # x.a.i %in% x.10.i
+  # x.a.i %in% x.AUCmin.i
+  # x.a.i %in% x.AUC10.i
+  # x.m.i %in% x.10.i
+
+
   # if(seq==T){
-  f <- factor(c(x$features, x.m$features, x.10$features, x.AUCmin$features, x.AUC10$features),
-              levels=1:nlevels(x$features), labels=levels(x$features))
+  x.mdls <- data.frame(rbind(x.a, x.m, x.10, x.AUCmin, x.AUC10))
 
-  beta <- c(x$rm, x.m$rm, x.10$rm, x.AUCmin$rm, x.AUC10$rm)
+  f <- factor(x.mdls$features)
+  beta <- c(x.mdls$rm)
+  # f <- factor(c(x.a$features, x.m$features, x.10$features, x.AUCmin$features, x.AUC10$features),
+  #             levels=1:nlevels(x$features), labels=levels(x$features))
+  # beta <- c(x.a$rm, x.m$rm, x.10$rm, x.AUCmin$rm, x.AUC10$rm)
   cat("\n", "arguments used for building models", "\n")
-  x.mdls <- data.frame(rbind(x, x.m, x.10, x.AUCmin, x.AUC10))
-  x.mdls$sel.cri <- paste0("Mod.",c(paste0("AICc_", 1:length(wsum)),
-                                    "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  # x.mdls$sel.cri <- paste0("Mod.",c(paste0("AICc_", 1:length(wsum)),
+  #                                   "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
 
-  print(data.frame(features=f, beta, row.names = c(paste("AICc", 1:length(wsum)),
-                                                   "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10")))
+  # print(data.frame(features=f, beta, row.names = c(paste("AICc", 1:length(wsum)),
+  #                                                  "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10")))
+  print(data.frame(features=x.mdls$features, beta=x.mdls$rm, row.names = x.mdls$sel.cri))
+
   cat("\n")
   args <- paste(paste0(arg1), paste0(arg2),
                 ifelse(grepl("H", f), paste("hinge"), paste("nohinge")),
@@ -66,7 +121,7 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
   } else if(save == "M"){
     return(x.mdls)
   } else if (save == "B"){
-    return(list(c(strsplit(args, ",")),x.mdls))
+    return(list(args=c(strsplit(args, ",")), mdls=x.mdls))
   }
 }
 
@@ -112,7 +167,8 @@ f.args <- function(x, wAICsum=0.99, save = "B", randomseed=F, responsecurves=T, 
 #' @export
 mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, formt = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                   wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
+                   mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                   responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                    numCores = 1, parallelTunning = TRUE){
 
   path.res <- "4_ENMeval.results"
@@ -131,11 +187,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   ENMeval.r <- ENMeval.o@results
   # cat(c(names(ENMeval.r[i]), "\n"))
 
-  mdl.arg <- f.args(ENMeval.r, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
+  mdl.arg <- f.args(ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
 
   args.all <- mdl.arg[[1]]
-  args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)]
+  args.aicc <- grep("Mod.AIC", xsel.mdls$sel.cri)
 
   # exportar planilha de resultados
   # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
@@ -146,8 +202,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".csv"))
 
-  mod.nms <- paste(xsel.mdls[,"sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
-  mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
+  mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
+  mod.pred.nms <- c(if(length(args.aicc)>0){
+    c("Mod.AvgAICc", "Mod.LowAICc")
+  }, mod.nms[(length(args.aicc)+1):length(args.all)])
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -160,21 +219,22 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   #### AIC AVG model
   {
-    avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
-    if(dir.exists(avg.m.path)==F) dir.create(avg.m.path)
-
+    if(length(args.aicc)>0) {
+      avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
+      if(dir.exists(avg.m.path)==F) dir.create(avg.m.path)
+    }
     ##### list of models to average
-    mod.avg.i <- vector("list", length(args.aicc))
+    # mod.avg.i <- vector("list", length(args.aicc))
     # filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".grd"), sep='/')
 
     if(numCores>1 & parallelTunning){
 
-      cl<-parallel::makeCluster(numCores)
+      cl <- parallel::makeCluster(numCores)
 
       mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
         if(i<=length(args.aicc)){
-          path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+          path2file <- paste(avg.m.path, mod.nms[i], sep='/')
         }else{
           path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
         }
@@ -192,11 +252,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
 
 
-    }else{
+    } else {
       mxnt.mdls <- lapply(seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
         if(i<=length(args.aicc)){
-          path2file <- paste(getwd(), avg.m.path, mod.nms[i], sep='/')
+          path2file <- paste(avg.m.path, mod.nms[i], sep='/')
         }else{
           path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
         }
@@ -248,9 +308,10 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 #' plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model selection criteria
 #' @export
 mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE, formt = "raster", # , a.proj.l
-                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                          wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
-                          numCores = 1, parallelTunning = TRUE){
+                         pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+                         mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                         responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
+                         numCores = 1, parallelTunning = TRUE){
 
   # path.res <- "4_ENMeval.results"
   # if(dir.exists(path.res)==F) dir.create(path.res)
@@ -261,41 +322,41 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.c","f.args"))
 
-  mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+    mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-    # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
+      # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
 
-    # a <- NULL
-    # if(use.ENMeval.bgpts){ a <- ENMeval.o.l[[i]]@bg.pts }
+      # a <- NULL
+      # if(use.ENMeval.bgpts){ a <- ENMeval.o.l[[i]]@bg.pts }
 
-    cat(c(names(ENMeval.o.l[i]), "\n"))
-      # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
-      # compute final models and predictions
-     resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
-                                          a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
-                                          occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, # a=ENMeval.o.l[[i]]@bg.pts,
-                                          formt = formt,
-                                          pred.args = pred.args, wAICsum = wAICsum,
-                                          randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
-
-    return(resu)
-  }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
-
-  parallel::stopCluster(cl)
-
-  }else{
-
-    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
-      ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-    # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
-    cat(c(names(ENMeval.o.l[i]), "\n"))
+      cat(c(names(ENMeval.o.l[i]), "\n"))
       # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
       # compute final models and predictions
       resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
-                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
-                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, formt = formt,
-                      pred.args = pred.args, wAICsum = wAICsum,
-                      randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+                     a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
+                     occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, # a=ENMeval.o.l[[i]]@bg.pts,
+                     formt = formt,
+                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
+                     randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+
+      return(resu)
+    }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, mSel, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+
+    parallel::stopCluster(cl)
+
+  } else {
+
+    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+      ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
+      # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
+      cat(c(names(ENMeval.o.l[i]), "\n"))
+      # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+      # compute final models and predictions
+      resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
+                     a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
+                     occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, formt = formt,
+                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
+                     randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
