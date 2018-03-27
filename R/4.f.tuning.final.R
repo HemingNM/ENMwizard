@@ -27,82 +27,68 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   x.a.i <- order(x$delta.AICc)
   x <- x[x.a.i,]
   if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
+  x$ID <- as.numeric(rownames(x))
 
   # AICcAvg
   if("AICavg" %in% mSel){
-    wsum <- 1:(which(cumsum(x$w.AIC) >= wAICsum)[1])
+    if(any(cumsum(x$w.AIC) >= wAICsum)){
+      wsum <- 1:(which(cumsum(x$w.AIC) >= wAICsum)[1])
+    } else {
+      wsum <- 1:length(x$w.AIC)
+    }
+
+    x.a.i <- x.a.i[wsum]
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
-    x.a <- x[wsum,]
-    x.a$sel.cri <- paste0("Mod.AICc_", 1:length(wsum))
+
   } else {
-    x.a <- NULL
+    x.a.i <- NULL
   }
+  x <- x[order(x$ID),]
 
   # LowAIC
-  if(("LowAIC" %in% mSel) & (!"AICavg" %in% mSel)){
+  if("LowAIC" %in% mSel){
     x.la.i <- order(x$delta.AICc)[1]
-    x.a <- x[x.la.i,]
-    x.a$sel.cri <- paste0("Mod.AICc_", 1)
-  } else if ((!"LowAIC" %in% mSel) & (!"AICavg" %in% mSel)){
-    x.a <- NULL
+  } else {
+    x.la.i <- NULL
   }
 
   # OR
   if("OR" %in% mSel){
     # seq
-    x.m.i <- order(x$Mean.ORmin, -x$Mean.AUC)[1]
-    x.m <- x[x.m.i,]
-    x.m$sel.cri <- "Mod.Mean.ORmin"
+    xORm.i <- order(x$Mean.ORmin, -x$Mean.AUC)[1]
     # seqOr10
-    x.10.i <- order(x$Mean.OR10, -x$Mean.AUC)[1]
-    x.10 <- x[x.10.i,]
-    x.10$sel.cri <- "Mod.Mean.OR10"
+    xOR10.i <- order(x$Mean.OR10, -x$Mean.AUC)[1]
   } else {
-    x.m <- NULL
-    x.10 <- NULL
+    xORm.i <- NULL
+    xOR10.i <- NULL
   }
 
   # AUC
   if("AUC" %in% mSel){
     #AUCmin
-    x.AUCmin.i <- order(-x$Mean.AUC, x$Mean.ORmin)[1]
-    x.AUCmin <- x[x.AUCmin.i,]
-    x.AUCmin$sel.cri <- "Mod.Mean.AUCmin"
+    xAUCmin.i <- order(-x$Mean.AUC, x$Mean.ORmin)[1]
     # AUC10
-    x.AUC10.i <- order(-x$Mean.AUC, x$Mean.OR10)[1]
-    x.AUC10 <- x[x.AUC10.i,]
-    x.AUC10$sel.cri <- "Mod.Mean.AUC10"
+    xAUC10.i <- order(-x$Mean.AUC, x$Mean.OR10)[1]
   } else {
-    x.AUCmin <- NULL
-    x.AUC10 <- NULL
+    xAUCmin.i <- NULL
+    xAUC10.i <- NULL
   }
 
-  ### TO DO - remove repeated models and put their names in x.mdls
-  # # combn(c(x.a.i, x.m.i, x.10.i, x.AUCmin.i, x.AUC10.i), 2)
-  # combn(1:5, 2)
-  # x.a.i %in% x.m.i
-  # x.a.i %in% x.10.i
-  # x.a.i %in% x.AUCmin.i
-  # x.a.i %in% x.AUC10.i
-  # x.m.i %in% x.10.i
+  x$sel.cri <- ""
+  x$sel.cri[x.a.i] <- paste0(x$sel.cri[x.a.i], paste0("AICc_", 1:length(wsum)))
+  x$sel.cri[x.la.i] <- sub("^\\.", "", paste(x$sel.cri[x.la.i], "LowAICc", sep = "."))
+  x$sel.cri[xORm.i] <- sub("^\\.", "", paste(x$sel.cri[xORm.i], "ORmin", sep = "."))
+  x$sel.cri[xOR10.i] <- sub("^\\.", "", paste(x$sel.cri[xOR10.i], "OR10", sep = "."))
+  x$sel.cri[xAUCmin.i] <- sub("^\\.", "", paste(x$sel.cri[xAUCmin.i], "AUCmin", sep = "."))
+  x$sel.cri[xAUC10.i] <- sub("^\\.", "", paste(x$sel.cri[xAUC10.i], "AUC10", sep = "."))
+  xsel.mdls <- x[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
+  xsel.mdls$ID <- NULL
 
-
-  # if(seq==T){
-  x.mdls <- data.frame(rbind(x.a, x.m, x.10, x.AUCmin, x.AUC10))
-
-  f <- factor(x.mdls$features)
-  beta <- c(x.mdls$rm)
-  # f <- factor(c(x.a$features, x.m$features, x.10$features, x.AUCmin$features, x.AUC10$features),
-  #             levels=1:nlevels(x$features), labels=levels(x$features))
-  # beta <- c(x.a$rm, x.m$rm, x.10$rm, x.AUCmin$rm, x.AUC10$rm)
+  f <- factor(xsel.mdls$features)
+  beta <- c(xsel.mdls$rm)
   cat("\n", "arguments used for building models", "\n")
-  # x.mdls$sel.cri <- paste0("Mod.",c(paste0("AICc_", 1:length(wsum)),
-  #                                   "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
-
-  # print(data.frame(features=f, beta, row.names = c(paste("AICc", 1:length(wsum)),
-  #                                                  "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10")))
-  print(data.frame(features=x.mdls$features, beta=x.mdls$rm, row.names = x.mdls$sel.cri))
+  print(data.frame(features=xsel.mdls$features, beta=xsel.mdls$rm, row.names = xsel.mdls$sel.cri))
 
   cat("\n")
   args <- paste(paste0(arg1), paste0(arg2),
@@ -119,9 +105,9 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if(save == "A"){
     return(c(strsplit(args, ",")))
   } else if(save == "M"){
-    return(x.mdls)
+    return(xsel.mdls)
   } else if (save == "B"){
-    return(list(args=c(strsplit(args, ",")), mdls=x.mdls))
+    return(list(args=c(strsplit(args, ",")), mdls=xsel.mdls))
   }
 }
 
@@ -191,7 +177,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   xsel.mdls <- mdl.arg[[2]]
 
   args.all <- mdl.arg[[1]]
-  args.aicc <- grep("Mod.AIC", xsel.mdls$sel.cri)
+  args.aicc <- grep("AIC", xsel.mdls$sel.cri)
 
   # exportar planilha de resultados
   # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
@@ -202,11 +188,14 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".csv"))
 
-  mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"]) # mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
-  mod.pred.nms <- c(if(length(args.aicc)>0){
-    c("Mod.AvgAICc", "Mod.LowAICc")
-  }, mod.nms[(length(args.aicc)+1):length(args.all)])
+  # mod.pred.nms <- c(if(length(args.aicc)>0){
+  #   c("Mod.AvgAICc", "Mod.LowAICc")
+  # }, mod.nms[(length(args.aicc)+1):length(args.all)])
+  mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+                    paste0("Mod.", mod.nms[1:length(args.all)]))
+
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -219,10 +208,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   #### AIC AVG model
   {
-    if(length(args.aicc)>0) {
-      avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
-      if(dir.exists(avg.m.path)==F) dir.create(avg.m.path)
-    }
+    # if(length(args.aicc)>0) {
+    #   avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
+    #   if(dir.exists(avg.m.path)==F) dir.create(avg.m.path)
+    # }
+
     ##### list of models to average
     # mod.avg.i <- vector("list", length(args.aicc))
     # filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".grd"), sep='/')
@@ -233,11 +223,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
       mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
-        if(i<=length(args.aicc)){
-          path2file <- paste(avg.m.path, mod.nms[i], sep='/')
-        }else{
+        # if(i<=length(args.aicc)){
+        #   path2file <- paste(avg.m.path, mod.nms[i], sep='/')
+        # }else{
           path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-        }
+        # }
 
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
@@ -255,11 +245,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
     } else {
       mxnt.mdls <- lapply(seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
-        if(i<=length(args.aicc)){
-          path2file <- paste(avg.m.path, mod.nms[i], sep='/')
-        }else{
+        # if(i<=length(args.aicc)){
+        #   path2file <- paste(avg.m.path, mod.nms[i], sep='/')
+        # }else{
           path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-        }
+        # }
 
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
