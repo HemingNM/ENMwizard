@@ -83,22 +83,22 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
     if(sum(grepl("LowAICc", names(pred.r)))>0){
       thrshld.crit.v[grep("Mod.AICc_1$", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
-    if(sum(grepl("Mean.ORmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
+    if(sum(grepl("ORmin", names(pred.r)))>0){
+      thrshld.crit.v[grep("ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
     }else {NA},
-    if(sum(grepl("Mean.OR10", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.OR10", mcmp.spi[["selected.mdls"]]$sel.cri),]
+    if(sum(grepl("OR10", names(pred.r)))>0){
+      thrshld.crit.v[grep("OR10", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
-    if(sum(grepl("Mean.AUCmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.AUCmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
+    if(sum(grepl("AUCmin", names(pred.r)))>0){
+      thrshld.crit.v[grep("AUCmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
-    if(sum(grepl("Mean.AUC10", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mean.AUC10", mcmp.spi[["selected.mdls"]]$sel.cri),]
+    if(sum(grepl("AUC10", names(pred.r)))>0){
+      thrshld.crit.v[grep("AUC10", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA} ) )
 
   # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
   thrshld.mod.crt <- as.data.frame(thrshld.mod.crt[!is.na(thrshld.mod.crt[,1]),])
-  row.names(thrshld.mod.crt) <- mod.sel.crit
+  # row.names(thrshld.mod.crt) <- mod.sel.crit
   colnames(thrshld.mod.crt) <- paste0("thrshld.", thrshld.nms)
 
   brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
