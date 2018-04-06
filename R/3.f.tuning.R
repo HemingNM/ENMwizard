@@ -83,11 +83,11 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
 #' @seealso \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 #' @export
 ENMevaluate.l.opt <- function (ENMeval.o.l) {
-  ENMevaluate.opt <- setClass("ENMevaluate.opt",
-                              slots = c(results="data.frame",
-                                        occ.pts="data.frame",
-                                        bg.pts="data.frame"),
-                              package = "ENMwizard")
+  # ENMevaluate.opt <- setClass("ENMevaluate.opt",
+  #                             slots = c(results="data.frame",
+  #                                       occ.pts="data.frame",
+  #                                       bg.pts="data.frame"),
+  #                             package = "ENMwizard")
 
   ENMeval.res <- vector("list", length(ENMeval.o.l))
   names(ENMeval.res) <- names(ENMeval.o.l)
