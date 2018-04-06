@@ -34,11 +34,11 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
   ENMeval.res <- vector("list", length(occ.l))
   names(ENMeval.res) <- names(occ.l)
   # ENMeval.occ.results <- ENMeval.res
-  ENMevaluate.opt <- setClass("ENMevaluate.opt",
-                              slots = c(results="data.frame",
-                                        occ.pts="data.frame",
-                                        bg.pts="data.frame"),
-                              package = "ENMwizard")
+  # ENMevaluate.opt <- setClass("ENMevaluate.opt",
+  #                             slots = c(results="data.frame",
+  #                                       occ.pts="data.frame",
+  #                                       bg.pts="data.frame"),
+  #                             package = "ENMwizard")
 
   if(resultsOnly){
     for(i in 1:length(occ.l)){

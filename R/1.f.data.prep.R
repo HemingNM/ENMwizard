@@ -617,8 +617,8 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' @param loc.data.lst Named list containing data.frames of species occurence locations.
 #' Each data.frame can include several columnns, but must include at minimum a column
 #' of latitude and a column of longitude values
-#' @inheritParams spThin::thin
-# #' @inheritParams spThin::spThin
+# #' @inheritParams spThin::thin
+#' @inheritParams spThin::spThin
 #' @inheritParams poly.c.batch
 #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
@@ -643,7 +643,7 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
                     thin.par, reps, locs.thinned.list.return,
                     write.files, max.files, out.dir, write.log.file){
 
-    # if(utils::packageVersion("spThin")>=1.0){
+    # if(utils::packageVersion("spThin")>= 1.0){
     #   spThin::spThin(as.data.frame(loc.data.lst[[i]]),
     #                lat.col = lat.col, long.col = long.col,
     #                spec.col = spec.col,
@@ -656,7 +656,7 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
     #                log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
     #                write.log.file = write.log.file)
     # } else {
-    spThin::thin(as.data.frame(loc.data.lst[[i]]),
+    spThin::spThin(as.data.frame(loc.data.lst[[i]]),
                  lat.col = lat.col, long.col = long.col,
                  spec.col = spec.col,
                  thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos

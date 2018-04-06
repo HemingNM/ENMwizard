@@ -14,31 +14,6 @@ thin.batch(loc.data.lst, lat.col = "lat", long.col = "lon",
 Each data.frame can include several columnns, but must include at minimum a column
 of latitude and a column of longitude values}
 
-\item{lat.col}{Name of column of latitude values. Caps sensitive.}
-
-\item{long.col}{Name of column of longitude values. Caps sensitive.}
-
-\item{spec.col}{Name of column of species name. Caps sensitive.}
-
-\item{thin.par}{Thinning parameter - the distance (in kilometers) that you want
-records to be separated by.}
-
-\item{reps}{The number of times to repete the thinning process. Given the random
-process of removing nearest-neighbors there should be 'rep' number of different
-sets of coordinates.}
-
-\item{locs.thinned.list.return}{TRUE/FALSE - If true, the `list` of
-the data.frame of thinned locs resulting from each replication
-is returned (see Returns below).}
-
-\item{write.files}{TRUE/FALSE - If true, new *.csv files will be
-written with the thinned locs data}
-
-\item{max.files}{The maximum number of *csv files to be written based on the
-thinned data}
-
-\item{write.log.file}{TRUE/FALSE create/append log file of thinning run}
-
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{

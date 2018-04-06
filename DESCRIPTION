@@ -14,7 +14,6 @@ RoxygenNote: 6.0.1
 Imports:
   dismo,
   ENMeval,
-  spThin,
   rgdal,
   raster,
   sp,
@@ -36,5 +35,6 @@ Suggests:
     parallel,
     devtools
 Remotes:
+    github::mlammens/spThin (>= 1.0),
     github::danlwarren/ENMTools
 VignetteBuilder: knitr
