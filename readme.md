@@ -47,9 +47,9 @@ library(raster)
 
 # Using ENMwizard's magic wand
 
-## ------- 1. Prepare environmental data
+## - 1. Prepare environmental data
 
-### ------- 1.1 Load occurence data
+### - 1.1 Load occurence data
 
 First, lets use occ data available in dismo package
 ```r
@@ -67,7 +67,7 @@ Now we make it a named list, where names correspond to species names.
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 ```
 
-### ------- 1.2 create occ polygon to crop rasters prior to modelling
+### - 1.2 create occ polygon to crop rasters prior to modelling
 
 The occurence points in the named list are used to create polygons ...
 ```r
@@ -75,14 +75,14 @@ occ.polys <- poly.c.batch(spp.occ.list)
 
 ```
 
-### ------- 1.2.1 creating buffer
+### - 1.2.1 creating buffer
 
-... and the occurrence polygons are buffered 1.5 degrees wider.
+... and the occurrence polygons are buffered using 1.5 degrees.
 ```r
 occ.b <- bffr.batch(occ.polys, bffr.width = 1.5)
 ```
 
-### ------- 1.3. Cut enviromental layers with occ.b and save in hardrive.
+### - 1.3. Cut enviromental layers with occ.b and save in hardrive.
 Specify the path to the environmental variables
 it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
 here we will use variables available in dismo package
@@ -116,8 +116,8 @@ for(i in 1:length(occ.b.env)){
 ```
 
 
-## ------- 2. Prepare occurence data
-### ------- 2.1 Filtering original dataset
+## - 2. Prepare occurence data
+### - 2.1 Filtering original dataset
 Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
 ```r
 thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
@@ -129,23 +129,23 @@ thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
 -----
 
 
-## ------- 3. Tunning Maxent's feauture classes and regularization multiplier via ENMeval
-### ------- 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
+## - 3. Tunning Maxent's feauture classes and regularization multiplier via ENMeval
+### - 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
 After thinning, we choose one dataset for each species for modelling.
 ```r
 occ.locs <- loadTocc(thinned.dataset.batch)
 ```
 
-### ------- 3.3 model tuning using ENMeval
+### - 3.3 model tuning using ENMeval
 Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
 ```
 
 -----
-## ------- 4. Model Fitting (Calibration)
-### ------- 4.3 Run top corresponding models and save predictions 
-#### ------- 4.3.1 save maxent best models and predictions for each model
+## - 4. Model Fitting (Calibration)
+### - 4.3 Run top corresponding models and save predictions 
+#### - 4.3.1 save maxent best models and predictions for each model
 
 Now, select maxent model calibrations and predictions using the function mxnt.cp.batch. This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
 
@@ -170,8 +170,8 @@ mxnt.mdls.preds.lst <- mxnt.cp.batch(ENMeval.res = ENMeval.res.lst,a.calib.l = o
 ```
 
 
-## -------  4.1 Projection
-### ------- 4.1. Downloading environmental data
+## -  4.1 Projection
+### - 4.1. Downloading environmental data
 
 For projection it is necessary to download raster files with the environmnetal variables of interest. In this example, a directory called 'rasters' is created. Then, rasters from current and future climatic conditions projected for 2050 and 2070 are downloaded and loaded. Finally, two lists are created, one for current conditions and another for the two future cenarios.
 
@@ -237,7 +237,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-###  4.8.5 threshold for past and future pred
+###  4.8.5 threshold for past and future predictions
 
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and 
 apply on the projections.
