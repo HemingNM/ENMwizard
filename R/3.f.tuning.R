@@ -50,7 +50,7 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                    progbar = progbar, updateProgress = updateProgress)
-      ENMeval.res[[i]] <- methods::new("ENMevaluate.opt",
+      ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
                               results = eval@results,
                               occ.pts = eval@occ.pts,
                               bg.pts = eval@bg.pts)
@@ -92,7 +92,7 @@ ENMevaluate.l.opt <- function (ENMeval.o.l) {
   ENMeval.res <- vector("list", length(ENMeval.o.l))
   names(ENMeval.res) <- names(ENMeval.o.l)
   for (i in seq_along(ENMeval.o.l)) {
-    ENMeval.res[[i]] <- methods::new("ENMevaluate.opt",
+    ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
                              results = ENMeval.o.l[[i]]@results,
                              occ.pts = ENMeval.o.l[[i]]@occ.pts,
                              bg.pts = ENMeval.o.l[[i]]@bg.pts)
