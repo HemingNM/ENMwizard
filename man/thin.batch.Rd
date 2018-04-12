@@ -4,17 +4,20 @@
 \alias{thin.batch}
 \title{Filter each species' occurence dataset}
 \usage{
-thin.batch(loc.data.lst, lat.col = "lat", long.col = "lon",
-  spec.col = "species", thin.par = 10, reps = 10,
-  locs.thinned.list.return = TRUE, write.files = TRUE, max.files = 1,
-  write.log.file = TRUE, numCores = 1)
+thin.batch(loc.data.lst, dist = 10, nrep = 10, numCores = 1, ...)
 }
 \arguments{
-\item{loc.data.lst}{Named list containing data.frames of species occurence locations.
+\item{loc.data.lst}{Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame of species occurence locations.
 Each data.frame can include several columnns, but must include at minimum a column
 of latitude and a column of longitude values}
 
+\item{dist}{\code{numeric} minimum distance (m) between records.}
+
+\item{nrep}{\code{numeric} number of replicate thinned data sets to produce when using the \code{heuristic} method.}
+
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+
+\item{...}{additional arguments passed to \code{\link[lpSolveAPI]{lp.control}} if method=='lpsolve' or gurobi::gurobi() if method=='gurobi'.}
 }
 \value{
 Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
@@ -28,5 +31,5 @@ plotThin(thinned.dataset.batch[[1]])
 length(thinned.dataset.batch[[1]])
 }
 \seealso{
-\code{\link[spThin]{thin}}, \code{\link{loadTocc}}
+\code{\link[spThin]{spThin}}, \code{\link{loadTocc}}
 }

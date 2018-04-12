@@ -416,7 +416,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
     # Create dataframe with correct rownames
     p.df <- data.frame(ID=1:length(p), row.names = pid)
     # Coersion
-    p <- SpatialPolygonsDataFrame(p, p.df)
+    p <- sp::SpatialPolygonsDataFrame(p, p.df)
   }
   # raster::crs(poly.data) <- crs.set
   # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
@@ -614,23 +614,24 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 
 #' Filter each species' occurence dataset
 #'
-#' @param loc.data.lst Named list containing data.frames of species occurence locations.
+#' @param loc.data.lst Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame of species occurence locations.
 #' Each data.frame can include several columnns, but must include at minimum a column
 #' of latitude and a column of longitude values
 # #' @inheritParams spThin::thin
 #' @inheritParams spThin::spThin
 #' @inheritParams poly.c.batch
-#' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
+# #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
+#' @seealso \code{\link[spThin]{spThin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
 #' thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
 #' plotThin(thinned.dataset.batch[[1]])
 #' length(thinned.dataset.batch[[1]])
 #' @export
-thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col = "species",
-                       thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
-                       write.files = TRUE, max.files = 1, write.log.file = TRUE,
-                       numCores = 1) {
+thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.col = "species",
+                       dist = 10, nrep = 10, # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
+                       # write.files = TRUE, max.files = 1, write.log.file = TRUE,
+                       numCores = 1, ...) {
 
   out.dir <- "1_sppData/occ.thinned.full"
   if(dir.exists("1_sppData")==F) dir.create("1_sppData")
@@ -639,34 +640,44 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
   spp <- names(loc.data.lst)
 
   t.loc <- function(i, loc.data.lst, spp,
-                    lat.col, long.col, spec.col,
-                    thin.par, reps, locs.thinned.list.return,
-                    write.files, max.files, out.dir, write.log.file){
+                   dist, nrep
+                    # lat.col, long.col, spec.col,
+                    # thin.par, reps, locs.thinned.list.return,
+                    # write.files, max.files, out.dir, write.log.file
+                   ){
 
     # if(utils::packageVersion("spThin")>= 1.0){
-    #   spThin::spThin(as.data.frame(loc.data.lst[[i]]),
-    #                lat.col = lat.col, long.col = long.col,
-    #                spec.col = spec.col,
-    #                thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
-    #                locs.thinned.list.return = locs.thinned.list.return,
-    #                write.files = write.files,
-    #                max.files = max.files,
-    #                out.dir = out.dir,
-    #                out.base = paste0(spp[i], ".occ.thinned"),
-    #                log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
-    #                write.log.file = write.log.file)
+    occ.spdf <- loc.data.lst[[i]]
+    if(!class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
+      lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
+      lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
+      sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
+    }
+      spThin::spThin(occ.spdf,
+                     dist = dist, nrep = nrep
+                     # lat.col = lat.col, long.col = long.col,
+                   # spec.col = spec.col,
+                   # thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
+                   # locs.thinned.list.return = locs.thinned.list.return,
+                   # write.files = write.files,
+                   # max.files = max.files,
+                   # out.dir = out.dir,
+                   # out.base = paste0(spp[i], ".occ.thinned"),
+                   # log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
+                   # write.log.file = write.log.file
+                   )
     # } else {
-    spThin::spThin(as.data.frame(loc.data.lst[[i]]),
-                 lat.col = lat.col, long.col = long.col,
-                 spec.col = spec.col,
-                 thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
-                 locs.thinned.list.return = locs.thinned.list.return,
-                 write.files = write.files,
-                 max.files = max.files,
-                 out.dir = out.dir,
-                 out.base = paste0(spp[i], ".occ.thinned"),
-                 log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
-                 write.log.file = write.log.file)
+    # spThin::spThin(as.data.frame(loc.data.lst[[i]]),
+    #              lat.col = lat.col, long.col = long.col,
+    #              spec.col = spec.col,
+    #              thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
+    #              locs.thinned.list.return = locs.thinned.list.return,
+    #              write.files = write.files,
+    #              max.files = max.files,
+    #              out.dir = out.dir,
+    #              out.base = paste0(spp[i], ".occ.thinned"),
+    #              log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
+    #              write.log.file = write.log.file)
       # }
 
   }
@@ -679,38 +690,50 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
 
     thinned.dataset.full <- parallel::clusterApply(cl, base::seq_along(loc.data.lst),
                                     function(i, loc.data.lst, spp,
-                                             lat.col, long.col, spec.col,
-                                             thin.par, reps, locs.thinned.list.return,
-                                             write.files, max.files, out.dir, write.log.file){
+                                             dist = 10, nrep = 10
+                                             # lat.col, long.col, spec.col,
+                                             # thin.par, reps, locs.thinned.list.return,
+                                             # write.files, max.files, out.dir, write.log.file
+                                             ){
 
                                       t.loc(i, loc.data.lst, spp,
-                                            lat.col, long.col, spec.col,
-                                            thin.par, reps, locs.thinned.list.return,
-                                            write.files, max.files, out.dir, write.log.file)
+                                            dist = 10, nrep = 10
+                                            # lat.col, long.col, spec.col,
+                                            # thin.par, reps, locs.thinned.list.return,
+                                            # write.files, max.files, out.dir, write.log.file
+                                      )
 
                                     }, loc.data.lst, spp,
-                                    lat.col, long.col, spec.col,
-                                    thin.par, reps, locs.thinned.list.return,
-                                    write.files, max.files, out.dir, write.log.file)
+                                    dist = 10, nrep = 10
+                                    # lat.col, long.col, spec.col,
+                                    # thin.par, reps, locs.thinned.list.return,
+                                    # write.files, max.files, out.dir, write.log.file
+    )
 
     parallel::stopCluster(cl)
 
   } else {
     thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
                                    function(i, loc.data.lst, spp,
-                                            lat.col, long.col, spec.col,
-                                            thin.par, reps, locs.thinned.list.return,
-                                            write.files, max.files, out.dir, write.log.file){
+                                            dist = 10, nrep = 10
+                                            # lat.col, long.col, spec.col,
+                                            # thin.par, reps, locs.thinned.list.return,
+                                            # write.files, max.files, out.dir, write.log.file
+                                            ){
 
                                      t.loc(i, loc.data.lst, spp,
-                                           lat.col, long.col, spec.col,
-                                           thin.par, reps, locs.thinned.list.return,
-                                           write.files, max.files, out.dir, write.log.file)
+                                           dist = 10, nrep = 10
+                                           # lat.col, long.col, spec.col,
+                                           # thin.par, reps, locs.thinned.list.return,
+                                           # write.files, max.files, out.dir, write.log.file
+                                            )
 
                                    }, loc.data.lst, spp,
-                                   lat.col, long.col, spec.col,
-                                   thin.par, reps, locs.thinned.list.return,
-                                   write.files, max.files, out.dir, write.log.file)
+                                   dist = 10, nrep = 10
+                                   # lat.col, long.col, spec.col,
+                                   # thin.par, reps, locs.thinned.list.return,
+                                   # write.files, max.files, out.dir, write.log.file
+                                    )
 
   }
   # names(occ.b) <- names(occ.polys)
@@ -728,7 +751,8 @@ thin.batch <- function(loc.data.lst, lat.col = "lat", long.col = "lon", spec.col
 #' @param occ.list.thin named list returned from "thin.batch"
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
 #' @param wtd : which thinned dataset?
-#' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
+# #' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
+#' @seealso \code{\link[spThin]{spThin}}, \code{\link{thin.batch}}
 #' @return named list of thinned occurence data for each species in the list
 #' @examples
 #' occ.locs <- loadTocc(thinned.dataset.batch)
