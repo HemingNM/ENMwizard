@@ -612,11 +612,19 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 
 
 
-#' Filter each species' occurence dataset
+#' Spatially thin a list of species occurrence data
 #'
-#' @param loc.data.lst Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame of species occurence locations.
-#' Each data.frame can include several columnns, but must include at minimum a column
-#' of latitude and a column of longitude values
+#' Will use spThin optimisation algorithm to subset the dataset such that
+#' all occurrence locations are a minimum distance apart. This process helps
+#' reduce the effect of biases in observation records on the predictive
+#' performance of ecological niche models.
+#'
+#' Make sure coordinates are in decimal degrees. This function will use
+#' great.circle.distance to thin the datasets
+#'
+#' @param loc.data.lst Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame
+#' of species occurence locations. Each data.frame can include several columnns, but must
+#' include at minimum a column of latitude and a column of longitude values
 # #' @inheritParams spThin::thin
 #' @inheritParams spThin::spThin
 #' @inheritParams poly.c.batch
@@ -629,7 +637,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' length(thinned.dataset.batch[[1]])
 #' @export
 thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.col = "species",
-                       dist = 10, method = "heuristic", nrep = 10, # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
+                       dist = 10000, method = "heuristic", nrep = 10, # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
                        # write.files = TRUE, max.files = 1, write.log.file = TRUE,
                        numCores = 1, ...) {
 
@@ -653,8 +661,9 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
       lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
       sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
     }
+
       spThin::spThin(occ.spdf,
-                     dist = dist, method = method, nrep = nrep
+                     dist = dist, method = method, nrep = nrep, great.circle.distance = T
                      # lat.col = lat.col, long.col = long.col,
                    # spec.col = spec.col,
                    # thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
