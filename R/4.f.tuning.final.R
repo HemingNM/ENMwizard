@@ -157,7 +157,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
                    responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                    numCores = 1, parallelTunning = TRUE){
 
-  path.res <- "4_ENMeval.results"
+  path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
@@ -181,12 +181,12 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   # exportar planilha de resultados
   # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
-  # xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
-  utils::write.csv(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".csv"))
+  # xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
+  utils::write.csv(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
   res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
   colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAICc", "NP", "Rank", "OR10", "ORLPT", "AUC")
-  # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".xlsx"))
-  utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("4_ENMeval.results/Mdls.", "", path.mdls), ".csv"))
+  # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
+  utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
   mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"]) # mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
@@ -209,7 +209,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   #### AIC AVG model
   {
     # if(length(args.aicc)>0) {
-    #   avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
+    #   avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
     #   if(dir.exists(avg.m.path)==F) dir.create(avg.m.path)
     # }
 
@@ -303,7 +303,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                          numCores = 1, parallelTunning = TRUE){
 
-  # path.res <- "4_ENMeval.results"
+  # path.res <- "3_out.MaxEnt"
   # if(dir.exists(path.res)==F) dir.create(path.res)
   # path.mdls <- paste(path.res, paste0("Mdls.", names(ENMeval.res)), sep="/")
 

@@ -133,8 +133,8 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     # sp.nm <- names(mtp.l)[sp]
     areas.occ.df[[sp]] <- as.data.frame(area.occ.spp[[sp]]) #
     colnames(areas.occ.df[[sp]]) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
-    # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".xlsx"))
-    utils::write.csv(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".csv"))
+    # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/areaT.", sp, ".xlsx"))
+    utils::write.csv(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/areaT.", sp, ".csv"))
     # } # species
     return(area.occ.spp[[sp]]) }, mtp.l, areas, restrict, digits) # species
 
@@ -159,7 +159,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 #' f.var.ci(mxnt.mdls.preds.lst)
 #' @export
 f.var.ci <- function(mcmp.l){
-  path.res <- "4_ENMeval.results"
+  path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
@@ -260,9 +260,9 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
       } # model criteria
     } # threshold criteria
 
-    # xlsx::write.xlsx(round(df.OmR[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/OmRate", sp, ".xlsx")) # reorder ds
-    utils::write.csv(round(df.OmR[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/OmRate", sp, ".csv")) # reorder ds
-    # write.xlsx(round(df.FPA[[sp]],digits), paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea", sp, ".xlsx")) # reorder ds
+    # xlsx::write.xlsx(round(df.OmR[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".xlsx")) # reorder ds
+    utils::write.csv(round(df.OmR[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".csv")) # reorder ds
+    # write.xlsx(round(df.FPA[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea", sp, ".xlsx")) # reorder ds
   }
   # if(save){
     df.OmR.c <- data.table::rbindlist(lapply(lapply(df.OmR, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
@@ -270,9 +270,9 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
     colnames(df.OmR.c)[1:2] <- c("sp", "Model")
     # colnames(df.FPA.c)[1:2] <- c("sp", "Model")
 
-    # xlsx::write.xlsx(df.OmR.c, paste0("4_ENMeval.results/OmRate.xlsx")) # reorder ds
-    utils::write.csv(df.OmR.c, paste0("4_ENMeval.results/OmRate.csv")) # reorder ds
-    # xlsx::write.xlsx(df.FPA.c, paste0("4_ENMeval.results/FracPredArea.xlsx")) # reorder ds
+    # xlsx::write.xlsx(df.OmR.c, paste0("3_out.MaxEnt/OmRate.xlsx")) # reorder ds
+    utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/OmRate.csv")) # reorder ds
+    # xlsx::write.xlsx(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.xlsx")) # reorder ds
   # }
   return(OmR = df.OmR)
 }
@@ -345,11 +345,11 @@ f.FPA <- function(mtp.l, digits = 3){
       return(fpa.mods.t) }, mtp.l.sp, sp, digits, df.FPA) # pred.scenario
 
     df.FPA[[sp]][] <- round(array(aperm(simplify2array(fpa.mods.t.p), c(3,2,1))), digits = digits) #,
-    # xlsx::write.xlsx(df.FPA[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
-    utils::write.csv(df.FPA[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/FracPredArea.", sp, ".csv")) # reorder ds
+    # xlsx::write.xlsx(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
+    utils::write.csv(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".csv")) # reorder ds
     # areas.occ.df[[sp]] <- as.data.frame(df.FPA[[sp]]) #
     # colnames(areas.occ.df[[sp]]) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
-    # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("4_ENMeval.results/Mdls.", sp, "/areaT.", sp, ".xlsx"))
+    # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/areaT.", sp, ".xlsx"))
 
     # } # species
     return(df.FPA[[sp]]) }, mtp.l, areas, digits) # species

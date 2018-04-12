@@ -4,7 +4,7 @@
 #' Apply threshold for a prediction
 #'
 #' This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp' object
-#' and save on the folder "4_ENMeval.results/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
+#' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
 #' @param mcmp.spi Species "i" of a object returned by "mxnt.p.batch.mscn", containing a list of
@@ -31,7 +31,7 @@
 #' @export
 f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
-    path.mdls <- paste("4_ENMeval.results", "Mdls.sp", sep = "/")
+    path.mdls <- paste("3_out.MaxEnt", "Mdls.sp", sep = "/")
   }
   if(dir.exists(path.mdls)==F) dir.create(path.mdls)
   # args <- 1:length(mcmp.spi[["mxnt.mdls"]])
@@ -173,7 +173,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' Apply threshold for all predictions
 #'
 #' This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp.l' object
-#' and save on the folder "4_ENMeval.results/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
+#' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
 #' @param mcmp.l Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
@@ -186,7 +186,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
 #' @export
 f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
-  path.res <- "4_ENMeval.results"
+  path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")

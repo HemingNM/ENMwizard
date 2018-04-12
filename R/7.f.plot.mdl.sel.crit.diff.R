@@ -42,7 +42,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 #' @export
 f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
-  { path.res <- "4_ENMeval.results"
+  { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
@@ -118,7 +118,7 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
 #' f.plot.mxnt.preds.mscn(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
 #' @export
 f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
-  { path.res <- "4_ENMeval.results"
+  { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
@@ -266,7 +266,7 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
 #' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 #' @export
 f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
-  { path.res <- "4_ENMeval.results"
+  { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==F) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")

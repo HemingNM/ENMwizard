@@ -26,7 +26,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
 
-  path.res <- "4_ENMeval.results"
+  path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
@@ -67,7 +67,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
 
   # AIC AVG model
   if(length(args.aicc)>1) {
-    avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("4_ENMeval.results/selected.models/cloglog/", mod.pred.nms[2])
+    avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
     if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
     filename.aicc <- paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/')#[1:length(args.aicc)]
   } # else {
@@ -193,7 +193,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
 #                               # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
 #                               # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 #'
-#   # path.res <- "4_ENMeval.results"
+#   # path.res <- "3_out.MaxEnt"
 #   # if(dir.exists(path.res)==F) dir.create(path.res)
 #   # path.mdls <- paste(path.res, paste0("Mdls.", names(mcm.l)), sep="/")
 #   mcmp.l <- vector("list", length(mcm.l))
