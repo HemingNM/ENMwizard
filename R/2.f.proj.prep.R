@@ -153,12 +153,12 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   if(identical(pred.poly, p)){
   # if(mask==F){
     area.p <- raster::crop(env.uncut, p,
-                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
+                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, ".", prj.nm,".grd"), sep="/"),
                            format="raster", overwrite=T)
   } else {
     env.crp <- raster::crop(env.uncut, p)
     area.p <- raster::mask(env.crp, pred.poly,
-                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
+                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, ".", prj.nm,".grd"), sep="/"),
                            format="raster", overwrite=T)
   }
   return(area.p)
