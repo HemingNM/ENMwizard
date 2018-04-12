@@ -18,7 +18,6 @@ devtools::install_github("HemingNM/ENMwizard")
 devtools::install_github("danlwarren/ENMTools")
 devtools::install_github("mlammens/spThin")
 library(ENMwizard)
-library(raster)
 ```
 
 You also need to install ENMTools from GitHub.
@@ -38,7 +37,6 @@ install.packages("devtools")
 library(devtools)
 install_local("PATH")
 library(ENMwizard)
-library(raster)
 ```
 
 
@@ -70,10 +68,25 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 
 ### - 1.2 create occ polygon to crop rasters prior to modelling
 
-The occurence points in the named list are used to create polygons ...
+The occurence points in the named list are used to create polygons. 
+Notice that you can cluster the occ points using several clustering methods. 
+See differences and choose one that fits your needs:
 ```r
 occ.polys <- poly.c.batch(spp.occ.list)
-
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="E")
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="AP", q=.01) # less polygons
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="AP", q=.1)
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="AP", q=.2)
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="AP", q=.3)
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="AP", q=.5)
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="AP", q=.8) # more polygons
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "duda")
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "ball")
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "pseudot2")
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "trcovw")
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "kl") 
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdindex") 
+occ.polys <- poly.c.batch(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdbw")
 ```
 
 ### - 1.2.1 creating buffer
