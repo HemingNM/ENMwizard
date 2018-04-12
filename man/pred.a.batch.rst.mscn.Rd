@@ -5,7 +5,7 @@
 \title{Cut multiple projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)}
 \usage{
 pred.a.batch.rst.mscn(area.p, env.uncut.l, occ.polys, mask = F, prj.nm = "",
-  sp.nm = "a.proj4mult.spp", numCores = 1)
+  sp.nm = "mult.spp", numCores = 1)
 }
 \arguments{
 \item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}
@@ -14,7 +14,9 @@ pred.a.batch.rst.mscn(area.p, env.uncut.l, occ.polys, mask = F, prj.nm = "",
 
 \item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.}
 
-\item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p
+\item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or
+use all spatial extent of area.p
+
 #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst.mscn}}}

@@ -8,6 +8,7 @@
 #' @inheritParams alphahull::ashape
 #' @param save Should save polygons on disk?
 #' @param crs.set set the coordinate reference system (CRS) of the polygons
+#'
 #' @seealso \code{\link{poly.c.batch}}, \code{\link{poly.splt}}
 #' @return An object of class SpatialPolygons or SpatialPolygonsDataFrame. Polygon built using coordinates of species occurence data
 #' @examples
@@ -83,6 +84,7 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 #' @inheritParams poly.c
 #' @inheritParams poly.splt
 # #' @inheritParams mxnt.c.batch
+#'
 #' @seealso \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 #' #' @return A named list of spatial polygons built using coordinates
 #' @examples
@@ -209,6 +211,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 #' @inheritParams apcluster::negDistMat
 #' @inheritParams apcluster::apcluster
 #' @inheritParams NbClust::NbClust
+#'
 #' @seealso \code{\link{poly.c}}, \code{\link{poly.c.batch}}, \code{\link[NbClust]{NbClust}}
 #' @return spatial polygons built using coordinates
 #' @examples
@@ -386,6 +389,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #'
 #' @param occ.polys list of SpatialPolygons to bind
 #' @inheritParams poly.c
+#'
 #' @seealso \code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 #' @return shapefile with binded polygons
 #' @export
@@ -448,6 +452,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' @inheritParams rgeos::gBuffer
 #' @inheritParams poly.c
 #' @inheritParams poly.c.batch
+#'
 #' @seealso \code{\link[rgeos]{gBuffer}}, \code{\link{poly.c.batch}}
 #' @return A named list of SpatialPolygons
 #' @examples
@@ -541,6 +546,7 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 #' @param occ.b list of SpatialPolygons, usually returned from "bffr.batch" function
 #' @param env.uncut raster brick or stack to be cropped
 #' @inheritParams poly.c.batch
+#'
 #' @seealso \code{\link[raster]{crop}}, \code{\link{bffr.batch}}
 #' @return list [one element for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
@@ -628,6 +634,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 # #' @inheritParams spThin::thin
 #' @inheritParams spThin::spThin
 #' @inheritParams poly.c.batch
+#'
 # #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 #' @seealso \code{\link[spThin]{spThin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
@@ -760,6 +767,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 #' @param occ.list.thin named list returned from "thin.batch"
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
 #' @param wtd : which thinned dataset?
+#'
 # #' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
 #' @seealso \code{\link[spThin]{spThin}}, \code{\link{thin.batch}}
 #' @return named list of thinned occurence data for each species in the list

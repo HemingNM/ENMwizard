@@ -15,6 +15,7 @@
 #' It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
 #' Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
 #' @inheritParams  ENMeval::ENMevaluate
+#'
 #' @seealso \code{\link[ENMeval]{ENMevaluate}}
 #' @examples
 #' ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
@@ -75,6 +76,7 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
 #' Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
 #'
 #' @inheritParams mxnt.c.batch
+#'
 #' @seealso \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 #' @export
 ENMevaluate.l.opt <- function (ENMeval.o.l) {

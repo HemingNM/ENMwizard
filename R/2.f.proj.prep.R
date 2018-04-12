@@ -25,6 +25,7 @@
 #' @param mult how much increase or decrease buffer
 #' @param buffer should the area be cut using a buffer around occ.poly?
 #' @param same should latitudinal and longitudinal increase vary independently?
+#'
 #' @seealso \code{\link{pred.a.poly.batch}}
 #' @return  SpatialPolygons (enlarged occ.poly)
 # #' @examples
@@ -91,6 +92,7 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=F, s
 #'
 #' @param occ.polys list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.
 #' @inheritParams pred.a.poly
+#'
 #' @seealso \code{\link{pred.a.poly}}
 #' @return  named list of SpatialPolygons (enlarged occ.poly)
 # TODO - examples
@@ -126,6 +128,7 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T
 #' @param env.uncut raster/brick of environmental variables to be cut
 #' @param prj.nm climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario
 #' @param sp.nm name (of species) to give to saved object
+#'
 #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 #' \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 #' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
@@ -183,6 +186,7 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
 #'
 #' @inheritParams pred.a
 #' @param pred.polys list of SpatialPolygons (usually of based on species occ points)
+#'
 #' #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 #' \code{\link{pred.a}}, \code{\link{pred.a.batch.mscn}},
 #' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
@@ -214,6 +218,7 @@ pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.unc
 #' @inheritParams pred.a.batch
 #' @param env.uncut.l list of raster/brick of environmental variables to be cut
 #' @param numCores specify number of cores if aim run in parallel
+#'
 #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 #' \code{\link{pred.a}}, \code{\link{pred.a.batch}},
 #' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
@@ -262,6 +267,7 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ #
 #' @inheritParams pred.a
 #' @inheritParams pred.a.batch
 #' @param mask should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details
+#'
 #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 #' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 #' \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
@@ -299,7 +305,9 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 #' @inheritParams pred.a
 #' @inheritParams pred.a.batch
 #' @inheritParams pred.a.poly.batch
-#' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or use all spatial extent of area.p
+#' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or
+#' use all spatial extent of area.p
+#'
 #' #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 #' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 #' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst.mscn}}
@@ -308,7 +316,7 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 # #' @examples
 #'
 #' @export
-pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp"){
+pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm = "mult.spp"){
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
@@ -343,6 +351,7 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp
 #' @inheritParams pred.a.poly.batch
 #' @inheritParams pred.a.batch.rst
 #' @inheritParams mxnt.c.batch
+#'
 #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 #' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 #' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}
@@ -351,7 +360,8 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp
 # #' @examples
 #'
 #' @export
-pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm="", sp.nm = "a.proj4mult.spp", numCores=1){
+pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F,
+                                  prj.nm="", sp.nm = "mult.spp", numCores=1){
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==F) dir.create(path.proj)
@@ -377,17 +387,17 @@ pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F, prj.nm
   cat(c("\n","Creating projection area","\n"))
   area.p.spi <- vector("list", length(env.uncut.l))
 
-  area.pl[[1]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
-    prj.nm.j <- paste("", prj.nm, names(env.uncut.l)[j], sep=".")
+  p.area <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
+    prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")
     # area.p.spi[[j]] <- pred.a.rst(area.p, env.uncut.l[[j]], occ.polys[[1]], mask=mask, prj.nm = prj.nm.j, sp.nm = sp.nm)
     area.p.spi[[j]] <- pred.a(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
     # area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
-    area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(prj.nm, ".", names(env.uncut.l)[j])) )
+    area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(names(env.uncut.l)[j])) )
   } ) )
 
-  for(i in 2:length(occ.polys)){
+  for(i in 1:length(occ.polys)){
     # cat(c("\n","Creating projection area for", names(occ.polys)[i],"\n",  "Species",  i, "of", length(occ.polys),"\n"))
-    area.pl[[i]] <- area.pl[[1]]
+    area.pl[[i]] <- p.area
   }
   return(area.pl)
 }

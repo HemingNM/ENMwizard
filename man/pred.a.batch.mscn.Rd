@@ -8,6 +8,7 @@ pred.a.batch.mscn(pred.polys, env.uncut.l, prj.nm = "", numCores = 1)
 }
 \arguments{
 \item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)
+
 #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
 \code{\link{pred.a}}, \code{\link{pred.a.batch.mscn}},
 \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}}
