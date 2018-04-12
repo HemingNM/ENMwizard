@@ -784,7 +784,6 @@ loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
       if(wtd > length(occ.list.thin[[i]])) stop(paste("There are only", length(occ.list.thin[[i]]), "thinned datasets. 'wtd' was", wtd))
 
       occ.l[[i]] <- as.data.frame(sp::coordinates(occ.list.thin[[i]][[wtd]]))
-      # colnames(occ.l[[i]]) <- c("LONG", "LAT")
     }
   }
 
