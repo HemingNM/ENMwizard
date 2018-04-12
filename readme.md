@@ -195,20 +195,24 @@ For projection it is necessary to download raster files with the environmnetal v
 dir.create("./rasters")
 
 # Download data for present
-current<-getData('worldclim', var='bio', res=10,path="rasters")
+current <- getData('worldclim', var='bio', res=10,path="rasters")
 
 # Download data for future projection (2050)
-futAC5085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
+futAC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
+names(futAC5085) <- names(current)
 
 # Download data for future projection (2070)
-futAC7085<-getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
+futAC7085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
+names(futAC7085) <- names(current)
 
+# current.l <- list(current = current[[c(1,12,16,17,5,6,7,8)]])
+# future.l <- list(futAC5085 = futAC5085[[c(1,12,16,17,5,6,7,8)]],
+#                 futAC7085 = futAC7085[[c(1,12,16,17,5,6,7,8)]])
 
-current.l<-list(current=current[[c(1,12,16,17,5,6,7,8)]])
-future.l<-list(futAC5085=futAC5085[[c(1,12,16,17,5,6,7,8)]],futAC7085=futAC7085[[c(1,12,16,17,5,6,7,8)]])
+env.proj.l <- list(current = current[[c(1,5,6,7,8,12,16,17)]],
+                futAC5085 = futAC5085[[c(1,5,6,7,8,12,16,17)]],
+                futAC7085 = futAC7085[[c(1,5,6,7,8,12,16,17)]])
 
-names(future.l[[1]])<-names(env.uncut)
-names(future.l[[2]])<-names(env.uncut)
 ```
 
 # 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
@@ -221,8 +225,7 @@ poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=FALSE)#
 plot(poly.projection[[1]])
 plot(occ.polys[[1]], col="red", add=T)
 
-pa.current.l <- pred.a.batch.mscn(poly.projection, current.l)
-pa.future.l  <- pred.a.batch.mscn(poly.projection, future.l)
+pa.env.proj.l <- pred.a.batch.mscn(poly.projection, env.proj.l)
 ```
 
 ## 4.1.2 if the extent to project is the same for all species
@@ -230,8 +233,8 @@ pa.future.l  <- pred.a.batch.mscn(poly.projection, future.l)
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
-current.all <- lapply(mxnt.mdls.preds.lst,function(x)current.l)
-future.all <- lapply(mxnt.mdls.preds.lst,function(x)future.l)
+env.proj.all <- pred.a.batch.rst.mscn(poly.projection$Bvarieg, env.proj.l, occ.polys)
+# env.proj.all <- lapply(mxnt.mdls.preds.lst, function(x)env.proj.l)
 ```
 
 ### 4.8 projections for present, future, and/or past
