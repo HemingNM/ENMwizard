@@ -2,16 +2,23 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{thin.batch}
 \alias{thin.batch}
-\title{Filter each species' occurence dataset}
+\title{Spatially thin a list of species occurrence data}
 \usage{
-thin.batch(loc.data.lst, dist = 10, nrep = 10, numCores = 1, ...)
+thin.batch(loc.data.lst, dist = 10000, method = "heuristic", nrep = 10,
+  numCores = 1, ...)
 }
 \arguments{
-\item{loc.data.lst}{Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame of species occurence locations.
-Each data.frame can include several columnns, but must include at minimum a column
-of latitude and a column of longitude values}
+\item{loc.data.lst}{Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame
+of species occurence locations. Each data.frame can include several columnns, but must
+include at minimum a column of latitude and a column of longitude values}
 
 \item{dist}{\code{numeric} minimum distance (m) between records.}
+
+\item{method}{\code{character} name of method to solve problem: \itemize{
+    \item{'heuristic': data is thinned using a stingy heuristic algorithm; this involves sequentially removing points until the smallest distance between any point is greater than \code{mindist}.}
+    \item{'lpsolve': the problem is expressed as an integer programming problem and solved using LpSolve.}
+    \item{'gurobi': as above, but solved using Gurobi.}
+}}
 
 \item{nrep}{\code{numeric} number of replicate thinned data sets to produce when using the \code{heuristic} method.}
 
@@ -23,7 +30,14 @@ of latitude and a column of longitude values}
 Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 }
 \description{
-Filter each species' occurence dataset
+Will use spThin optimisation algorithm to subset the dataset such that
+all occurrence locations are a minimum distance apart. This process helps
+reduce the effect of biases in observation records on the predictive
+performance of ecological niche models.
+}
+\details{
+Make sure coordinates are in decimal degrees. This function will use
+great.circle.distance to thin the datasets
 }
 \examples{
 thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
