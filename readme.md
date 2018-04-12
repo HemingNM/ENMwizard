@@ -234,7 +234,6 @@ When all species are to be projected using the same current and future climates 
 
 ```r
 env.proj.all <- pred.a.batch.rst.mscn(poly.projection$Bvarieg, env.proj.l, occ.polys)
-# env.proj.all <- lapply(mxnt.mdls.preds.lst, function(x)env.proj.l)
 ```
 
 ### 4.8 projections for present, future, and/or past
@@ -243,11 +242,10 @@ Finally, all species can be projected for all cenarios using all models. This is
 
 ```r
 # For single or multiple species
-mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.current.l)
 # using a single core (default)
-mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf, a.proj.l = pa.future.l)
+mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l)
 # or using multiple cores
-mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.cf, a.proj.l = pa.future.l, numCores=2)
+mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l, numCores=2)
 
 # plot projections
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
