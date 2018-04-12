@@ -629,7 +629,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' length(thinned.dataset.batch[[1]])
 #' @export
 thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.col = "species",
-                       dist = 10, nrep = 10, # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
+                       dist = 10, method = "heuristic", nrep = 10, # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
                        # write.files = TRUE, max.files = 1, write.log.file = TRUE,
                        numCores = 1, ...) {
 
@@ -639,9 +639,9 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 
   spp <- names(loc.data.lst)
 
-  t.loc <- function(i, loc.data.lst, spp,
-                   dist, nrep
-                    # lat.col, long.col, spec.col,
+  t.loc <- function(i, loc.data.lst,
+                   dist, method, nrep
+                    # spp, lat.col, long.col, spec.col,
                     # thin.par, reps, locs.thinned.list.return,
                     # write.files, max.files, out.dir, write.log.file
                    ){
@@ -654,7 +654,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
       sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
     }
       spThin::spThin(occ.spdf,
-                     dist = dist, nrep = nrep
+                     dist = dist, method = method, nrep = nrep
                      # lat.col = lat.col, long.col = long.col,
                    # spec.col = spec.col,
                    # thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
@@ -689,47 +689,47 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
     cl<-parallel::makeCluster(numCores)
 
     thinned.dataset.full <- parallel::clusterApply(cl, base::seq_along(loc.data.lst),
-                                    function(i, loc.data.lst, spp,
-                                             dist = 10, nrep = 10
+                                    function(i, loc.data.lst, # spp,
+                                             dist, method, nrep
                                              # lat.col, long.col, spec.col,
                                              # thin.par, reps, locs.thinned.list.return,
                                              # write.files, max.files, out.dir, write.log.file
                                              ){
 
-                                      t.loc(i, loc.data.lst, spp,
-                                            dist = 10, nrep = 10
+                                      t.loc(i, loc.data.lst, # spp,
+                                            dist, method, nrep
                                             # lat.col, long.col, spec.col,
                                             # thin.par, reps, locs.thinned.list.return,
                                             # write.files, max.files, out.dir, write.log.file
-                                      )
+                                            )
 
-                                    }, loc.data.lst, spp,
-                                    dist = 10, nrep = 10
+                                    }, loc.data.lst, # spp,
+                                    dist, method, nrep
                                     # lat.col, long.col, spec.col,
                                     # thin.par, reps, locs.thinned.list.return,
                                     # write.files, max.files, out.dir, write.log.file
-    )
+                                    )
 
     parallel::stopCluster(cl)
 
   } else {
     thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
-                                   function(i, loc.data.lst, spp,
-                                            dist = 10, nrep = 10
+                                   function(i, loc.data.lst, # spp,
+                                            dist, method, nrep
                                             # lat.col, long.col, spec.col,
                                             # thin.par, reps, locs.thinned.list.return,
                                             # write.files, max.files, out.dir, write.log.file
                                             ){
 
-                                     t.loc(i, loc.data.lst, spp,
-                                           dist = 10, nrep = 10
+                                     t.loc(i, loc.data.lst, # spp,
+                                           dist, method, nrep
                                            # lat.col, long.col, spec.col,
                                            # thin.par, reps, locs.thinned.list.return,
                                            # write.files, max.files, out.dir, write.log.file
                                             )
 
-                                   }, loc.data.lst, spp,
-                                   dist = 10, nrep = 10
+                                   }, loc.data.lst, #spp,
+                                   dist, method, nrep
                                    # lat.col, long.col, spec.col,
                                    # thin.par, reps, locs.thinned.list.return,
                                    # write.files, max.files, out.dir, write.log.file
