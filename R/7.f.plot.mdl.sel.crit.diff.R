@@ -43,7 +43,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @export
 f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
   { path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==F) dir.create(path.res)
+  if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mcmp.l[[1]]$pred.args}
@@ -64,12 +64,12 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
   # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
   for(i in 1:length(mtp.l)){ # species
     thrshld.path <- paste(path.mdls[i], outpt, "Mdls.thrshld", "figs", sep='/')
-    if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
+    if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
 
     mods.thrshld <- mtp.l[[i]]
 
     for(l in 1:length(mods.thrshld$binary)){ # threshold criteria
-      thr.crt <- grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=T)
+      thr.crt <- grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=TRUE)
       grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin", ".", thr.crt, ".pdf"), sep='/'), # , pred.nm
                      width = 20, height = 10)
       graphics::par(mfrow=c(3,5), mar=c(2,1,2,1), oma = c(1, 1, 4, 1))
@@ -86,7 +86,7 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
         if(j==1){
           graphics::title(paste("Threshold criteria:", thr.crt), line = 2, outer = T, cex.main=2)
         }
-        raster::plot(r.dif,  legend.only=TRUE, smallplot=c(.78, .79, .2, .8),  #horiz=T,#  c(.79, .80, .2, .8)
+        raster::plot(r.dif,  legend.only=TRUE, smallplot=c(.78, .79, .2, .8),  #horiz=TRUE,#  c(.79, .80, .2, .8)
                      breaks= c(-1, -.34, .34, 1), col=c("blue", "white", "red"),
                      # bg = "white",
                      #col=c("blue", "blue","white", "red", "red"),
@@ -119,7 +119,7 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
 #' @export
 f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
   { path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==F) dir.create(path.res)
+  if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mcmp.l[[1]]$pred.args}
@@ -150,7 +150,7 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
   # cat(c("\n"))
   for(sp in 1:length(mtp.l)){ # species
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
-    if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
+    if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
     # cat(c("\n", "Climatic Scenario:"))
     ## TODO use mclapply
@@ -163,7 +163,7 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
       cat(c("\n", "Threshold Criterion: "))
 
       for(l in names(mods.thrshld$binary)){ # threshold criteria
-        thr.crt <- l #sub("x10ptp", "10P", sub("mtp", "LPT", l))  #grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=T)
+        thr.crt <- l #sub("x10ptp", "10P", sub("mtp", "LPT", l))  #grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=TRUE)
         #### TODO
         # if(l %in% ta) {
         thr.CRT <- t.NMS[which(t.nms %in% l)] #}
@@ -200,10 +200,10 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
           }
           if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
           raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
-                       legend=FALSE, add=T) # main= main.nms,
+                       legend=FALSE, add=TRUE) # main= main.nms,
 
           graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
-          raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=T,#  c(.79, .80, .2, .8)
+          raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=TRUE,#  c(.79, .80, .2, .8)
                        xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
                        breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
                        axis.args=list(at=seq(-1, 1), labels=c(make.underscript(n2), "equal", make.underscript(n1) )))
@@ -265,9 +265,9 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
 #' @examples
 #' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 #' @export
-f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=F, numCores=1){
+f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=FALSE, numCores=1){
   { path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==F) dir.create(path.res)
+  if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mcmp.l[[1]]$pred.args}
@@ -284,7 +284,7 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
 
   comb.plots <- utils::combn(length(mtp.l[[1]]), 2)
   cli.scn.pres <- which(names(mtp.l[[1]]) == sel.clim.scn)
-  sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==T # rowsum(comb.plots == cli.scn.pres)==T # comb.plots[, ]
+  sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==TRUE # rowsum(comb.plots == cli.scn.pres)==TRUE # comb.plots[, ]
   comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
   comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
 
@@ -343,10 +343,10 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
         #   }
         if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
         raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
-                     legend=FALSE, add=T) # main= main.nms,
+                     legend=FALSE, add=TRUE) # main= main.nms,
         #
         graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
-        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=T,#  c(.79, .80, .2, .8)
+        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=TRUE,#  c(.79, .80, .2, .8)
                      xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
                      breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
                      axis.args=list(at=seq(-1, 1), labels=c(n2, "equal", n1 )))
@@ -361,7 +361,7 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
 
   for(sp in 1:length(mtp.l)){ # species
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
-    if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
+    if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
 
     f.plot(sp, mtp.l, mdl.crit=mdl.crit, t.NMS, t.nms, thrshld.path,

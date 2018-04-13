@@ -12,7 +12,7 @@
 #' The user can crop a squared area with an extent larger than the extent of occ.poly. By default, the "extent increase"
 #' is the maximum of latitudinal and longitudinal extent "max(abs(ext.proj[1]-ext.proj[2]), abs(ext.proj[3]-ext.proj[4]))".
 #' The result is added to each side of the occ.poly extent. This may be changed by setting "mult", which will be multiplied
-#' by the "extent increase". Latitudinal and longitudinal increase may also vary independently by setting "same=F".
+#' by the "extent increase". Latitudinal and longitudinal increase may also vary independently by setting "same=FALSE".
 #'
 #' The user can also set a buffer around occ.poly to cut the raster/brick object. Buffer value is, by default,
 #' calculated in the same way as "extent increase", using "max(abs(ext.proj[1]-ext.proj[2]), abs(ext.proj[3]-ext.proj[4]))".
@@ -31,12 +31,12 @@
 # #' @examples
 #'
 #' @export
-pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=F, same=T){ #, o.path = "occ.poly"
+pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ #, o.path = "occ.poly"
   path.proj <- "1_sppData/area.proj.poly"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  # if(dir.exists("1_sppData/area.proj")==F) dir.create("1_sppData/area.proj")
-  if(dir.exists(path.proj)==F) dir.create(path.proj)
-  # if(dir.exists(paste(path.proj, sp.nm, sep="/"))==F) dir.create(paste(path.proj, sp.nm, sep="/"))
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
+  # if(dir.exists("1_sppData/area.proj")==FALSE) dir.create("1_sppData/area.proj")
+  if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
+  # if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
 
   # pensar melhor como projetar
   #if(is.na(projection(occ.poly))){print} # projection(occ.poly) <- crs.set
@@ -97,10 +97,10 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=F, s
 #' @return  named list of SpatialPolygons (enlarged occ.poly)
 # TODO - examples
 #' @examples
-#'area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=F)
+#'area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=FALSE)
 #'plot(area.projection[[1]][[1]])
 #' @export
-pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T){ # , o.path = "occ.poly"
+pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ # , o.path = "occ.poly"
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
   # cat("\n", deg.incr, "\n")
@@ -139,8 +139,8 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=F, same=T
 #' @export
 pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   path.proj <- "2_envData/area.proj"
-  if(dir.exists(path.proj)==F) dir.create(path.proj)
-  if(dir.exists(paste(path.proj, sp.nm, sep="/"))==F) dir.create(paste(path.proj, sp.nm, sep="/"))
+  if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
+  if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
 
   p <- sp::Polygon(rbind(c(sp::bbox(pred.poly)[1,1], sp::bbox(pred.poly)[2,1]),
                      c(sp::bbox(pred.poly)[1,1], sp::bbox(pred.poly)[2,2]),
@@ -151,15 +151,15 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   # # p <- methods::as(ext.proj, "SpatialPolygons")
 
   if(identical(pred.poly, p)){
-  # if(mask==F){
+  # if(mask==FALSE){
     area.p <- raster::crop(env.uncut, p,
-                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, ".", prj.nm,".grd"), sep="/"),
-                           format="raster", overwrite=T)
+                           file= paste(path.proj, sp.nm, gsub("^\\.|\\.\\.\\.|\\.\\.", ".", paste0("areaProj.", sp.nm, ".", prj.nm,".grd")), sep="/"),
+                           format="raster", overwrite=TRUE)
   } else {
     env.crp <- raster::crop(env.uncut, p)
     area.p <- raster::mask(env.crp, pred.poly,
-                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, ".", prj.nm,".grd"), sep="/"),
-                           format="raster", overwrite=T)
+                           file= paste(path.proj, sp.nm, gsub("^\\.|\\.\\.\\.|\\.\\.", ".", paste0("areaProj.", sp.nm, ".", prj.nm,".grd")), sep="/"),
+                           format="raster", overwrite=TRUE)
   }
   return(area.p)
 }
@@ -216,10 +216,10 @@ pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.unc
 # #' @examples
 #'
 #' @export
-pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ # , ext.proj=NULL
+pred.a.batch.mscn <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj=NULL, prj.nm=""
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
-  if(dir.exists(path.proj)==F) dir.create(path.proj)
+  if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   area.pl <- vector("list", length(pred.polys))
   names(area.pl) <- names(pred.polys)
   for(i in base::seq_along(pred.polys)){
@@ -228,7 +228,8 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ #
     # for(j in seq_along(area.p.spi)){
     if(numCores>1){
       area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
-        prj.nm.j <- gsub("^\\.|\\.\\.\\.|\\.\\.",".",paste(prj.nm, names(env.uncut.l)[j], sep="."))
+        # prj.nm.j <- gsub("^\\.|\\.\\.\\.|\\.\\.",".",paste(prj.nm, names(env.uncut.l)[j], sep="."))
+        prj.nm.j <- names(env.uncut.l)[j]
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.", "", prj.nm.j)) # paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
@@ -264,21 +265,21 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, prj.nm="", numCores=1){ #
 # #' @examples
 #'
 #' @export
-pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , crs.set
+pred.a.rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp"){ # , crs.set
   path.proj <- "2_envData/area.proj"
-  if(dir.exists(path.proj)==F) dir.create(path.proj)
-  if(dir.exists(paste(path.proj, sp.nm, sep="/"))==F) dir.create(paste(path.proj, sp.nm, sep="/"))
+  if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
+  if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
 
   ext.proj <- raster::extent(area.p)
-  if(mask==F){
+  if(mask==FALSE){
     area.p <- raster::crop(env.uncut, ext.proj,
-                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
-                           format="raster", overwrite=T)
+                           file = paste(path.proj, sp.nm, gsub("^\\.|\\.\\.\\.|\\.\\.", ".", paste0("areaProj.", sp.nm, prj.nm,".grd")), sep="/"),
+                           format = "raster", overwrite=TRUE)
   } else {
     env.crp <- raster::crop(env.uncut, ext.proj)
     area.p <- raster::mask(env.crp, area.p,
-                           file= paste(path.proj, sp.nm, paste0("areaProj.", sp.nm, prj.nm,".grd"), sep="/"),
-                           format="raster", overwrite=T)
+                           file = paste(path.proj, sp.nm, gsub("^\\.|\\.\\.\\.|\\.\\.", ".", paste0("areaProj.", sp.nm, prj.nm,".grd")), sep="/"),
+                           format = "raster", overwrite=TRUE)
   }
   raster::projection(area.p) <- raster::projection(env.uncut)
   return(area.p)
@@ -304,12 +305,12 @@ pred.a.rst <- function(area.p, env.uncut, mask=F, prj.nm="", sp.nm="sp"){ # , cr
 # #' @examples
 #'
 #' @export
-pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp.nm = "mult.spp"){
+pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm="", sp.nm = "mult.spp"){
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
 
-  if(mask==F){
+  if(mask==FALSE){
     area.p <- methods::as(raster::extent(area.p), "SpatialPolygons")
   }
 
@@ -348,15 +349,15 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=F, prj.nm="", sp
 # #' @examples
 #'
 #' @export
-pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=F,
+pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
                                   prj.nm="", sp.nm = "mult.spp", numCores=1){
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
-  if(dir.exists(path.proj)==F) dir.create(path.proj)
+  if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
 
-  if(mask==F){
+  if(mask==FALSE){
     area.p <- methods::as(raster::extent(area.p), "SpatialPolygons")
   }
 

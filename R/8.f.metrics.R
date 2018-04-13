@@ -160,7 +160,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 #' @export
 f.var.ci <- function(mcmp.l){
   path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==F) dir.create(path.res)
+  if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
 
@@ -196,7 +196,7 @@ f.var.ci <- function(mcmp.l){
     # var.permImp.df <- var.permImp.df[c(1,2,(nrow(var.permImp.df)-3):nrow(var.permImp.df)),]
     var.contPermImp[[sp]] <- array(c(var.cont.df,var.permImp.df), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
     # xlsx::write.xlsx(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.contPermImp.", names((mcmp.l)[sp]), ".xlsx"), sheetName="contribution")
-    # xlsx::write.xlsx(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.contPermImp.", names((mcmp.l)[sp]), ".xlsx"), append=T, sheetName="permutation.importance")
+    # xlsx::write.xlsx(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.contPermImp.", names((mcmp.l)[sp]), ".xlsx"), append=TRUE, sheetName="permutation.importance")
     utils::write.csv(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.Contribution.", names((mcmp.l)[sp]), ".csv"))
     utils::write.csv(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.PermImportance", names((mcmp.l)[sp]), ".csv"))
   }
@@ -228,7 +228,7 @@ f.var.ci <- function(mcmp.l){
 #' @examples
 #' f.OR(mods.thrshld.lst, occ.locs, "current")
 #' @export
-f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , save=T
+f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , save=TRUE
   # library(data.table)
   df.OmR <- vector("list")
   # df.FPA <- df.OmR

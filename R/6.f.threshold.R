@@ -33,7 +33,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
     path.mdls <- paste("3_out.MaxEnt", "Mdls.sp", sep = "/")
   }
-  if(dir.exists(path.mdls)==F) dir.create(path.mdls)
+  if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
   # args <- 1:length(mcmp.spi[["mxnt.mdls"]])
   mxnt.mdls <- mcmp.spi[["mxnt.mdls"]]
 
@@ -45,7 +45,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   #### TODO use the "slot" to find and loop through predictions
   ##  check here
-  pred.r <- mcmp.spi$mxnt.preds[[scn.nm]] # mcmp.spi[[match(pred.nm, names(mcmp.spi))]] # , fixed=T # [pred.i]
+  pred.r <- mcmp.spi$mxnt.preds[[scn.nm]] # mcmp.spi[[match(pred.nm, names(mcmp.spi))]] # , fixed=TRUE # [pred.i]
   pred.args <- mcmp.spi$pred.args
   mod.sel.crit <- names(pred.r)
 
@@ -61,7 +61,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   thrshld.path <- paste(path.mdls, outpt, "Mdls.thrshld", sep='/')
 
-  if(dir.exists(thrshld.path)==F) dir.create(thrshld.path)
+  if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
 
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
   thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl("Cloglog", rownames(mxnt.mdls[[1]]@results)) & # TODO use "outpt" variable
@@ -187,7 +187,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' @export
 f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
   path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==F) dir.create(path.res)
+  if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
   path.mdls <- paste(path.res, path.sp.m, sep="/")
 
@@ -198,7 +198,7 @@ f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
 
   for(i in base::seq_along(mcmp.l)){ # species i
     path.mdls.i <- path.mdls[i]
-    if(dir.exists(path.mdls.i)==F) dir.create(path.mdls.i)
+    if(dir.exists(path.mdls.i)==FALSE) dir.create(path.mdls.i)
     #scn.ind <- grep(n.pred.nm, names(mcmp.l[[i]]))
     mcmp.spi <- mcmp.l[[i]]
     # scn.ind <- grep(pred.nm, names(mcmp.l[[i]]))

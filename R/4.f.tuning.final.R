@@ -22,7 +22,7 @@
 #' @return A vector of args (if save="A"), data.frame of selected models (if save="M") or
 #' a list with both, args and selected models, (if save="B")
 #' @export
-f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=T
+f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=TRUE
 
   x.a.i <- order(x$delta.AICc)
   x <- x[x.a.i,]
@@ -100,8 +100,8 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
                 ifelse(grepl("P", f), paste("product"), paste("noproduct")),
                 ifelse(grepl("T", f), paste("threshold"), paste("nothreshold")),
                 paste0("betamultiplier=", beta),
-                paste0("responsecurves=", ifelse(responsecurves==T, "true", "false")),
-                paste0("randomseed=", ifelse(randomseed==T, "true", "false")),
+                paste0("responsecurves=", ifelse(responsecurves==TRUE, "true", "false")),
+                paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
 
   if(save == "A"){
@@ -204,7 +204,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
 
-  if(dir.exists(paste(path.mdls, outpt, sep='/'))==F) dir.create(paste(path.mdls, outpt, sep='/'))
+  if(dir.exists(paste(path.mdls, outpt, sep='/'))==FALSE) dir.create(paste(path.mdls, outpt, sep='/'))
 
   mxnt.mdls <- vector("list", length(args.all))
 
@@ -212,7 +212,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   {
     # if(length(args.aicc)>0) {
     #   avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
-    #   if(dir.exists(avg.m.path)==F) dir.create(avg.m.path)
+    #   if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
     # }
 
     ##### list of models to average
@@ -237,7 +237,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
         resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
         return(resu)
         # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-        #                            file = filename, format = formt, overwrite=T)
+        #                            file = filename, format = formt, overwrite=TRUE)
       }, args.all, mod.nms, a.calib, occ, a) #)
 
       parallel::stopCluster(cl)
@@ -259,7 +259,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
         resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
         return(resu)
         # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-        #                            file = filename, format = formt, overwrite=T)
+        #                            file = filename, format = formt, overwrite=TRUE)
       }, args.all, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
 
     } # closes else
@@ -306,7 +306,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                          numCores = 1, parallelTunning = TRUE){
 
   # path.res <- "3_out.MaxEnt"
-  # if(dir.exists(path.res)==F) dir.create(path.res)
+  # if(dir.exists(path.res)==FALSE) dir.create(path.res)
   # path.mdls <- paste(path.res, paste0("Mdls.", names(ENMeval.res)), sep="/")
 
   if(numCores>1 & parallelTunning==FALSE){
@@ -322,7 +322,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
       # if(use.ENMeval.bgpts){ a <- ENMeval.o.l[[i]]@bg.pts }
 
       cat(c(names(ENMeval.o.l[i]), "\n"))
-      # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+      # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
       # compute final models and predictions
       resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
@@ -342,7 +342,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
       # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
       cat(c(names(ENMeval.o.l[i]), "\n"))
-      # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+      # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
       # compute final models and predictions
       resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
@@ -365,7 +365,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
   #   ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
   #   ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
   #   cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
-  #   # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+  #   # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
   #   # compute final models and predictions
   #   mxnt.mdls.preds.lst[[i]] <- mxnt.c(x = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
   #                                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],

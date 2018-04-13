@@ -15,14 +15,14 @@
 #' occ.poly <- poly.c(occ.spdf, sp.nm="occ.poly")
 #' plot(occ.poly)
 #' @export
-poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
+poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  if(dir.exists(o.path)==F) dir.create(o.path)
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
+  if(dir.exists(o.path)==FALSE) dir.create(o.path)
 
   u.pts <- as.data.frame(unique(sp::coordinates(occ.spdf)))
 
-  if(convex==F){ # convex hulls to crop rasters
+  if(convex==FALSE){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
 
@@ -93,7 +93,7 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=T, alpha=10, save=T, crs.set 
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
+#' occ.polys <- poly.c.batch(spp.occ.list, convex=TRUE, alpha=10)
 #' @export
 poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
                          distance = "euclidean", min.nc = 2, max.nc = 20,
@@ -108,9 +108,9 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 
 
   o.path.pts <- "1_sppData/occ.pts"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(save.pts){
-    if(dir.exists(o.path.pts)==F) dir.create(o.path.pts)
+    if(dir.exists(o.path.pts)==FALSE) dir.create(o.path.pts)
   }
   #
   # for(i in 1:length(spp.occ.list)){
@@ -144,7 +144,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 
     if(plot){
       sp::plot(resu, main=names(spp.occ.list)[i])
-      sp::plot(occ.spdf, col="red", add=T)
+      sp::plot(occ.spdf, col="red", add=TRUE)
     }
     return(resu)
   }
@@ -225,7 +225,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 1, max.nc = 20,
                       method = "centroid", index = "trcovw", alphaBeale = 0.1,
-                      convex=T, alpha=10, sp.nm = "sp.nm", save = T,
+                      convex=TRUE, alpha=10, sp.nm = "sp.nm", save = T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
 
   # u.pts <- sp::coordinates(occ.spdf)
@@ -282,7 +282,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 
   spp.k.list <- lapply(1:k, function(i){u.pts[clust==i,]})
   names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
-  occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=F, save=F)
+  occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=FALSE, save=FALSE)
   if(length(occ.polys.lst)>1){
     occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
   } else {
@@ -294,7 +294,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
   #  sp::plot(occ.polys.sp)
   # occ.spdf <- as.data.frame(occ.spdf)
   # sp::coordinates(occ.spdf) <- ~LONG+LAT
-  #  sp::plot(occ.spdf, col="red", add=T)
+  #  sp::plot(occ.spdf, col="red", add=TRUE)
   return(occ.polys.sp)
 }
 
@@ -333,8 +333,8 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #
 #
 # # function to create N polygons for a species (whenever distribution seems disjoint) and save in a single .shp
-#                       (spp.occ, k=2, convex=T, alpha=10, sp.nm = "sp1", crs.set = NULL)
-# poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=T, alpha=10, sp.nm = "sp1", crs.set = NA){
+#                       (spp.occ, k=2, convex=TRUE, alpha=10, sp.nm = "sp1", crs.set = NULL)
+# poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=TRUE, alpha=10, sp.nm = "sp1", crs.set = NA){
 #   # We need to create separated polygons, because we don't want such large area without points.
 #
 #   if(is.null(k)){
@@ -370,14 +370,14 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #   # create one polygon for each set of points
 # spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
 # names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
-# occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=F, save=F)
+# occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=FALSE, save=FALSE)
 # occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
 # # raster::crs(occ.polys.sp) <- crs.set
 # # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
 # sp::plot(occ.polys.sp)
 # spp.occ <- as.data.frame(spp.occ)
 # sp::coordinates(spp.occ) <- ~LONG+LAT
-# sp::plot(spp.occ, col="red", add=T)
+# sp::plot(spp.occ, col="red", add=TRUE)
 # return(occ.polys.sp)
 # }
 #
@@ -393,10 +393,10 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #' @seealso \code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 #' @return shapefile with binded polygons
 #' @export
-bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
+bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.poly"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  if(dir.exists(o.path)==F) dir.create(o.path)
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
+  if(dir.exists(o.path)==FALSE) dir.create(o.path)
 
   # http://r-sig-geo.2731867.n2.nabble.com/merging-several-shapefiles-into-one-td6401613.html
   # Get polygons and change IDs
@@ -427,7 +427,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
   sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
 
-  # writeOGR(p, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=T, driver="ESRI Shapefile")
+  # writeOGR(p, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=TRUE, driver="ESRI Shapefile")
   # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
   if(save){
     raster::shapefile(p, filename = filename, overwrite=TRUE)
@@ -465,16 +465,16 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=T, crs.set = "+proj=longlat 
 #' @export
 bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.bffr"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  if(dir.exists(o.path)==F) dir.create(o.path)
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
+  if(dir.exists(o.path)==FALSE) dir.create(o.path)
 
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
   # occ.b <- vector("list", length(occ.polys))
   occ.b <- vector("list")
   # names(occ.b) <- names(occ.polys)
-  # if(dir.exists(o.path)==F) dir.create(o.path)
+  # if(dir.exists(o.path)==FALSE) dir.create(o.path)
   # bf.path <- paste(o.path,"bffr", sep = "/" )
-  # if(dir.exists(bf.path)==F) dir.create(bf.path)
+  # if(dir.exists(bf.path)==FALSE) dir.create(bf.path)
 
   if(length(mult)==1){ mult <- rep(mult, length(occ.polys))}
   TF.b.w <- is.null(bffr.width)
@@ -498,7 +498,7 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 
     if(plot == T){
       sp::plot(occ.b.i, col="green", main=n.occp.i)
-      sp::plot(occ.polys.i, border="red", add=T)
+      sp::plot(occ.polys.i, border="red", add=TRUE)
     }
     return(occ.b.i)
   }
@@ -560,13 +560,13 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 #' occ.b.env <- env.cut(occ.b, env.uncut)
 #' for(i in 1:length(occ.b.env)){
 #'    plot(occ.b.env[[i]][[1]])
-#'    plot(occ.b[[i]], add=T)
+#'    plot(occ.b[[i]], add=TRUE)
 #' }
 #' @export
 env.cut <- function(occ.b, env.uncut, numCores = 1){
   path.env.out <- "2_envData/area.calib"
-  if(dir.exists("2_envData")==F) dir.create("2_envData")
-  if(dir.exists(path.env.out)==F) dir.create(path.env.out)
+  if(dir.exists("2_envData")==FALSE) dir.create("2_envData")
+  if(dir.exists(path.env.out)==FALSE) dir.create(path.env.out)
   ## Clipping rasters for each species
   occ.b.env <- vector("list")
   # occ.b.env <- vector("list", length(occ.b))
@@ -581,7 +581,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
     env.i <- raster::crop(env.uncut, raster::extent(occ.b.i))
     env.i <- raster::mask(env.i, occ.b.i)
     # raster::crs(env.i) <- raster::crs(env.uncut)
-    # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==F) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
+    # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==FALSE) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
     env.i <- raster::writeRaster(env.i,
                                  filename = paste(path.env.out, paste("envData.", n.occ.b.i, ".grd", sep=''), sep='/'),
                                  format = "raster", overwrite = T)
@@ -649,8 +649,8 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                        numCores = 1, ...) {
 
   out.dir <- "1_sppData/occ.thinned.full"
-  if(dir.exists("1_sppData")==F) dir.create("1_sppData")
-  if(dir.exists(out.dir)==F) dir.create(out.dir)
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
+  if(dir.exists(out.dir)==FALSE) dir.create(out.dir)
 
   spp <- names(loc.data.lst)
 
@@ -774,7 +774,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 #' @examples
 #' occ.locs <- loadTocc(thinned.dataset.batch)
 #' @export
-loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
+loadTocc <- function(occ.list.thin, from.disk=FALSE, wtd=1){
   occ.l <- vector("list", length(occ.list.thin))
   names(occ.l) <- names(occ.list.thin)
 
@@ -782,7 +782,7 @@ loadTocc <- function(occ.list.thin, from.disk=F, wtd=1){
     out.dir <- "1_sppData/occ.thinned.full"
     for(i in 1:length(occ.list.thin)){
       occ.l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ.thinned", ".thin1.csv"),
-                                    header=TRUE, sep=',', stringsAsFactors=F)[2:3]
+                                    header=TRUE, sep=',', stringsAsFactors=FALSE)[2:3]
     }
   } else { # retrieve from thinned obj
     # occ.l <- lapply(occ.list.thin, function(x, wtd){

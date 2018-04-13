@@ -61,8 +61,8 @@ f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){
 
 
     # xlsx::write.xlsx(r.o.l[,,"D"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.", sp, ".xlsx"), sheetName="D")
-    # xlsx::write.xlsx(r.o.l[,,"I"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.", sp, ".xlsx"), sheetName="I", append=T)
-    # xlsx::write.xlsx(r.o.l[,,"rank.cor"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.", sp, ".xlsx"), sheetName="rank.cor", append=T)
+    # xlsx::write.xlsx(r.o.l[,,"I"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.", sp, ".xlsx"), sheetName="I", append=TRUE)
+    # xlsx::write.xlsx(r.o.l[,,"rank.cor"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.", sp, ".xlsx"), sheetName="rank.cor", append=TRUE)
     utils::write.csv(r.o.l[,,"D"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.D", sp, ".csv"))
     utils::write.csv(r.o.l[,,"I"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.I", sp, ".csv"))
     utils::write.csv(r.o.l[,,"rank.cor"], paste0("3_out.MaxEnt/Mdls.", sp, "/Raster.ovrlp.rank.cor", sp, ".csv"))

@@ -24,7 +24,7 @@
 #' @export
 mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
+  # wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
 
   path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
@@ -38,7 +38,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   args.all <- mcm$mxnt.args
   # args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
   args.aicc <- grep("AIC", xsel.mdls$sel.cri)
-  args.or.auc <- grep("AIC", xsel.mdls$sel.cri, invert=T)
+  args.or.auc <- grep("AIC", xsel.mdls$sel.cri, invert=TRUE)
 
   print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
 
@@ -191,15 +191,15 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
 # #' @export
 # mxnt.p.batch <- function(mcm.l, pred.nm="fut", a.proj.l, formt = "raster",numCores=1){ #, #, ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
 #                               # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-#                               # wAICsum=0.99, randomseed=F, responsecurves=T, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
+#                               # wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ #wAICsum=0.99,
 #'
 #   # path.res <- "3_out.MaxEnt"
-#   # if(dir.exists(path.res)==F) dir.create(path.res)
+#   # if(dir.exists(path.res)==FALSE) dir.create(path.res)
 #   # path.mdls <- paste(path.res, paste0("Mdls.", names(mcm.l)), sep="/")
 #   mcmp.l <- vector("list", length(mcm.l))
 #   names(mcmp.l) <- names(mcm.l)
 #   for(i in 1:length(mcmp.l)){
-#     # if(dir.exists(path.mdls[i])==F) dir.create(path.mdls[i])
+#     # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
 #     cat(c(names(mcm.l)[i], "\n"))
 #     # print(paste(names(mcm.l)[i]))
 #     # compute final models and predictions
