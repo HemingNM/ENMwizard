@@ -29,6 +29,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
   x$ID <- as.numeric(rownames(x))
 
+  x$sel.cri <- ""
   # AICcAvg
   if("AICavg" %in% mSel){
     if(any(cumsum(x$w.AIC) >= wAICsum)){
@@ -38,6 +39,8 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
     }
 
     x.a.i <- x.a.i[wsum]
+    x$sel.cri[x.a.i] <- paste0(x$sel.cri[x.a.i], paste0("AICc_", 1:length(wsum)))
+
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
 
@@ -49,6 +52,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   # LowAIC
   if("LowAIC" %in% mSel){
     x.la.i <- order(x$delta.AICc)[1]
+    x$sel.cri[x.la.i] <- sub("^\\.", "", paste(x$sel.cri[x.la.i], "LowAICc", sep = "."))
   } else {
     x.la.i <- NULL
   }
@@ -57,8 +61,10 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if("OR" %in% mSel){
     # seq
     xORm.i <- order(x$Mean.ORmin, -x$Mean.AUC)[1]
+    x$sel.cri[xORm.i] <- sub("^\\.", "", paste(x$sel.cri[xORm.i], "ORmin", sep = "."))
     # seqOr10
     xOR10.i <- order(x$Mean.OR10, -x$Mean.AUC)[1]
+    x$sel.cri[xOR10.i] <- sub("^\\.", "", paste(x$sel.cri[xOR10.i], "OR10", sep = "."))
   } else {
     xORm.i <- NULL
     xOR10.i <- NULL
@@ -68,20 +74,16 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if("AUC" %in% mSel){
     #AUCmin
     xAUCmin.i <- order(-x$Mean.AUC, x$Mean.ORmin)[1]
+    x$sel.cri[xAUCmin.i] <- sub("^\\.", "", paste(x$sel.cri[xAUCmin.i], "AUCmin", sep = "."))
     # AUC10
     xAUC10.i <- order(-x$Mean.AUC, x$Mean.OR10)[1]
+    x$sel.cri[xAUC10.i] <- sub("^\\.", "", paste(x$sel.cri[xAUC10.i], "AUC10", sep = "."))
   } else {
     xAUCmin.i <- NULL
     xAUC10.i <- NULL
   }
 
-  x$sel.cri <- ""
-  x$sel.cri[x.a.i] <- paste0(x$sel.cri[x.a.i], paste0("AICc_", 1:length(wsum)))
-  x$sel.cri[x.la.i] <- sub("^\\.", "", paste(x$sel.cri[x.la.i], "LowAICc", sep = "."))
-  x$sel.cri[xORm.i] <- sub("^\\.", "", paste(x$sel.cri[xORm.i], "ORmin", sep = "."))
-  x$sel.cri[xOR10.i] <- sub("^\\.", "", paste(x$sel.cri[xOR10.i], "OR10", sep = "."))
-  x$sel.cri[xAUCmin.i] <- sub("^\\.", "", paste(x$sel.cri[xAUCmin.i], "AUCmin", sep = "."))
-  x$sel.cri[xAUC10.i] <- sub("^\\.", "", paste(x$sel.cri[xAUC10.i], "AUC10", sep = "."))
+
   xsel.mdls <- x[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
   xsel.mdls$ID <- NULL
 
