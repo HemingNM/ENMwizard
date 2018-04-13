@@ -235,7 +235,8 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj
       } ) )
     } else {
       area.pl[[i]] <- unlist(lapply(base::seq_along(area.p.spi), function(j){
-        prj.nm.j <- gsub("^\\.|\\.\\.\\.|\\.\\.",".",paste(prj.nm, names(env.uncut.l)[j], sep="."))
+        # prj.nm.j <- gsub("^\\.|\\.\\.\\.|\\.\\.",".",paste(prj.nm, names(env.uncut.l)[j], sep="."))
+        prj.nm.j <- names(env.uncut.l)[j]
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.", "", prj.nm.j)) #paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
