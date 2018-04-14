@@ -81,7 +81,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
         }, wv) ### check if is raster
     } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
-      thrshld.crit.v[grep("Mod.AICc_1$", mcmp.spi[["selected.mdls"]]$sel.cri),]
+      thrshld.crit.v[grep("LowAICc", mcmp.spi[["selected.mdls"]]$sel.cri),]
     } else {NA},
     if(sum(grepl("ORmin", names(pred.r)))>0){
       thrshld.crit.v[grep("ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]

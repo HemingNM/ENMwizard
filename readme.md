@@ -153,7 +153,9 @@ occ.locs <- loadTocc(thinned.dataset.batch)
 ### - 3.3 model tuning using ENMeval
 Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
-ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,method="block")
+ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, 
+                    RMvalues = 1, fc = c("L", "LQ", "LP"),
+                    method="block")
 ```
 
 -----
@@ -166,20 +168,22 @@ Now, select maxent model calibrations and predictions using the function mxnt.cp
 ```r
 
 # Run model
-mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99)
+mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, 
+                                    a.calib.l = occ.b.env, occ.l = occ.locs,
+                                    mSel = "LowAIC")
 
 
-# Comparing single core processing and multiple core processing
-
-# Parallel processing forking models (best for small sets of species)
-system.time(
-mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=TRUE)
-)
-
-# Parallel processing forking species (best for large sets of species)
-system.time(
-mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=FALSE)
-)
+# # Comparing single core processing and multiple core processing
+# 
+# # Parallel processing forking models (best for small sets of species)
+# system.time(
+# mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=TRUE)
+# )
+# 
+# # Parallel processing forking species (best for large sets of species)
+# system.time(
+# mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=FALSE)
+# )
 
 ```
 
@@ -195,7 +199,7 @@ For projection it is necessary to download raster files with the environmnetal v
 dir.create("./rasters")
 
 # Download data for present
-current <- getData('worldclim', var='bio', res=10,path="rasters")
+current <- getData('worldclim', var='bio', res=10, path="rasters")
 
 # Download data for future projection (2050)
 futAC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
@@ -222,10 +226,13 @@ Now it is time to define the projection area for each species. The projection ar
 
 ```r
 poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=FALSE)#
-plot(poly.projection[[1]])
-plot(occ.polys[[1]], col="red", add=T)
+plot(poly.projection[[1]], col="gray")
+plot(occ.polys[[1]], col="white", add=T)
 
 pa.env.proj.l <- pred.a.batch.mscn(poly.projection, env.proj.l)
+plot(poly.projection[[1]], col="gray")
+plot(pa.env.proj.l[[1]][[1]][[1]], add=T)
+plot(occ.polys[[1]], add=T)
 ```
 
 ## 4.1.2 if the extent to project is the same for all species
@@ -248,6 +255,7 @@ mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.env.p
 mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l, numCores=2)
 
 # plot projections
+par(mfrow=c(1,2), mar=c(1,2,1,2))
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
