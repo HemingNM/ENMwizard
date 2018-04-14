@@ -32,13 +32,13 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
   pred.args <- mcm$pred.args
 
-  xsel.mdls <- mcm$selected.mdls # mdl.arg[[2]]
+  xsel.mdls <- mcm$selected.mdls[order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   f <- factor(xsel.mdls$features)
   beta <- xsel.mdls$rm
   args.all <- mcm$mxnt.args
   # args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
   args.aicc <- grep("AIC", xsel.mdls$sel.cri)
-  args.or.auc <- grep("AIC", xsel.mdls$sel.cri, invert=TRUE)
+  args.or.auc <- grep("OR|AUC", xsel.mdls$sel.cri)
 
   print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
 
@@ -49,7 +49,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   #   c("Mod.AvgAICc", "Mod.LowAICc")
   # }, mod.nms[(length(args.aicc)+1):length(args.all)])
   mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
-                    paste0("Mod.", mod.nms[1:length(args.all)]))
+                    mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
@@ -231,7 +231,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
 #' \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p}}
 #' @return A 'mcmp.spl' object. A list of objects returned from function "mxnt.p", containing the new (multiple) projections for each element (species) of the list
 #' @examples
-#' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
+#' mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mcm.l = mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' @export
 mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, parallelTunning = TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   mdl.names <- names(mcm.l)
