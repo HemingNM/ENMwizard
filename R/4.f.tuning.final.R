@@ -29,7 +29,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
   x$ID <- as.numeric(rownames(x))
 
-  x$sel.cri <- ""
+  x$opt.crit <- ""
   # AICcAvg
   if("AICavg" %in% mSel){
     if(any(cumsum(x$w.AIC) >= wAICsum)){
@@ -39,7 +39,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
     }
 
     x.a.i <- x.a.i[wsum]
-    x$sel.cri[wsum] <- paste0(x$sel.cri[wsum], paste0("AICc_", wsum))
+    x$opt.crit[wsum] <- paste0(x$opt.crit[wsum], paste0("AICc_", wsum))
 
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
@@ -52,7 +52,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   # LowAIC
   if("LowAIC" %in% mSel){
     x.la.i <- order(x$delta.AICc)[1]
-    x$sel.cri[x.la.i] <- sub("^\\.", "", paste(x$sel.cri[x.la.i], "LowAICc", sep = "."))
+    x$opt.crit[x.la.i] <- sub("^\\.", "", paste(x$opt.crit[x.la.i], "LowAICc", sep = "."))
   } else {
     x.la.i <- NULL
   }
@@ -61,10 +61,10 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if("OR" %in% mSel){
     # seq
     xORm.i <- order(x$Mean.ORmin, -x$Mean.AUC)[1]
-    x$sel.cri[xORm.i] <- sub("^\\.", "", paste(x$sel.cri[xORm.i], "ORmin", sep = "."))
+    x$opt.crit[xORm.i] <- sub("^\\.", "", paste(x$opt.crit[xORm.i], "ORmin", sep = "."))
     # seqOr10
     xOR10.i <- order(x$Mean.OR10, -x$Mean.AUC)[1]
-    x$sel.cri[xOR10.i] <- sub("^\\.", "", paste(x$sel.cri[xOR10.i], "OR10", sep = "."))
+    x$opt.crit[xOR10.i] <- sub("^\\.", "", paste(x$opt.crit[xOR10.i], "OR10", sep = "."))
   } else {
     xORm.i <- NULL
     xOR10.i <- NULL
@@ -74,10 +74,10 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if("AUC" %in% mSel){
     #AUCmin
     xAUCmin.i <- order(-x$Mean.AUC, x$Mean.ORmin)[1]
-    x$sel.cri[xAUCmin.i] <- sub("^\\.", "", paste(x$sel.cri[xAUCmin.i], "AUCmin", sep = "."))
+    x$opt.crit[xAUCmin.i] <- sub("^\\.", "", paste(x$opt.crit[xAUCmin.i], "AUCmin", sep = "."))
     # AUC10
     xAUC10.i <- order(-x$Mean.AUC, x$Mean.OR10)[1]
-    x$sel.cri[xAUC10.i] <- sub("^\\.", "", paste(x$sel.cri[xAUC10.i], "AUC10", sep = "."))
+    x$opt.crit[xAUC10.i] <- sub("^\\.", "", paste(x$opt.crit[xAUC10.i], "AUC10", sep = "."))
   } else {
     xAUCmin.i <- NULL
     xAUC10.i <- NULL
@@ -90,7 +90,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   f <- factor(xsel.mdls$features)
   beta <- c(xsel.mdls$rm)
   cat("\n", "arguments used for building models", "\n")
-  print(data.frame(selection.criteria = xsel.mdls$sel.cri, features=xsel.mdls$features, beta=xsel.mdls$rm))
+  print(data.frame(optimality.criteria = xsel.mdls$opt.crit, features=xsel.mdls$features, beta=xsel.mdls$rm))
 
   cat("\n")
   args <- paste(paste0(arg1), paste0(arg2),
@@ -177,25 +177,29 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
+  ENMeval.r <- cbind(ENMeval.r, opt.crit=xsel.mdls$opt.crit)
+
+  xsel.mdls <- xsel.mdls[xsel.mdls$opt.crit!="",]
+
 
   args.all <- mdl.arg[[1]]
-  args.aicc <- grep("AIC", xsel.mdls$sel.cri)
+  args.aicc <- grep("AIC", xsel.mdls$opt.crit)
 
   # exportar planilha de resultados
   # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
   # xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
-  utils::write.csv(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
-  res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
+  utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
+  res.tbl <- ENMeval.r[,c("opt.crit", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
   colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAICc", "NP", "Rank", "OR10", "ORLPT", "AUC")
   # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
-  mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"]) # mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  mod.nms <- paste0("Mod.", xsel.mdls[, "opt.crit"]) # mod.nms <- paste(xsel.mdls[, "opt.crit"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
   # mod.pred.nms <- c(if(length(args.aicc)>0){
   #   c("Mod.AvgAICc", "Mod.LowAICc")
   # }, mod.nms[(length(args.aicc)+1):length(args.all)])
-  mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$opt.crit))>0){"Mod.LowAICc"},
                     paste0("Mod.", mod.nms[1:length(args.all)]))
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
