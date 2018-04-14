@@ -39,7 +39,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
     }
 
     x.a.i <- x.a.i[wsum]
-    x$sel.cri[x.a.i] <- paste0(x$sel.cri[x.a.i], paste0("AICc_", 1:length(wsum)))
+    x$sel.cri[x.a.i] <- paste0(x$sel.cri[x.a.i], paste0("AICc_", x.a.i))
 
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
@@ -175,7 +175,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   ENMeval.r <- ENMeval.o@results
   # cat(c(names(ENMeval.r[i]), "\n"))
 
-  mdl.arg <- f.args(ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
+  mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
 
   args.all <- mdl.arg[[1]]
@@ -329,7 +329,8 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, # a=ENMeval.o.l[[i]]@bg.pts,
                      formt = formt,
                      pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
-                     randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+                     randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,
+                     numCores = numCores, parallelTunning = parallelTunning)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, mSel, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)

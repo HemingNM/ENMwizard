@@ -33,7 +33,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
     path.mdls <- paste("3_out.MaxEnt", "Mdls.sp", sep = "/")
   }
-  if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
+  if(dir.exists(path.mdls)==FALSE) {dir.create(path.mdls)}
   # args <- 1:length(mcmp.spi[["mxnt.mdls"]])
   mxnt.mdls <- mcmp.spi[["mxnt.mdls"]]
 
@@ -61,7 +61,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   thrshld.path <- paste(path.mdls, outpt, "Mdls.thrshld", sep='/')
 
-  if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
+  if(dir.exists(thrshld.path)==FALSE) {dir.create(thrshld.path)}
 
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
   thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl("Cloglog", rownames(mxnt.mdls[[1]]@results)) & # TODO use "outpt" variable
@@ -79,25 +79,25 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
       apply(data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
         stats::weighted.mean(x, wv)
         }, wv) ### check if is raster
-    } else {NA}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
+    } else {NULL}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
     if(sum(grepl("LowAICc", names(pred.r)))>0){
       thrshld.crit.v[grep("LowAICc", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NA},
+    } else {NULL},
     if(sum(grepl("ORmin", names(pred.r)))>0){
       thrshld.crit.v[grep("ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    }else {NA},
+    }else {NULL},
     if(sum(grepl("OR10", names(pred.r)))>0){
       thrshld.crit.v[grep("OR10", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NA},
+    } else {NULL},
     if(sum(grepl("AUCmin", names(pred.r)))>0){
       thrshld.crit.v[grep("AUCmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NA},
+    } else {NULL},
     if(sum(grepl("AUC10", names(pred.r)))>0){
       thrshld.crit.v[grep("AUC10", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NA} ) )
+    } else {NULL} ) )
 
   # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
-  thrshld.mod.crt <- as.data.frame(thrshld.mod.crt[!is.na(thrshld.mod.crt[,1]),])
+  # thrshld.mod.crt <- as.data.frame(thrshld.mod.crt[!is.na(thrshld.mod.crt[,1]),])
   # row.names(thrshld.mod.crt) <- mod.sel.crit
   colnames(thrshld.mod.crt) <- paste0("thrshld.", thrshld.nms)
 
