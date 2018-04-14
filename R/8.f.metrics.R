@@ -225,8 +225,8 @@ f.var.ci <- function(mcmp.l){
 #' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return A list of species' ORs computed for the selected (current) climatic scenario and
 #' each threshold and model criteria
-#' @examples
-#' f.OR(mods.thrshld.lst, occ.locs, "current")
+##' @examples
+##' f.OR(mtp.l=mods.thrshld.lst, occ.locs, "current")
 #' @export
 f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , save=TRUE
   # library(data.table)

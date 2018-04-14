@@ -154,7 +154,7 @@ occ.locs <- loadTocc(thinned.dataset.batch)
 Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, 
-                    RMvalues = 1, fc = c("L", "LQ", "LP"),
+                    RMvalues = c(.5, 1, 1.5), fc = c("L", "LQ", "LP"),
                     method="block")
 ```
 
@@ -169,8 +169,8 @@ Now, select maxent model calibrations and predictions using the function mxnt.cp
 
 # Run model
 mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, 
-                                    a.calib.l = occ.b.env, occ.l = occ.locs,
-                                    mSel = "LowAIC")
+                                    a.calib.l = occ.b.env, occ.l = occ.locs)#,
+                                    #mSel = "LowAIC")
 
 
 # # Comparing single core processing and multiple core processing
@@ -271,12 +271,26 @@ mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
 
 #### Plotting one projection for current climate and another for a future climatic scenario
 ```r
-par(mfrow=c(1,2))
-plot(mods.thrshld.lst$Bvarieg$current$binary$mtp[[1]])
-plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$mtp[[1]])
+plot(mods.thrshld.lst$Bvarieg$current$binary$mtp)
+plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$mtp)
 ```
 
 #### Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
 f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
+```
+
+
+#### 5. Metrics
+Compute variable contribution and importance
+```r
+f.var.ci(mxnt.mdls.preds.lst)
+```
+Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
+```r
+f.FPA(mods.thrshld.lst)
+```
+Compute "Omission Rate"
+```r
+f.OR(mods.thrshld.lst, occ.locs)
 ```
