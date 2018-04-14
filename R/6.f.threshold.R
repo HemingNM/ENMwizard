@@ -48,6 +48,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   pred.r <- mcmp.spi$mxnt.preds[[scn.nm]] # mcmp.spi[[match(pred.nm, names(mcmp.spi))]] # , fixed=TRUE # [pred.i]
   pred.args <- mcmp.spi$pred.args
   mod.sel.crit <- names(pred.r)
+  mod.nms  <- mcmp.spi[["selected.mdls"]]$sel.cri
 
   if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
     # args.aicc <- 1:(length(args)-4)
@@ -71,7 +72,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   thrshld.crit.v <- as.data.frame(matrix(data=sapply(thrshld.crit, function(y) sapply(mxnt.mdls[1:length(mxnt.mdls)], function(x) x@results[rownames(x@results) == y]) ),
                                          ncol = length(thrshld.i)))
   colnames(thrshld.crit.v) <- thrshld.nms
-  rownames(thrshld.crit.v) <- mcmp.spi[["selected.mdls"]]$sel.cri
+  rownames(thrshld.crit.v) <- mod.nms#  <- mcmp.spi[["selected.mdls"]]$sel.cri
   thrshld.crit.v
 
 
