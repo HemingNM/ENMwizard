@@ -38,7 +38,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
       wsum <- 1:length(x$w.AIC)
     }
 
-    # x.a.i <- x.a.i[wsum]
+    x.a.i <- x.a.i[wsum]
     x$sel.cri[wsum] <- paste0(x$sel.cri[wsum], paste0("AICc_", wsum))
 
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
@@ -84,13 +84,13 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   }
 
 
-  xsel.mdls <- x[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
+  xsel.mdls <- x#[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
   xsel.mdls$ID <- NULL
 
   f <- factor(xsel.mdls$features)
   beta <- c(xsel.mdls$rm)
   cat("\n", "arguments used for building models", "\n")
-  print(data.frame(features=xsel.mdls$features, beta=xsel.mdls$rm, row.names = xsel.mdls$sel.cri))
+  print(data.frame(selection.criteria = xsel.mdls$sel.cri, features=xsel.mdls$features, beta=xsel.mdls$rm))
 
   cat("\n")
   args <- paste(paste0(arg1), paste0(arg2),
