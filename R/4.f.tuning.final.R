@@ -177,8 +177,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
-  ENMeval.r <- cbind(ENMeval.r, opt.crit=xsel.mdls$opt.crit)
-
+  ENMeval.r <- cbind(ENMeval.r, opt.crit=xsel.mdls$opt.crit, rankAICc=xsel.mdls$rankAICc)
   xsel.mdls <- xsel.mdls[xsel.mdls$opt.crit!="",]
 
 
@@ -189,10 +188,11 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
   # xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
-  res.tbl <- ENMeval.r[,c("opt.crit", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
+  res.tbl <- xsel.mdls[,c("opt.crit", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
   colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAICc", "NP", "Rank", "OR10", "ORLPT", "AUC")
   # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
+
 
   mod.nms <- paste0("Mod.", xsel.mdls[, "opt.crit"]) # mod.nms <- paste(xsel.mdls[, "opt.crit"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
