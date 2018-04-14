@@ -25,7 +25,7 @@
 #' @seealso \code{\link{f.thr.batch}}
 #' @return Stack or brick of thresholded predictions
 #' @examples
-#' mods.thrshld <- f.thr(mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+#' mods.thrshld <- f.thr(mcmp.spi=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
 #' @export
@@ -51,7 +51,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
     # args.aicc <- 1:(length(args)-4)
-    wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
+    wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
   } # else { wv <- 1 } # rep(1, 1+length(grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri, invert = T))) } # else {wv <- rep(0, max(grep("Mod.AICc", mcmp.spi[[1]]$sel.cri))) }
 
 
@@ -70,36 +70,49 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   ## extract values of threshold from each model and criteria # sapply(mxnt.mdls[1:length(args)]
   thrshld.crit.v <- as.data.frame(matrix(data=sapply(thrshld.crit, function(y) sapply(mxnt.mdls[1:length(mxnt.mdls)], function(x) x@results[rownames(x@results) == y]) ),
                                          ncol = length(thrshld.i)))
+  colnames(thrshld.crit.v) <- thrshld.nms
+  rownames(thrshld.crit.v) <- mcmp.spi[["selected.mdls"]]$sel.cri
+  thrshld.crit.v
 
+
+
+  thrshld.mod.crt <- rbind(if(sum(grepl("AICc_", mod.nms))>0){
+    matrix(apply(data.frame(thrshld.crit.v[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
+      stats::weighted.mean(x, wv)
+    }, wv), nrow = 1, dimnames = list("AvgAICc", thrshld.nms) )
+  } else {NULL},
+  thrshld.crit.v)
+
+  thrshld.mod.crt <- thrshld.mod.crt[rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit),]
   # thrshld.mod.crt <- thrshld.crit.v[1]
   # grep("LowAICc", names(pred.r))
 
-  thrshld.mod.crt <- data.frame(rbind(
-    if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
-      apply(data.frame(thrshld.crit.v[grep("Mod.AICc", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
-        stats::weighted.mean(x, wv)
-        }, wv) ### check if is raster
-    } else {NULL}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
-    if(sum(grepl("LowAICc", names(pred.r)))>0){
-      thrshld.crit.v[grep("LowAICc", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NULL},
-    if(sum(grepl("ORmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    }else {NULL},
-    if(sum(grepl("OR10", names(pred.r)))>0){
-      thrshld.crit.v[grep("OR10", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NULL},
-    if(sum(grepl("AUCmin", names(pred.r)))>0){
-      thrshld.crit.v[grep("AUCmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NULL},
-    if(sum(grepl("AUC10", names(pred.r)))>0){
-      thrshld.crit.v[grep("AUC10", mcmp.spi[["selected.mdls"]]$sel.cri),]
-    } else {NULL} ) )
-
-  # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
-  # thrshld.mod.crt <- as.data.frame(thrshld.mod.crt[!is.na(thrshld.mod.crt[,1]),])
-  # row.names(thrshld.mod.crt) <- mod.sel.crit
-  colnames(thrshld.mod.crt) <- paste0("thrshld.", thrshld.nms)
+  # thrshld.mod.crt <- data.frame(rbind(
+  #   if(sum(grepl("AvgAICc", names(pred.r)))>0){ # # 1:length(args.aicc)
+  #     apply(data.frame(thrshld.crit.v[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
+  #       stats::weighted.mean(x, wv)
+  #       }, wv) ### check if is raster
+  #   } else {NULL}, # compute avg.thrshld from each criteria weighted by model importance (AICc W)
+  #   if(sum(grepl("LowAICc", names(pred.r)))>0){
+  #     thrshld.crit.v[grep("LowAICc", mcmp.spi[["selected.mdls"]]$sel.cri),]
+  #   } else {NULL},
+  #   if(sum(grepl("ORmin", names(pred.r)))>0){
+  #     thrshld.crit.v[grep("ORmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
+  #   }else {NULL},
+  #   if(sum(grepl("OR10", names(pred.r)))>0){
+  #     thrshld.crit.v[grep("OR10", mcmp.spi[["selected.mdls"]]$sel.cri),]
+  #   } else {NULL},
+  #   if(sum(grepl("AUCmin", names(pred.r)))>0){
+  #     thrshld.crit.v[grep("AUCmin", mcmp.spi[["selected.mdls"]]$sel.cri),]
+  #   } else {NULL},
+  #   if(sum(grepl("AUC10", names(pred.r)))>0){
+  #     thrshld.crit.v[grep("AUC10", mcmp.spi[["selected.mdls"]]$sel.cri),]
+  #   } else {NULL} ) )
+  #
+  # # thrshld.mod.crt <- cbind(thrshld.mod.crt, thrshld.mod.crt)
+  # # thrshld.mod.crt <- as.data.frame(thrshld.mod.crt[!is.na(thrshld.mod.crt[,1]),])
+  # # row.names(thrshld.mod.crt) <- mod.sel.crit
+  # colnames(thrshld.mod.crt) <- paste0("thrshld.", thrshld.nms)
 
   brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
   brick.nms.t.b <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms, ".b")
@@ -183,7 +196,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 #' @seealso \code{\link{f.thr}}
 #' @return List of stack or brick of thresholded predictions
 #' @examples
-#' mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.pf)
+#' mods.thrshld.lst <- f.thr.batch(mcmp.l=mxnt.mdls.preds.cf)
 #' @export
 f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
   path.res <- "3_out.MaxEnt"
