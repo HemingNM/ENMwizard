@@ -84,7 +84,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   }
 
 
-  xsel.mdls <- x[order(x$delta.AICc)] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
+  xsel.mdls <- x[order(x$delta.AICc),] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
   xsel.mdls$ID <- NULL
 
   f <- factor(xsel.mdls$features)
