@@ -156,7 +156,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 #' @seealso \code{\link[dismo]{maxent}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return List of arrays containing variable contribution and importance for each species
 #' @examples
-#' f.var.ci(mxnt.mdls.preds.lst)
+#' f.var.ci(mcmp.l = mxnt.mdls.preds.lst)
 #' @export
 f.var.ci <- function(mcmp.l){
   path.res <- "3_out.MaxEnt"
@@ -167,7 +167,7 @@ f.var.ci <- function(mcmp.l){
   var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
   for(sp in seq_along(mcmp.l)){
     mxnt.mdls <- mcmp.l[[sp]]$mxnt.mdls
-    mod.nms <- mcmp.l[[sp]]$selected.mdls$sel.cri
+    mod.nms <- paste0("Mod.",mcmp.l[[sp]]$selected.mdls$sel.cri)
     var.nms <- gsub( ".contribution", "", rownames(mxnt.mdls[[1]]@results)[grepl("contribution", rownames(mxnt.mdls[[1]]@results))])
     w.mdls <- mcmp.l[[sp]]$selected.mdls$w.AIC
 
@@ -182,17 +182,17 @@ f.var.ci <- function(mcmp.l){
       var.permImp.df[i,] <- mxnt.mdls[[i]]@results[grepl("permutation.importance", rownames(mxnt.mdls[[i]]@results))]
     }
 
-    var.cont.df <- rbind( if(sum(grepl("AvgAICc", names(mod.nms)))>0){
-      Mod.Avg.AICc = apply(data.frame(var.cont.df[grep("Mod.AICc",mod.nms),]), 2,
-                           function(x) sum(x*w.mdls[grep("Mod.AICc", mod.nms)]))
+    var.cont.df <- rbind( if(sum(grepl("AICc_", mod.nms))>0){
+      matrix(apply(data.frame(var.cont.df[grep("AICc_",mod.nms),]), 2,
+                           function(x) sum(x*w.mdls[grep("AICc_", mod.nms)])), nrow = 1, dimnames = list("Mod.Avg.AICc", var.nms) )
     } else {NULL},
     var.cont.df)
     # var.cont.df[grep("LowAICc|ORmin|OR10|AUCmin|AUC10", mod.nms),],
     # var.cont.df[grep("Mod.AICc", mod.nms),])
 
-    var.permImp.df <- rbind(if(sum(grepl("AvgAICc", names(mod.nms)))>0){
-      Mod.Avg.AICc = apply(data.frame(var.permImp.df[grep("Mod.AICc", mod.nms),]), 2,
-                           function(x) sum(x*w.mdls[grep("Mod.AICc", mod.nms)]))
+    var.permImp.df <- rbind(if(sum(grepl("AICc_", mod.nms))>0){
+      matrix(apply(data.frame(var.permImp.df[grep("AICc_", mod.nms),]), 2,
+                           function(x) sum(x*w.mdls[grep("AICc_", mod.nms)])), nrow = 1, dimnames = list("Mod.Avg.AICc", var.nms) )
     } else {NULL},
     var.permImp.df)
     # var.permImp.df[grep("LowAICc|ORmin|OR10|AUCmin|AUC10", mod.nms),],
@@ -200,7 +200,7 @@ f.var.ci <- function(mcmp.l){
     # save into list subitem
     # var.cont.df <- var.cont.df[c(1,2,(nrow(var.cont.df)-3):nrow(var.cont.df)),]
     # var.permImp.df <- var.permImp.df[c(1,2,(nrow(var.permImp.df)-3):nrow(var.permImp.df)),]
-    var.contPermImp[[sp]] <- array(c(var.cont.df,var.permImp.df), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
+    var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
     # xlsx::write.xlsx(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.contPermImp.", names((mcmp.l)[sp]), ".xlsx"), sheetName="contribution")
     # xlsx::write.xlsx(var.contPermImp[[sp]][,,2], paste0(path.mdls[sp],"/var.contPermImp.", names((mcmp.l)[sp]), ".xlsx"), append=TRUE, sheetName="permutation.importance")
     utils::write.csv(var.contPermImp[[sp]][,,1], paste0(path.mdls[sp],"/var.Contribution.", names((mcmp.l)[sp]), ".csv"))
