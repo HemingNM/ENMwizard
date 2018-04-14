@@ -38,8 +38,8 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
       wsum <- 1:length(x$w.AIC)
     }
 
-    x.a.i <- x.a.i[wsum]
-    x$sel.cri[x.a.i] <- paste0(x$sel.cri[x.a.i], paste0("AICc_", x.a.i))
+    # x.a.i <- x.a.i[wsum]
+    x$sel.cri[wsum] <- paste0(x$sel.cri[wsum], paste0("AICc_", wsum))
 
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
