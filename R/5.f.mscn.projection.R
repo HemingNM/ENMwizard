@@ -32,7 +32,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
   pred.args <- mcm$pred.args
 
-  xsel.mdls <- mcm$selected.mdls[order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
+  xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   f <- factor(xsel.mdls$features)
   beta <- xsel.mdls$rm
   args.all <- mcm$mxnt.args
