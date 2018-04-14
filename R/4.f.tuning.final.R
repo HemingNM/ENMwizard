@@ -178,10 +178,10 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
   ENMeval.r <- cbind(ENMeval.r, opt.crit=xsel.mdls$sel.cri, rankAICc=xsel.mdls$rankAICc)
-  xsel.mdls <- xsel.mdls[xsel.mdls$sel.cri!="",]
+  mdls.keep <- xsel.mdls$sel.cri!=""
+  xsel.mdls <- xsel.mdls[mdls.keep,]
 
-
-  args.all <- mdl.arg[[1]]
+  args.all <- mdl.arg[[1]][mdls.keep]
   args.aicc <- grep("AIC", xsel.mdls$sel.cri)
 
   # exportar planilha de resultados
