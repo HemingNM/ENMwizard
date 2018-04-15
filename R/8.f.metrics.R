@@ -108,7 +108,9 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
           }
           ar <- sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)
           ar <- round(ar, digits = digits)
-          print(paste(names(mtp.l.sp.sc.t)[m], " area is ", ar))
+
+          # print(paste(names(mtp.l.sp.sc.t)[m], " area is ", ar))
+
           area.occ.spp[[sp]][sc,t,m] <<- ar
           # return(ar)
           # } # model criteria
@@ -155,7 +157,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
   utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
   # }
 
-  names(area.occ.spp) <- names(mtp.l)
+  # names(area.occ.spp) <- names(mtp.l)
   return(area.occ.spp)
 }
 
@@ -352,7 +354,7 @@ f.FPA <- function(mtp.l, digits = 3){
           # FPA <- (length(ar[ar==1]) /
           #           length(ar[!is.na(ar)]) )
 
-          print(paste(names(mtp.l[[sp]][[sc]][[2]][[t]])[m], " FPA is ", FPA))
+          # print(paste(names(mtp.l[[sp]][[sc]][[2]][[t]])[m], " FPA is ", FPA))
 
           # return(FPA)
           # } # model criteria
