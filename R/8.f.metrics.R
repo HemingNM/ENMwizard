@@ -140,10 +140,15 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     # sp.nm <- names(mtp.l)[sp]
     areas.occ.df[[sp]] <- as.data.frame(area.occ.spp[[sp]]) #
     colnames(areas.occ.df[[sp]]) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
-    # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/areaT.", sp, ".xlsx"))
-    utils::write.csv(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/areaT.", sp, ".csv"))
+    utils::write.csv(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/totalArea", sp, ".csv"))
     # } # species
     return(area.occ.spp[[sp]]) }, mtp.l, areas, restrict, digits) # species
+
+  # if(save){
+  area.occ.spp.c <- data.table::rbindlist(lapply(lapply(area.occ.spp, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  colnames(area.occ.spp.c)[1:2] <- c("sp", "Model")
+  utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
+  # }
 
   names(area.occ.spp) <- names(mtp.l)
   return(area.occ.spp)
@@ -275,13 +280,8 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
   }
   # if(save){
     df.OmR.c <- data.table::rbindlist(lapply(lapply(df.OmR, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-    # df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
     colnames(df.OmR.c)[1:2] <- c("sp", "Model")
-    # colnames(df.FPA.c)[1:2] <- c("sp", "Model")
-
-    # xlsx::write.xlsx(df.OmR.c, paste0("3_out.MaxEnt/OmRate.xlsx")) # reorder ds
     utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/OmRate.csv")) # reorder ds
-    # xlsx::write.xlsx(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.xlsx")) # reorder ds
   # }
   return(OmR = df.OmR)
 }
@@ -370,6 +370,12 @@ f.FPA <- function(mtp.l, digits = 3){
     # } # species
     return(df.FPA[[sp]]) }, mtp.l, areas, digits) # species
 
+
+  # if(save){
+  df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  colnames(df.FPA.c)[1:2] <- c("sp", "Model")
+  utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
+  # }
   names(df.FPA) <- names(mtp.l)
   return(df.FPA)
 }
