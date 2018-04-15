@@ -118,7 +118,14 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
       # } # pred.scenario
       return(ar.mods.t) }, mtp.l.sp, sp, restrict, digits, area.occ.spp) # pred.scenario
 
-    area.occ.spp[[sp]][] <- array(aperm(simplify2array(ar.mods.t.p), c(3,2,1))) #,
+    ar.mods.t.p <- simplify2array(ar.mods.t.p)
+    if(length(dim(ar.mods.t.p))==2){
+      dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1)
+    } else if(length(dim(ar.mods.t.p))==1){
+      dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1, 1)
+    }
+
+    area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
     # dim = dim(areas),
     # dimnames = list(names(mtp.l[[1]]), # pred.scenario
     #                 names(mtp.l[[1]][[1]][[2]]), # threshold criteria
@@ -287,7 +294,7 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
 #' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}
 #' @return A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 #' @examples
-#' f.FPA.mscn(mtp.l)
+#' f.FPA.mscn(mtp.l=mods.thrshld.lst)
 #' @export
 f.FPA <- function(mtp.l, digits = 3){
   df.FPA <- vector("list", length = length(mtp.l))
@@ -344,7 +351,14 @@ f.FPA <- function(mtp.l, digits = 3){
       # } # pred.scenario
       return(fpa.mods.t) }, mtp.l.sp, sp, digits, df.FPA) # pred.scenario
 
-    df.FPA[[sp]][] <- round(array(aperm(simplify2array(fpa.mods.t.p), c(3,2,1))), digits = digits) #,
+    fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
+    if(length(dim(fpa.mods.t.p))==2){
+    dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
+    } else if(length(dim(fpa.mods.t.p))==1){
+      dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1, 1)
+    }
+
+    df.FPA[[sp]][] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
     # xlsx::write.xlsx(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
     utils::write.csv(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".csv")) # reorder ds
     # areas.occ.df[[sp]] <- as.data.frame(df.FPA[[sp]]) #
