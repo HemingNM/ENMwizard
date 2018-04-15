@@ -71,6 +71,9 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
                                  names(mtp.l[[1]][[1]][[2]]), # threshold criteria
                                  c.nms )) # model criteria
   #
+  # areas <- data.table::melt(areas)
+  # colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
+
   thrshld.crit <- names(mtp.l[[1]][[1]][[1]])
   areas.occ.df <- vector("list")
 
@@ -145,8 +148,10 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     return(area.occ.spp[[sp]]) }, mtp.l, areas, restrict, digits) # species
 
   # if(save){
-  area.occ.spp.c <- data.table::rbindlist(lapply(lapply(area.occ.spp, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-  colnames(area.occ.spp.c)[1:2] <- c("sp", "Model")
+  names(area.occ.spp) <- names(mtp.l)
+  area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, function(x) data.table::melt(x)), idcol = "sp")
+  # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
   utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
   # }
 
@@ -260,27 +265,33 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
     ci <- grep(current.pred.nm, names(mtp.l[[sp]]))
     trlds <- names(mtp.l[[sp]][[ci]]$binary)
     thrshld.nms <- paste0(".", trlds, collapse = "|") # c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
-    mdls <- gsub(paste(c(thrshld.nms, "Mod."), collapse = "|"), "", names(mtp.l[[1]][[ci]]$binary[[1]]))
+    mdls <- gsub(paste(c(thrshld.nms, "Mod.", ".current"), collapse = "|"), "", names(mtp.l[[1]][[ci]]$binary[[1]]))
     nr <- length(mdls)
     nc <- length(trlds)
-    df.OmR[[sp]] <- as.data.frame(matrix(nrow=nr, ncol=nc))
-    rownames(df.OmR[[sp]]) <- mdls
-    colnames(df.OmR[[sp]]) <- trlds
+    df.OmR[[sp]] <- data.frame(matrix(nrow=nr, ncol=nc), Model=mdls)
+    # rownames(df.OmR[[sp]]) <- mdls
+    colnames(df.OmR[[sp]])[1:length(trlds)] <- trlds
+    # df.OmR[[sp]] <- cbind(df.OmR[[sp]], Model=mdls)
     # df.FPA[[sp]] <- df.OmR[[sp]]
 
     for(t in names(mtp.l[[sp]][[ci]]$binary)){ # threshold criteria
       for(m in 1:raster::nlayers(mtp.l[[sp]][[ci]]$binary[[t]])){ # model criteria
-        df.OmR[[sp]][m, t] <- (1-(sum(raster::extract(mtp.l[[sp]][[ci]]$binary[[t]][[m]], occ.spdf), na.rm = T)/N.pts) )
+        df.OmR[[sp]][m, t] <- round((1-(sum(raster::extract(mtp.l[[sp]][[ci]]$binary[[t]][[m]], occ.spdf), na.rm = T)/N.pts) ), digits)
       } # model criteria
     } # threshold criteria
 
+    df.OmR[[sp]] <- data.table::melt(df.OmR[[sp]], id.vars="Model")
+    colnames(df.OmR[[sp]])[1:3] <- c("Model", "threshold", "OmR")
     # xlsx::write.xlsx(round(df.OmR[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".xlsx")) # reorder ds
-    utils::write.csv(round(df.OmR[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".csv")) # reorder ds
+    utils::write.csv(df.OmR[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".csv")) # reorder ds
     # write.xlsx(round(df.FPA[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea", sp, ".xlsx")) # reorder ds
   }
   # if(save){
-    df.OmR.c <- data.table::rbindlist(lapply(lapply(df.OmR, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-    colnames(df.OmR.c)[1:2] <- c("sp", "Model")
+  # data.table::setDT(df.OmR[[sp]], keep.rownames = TRUE)
+  # lapply(df.OmR, function(x) data.table::melt(x, id.vars="Model"))
+  df.OmR.c <- data.table::rbindlist(df.OmR, idcol = "sp")
+    # df.OmR.c <- data.table::rbindlist(lapply(lapply(df.OmR, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+    # colnames(df.OmR.c)[1:4] <- c("sp", "Model", "threshold", "OmR")
     utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/OmRate.csv")) # reorder ds
   # }
   return(OmR = df.OmR)
@@ -307,10 +318,11 @@ f.FPA <- function(mtp.l, digits = 3){
                        raster::nlayers(mtp.l[[1]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
                  dimnames = list(names(mtp.l[[1]]), # pred.scenario
                                  names(mtp.l[[1]][[1]][[2]]), # threshold criteria
-                                 gsub(paste(c(".mxnt.pred.", "fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd"), collapse = "|"), "", names(mtp.l[[1]][[1]][[2]][[1]]))
+                                 gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd"), collapse = "|"), "", names(mtp.l[[1]][[1]][[2]][[1]]))
                  )) # model criteria
   #
-
+  areas <- data.table::melt(areas)
+  colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
 
   df.FPA <- lapply(names(mtp.l), function(sp, mtp.l, areas, digits){ # species
     # for(sp in names(mtp.l)){ # species
@@ -355,12 +367,13 @@ f.FPA <- function(mtp.l, digits = 3){
 
     fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
     if(length(dim(fpa.mods.t.p))==2){
-    dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
+      dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
     } else if(length(dim(fpa.mods.t.p))==1){
       dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1, 1)
     }
 
-    df.FPA[[sp]][] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+    df.FPA[[sp]][,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+    # colnames(df.FPA[[sp]])[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
     # xlsx::write.xlsx(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
     utils::write.csv(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".csv")) # reorder ds
     # areas.occ.df[[sp]] <- as.data.frame(df.FPA[[sp]]) #
@@ -372,8 +385,12 @@ f.FPA <- function(mtp.l, digits = 3){
 
 
   # if(save){
-  df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-  colnames(df.FPA.c)[1:2] <- c("sp", "Model")
+  names(df.FPA) <- names(mtp.l)
+  df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
+  # lapply(df.FPA, function(x) data.table::melt(x) )
+  # df.FPA.c <- data.table::rbindlist(lapply(df.FPA, function(x) data.table::melt(x)), idcol = TRUE)
+  # df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, function(x) data.table::melt(x)), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  # colnames(df.FPA.c)[1:4] <- c("sp", "Clim.scen", "threshold", "Model")
   utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
   # }
   names(df.FPA) <- names(mtp.l)
