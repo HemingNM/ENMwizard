@@ -151,7 +151,9 @@ occ.locs <- loadTocc(thinned.dataset.batch)
 ```
 
 ### - 3.3 model tuning using ENMeval
-Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
+Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). Here we will test which combination of Feature Classes and Regularization Multipliers give the best results. For this, we will partition our occurence data using the "block" method.
+
+By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, 
                     RMvalues = c(.5, 1, 1.5), fc = c("L", "LQ", "LP"),
@@ -160,10 +162,7 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env,
 
 -----
 ## - 4. Model Fitting (Calibration)
-### - 4.3 Run top corresponding models and save predictions 
-#### - 4.3.1 save maxent best models and predictions for each model
-
-Now, select maxent model calibrations and predictions using the function mxnt.cp.batch. This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
+After tuning MaxEnt models, we will calibrate them using all occurence data (i.e. without partition them).
 
 ```r
 
@@ -187,10 +186,8 @@ mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst,
 
 ```
 
-
-## -  4.1 Projection
-### - 4.1. Downloading environmental data
-
+## -  5. Projection
+### - 5.1. Downloading environmental data
 For projection it is necessary to download raster files with the environmnetal variables of interest. In this example, a directory called 'rasters' is created. Then, rasters from current and future climatic conditions projected for 2050 and 2070 are downloaded and loaded. Finally, two lists are created, one for current conditions and another for the two future cenarios.
 
 ```r
@@ -219,9 +216,8 @@ env.proj.l <- list(current = current[[c(1,5,6,7,8,12,16,17)]],
 
 ```
 
-# 4.1 Preparing projecion area: save rasters onto which the model will be projected in an object called "areas.projection"
-# 4.1.1 select area for projection based on the extent of occ points
-
+### - 5.2 Preparing projecion area: save rasters onto which the model will be projected in an object called "pa.env.proj.l"
+### - 5.2.1 select area for projection based on the extent of occ points
 Now it is time to define the projection area for each species. The projection area can be the same for all species (in this example) of be defined individually. Here, the projection area will be defined as an square area slightly larger than the original occurrence of the species. Then, a two lists with models will be created for a species. In the first list, the projection will be performed using current climatic conditions. In the second list, two cenarios of futurure climate (defined above) are created.
 
 ```r
@@ -235,17 +231,17 @@ plot(pa.env.proj.l[[1]][[1]][[1]], add=T)
 plot(occ.polys[[1]], add=T)
 ```
 
-## 4.1.2 if the extent to project is the same for all species
-
+### - 5.2.2 if the extent to project is the same for all species
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
 pa.env.proj.l <- pred.a.batch.rst.mscn(poly.projection$Bvarieg, env.proj.l, occ.polys)
 ```
 
-### 4.8 projections for present, future, and/or past
+### - 5.3 Model projections
 
-Finally, all species can be projected for all cenarios using all models. This is performed by `the mxnt.p.batch.mscn` function. The function has two arguments: 1) Model fit from maxent models within a list (see step 4.3 above) and 2) lists of rasters representing all cenarios to be projected. The last argument must be represented by a list of species. For each species, a list (within the first) is provided with all cenarios to be performed for each species (see last step above).
+Finally, the model(s) can be projected on all climatic cenarios. This is performed by `the mxnt.p.batch.mscn` function. The function has two arguments: 1) MaxEnt fitted models (see step 4.3 above) and 2) list of rasters representing all cenarios onto which models will be projected.
+This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
 
 ```r
 # For single or multiple species
@@ -262,8 +258,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-###  4.8.5 threshold for past and future predictions
-
+### - 5.4 Applying thresholds on climatic scenarios
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and 
 apply on the projections.
 
@@ -271,19 +266,20 @@ apply on the projections.
 mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
 ```
 
-#### Plotting one projection for current climate and another for a future climatic scenario
+## - 6. Visualizing
+### - 6.1. Plotting one projection for current climate and another for a future climatic scenario
 ```r
 plot(mods.thrshld.lst$Bvarieg$current$binary$mtp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$mtp)
 ```
 
-#### Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
+### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
 f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 ```
 
 
-#### 5. Metrics
+## - 7. Metrics
 Compute variable contribution and importance
 ```r
 f.var.ci(mxnt.mdls.preds.lst)
