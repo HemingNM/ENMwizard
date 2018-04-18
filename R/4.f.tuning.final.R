@@ -179,7 +179,9 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
-  ENMeval.r <- cbind(ENMeval.r, opt.crit=xsel.mdls$sel.cri, rankAICc=xsel.mdls$rankAICc)
+  ENMeval.r <- xsel.mdls[order(as.numeric(rownames(xsel.mdls))),]
+  # colnames(xsel.mdls)[colnames(xsel.mdls)== "sel.cri"] <- "opt.crit"
+  # ENMeval.r <- cbind(ENMeval.r[order(ENMeval.r$delta.AICc),], opt.crit=xsel.mdls$sel.cri, rankAICc=xsel.mdls$rankAICc)
   mdls.keep <- xsel.mdls$sel.cri!=""
   xsel.mdls <- xsel.mdls[mdls.keep,]
   args.all <- mdl.arg[[1]][mdls.keep]
