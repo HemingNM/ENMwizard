@@ -24,12 +24,13 @@
 #' @export
 f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=TRUE
 
+  x$sel.cri <- ""
+  x$ID <- as.numeric(rownames(x))
+
   x.a.i <- order(x$delta.AICc)
   x <- x[x.a.i,]
   if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
-  x$ID <- as.numeric(rownames(x))
 
-  x$sel.cri <- ""
   # AICcAvg
   if("AICavg" %in% mSel){
     if(any(cumsum(x$w.AIC) >= wAICsum)){
@@ -44,14 +45,15 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
 
-  } else {
-    x.a.i <- NULL
-  }
+  } # else {
+  #   x.a.i <- NULL
+  # }
+
   x <- x[order(x$ID),]
 
   # LowAIC
   if("LowAIC" %in% mSel){
-    x.la.i <- order(x$delta.AICc)[1]
+    x.la.i <- x.a.i[1]
     x$sel.cri[x.la.i] <- sub("^\\.", "", paste(x$sel.cri[x.la.i], "LowAICc", sep = "."))
   } else {
     x.la.i <- NULL
@@ -84,7 +86,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   }
 
 
-  xsel.mdls <- x[order(x$delta.AICc),] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
+  xsel.mdls <- x[x.a.i,] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
   xsel.mdls$ID <- NULL
 
   f <- factor(xsel.mdls$features)

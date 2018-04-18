@@ -309,7 +309,7 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
 #' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}
 #' @return A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 #' @examples
-#' f.FPA.mscn(mtp.l=mods.thrshld.lst)
+#' f.FPA(mtp.l=mods.thrshld.lst)
 #' @export
 f.FPA <- function(mtp.l, digits = 3){
   df.FPA <- vector("list", length = length(mtp.l))
