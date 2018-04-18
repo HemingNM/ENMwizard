@@ -169,8 +169,8 @@ Now, select maxent model calibrations and predictions using the function mxnt.cp
 
 # Run model
 mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, 
-                                    a.calib.l = occ.b.env, occ.l = occ.locs)#,
-                                    #mSel = "LowAIC")
+                                    a.calib.l = occ.b.env, occ.l = occ.locs,
+                                    mSel = c("LowAIC"))# "LowAIC") # , "OR"
 
 
 # # Comparing single core processing and multiple core processing
@@ -240,7 +240,7 @@ plot(occ.polys[[1]], add=T)
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
-env.proj.all <- pred.a.batch.rst.mscn(poly.projection$Bvarieg, env.proj.l, occ.polys)
+pa.env.proj.l <- pred.a.batch.rst.mscn(poly.projection$Bvarieg, env.proj.l, occ.polys)
 ```
 
 ### 4.8 projections for present, future, and/or past
@@ -249,8 +249,10 @@ Finally, all species can be projected for all cenarios using all models. This is
 
 ```r
 # For single or multiple species
+
 # using a single core (default)
 mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l)
+
 # or using multiple cores
 mxnt.mdls.preds.cf <- mxnt.p.batch.mscn(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l, numCores=2)
 
@@ -286,11 +288,16 @@ Compute variable contribution and importance
 ```r
 f.var.ci(mxnt.mdls.preds.lst)
 ```
+Compute "Omission Rate"
+```r
+f.OR(mods.thrshld.lst, occ.locs)
+```
+
 Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
 ```r
 f.FPA(mods.thrshld.lst)
 ```
-Compute "Omission Rate"
+Compute species' total suitable area
 ```r
-f.OR(mods.thrshld.lst, occ.locs)
+f.area.occ.mscn(mods.thrshld.lst)
 ```
