@@ -280,20 +280,20 @@ f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 
 
 ## - 7. Metrics
-Compute variable contribution and importance
+### - Compute variable contribution and importance
 ```r
 f.var.ci(mxnt.mdls.preds.lst)
 ```
-Compute "Omission Rate"
+### - Compute "Omission Rate"
 ```r
 f.OR(mods.thrshld.lst, occ.locs)
 ```
 
-Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
+### - Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
 ```r
 f.FPA(mods.thrshld.lst)
 ```
-Compute species' total suitable area
+### - Compute species' total suitable area
 ```r
 f.area.occ.mscn(mods.thrshld.lst)
 ```
