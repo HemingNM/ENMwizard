@@ -156,7 +156,7 @@ Here we will run ENMevaluate.batch to call ENMevaluate (from ENMeval package). H
 By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, 
-                    RMvalues = c(.5, 1, 1.5), fc = c("L", "LQ", "LP"),
+                    RMvalues = c(1, 1.5), fc = c("L", "LQ", "LP"),
                     method="block")
 ```
 
@@ -223,7 +223,7 @@ Now it is time to define the projection area for each species. The projection ar
 ```r
 poly.projection <- pred.a.poly.batch(occ.polys, mult = .1, buffer=FALSE)#
 plot(poly.projection[[1]], col="gray")
-plot(occ.polys[[1]], col="white", add=T)
+plot(occ.polys[[1]], col="yellow", add=T)
 
 pa.env.proj.l <- pred.a.batch.mscn(poly.projection, env.proj.l)
 plot(poly.projection[[1]], col="gray")
@@ -271,11 +271,13 @@ mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
 ```r
 plot(mods.thrshld.lst$Bvarieg$current$binary$mtp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$mtp)
+# f.plot.mxnt.preds.mscn(mxnt.mdls.preds.cf, mods.thrshld.lst)
+
 ```
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
+# f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 ```
 
 
