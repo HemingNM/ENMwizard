@@ -5,7 +5,7 @@
 ## Wickham 2015 R packages (pg 98) Documenting package
 # ?devtools::use_package()
 # devtools::create()
-devtools::use_build_ignore(c("documenting", "parallel.md", "readme.md", "all.classes.R"))
+devtools::use_build_ignore(c("documenting", "parallel.md", "readme.md"))
 devtools::document()
 devtools::check()
 # devtools::load_all()
