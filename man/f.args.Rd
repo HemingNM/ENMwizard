@@ -5,7 +5,7 @@
 \title{Creating arguments for selected models}
 \usage{
 f.args(x, mSel = c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
-  save = "B", randomseed = F, responsecurves = T,
+  save = "B", randomseed = FALSE, responsecurves = TRUE,
   arg1 = "noaddsamplestobackground", arg2 = "noautofeature")
 }
 \arguments{

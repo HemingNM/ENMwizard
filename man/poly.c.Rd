@@ -4,8 +4,8 @@
 \alias{poly.c}
 \title{Create minimum convex polygon based on species occurence data}
 \usage{
-poly.c(occ.spdf, sp.nm = "sp.nm", convex = T, alpha = 10, save = T,
-  crs.set = "+proj=longlat +datum=WGS84")
+poly.c(occ.spdf, sp.nm = "sp.nm", convex = TRUE, alpha = 10,
+  save = TRUE, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
 \item{occ.spdf}{An object of class SpatialPoints or SpatialPointsDataFrame (e.g. species occurence coordinates)}

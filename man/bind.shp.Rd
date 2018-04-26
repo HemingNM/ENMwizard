@@ -4,7 +4,7 @@
 \alias{bind.shp}
 \title{Bind list of SpatialPolygons into a single SpatialPolygons object}
 \usage{
-bind.shp(occ.polys, sp.nm = "sp.nm", save = T,
+bind.shp(occ.polys, sp.nm = "sp.nm", save = TRUE,
   crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{

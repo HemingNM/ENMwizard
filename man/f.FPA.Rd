@@ -18,7 +18,7 @@ A list of species' FPAs computed for each climatic scenario, threshold and model
 Compute "Fractional predicted area" ('n of occupied pixels'/total n) or ('area of occupied pixels'/total area)
 }
 \examples{
-f.FPA.mscn(mtp.l)
+f.FPA(mtp.l=mods.thrshld.lst)
 }
 \seealso{
 \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}

@@ -4,7 +4,7 @@
 \alias{loadTocc}
 \title{Load "thin.batch" filtered occurrence data}
 \usage{
-loadTocc(occ.list.thin, from.disk = F, wtd = 1)
+loadTocc(occ.list.thin, from.disk = FALSE, wtd = 1)
 }
 \arguments{
 \item{occ.list.thin}{named list returned from "thin.batch"}

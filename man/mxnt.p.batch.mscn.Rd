@@ -27,7 +27,7 @@ several environmental (areas/climatic) scenarios (specified in a.proj.l). These 
 each element (species) the original object.
 }
 \examples{
-mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
+mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mcm.l = mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 }
 \seealso{
 \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},

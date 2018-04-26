@@ -4,8 +4,8 @@
 \alias{pred.a.poly.batch}
 \title{Select area for projection based on the extent of occ points}
 \usage{
-pred.a.poly.batch(occ.polys, deg.incr = NULL, mult = 1, buffer = F,
-  same = T)
+pred.a.poly.batch(occ.polys, deg.incr = NULL, mult = 1, buffer = FALSE,
+  same = TRUE)
 }
 \arguments{
 \item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.}
@@ -26,7 +26,7 @@ This function is a wrapper for "pred.a". See ?pred.a
 It works with a named list of occ.polys to delimitate the projection area for each of the species.
 }
 \examples{
-area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=F)
+area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=FALSE)
 plot(area.projection[[1]][[1]])
 }
 \seealso{

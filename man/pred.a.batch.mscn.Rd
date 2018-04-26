@@ -4,7 +4,7 @@
 \alias{pred.a.batch.mscn}
 \title{Cut multiple projection areas (climatic scenarios) for multiple species (list of SpatialPolygons)}
 \usage{
-pred.a.batch.mscn(pred.polys, env.uncut.l, prj.nm = "", numCores = 1)
+pred.a.batch.mscn(pred.polys, env.uncut.l, numCores = 1)
 }
 \arguments{
 \item{pred.polys}{list of SpatialPolygons (usually of based on species occ points)
@@ -14,8 +14,6 @@ pred.a.batch.mscn(pred.polys, env.uncut.l, prj.nm = "", numCores = 1)
 \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}}
 
 \item{env.uncut.l}{list of raster/brick of environmental variables to be cut}
-
-\item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 
 \item{numCores}{specify number of cores if aim run in parallel}
 }

@@ -4,8 +4,8 @@
 \alias{pred.a.batch.rst.mscn}
 \title{Cut multiple projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)}
 \usage{
-pred.a.batch.rst.mscn(area.p, env.uncut.l, occ.polys, mask = F, prj.nm = "",
-  sp.nm = "mult.spp", numCores = 1)
+pred.a.batch.rst.mscn(area.p, env.uncut.l, occ.polys, mask = FALSE,
+  prj.nm = "", sp.nm = "mult.spp", numCores = 1)
 }
 \arguments{
 \item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}

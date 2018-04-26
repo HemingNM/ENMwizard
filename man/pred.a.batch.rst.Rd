@@ -4,7 +4,7 @@
 \alias{pred.a.batch.rst}
 \title{Cut projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)}
 \usage{
-pred.a.batch.rst(area.p, env.uncut, occ.polys, mask = F, prj.nm = "",
+pred.a.batch.rst(area.p, env.uncut, occ.polys, mask = FALSE, prj.nm = "",
   sp.nm = "mult.spp")
 }
 \arguments{

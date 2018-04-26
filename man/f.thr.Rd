@@ -30,11 +30,11 @@ Stack or brick of thresholded predictions
 }
 \description{
 This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp' object
-and save on the folder "4_ENMeval.results/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
+and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 }
 \examples{
-mods.thrshld <- f.thr(mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+mods.thrshld <- f.thr(mcmp.spi=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 plot(mods.thrshld[[1]][[2]]) # continuous
 plot(mods.thrshld[[2]][[2]]) # binary
 }

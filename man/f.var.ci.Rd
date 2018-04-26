@@ -17,7 +17,7 @@ List of arrays containing variable contribution and importance for each species
 Compute variable contribution and importance for each model
 }
 \examples{
-f.var.ci(mxnt.mdls.preds.lst)
+f.var.ci(mcmp.l = mxnt.mdls.preds.lst)
 }
 \seealso{
 \code{\link[dismo]{maxent}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}

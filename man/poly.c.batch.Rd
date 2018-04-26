@@ -70,7 +70,7 @@ Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- poly.c.batch(spp.occ.list)
-occ.polys <- poly.c.batch(spp.occ.list, convex=T, alpha=10)
+occ.polys <- poly.c.batch(spp.occ.list, convex=TRUE, alpha=10)
 }
 \seealso{
 \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}

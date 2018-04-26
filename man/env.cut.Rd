@@ -32,7 +32,7 @@ env.uncut <- brick("path/to/env")
 occ.b.env <- env.cut(occ.b, env.uncut)
 for(i in 1:length(occ.b.env)){
    plot(occ.b.env[[i]][[1]])
-   plot(occ.b[[i]], add=T)
+   plot(occ.b[[i]], add=TRUE)
 }
 }
 \seealso{

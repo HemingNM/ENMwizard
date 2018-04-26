@@ -5,7 +5,7 @@
 \title{Plot differences between climatic scenarios}
 \usage{
 f.plot.scn.diff(mcmp.l, mtp.l, mod.sel = "AvgAICc",
-  sel.clim.scn = "current", basemap = NULL, save = F, numCores = 1)
+  sel.clim.scn = "current", basemap = NULL, save = FALSE, numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
