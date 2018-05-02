@@ -21,3 +21,4 @@ make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 \seealso{
 \code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.mxnt.preds.mscn}}, \code{\link{f.plot.scn.diff}}
 }
+\keyword{internal}

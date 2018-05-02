@@ -41,3 +41,4 @@ return the necessary arguments for final model calibration and predictions.
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 f.args(ENMeval.res.lst[[1]]@results)
 }
+\keyword{internal}

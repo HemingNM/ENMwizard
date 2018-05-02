@@ -33,3 +33,4 @@ plot(occ.poly)
 \seealso{
 \code{\link{poly.c.batch}}, \code{\link{poly.splt}}
 }
+\keyword{internal}

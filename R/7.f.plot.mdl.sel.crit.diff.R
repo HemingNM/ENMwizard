@@ -8,6 +8,7 @@
 #' @return list of formatted text
 #' @examples
 #' make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
+#' @keywords internal
 # #' @export
 make.underscript <- function(x) as.expression(lapply(x, function(y) {
   sp <- grepl("ORlpt", y)
@@ -40,6 +41,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @return won't return any object. Will save pdf's with differences among model predictions
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
+#' @keywords internal
 # #' @export
 f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
   { path.res <- "3_out.MaxEnt"

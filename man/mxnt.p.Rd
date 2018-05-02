@@ -36,3 +36,4 @@ the original object.
 \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
 \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p.batch.mscn}}
 }
+\keyword{internal}

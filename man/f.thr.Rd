@@ -41,3 +41,4 @@ plot(mods.thrshld[[2]][[2]]) # binary
 \seealso{
 \code{\link{f.thr.batch}}
 }
+\keyword{internal}
