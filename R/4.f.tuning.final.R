@@ -21,7 +21,7 @@
 #' f.args(ENMeval.res.lst[[1]]@results)
 #' @return A vector of args (if save="A"), data.frame of selected models (if save="M") or
 #' a list with both, args and selected models, (if save="B")
-#' @export
+# #' @export
 f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=TRUE
 
   x$sel.cri <- ""
@@ -154,7 +154,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
 #' \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm' (mxnt.c.mdls, Maxent Calibrated Models). A list containing the models ('selected.mdls') used for model calibration,
 #' calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pred.args').
-#' @export
+# #' @export
 mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, formt = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                    mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,

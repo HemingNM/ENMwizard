@@ -247,10 +247,9 @@ f.var.ci <- function(mcmp.l){
 #' @return A list of species' ORs computed for the selected (current) climatic scenario and
 #' each threshold and model criteria
 ##' @examples
-##' f.OR(mtp.l=mods.thrshld.lst, occ.locs, "current")
+##' f.OR(mtp.l=mods.thrshld.lst, occ.l=occ.locs, "current")
 #' @export
 f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , save=TRUE
-  # library(data.table)
   df.OmR <- vector("list")
   # df.FPA <- df.OmR
   for(sp in names(mtp.l)){ # species
@@ -282,7 +281,9 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
       } # model criteria
     } # threshold criteria
 
-    df.OmR[[sp]] <- data.table::melt(df.OmR[[sp]], id.vars="Model")
+    df.OmR[[sp]] <- data.table::melt(df.OmR[[sp]], id.vars="Model") # reshape2::melt(df.OmR[[sp]], id="Model") #
+    # reshape(df.OmR[[sp]], timevar="threshold", idvar="Model", varying = list(colnames(df.OmR[[sp]])[1:nc]),
+    #         v.names=colnames(df.OmR[[sp]])[1:nc], direction = "long")
     colnames(df.OmR[[sp]])[1:3] <- c("Model", "threshold", "OmR")
     # xlsx::write.xlsx(round(df.OmR[[sp]],digits), paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".xlsx")) # reorder ds
     utils::write.csv(df.OmR[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/OmRate", sp, ".csv")) # reorder ds
@@ -323,7 +324,7 @@ f.FPA <- function(mtp.l, digits = 3){
                                  gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd"), collapse = "|"), "", names(mtp.l[[1]][[1]][[2]][[1]]))
                  )) # model criteria
   #
-  areas <- data.table::melt(areas)
+  areas <- data.table::melt(areas) # reshape2::melt(areas)
   colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
 
   df.FPA <- lapply(names(mtp.l), function(sp, mtp.l, areas, digits){ # species

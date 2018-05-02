@@ -8,7 +8,7 @@
 #' @return list of formatted text
 #' @examples
 #' make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
-#' @export
+# #' @export
 make.underscript <- function(x) as.expression(lapply(x, function(y) {
   sp <- grepl("ORlpt", y)
   cf <- grepl("OR10p", y)
@@ -26,8 +26,8 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 }))
 
 
-#### 4.4 plot differences among model selection criteria predictions
-#' Plot differences among predictions of models selected from several criteria
+#### 4.4 plot differences between predictions of model selection criteria
+#' Plot differences between predictions of models selected from several criteria
 #'
 #' Plot differences among predictions of species model projetions selected using distinct criteria.
 #' This function will save the figures on pdf files in the folder "Mdls.thrshld/figs".
@@ -40,7 +40,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @return won't return any object. Will save pdf's with differences among model predictions
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
-#' @export
+# #' @export
 f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
   { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)

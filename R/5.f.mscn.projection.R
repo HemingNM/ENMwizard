@@ -21,7 +21,7 @@
 #' Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
 #' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
 # #' @examples
-#' @export
+# #' @export
 mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   # wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,

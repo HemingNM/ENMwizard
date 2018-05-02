@@ -30,7 +30,7 @@
 #' @return  SpatialPolygons (enlarged occ.poly)
 # #' @examples
 #'
-#' @export
+# #' @export
 pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ #, o.path = "occ.poly"
   path.proj <- "1_sppData/area.proj.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
@@ -136,7 +136,7 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, sa
 # TODO - examples
 # #' @examples
 #'
-#' @export
+# #' @export
 pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)

@@ -28,7 +28,7 @@
 #' mods.thrshld <- f.thr(mcmp.spi=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
-#' @export
+# #' @export
 f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   if(is.null(path.mdls)){
     path.mdls <- paste("3_out.MaxEnt", "Mdls.sp", sep = "/")

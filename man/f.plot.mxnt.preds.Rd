@@ -2,7 +2,7 @@
 % Please edit documentation in R/7.f.plot.mdl.sel.crit.diff.R
 \name{f.plot.mxnt.preds}
 \alias{f.plot.mxnt.preds}
-\title{Plot differences among predictions of models selected from several criteria}
+\title{Plot differences between predictions of models selected from several criteria}
 \usage{
 f.plot.mxnt.preds(mcmp.l, mtp.l, basemap = NULL)
 }
