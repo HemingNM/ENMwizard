@@ -7,9 +7,6 @@ citEntry(entry	= "Article",
                               as.person("E.E. Gutiérrez")),
          journal	= "in prep",
          year 		= "2018",
-         volume	= "",
-         number	= "",
-         pages		= "",
          url = "https://github.com/HemingNM/ENMwizard",
          textVersion	=
            paste("Heming, N.M., Dambros, C. and E.E. Gutiérrez (2018). ENMwizard R package: AIC model averaging and other advanced techniques in Ecological Niche Modeling made easy. in prep. https://github.com/HemingNM/ENMwizard")
