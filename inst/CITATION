@@ -2,9 +2,10 @@ citHeader("To cite ENMwizard in publications please use:")
 
 citEntry(entry	= "Misc", # "Article"
          title 	= "ENMwizard: AIC model averaging and other advanced techniques in Ecological Niche Modeling made easy",
-         author 	= personList(as.person("N.M. Heming"),
-                              as.person("C. Dambros"),
-                              as.person("E.E. Gutiérrez")),
+         author 	= personList(person("Neander", "Heming", "Marcel",
+                                     email="neanderh@yahoo.com.br", role="aut"),
+                              person("Cristian", "Dambros", role="ctb"),
+                              person("Eliécer", "Gutiérrez", "Eduardo", role="ctb")),
          journal	= "in prep",
          year 		= "2018",
          volume	= "",
