@@ -688,7 +688,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                    # write.log.file = write.log.file
                    )
      wdt <- which.max(sapply(th.ds@samples, length))
-     utils::write.csv(th.ds[[wdt]], paste0(out.dir, "/", spp, ".occ.thinned.csv"))
+     utils::write.csv(as.data.frame(th.ds[[wdt]]), paste0(out.dir, "/", spp, ".occ.thinned.csv"))
      return(th.ds)
     # } else {
     # spThin::spThin(as.data.frame(loc.data.lst[[i]]),
@@ -795,7 +795,7 @@ loadTocc <- function(occ.list.thin, from.disk=FALSE){ # , wtd=NULL
   if (from.disk){ # retrieve from disk
     out.dir <- "1_sppData/occ.thinned.full"
     for(i in 1:length(occ.list.thin)){
-      occ.l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ.thinned", ".thin1.csv"),
+      occ.l[[i]] <- utils::read.csv(paste0(out.dir, "/", names(occ.list.thin)[i], ".occ.thinned.csv"),
                                     header=TRUE, sep=',', stringsAsFactors=FALSE)[2:3]
     }
   } else { # retrieve from thinned obj
@@ -811,7 +811,7 @@ loadTocc <- function(occ.list.thin, from.disk=FALSE){ # , wtd=NULL
       # }
 
       # occ.l[[i]] <- as.data.frame(sp::coordinates(occ.list.thin[[i]][[wtd]]))
-      occ.l[[i]] <- as.data.frame(occ.list.thin[[i]][[wtd]])
+      occ.l[[i]] <- as.data.frame(occ.list.thin[[i]][[wdt]])
     }
   }
 
