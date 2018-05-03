@@ -23,7 +23,7 @@ named list of SpatialPolygons (enlarged occ.poly)
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a
-It works with a named list of occ.polys to delimitate the projection area for each of the species.
+It works with a named list of occ.polys to delimit the projection area for each of the species.
 }
 \examples{
 area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=FALSE)

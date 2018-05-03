@@ -27,7 +27,7 @@ include at minimum a column of latitude and a column of longitude values}
 \item{...}{additional arguments passed to \code{\link[lpSolveAPI]{lp.control}} if method=='lpsolve' or gurobi::gurobi() if method=='gurobi'.}
 }
 \value{
-Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
+Named list containing thinned datasets for each species. See ?thin of spThin package.
 }
 \description{
 Will use spThin optimisation algorithm to subset the dataset such that

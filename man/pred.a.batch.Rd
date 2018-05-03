@@ -22,7 +22,7 @@ named list of cropped raster or brick
 }
 \description{
 This function is a wrapper for "pred.a". See ?pred.a
-It works with a named list of pred.poly to delimitate the projection area for each of the species.
+It works with a named list of pred.poly to delimit the projection area for each of the species.
 }
 \examples{
 area.projection <- pred.a.batch(pred.polys, env.uncut)

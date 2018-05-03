@@ -89,7 +89,7 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALS
 #' Select area for projection based on the extent of occ points
 #'
 #' This function is a wrapper for "pred.a". See ?pred.a
-#' It works with a named list of occ.polys to delimitate the projection area for each of the species.
+#' It works with a named list of occ.polys to delimit the projection area for each of the species.
 #'
 #' @param occ.polys list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.
 #' @inheritParams pred.a.poly
@@ -172,7 +172,7 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
 #' Cut area for projection based on a list of SpatialPolygons
 #'
 #' This function is a wrapper for "pred.a". See ?pred.a
-#' It works with a named list of pred.poly to delimitate the projection area for each of the species.
+#' It works with a named list of pred.poly to delimit the projection area for each of the species.
 #'
 #' @inheritParams pred.a
 #' @param pred.polys list of SpatialPolygons (usually of based on species occ points)
@@ -201,7 +201,7 @@ pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.unc
 ### TODO - update description
 #' Cut multiple projection areas (climatic scenarios) for multiple species (list of SpatialPolygons)
 #'
-#' This function is a wrapper for "pred.a". See ?pred.a. This function delimitates the projection area for
+#' This function is a wrapper for "pred.a". See ?pred.a. This function delimits the projection area for
 #' each of the species contained in the pred.polys named list and crops
 #' multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species.
 #'

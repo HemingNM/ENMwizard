@@ -4,14 +4,12 @@
 \alias{loadTocc}
 \title{Load "thin.batch" filtered occurrence data}
 \usage{
-loadTocc(occ.list.thin, from.disk = FALSE, wtd = 1)
+loadTocc(occ.list.thin, from.disk = FALSE)
 }
 \arguments{
 \item{occ.list.thin}{named list returned from "thin.batch"}
 
 \item{from.disk}{boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj}
-
-\item{wtd}{: which thinned dataset?}
 }
 \value{
 named list of thinned occurence data for each species in the list

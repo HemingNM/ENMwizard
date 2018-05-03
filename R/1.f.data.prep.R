@@ -640,7 +640,8 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #'
 # #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 #' @seealso \code{\link[spThin]{spThin}}, \code{\link{loadTocc}}
-#' @return Named list containing thinned datasets for each species. See ?thin of spThin package. Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
+#' @return Named list containing thinned datasets for each species. See ?thin of spThin package.
+# #'  Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
 #' thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
 #' plotThin(thinned.dataset.batch[[1]])
@@ -658,7 +659,8 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
   spp <- names(loc.data.lst)
 
   t.loc <- function(i, loc.data.lst,
-                   dist, method, nrep
+                   dist, method, nrep,
+                   spp, out.dir
                     # spp, lat.col, long.col, spec.col,
                     # thin.par, reps, locs.thinned.list.return,
                     # write.files, max.files, out.dir, write.log.file
@@ -672,7 +674,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
       sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
     }
 
-      spThin::spThin(occ.spdf,
+     th.ds <- spThin::spThin(occ.spdf,
                      dist = dist, method = method, nrep = nrep, great.circle.distance = T
                      # lat.col = lat.col, long.col = long.col,
                    # spec.col = spec.col,
@@ -685,6 +687,9 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                    # log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
                    # write.log.file = write.log.file
                    )
+     wdt <- which.max(sapply(th.ds@samples, length))
+     utils::write.csv(th.ds[[wdt]], paste0(out.dir, "/", spp, ".occ.thinned.csv"))
+     return(th.ds)
     # } else {
     # spThin::spThin(as.data.frame(loc.data.lst[[i]]),
     #              lat.col = lat.col, long.col = long.col,
@@ -709,21 +714,24 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 
     thinned.dataset.full <- parallel::clusterApply(cl, base::seq_along(loc.data.lst),
                                     function(i, loc.data.lst, # spp,
-                                             dist, method, nrep
+                                             dist, method, nrep,
+                                             spp, out.dir
                                              # lat.col, long.col, spec.col,
                                              # thin.par, reps, locs.thinned.list.return,
                                              # write.files, max.files, out.dir, write.log.file
                                              ){
 
                                       t.loc(i, loc.data.lst, # spp,
-                                            dist, method, nrep
+                                            dist, method, nrep,
+                                            spp, out.dir
                                             # lat.col, long.col, spec.col,
                                             # thin.par, reps, locs.thinned.list.return,
                                             # write.files, max.files, out.dir, write.log.file
                                             )
 
                                     }, loc.data.lst, # spp,
-                                    dist, method, nrep
+                                    dist, method, nrep,
+                                    spp, out.dir
                                     # lat.col, long.col, spec.col,
                                     # thin.par, reps, locs.thinned.list.return,
                                     # write.files, max.files, out.dir, write.log.file
@@ -734,21 +742,24 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
   } else {
     thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
                                    function(i, loc.data.lst, # spp,
-                                            dist, method, nrep
+                                            dist, method, nrep,
+                                            spp, out.dir
                                             # lat.col, long.col, spec.col,
                                             # thin.par, reps, locs.thinned.list.return,
                                             # write.files, max.files, out.dir, write.log.file
                                             ){
 
                                      t.loc(i, loc.data.lst, # spp,
-                                           dist, method, nrep
+                                           dist, method, nrep,
+                                           spp, out.dir
                                            # lat.col, long.col, spec.col,
                                            # thin.par, reps, locs.thinned.list.return,
                                            # write.files, max.files, out.dir, write.log.file
                                             )
 
                                    }, loc.data.lst, #spp,
-                                   dist, method, nrep
+                                   dist, method, nrep,
+                                   spp, out.dir
                                    # lat.col, long.col, spec.col,
                                    # thin.par, reps, locs.thinned.list.return,
                                    # write.files, max.files, out.dir, write.log.file
@@ -769,7 +780,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 #'
 #' @param occ.list.thin named list returned from "thin.batch"
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
-#' @param wtd : which thinned dataset?
+# #' @param wtd : which thinned dataset?
 #'
 # #' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
 #' @seealso \code{\link[spThin]{spThin}}, \code{\link{thin.batch}}
@@ -777,7 +788,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 #' @examples
 #' occ.locs <- loadTocc(thinned.dataset.batch)
 #' @export
-loadTocc <- function(occ.list.thin, from.disk=FALSE, wtd=1){
+loadTocc <- function(occ.list.thin, from.disk=FALSE){ # , wtd=NULL
   occ.l <- vector("list", length(occ.list.thin))
   names(occ.l) <- names(occ.list.thin)
 
@@ -792,9 +803,15 @@ loadTocc <- function(occ.list.thin, from.disk=FALSE, wtd=1){
     # x <- x[[wtd]]
     # })
     for(i in 1:length(occ.list.thin)){
-      if(wtd > length(occ.list.thin[[i]])) stop(paste("There are only", length(occ.list.thin[[i]]), "thinned datasets. 'wtd' was", wtd))
+      # if(is.null(wdt)){
+        wdt <- which.max(sapply(occ.list.thin[[i]]@samples, length))
+      # }
+      # if(wtd > length(occ.list.thin[[i]])) {
+      #   stop(paste("There are only", length(occ.list.thin[[i]]), "thinned datasets. 'wtd' was", wtd))
+      # }
 
-      occ.l[[i]] <- as.data.frame(sp::coordinates(occ.list.thin[[i]][[wtd]]))
+      # occ.l[[i]] <- as.data.frame(sp::coordinates(occ.list.thin[[i]][[wtd]]))
+      occ.l[[i]] <- as.data.frame(occ.list.thin[[i]][[wtd]])
     }
   }
 

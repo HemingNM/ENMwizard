@@ -21,7 +21,7 @@ pred.a.batch.mscn(pred.polys, env.uncut.l, numCores = 1)
 named list of cropped list of raster/brick of environmental variables
 }
 \description{
-This function is a wrapper for "pred.a". See ?pred.a. This function delimitates the projection area for
+This function is a wrapper for "pred.a". See ?pred.a. This function delimits the projection area for
 each of the species contained in the pred.polys named list and crops
 multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species.
 }
