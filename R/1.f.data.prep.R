@@ -649,7 +649,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' @export
 thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.col = "species",
                        dist = 10000, method = "heuristic", nrep = 10, # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
-                       # write.files = TRUE, max.files = 1, write.log.file = TRUE,
+                       great.circle.distance = FALSE, # write.files = TRUE, max.files = 1, write.log.file = TRUE,
                        numCores = 1, ...) {
 
   out.dir <- "1_sppData/occ.thinned.full"
@@ -659,7 +659,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
   spp <- names(loc.data.lst)
 
   t.loc <- function(i, loc.data.lst,
-                   dist, method, nrep,
+                   dist, method, nrep, great.circle.distance,
                    spp, out.dir
                     # spp, lat.col, long.col, spec.col,
                     # thin.par, reps, locs.thinned.list.return,
@@ -675,7 +675,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
     }
 
      th.ds <- spThin::spThin(occ.spdf,
-                     dist = dist, method = method, nrep = nrep, great.circle.distance = T
+                     dist = dist, method = method, nrep = nrep, great.circle.distance =  great.circle.distance
                      # lat.col = lat.col, long.col = long.col,
                    # spec.col = spec.col,
                    # thin.par = thin.par, reps = reps, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
@@ -714,7 +714,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
 
     thinned.dataset.full <- parallel::clusterApply(cl, base::seq_along(loc.data.lst),
                                     function(i, loc.data.lst, # spp,
-                                             dist, method, nrep,
+                                             dist, method, nrep, great.circle.distance,
                                              spp, out.dir
                                              # lat.col, long.col, spec.col,
                                              # thin.par, reps, locs.thinned.list.return,
@@ -722,7 +722,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                                              ){
 
                                       t.loc(i, loc.data.lst, # spp,
-                                            dist, method, nrep,
+                                            dist, method, nrep, great.circle.distance,
                                             spp, out.dir
                                             # lat.col, long.col, spec.col,
                                             # thin.par, reps, locs.thinned.list.return,
@@ -730,7 +730,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                                             )
 
                                     }, loc.data.lst, # spp,
-                                    dist, method, nrep,
+                                    dist, method, nrep, great.circle.distance,
                                     spp, out.dir
                                     # lat.col, long.col, spec.col,
                                     # thin.par, reps, locs.thinned.list.return,
@@ -742,7 +742,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
   } else {
     thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
                                    function(i, loc.data.lst, # spp,
-                                            dist, method, nrep,
+                                            dist, method, nrep, great.circle.distance,
                                             spp, out.dir
                                             # lat.col, long.col, spec.col,
                                             # thin.par, reps, locs.thinned.list.return,
@@ -750,7 +750,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                                             ){
 
                                      t.loc(i, loc.data.lst, # spp,
-                                           dist, method, nrep,
+                                           dist, method, nrep, great.circle.distance,
                                            spp, out.dir
                                            # lat.col, long.col, spec.col,
                                            # thin.par, reps, locs.thinned.list.return,
@@ -758,7 +758,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                                             )
 
                                    }, loc.data.lst, #spp,
-                                   dist, method, nrep,
+                                   dist, method, nrep, great.circle.distance,
                                    spp, out.dir
                                    # lat.col, long.col, spec.col,
                                    # thin.par, reps, locs.thinned.list.return,
