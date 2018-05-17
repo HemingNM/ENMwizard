@@ -15,7 +15,7 @@
 #' occ.poly <- poly.c(occ.spdf, sp.nm="occ.poly")
 #' plot(occ.poly)
 #' @keywords internal
-# #' @export
+#' @export
 poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
@@ -223,7 +223,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 #' occ.polys <- poly.c.batch(spp.occ.list)
 #' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @keywords internal
-# #' @export
+#' @export
 poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 1, max.nc = 20,
                       method = "centroid", index = "trcovw", alphaBeale = 0.1,
@@ -395,7 +395,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #' @seealso \code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 #' @return shapefile with binded polygons
 #' @keywords internal
-# #' @export
+#' @export
 bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")

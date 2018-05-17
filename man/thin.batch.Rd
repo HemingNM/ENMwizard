@@ -5,7 +5,7 @@
 \title{Spatially thin a list of species occurrence data}
 \usage{
 thin.batch(loc.data.lst, dist = 10000, method = "heuristic", nrep = 10,
-  numCores = 1, ...)
+  great.circle.distance = FALSE, numCores = 1, ...)
 }
 \arguments{
 \item{loc.data.lst}{Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame
@@ -21,6 +21,8 @@ include at minimum a column of latitude and a column of longitude values}
 }}
 
 \item{nrep}{\code{numeric} number of replicate thinned data sets to produce when using the \code{heuristic} method.}
+
+\item{great.circle.distance}{\code{logical} if \code{TRUE} great circle distances will be used for distance calculations, else euclidean distances will be be used.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
