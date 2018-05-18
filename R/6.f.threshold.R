@@ -85,7 +85,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   } else {NULL},
   thrshld.crit.v)
 
-  thrshld.mod.crt <- thrshld.mod.crt[rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit),]
+  thrshld.mod.crt <- data.frame(x=thrshld.mod.crt[rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit),])
   # thrshld.mod.crt <- thrshld.crit.v[1]
   # grep("LowAICc", names(pred.r))
 
@@ -136,10 +136,10 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
            pred.t <- pred.r
 
-           pred.t <- raster::stack(lapply(seq_along(mod.sel.crit), function(m) {
+           pred.t <- raster::stack(lapply(seq_along(mod.sel.crit), function(m, pred.t, thrshld.mod.crt, t) {
              pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
              return(pred.t[[m]])
-           }))
+           }, pred.t, thrshld.mod.crt, t))
            # for(m in base::seq_along(mod.sel.crit)){
            #   pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
            # }
