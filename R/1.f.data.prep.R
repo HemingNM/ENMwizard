@@ -688,7 +688,7 @@ thin.batch <- function(loc.data.lst, # lat.col = "lat", long.col = "lon", spec.c
                    # write.log.file = write.log.file
                    )
      wdt <- which.max(sapply(th.ds@samples, length))
-     utils::write.csv(as.data.frame(th.ds[[wdt]]), paste0(out.dir, "/", spp, ".occ.thinned.csv"))
+     utils::write.csv(as.data.frame(th.ds[[wdt]]), paste0(out.dir, "/", spp[i], ".occ.thinned.csv"))
      return(th.ds)
     # } else {
     # spThin::spThin(as.data.frame(loc.data.lst[[i]]),
