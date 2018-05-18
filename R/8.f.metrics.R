@@ -151,10 +151,10 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 
   # if(save){
   names(area.occ.spp) <- names(mtp.l)
-  area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, function(x) data.table::melt(x)), idcol = "sp")
-  # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-  colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
-  utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
+  # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, function(x) data.table::melt(x)), idcol = "sp")
+  # # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  # colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
+  # utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
   # }
 
   # names(area.occ.spp) <- names(mtp.l)
@@ -389,12 +389,12 @@ f.FPA <- function(mtp.l, digits = 3){
 
   # if(save){
   names(df.FPA) <- names(mtp.l)
-  df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
-  # lapply(df.FPA, function(x) data.table::melt(x) )
-  # df.FPA.c <- data.table::rbindlist(lapply(df.FPA, function(x) data.table::melt(x)), idcol = TRUE)
-  # df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, function(x) data.table::melt(x)), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-  # colnames(df.FPA.c)[1:4] <- c("sp", "Clim.scen", "threshold", "Model")
-  utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
+# df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
+#   # lapply(df.FPA, function(x) data.table::melt(x) )
+#   # df.FPA.c <- data.table::rbindlist(lapply(df.FPA, function(x) data.table::melt(x)), idcol = TRUE)
+#   # df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, function(x) data.table::melt(x)), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+#   # colnames(df.FPA.c)[1:4] <- c("sp", "Clim.scen", "threshold", "Model")
+# utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
   # }
   names(df.FPA) <- names(mtp.l)
   return(df.FPA)
