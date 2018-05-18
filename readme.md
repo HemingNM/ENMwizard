@@ -261,8 +261,16 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ### - 5.4 Applying thresholds on climatic scenarios
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and 
 apply on the projections.
-
 ```r
+# 1. Fixed.cumulative.value.1 (fcv1);
+# 2. Fixed.cumulative.value.5 (fcv5);
+# 3. Fixed.cumulative.value.10 (fcv10);
+# 4. Minimum.training.presence (mtp);
+# 5. 10.percentile.training.presence (x10ptp);
+# 6. Equal.training.sensitivity.and.specificity (etss);
+# 7. Maximum.training.sensitivity.plus.specificity (mtss);
+# 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
+# 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
 mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
 ```
 
