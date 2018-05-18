@@ -810,7 +810,7 @@ loadTocc <- function(occ.list.thin, from.disk=FALSE){ # , wtd=NULL
       #   stop(paste("There are only", length(occ.list.thin[[i]]), "thinned datasets. 'wtd' was", wtd))
       # }
 
-      occ.l[[i]] <- as.data.frame(sp::coordinates(occ.list.thin[[i]][[wtd]]))
+      occ.l[[i]] <- as.data.frame(sp::coordinates(occ.list.thin[[i]][[wdt]]))
       # occ.l[[i]] <- as.data.frame(occ.list.thin[[i]][[wdt]])
       # occ.l[[i]] <- occ.list.thin[[i]][[wdt]]
     }
