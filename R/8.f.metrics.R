@@ -64,29 +64,32 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
   thrshld.nms <- paste(paste0(".",thrshld.nms), collapse = "|")
   # c.nms <- gsub(".mxnt.preds","",gsub(thrshld.nms,"",names(mtp.l[[1]][[1]][[2]][[1]]) ))
-  c.nms <- names(mtp.l[[1]][[1]][[2]][[1]])
-  m.nms <- c("LowAICc", "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10", "test", "AvgAICc")
-  invisible(sapply(seq_along(m.nms), function(i, x, y){
-    if(sum(grepl(m.nms[i], c.nms))>0){
-      c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]
-    }
-  }, c.nms, m.nms))
-
-  areas <- array(dim=c(length(mtp.l[[1]]), # rows for pred.scenario
-                       length(mtp.l[[1]][[1]][[2]]), # cols for threshold criteria
-                       raster::nlayers(mtp.l[[1]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
-                 dimnames = list(names(mtp.l[[1]]), # pred.scenario
-                                 names(mtp.l[[1]][[1]][[2]]), # threshold criteria
-                                 c.nms )) # model criteria
-  #
-  # areas <- data.table::melt(areas)
-  # colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
-
-  thrshld.crit <- names(mtp.l[[1]][[1]][[1]])
+  
   areas.occ.df <- vector("list")
 
   area.occ.spp <- lapply(names(mtp.l), function(sp, mtp.l, areas, restrict, digits){ # species
     # for(sp in names(mtp.l)){ # species
+    
+    c.nms <- names(mtp.l[[sp]][[1]][[2]][[1]])
+    m.nms <- c("LowAICc", "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10", "test", "AvgAICc")
+    invisible(sapply(seq_along(m.nms), function(i, x, y){
+      if(sum(grepl(m.nms[i], c.nms))>0){
+        c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]
+      }
+    }, c.nms, m.nms))
+    
+    areas <- array(dim=c(length(mtp.l[[sp]]), # rows for pred.scenario
+                         length(mtp.l[[sp]][[1]][[2]]), # cols for threshold criteria
+                         raster::nlayers(mtp.l[[sp]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
+                   dimnames = list(names(mtp.l[[sp]]), # pred.scenario
+                                   names(mtp.l[[sp]][[1]][[2]]), # threshold criteria
+                                   c.nms )) # model criteria
+    #
+    # areas <- data.table::melt(areas)
+    # colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
+    thrshld.crit <- names(mtp.l[[sp]][[1]][[1]])
+    
+    
     print(sp)
     area.occ.spp[[sp]] <- areas
 
@@ -140,8 +143,8 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 
     area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
     # dim = dim(areas),
-    # dimnames = list(names(mtp.l[[1]]), # pred.scenario
-    #                 names(mtp.l[[1]][[1]][[2]]), # threshold criteria
+    # dimnames = list(names(mtp.l[[sp]]), # pred.scenario
+    #                 names(mtp.l[[sp]][[1]][[2]]), # threshold criteria
     #                 c.nms )) # model criteria
 
 
@@ -159,10 +162,10 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 
   # if(save){
   names(area.occ.spp) <- names(mtp.l)
-  # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, function(x) data.table::melt(x)), idcol = "sp")
-  # # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-  # colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
-  # utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
+  area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, function(x) data.table::melt(x)), idcol = "sp")
+  # area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
+  utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
   # }
 
   # names(area.occ.spp) <- names(mtp.l)
@@ -194,7 +197,8 @@ f.var.ci <- function(mcmp.l){
   var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
   for(sp in names(mcmp.l)){
     mxnt.mdls <- mcmp.l[[sp]]$mxnt.mdls
-    mod.nms <- paste0("Mod.",mcmp.l[[sp]]$selected.mdls$sel.cri)
+    mod.nms <- paste0("Mod.", mcmp.l[[sp]]$selected.mdls$sel.cri)
+    pred.nms <- names(mcmp.l[[sp]]$mxnt.preds[[1]])
     var.nms <- gsub( ".contribution", "", rownames(mxnt.mdls[[1]]@results)[grepl("contribution", rownames(mxnt.mdls[[1]]@results))])
     w.mdls <- mcmp.l[[sp]]$selected.mdls$w.AIC
 
@@ -209,18 +213,18 @@ f.var.ci <- function(mcmp.l){
       var.permImp.df[i,] <- mxnt.mdls[[i]]@results[grepl("permutation.importance", rownames(mxnt.mdls[[i]]@results))]
     }
 
-    var.cont.df <- rbind( if(sum(grepl("AICc_", mod.nms))>0){
+    var.cont.df <- rbind( if(sum(grepl("AvgAIC", pred.nms))>0){
       matrix(apply(data.frame(var.cont.df[grep("AICc_",mod.nms),]), 2,
                            function(x) sum(x*w.mdls[grep("AICc_", mod.nms)])), nrow = 1, dimnames = list("Mod.Avg.AICc", var.nms) )
-    } else {NULL},
+    }, # else {NULL},
     var.cont.df)
     # var.cont.df[grep("LowAICc|ORmin|OR10|AUCmin|AUC10", mod.nms),],
     # var.cont.df[grep("Mod.AICc", mod.nms),])
 
-    var.permImp.df <- rbind(if(sum(grepl("AICc_", mod.nms))>0){
+    var.permImp.df <- rbind(if(sum(grepl("AvgAIC", pred.nms))>0){
       matrix(apply(data.frame(var.permImp.df[grep("AICc_", mod.nms),]), 2,
                            function(x) sum(x*w.mdls[grep("AICc_", mod.nms)])), nrow = 1, dimnames = list("Mod.Avg.AICc", var.nms) )
-    } else {NULL},
+    }, # else {NULL},
     var.permImp.df)
     # var.permImp.df[grep("LowAICc|ORmin|OR10|AUCmin|AUC10", mod.nms),],
     # var.permImp.df[grep("Mod.AICc", mod.nms),])
@@ -274,7 +278,7 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
     ci <- grep(current.pred.nm, names(mtp.l[[sp]]))
     trlds <- names(mtp.l[[sp]][[ci]]$binary)
     thrshld.nms <- paste0(".", trlds, collapse = "|") # c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
-    mdls <- gsub(paste(c(thrshld.nms, "Mod.", ".current"), collapse = "|"), "", names(mtp.l[[1]][[ci]]$binary[[1]]))
+    mdls <- gsub(paste(c(thrshld.nms, "Mod.", ".current"), collapse = "|"), "", names(mtp.l[[sp]][[ci]]$binary[[1]]))
     nr <- length(mdls)
     nc <- length(trlds)
     df.OmR[[sp]] <- data.frame(matrix(nrow=nr, ncol=nc), Model=mdls)
@@ -301,9 +305,9 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
   # data.table::setDT(df.OmR[[sp]], keep.rownames = TRUE)
   # lapply(df.OmR, function(x) data.table::melt(x, id.vars="Model"))
   df.OmR.c <- data.table::rbindlist(df.OmR, idcol = "sp")
-    # df.OmR.c <- data.table::rbindlist(lapply(lapply(df.OmR, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
-    # colnames(df.OmR.c)[1:4] <- c("sp", "Model", "threshold", "OmR")
-    utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/OmRate.csv")) # reorder ds
+  # df.OmR.c <- data.table::rbindlist(lapply(lapply(df.OmR, round, digits=digits), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
+  # colnames(df.OmR.c)[1:4] <- c("sp", "Model", "threshold", "OmR")
+  utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/OmRate.csv")) # reorder ds
   # }
   return(OmR = df.OmR)
 }
@@ -324,20 +328,20 @@ f.FPA <- function(mtp.l, digits = 3){
   df.FPA <- vector("list", length = length(mtp.l))
   names(df.FPA) <- names(mtp.l)
 
-  areas <- array(dim=c(length(mtp.l[[1]]), # rows for pred.scenario
-                       length(mtp.l[[1]][[1]][[2]]), # cols for threshold criteria
-                       raster::nlayers(mtp.l[[1]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
-                 dimnames = list(names(mtp.l[[1]]), # pred.scenario
-                                 names(mtp.l[[1]][[1]][[2]]), # threshold criteria
-                                 gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd"), collapse = "|"), "", names(mtp.l[[1]][[1]][[2]][[1]]))
-                 )) # model criteria
-  #
-  areas <- data.table::melt(areas) # reshape2::melt(areas)
-  colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
-
   df.FPA <- lapply(names(mtp.l), function(sp, mtp.l, areas, digits){ # species
     # for(sp in names(mtp.l)){ # species
     print(sp)
+    areas <- array(dim=c(length(mtp.l[[sp]]), # rows for pred.scenario
+                         length(mtp.l[[sp]][[1]][[2]]), # cols for threshold criteria
+                         raster::nlayers(mtp.l[[sp]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
+                   dimnames = list(names(mtp.l[[sp]]), # pred.scenario
+                                   names(mtp.l[[sp]][[1]][[2]]), # threshold criteria
+                                   gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd"), collapse = "|"), "", names(mtp.l[[sp]][[1]][[2]][[1]]))
+                   )) # model criteria
+    #
+    areas <- data.table::melt(areas) # reshape2::melt(areas)
+    colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
+    
     df.FPA[[sp]] <- areas
 
     mtp.l.sp <- mtp.l[[sp]]
@@ -397,14 +401,14 @@ f.FPA <- function(mtp.l, digits = 3){
 
   # if(save){
   names(df.FPA) <- names(mtp.l)
-# df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
+df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
 #   # lapply(df.FPA, function(x) data.table::melt(x) )
 #   # df.FPA.c <- data.table::rbindlist(lapply(df.FPA, function(x) data.table::melt(x)), idcol = TRUE)
 #   # df.FPA.c <- data.table::rbindlist(lapply(lapply(df.FPA, function(x) data.table::melt(x)), data.table::setDT, keep.rownames = TRUE), idcol = TRUE)
 #   # colnames(df.FPA.c)[1:4] <- c("sp", "Clim.scen", "threshold", "Model")
-# utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
+utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
   # }
-  names(df.FPA) <- names(mtp.l)
+  # names(df.FPA) <- names(mtp.l)
   return(df.FPA)
 }
 
