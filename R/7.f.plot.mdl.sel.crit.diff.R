@@ -50,8 +50,6 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mcmp.l[[1]]$pred.args}
 
-  comb.plots <- utils::combn(raster::nlayers(mtp.l[[1]]$continuous[[2]]), 2)
-
   # unlist(strsplit(names(mods.thrshld$binary[[2]]), "."))
 
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
@@ -65,6 +63,8 @@ f.plot.mxnt.preds <- function(mcmp.l, mtp.l, basemap=NULL){ #, pred.nm=""
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
   # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
   for(i in 1:length(mtp.l)){ # species
+    comb.plots <- utils::combn(raster::nlayers(mtp.l[[i]]$continuous[[2]]), 2)
+
     thrshld.path <- paste(path.mdls[i], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
 
@@ -134,8 +134,6 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
            "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
            "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 
-  comb.plots <- utils::combn(raster::nlayers(mtp.l[[1]][[1]]$binary[[1]]), 2)
-
   # unlist(strsplit(names(mods.thrshld$binary[[2]]), "."))
 
   t.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
@@ -151,6 +149,10 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
   # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
   # cat(c("\n"))
   for(sp in 1:length(mtp.l)){ # species
+
+    comb.plots <- utils::combn(raster::nlayers(mtp.l[[sp]][[1]]$binary[[1]]), 2)
+
+
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
@@ -274,8 +276,6 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mcmp.l[[1]]$pred.args}
 
-  mdl.crit <- grep(mod.sel, names(mtp.l[[1]][[1]]$binary[[1]]))
-
   a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
   sca <- c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70", "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_", "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds")
@@ -283,12 +283,6 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
            "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
            "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
            "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
-
-  comb.plots <- utils::combn(length(mtp.l[[1]]), 2)
-  cli.scn.pres <- which(names(mtp.l[[1]]) == sel.clim.scn)
-  sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==TRUE # rowsum(comb.plots == cli.scn.pres)==TRUE # comb.plots[, ]
-  comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
-  comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
 
   t.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
   t.NMS <- c("FCV1", "FCV5", "FCV10", "LPT (mtp)", "10P (x10ptp)", "ETSS (etss)", "MTSS", "BTO", "EETD")
@@ -303,6 +297,16 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
   f.plot <- function(sp, mtp.l, mdl.crit=1, t.NMS, t.nms, thrshld.path,
                      comb.plots, thrshld.nms.mod, basemap, make.underscript) { # climatic scenario
     # for(sc in names(mtp.l[[sp]])){ # climatic scenario
+
+    mdl.crit <- grep(mod.sel, names(mtp.l[[sp]][[1]]$binary[[1]]))
+
+    comb.plots <- utils::combn(length(mtp.l[[sp]]), 2)
+    cli.scn.pres <- which(names(mtp.l[[sp]]) == sel.clim.scn)
+    sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==TRUE # rowsum(comb.plots == cli.scn.pres)==TRUE # comb.plots[, ]
+    comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
+    comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
+
+
     mods.thrshld <- mtp.l[[sp]][[comb.plots[1,1]]]
 
     n.t <- length(mods.thrshld$binary)
