@@ -269,7 +269,8 @@ f.plot.mxnt.preds.mscn <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
 #' @examples
 #' f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 #' @export
-f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="current", basemap=NULL, save=FALSE, numCores=1){
+f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="current",
+                            basemap=NULL, save=FALSE, numCores=1){
   { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))

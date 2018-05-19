@@ -23,7 +23,8 @@
 # #' @examples
 #' @keywords internal
 # #' @export
-mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
+mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", 
+                   numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   # wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
 
@@ -32,7 +33,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
   pred.args <- mcm$pred.args
-
+  
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   f <- factor(xsel.mdls$features)
   beta <- xsel.mdls$rm
@@ -49,9 +50,12 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", numCores
   # mod.pred.nms <- c(if(length(args.aicc)>0){
   #   c("Mod.AvgAICc", "Mod.LowAICc")
   # }, mod.nms[(length(args.aicc)+1):length(args.all)])
-  mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  
+  # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  #                   mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
+  mod.pred.nms <- c(if(grep("AICavg", mcm$mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
                     mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
-
+  
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',

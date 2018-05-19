@@ -205,9 +205,12 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   # mod.pred.nms <- c(if(length(args.aicc)>0){
   #   c("Mod.AvgAICc", "Mod.LowAICc")
   # }, mod.nms[(length(args.aicc)+1):length(args.all)])
-  mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  
+  # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  #                   paste0("Mod.", mod.nms[1:length(args.all)]))
+  mod.pred.nms <- c(if(grep("AICavg", mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
                     paste0("Mod.", mod.nms[1:length(args.all)]))
-
+  
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -276,7 +279,8 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
 
   }
-  return(list(ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls, selected.mdls = xsel.mdls,
+  return(list(ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls, 
+              selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,
               mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
