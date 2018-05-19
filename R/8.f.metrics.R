@@ -1,4 +1,12 @@
 # # ##### 5. METRICS
+
+# TO DO - f.area.occ.mscn;
+# In area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3, 2, 1))) :
+#   number of items to replace is not a multiple of replacement length
+# TO DO - f.FPA
+# Error in `[<-.data.frame`(`*tmp*`, , ncol(areas), value = c(0.526, 0.461,  :
+#   replacement has 6 rows, data has 8
+
 # # #### 4.6 compute area occupied
 # #' Compute total suitable area
 # #'

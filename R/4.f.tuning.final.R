@@ -87,13 +87,14 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   }
 
 
-  xsel.mdls <- x[x.a.i,] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
-  xsel.mdls$ID <- NULL
+  # xsel.mdls <- x[x.a.i,] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
+  xsel.mdls <- x#[x$sel.cri!="",]
 
   f <- factor(xsel.mdls$features)
   beta <- c(xsel.mdls$rm)
   cat("\n", "arguments used for building models", "\n")
-  print(data.frame(optimality.criteria = xsel.mdls$sel.cri, features=xsel.mdls$features, beta=xsel.mdls$rm))
+  print(data.frame(ID=xsel.mdls$ID, optimality.criteria = xsel.mdls$sel.cri, features=xsel.mdls$features, beta=xsel.mdls$rm))
+  xsel.mdls$ID <- NULL
 
   cat("\n")
   args <- paste(paste0(arg1), paste0(arg2),

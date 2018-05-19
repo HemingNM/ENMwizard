@@ -134,7 +134,7 @@ for(i in 1:length(occ.b.env)){
 ### - 2.1 Filtering original dataset
 Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
 ```r
-thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
+thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list, great.circle.distance = T)
 ```
 
 ### Great! Now we are ready for tunning species' ENMs
