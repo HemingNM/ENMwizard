@@ -271,6 +271,7 @@ apply on the projections.
 # 7. Maximum.training.sensitivity.plus.specificity (mtss);
 # 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 # 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
+
 mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
 ```
 

@@ -78,14 +78,15 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
 
 
-  thrshld.mod.crt <- rbind(if(sum(grepl("AICc_", mod.nms))>0){
+  thrshld.mod.crt <- rbind(if(sum(grepl("AICc_", mod.nms))>1){
     matrix(apply(data.frame(thrshld.crit.v[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
       stats::weighted.mean(x, wv)
     }, wv), nrow = 1, dimnames = list("AvgAICc", thrshld.nms) )
-  } else {NULL},
+  } else {thrshld.crit <- thrshld.crit.v},
   thrshld.crit.v)
 
-  thrshld.mod.crt <- data.frame(x=thrshld.mod.crt[rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit),])
+  thrshld.mod.crt <- subset(thrshld.mod.crt, rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit))
+  # thrshld.mod.crt <- data.frame(x=thrshld.mod.crt[rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit),])
   # thrshld.mod.crt <- thrshld.crit.v[1]
   # grep("LowAICc", names(pred.r))
 
@@ -176,7 +177,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   # names(mods.t) <- thrshld.nms
   # names(mods.t.b) <- thrshld.nms
   # return(list(continuous=mods.t, binary=mods.t.b))
-
+  names(mt$binary$mtp)
   return(mt)
 }
 
