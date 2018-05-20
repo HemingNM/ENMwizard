@@ -350,7 +350,10 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                      numCores = numCores, parallelTunning = parallelTunning)
 
       return(resu)
-    }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, mSel, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+    }, ENMeval.o.l, a.calib.l, occ.l, 
+    use.ENMeval.bgpts, formt, pred.args, 
+    mSel, wAICsum, randomseed, responsecurves, 
+    arg1, arg2, numCores, parallelTunning)
 
     parallel::stopCluster(cl)
 
@@ -369,10 +372,14 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, formt = formt,
                      pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
-                     randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
+                     randomseed = randomseed, responsecurves = responsecurves, 
+                     arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning=parallelTunning)
 
       return(resu)
-    }, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning)
+    }, ENMeval.o.l, a.calib.l, occ.l, 
+    use.ENMeval.bgpts, formt, pred.args, 
+    mSel, wAICsum, randomseed, responsecurves, 
+    arg1, arg2, numCores, parallelTunning)
 
 
   }

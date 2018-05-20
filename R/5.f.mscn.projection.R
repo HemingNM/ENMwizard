@@ -266,7 +266,7 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                                          mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                                      sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                                      a.proj = a.proj[[j]],
-                                                                     formt = formt, parallelTunning=parallelTunning,
+                                                                     formt = formt, parallelTunning = parallelTunning,
                                                                      numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                                        }
                                        names(mxnt.preds.spi) <- paste0(names(a.proj))
@@ -299,7 +299,7 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                          mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                      sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                      a.proj = a.proj[[j]],
-                                                     formt = formt, parallelTunning=parallelTunning,
+                                                     formt = formt, parallelTunning = parallelTunning,
                                                      numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
                        }
                        names(mxnt.preds.spi) <- paste0(names(a.proj))
