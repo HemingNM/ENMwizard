@@ -6,7 +6,7 @@
 #'
 #' @param x Slot "results" of object of class ENMevaluation
 #' @param mSel character vector. Which criteria to use when selecting model(s). Currently implemented:
-#' "AICavg", "LowAIC", "OR", "AUC"
+#' "AvgAIC", "LowAIC", "OR", "AUC"
 #' @param wAICsum cumulative sum of top ranked models for which arguments will be created
 #' @param save should save args only ("A"), selected models only ("M") or both ("B")?
 #' @inheritParams dismo::maxent
@@ -23,7 +23,7 @@
 #' a list with both, args and selected models, (if save="B")
 #' @keywords internal
 # #' @export
-f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=TRUE
+f.args <- function(x, mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, save="B", randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # , seq=TRUE
 
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
@@ -33,7 +33,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
   if(is.null(x$rankAICc)) {x$rankAICc <- 1:nrow(x)} # if something goes wrong with function mxnt.c, check this line
 
   # AICcAvg
-  if("AICavg" %in% mSel){
+  if("AvgAIC" %in% mSel){
     if(any(cumsum(x$w.AIC) >= wAICsum)){
       wsum <- 1:(which(cumsum(x$w.AIC) >= wAICsum)[1])
     } else {
@@ -160,7 +160,7 @@ f.args <- function(x, mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
 # #' @export
 mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, formt = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                   mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                   mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
                    responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                    numCores = 1, parallelTunning = TRUE){
 
@@ -208,7 +208,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   
   # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
   #                   paste0("Mod.", mod.nms[1:length(args.all)]))
-  mod.pred.nms <- c(if(grep("AICavg", mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  mod.pred.nms <- c(if(grep("AvgAIC", mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
                     paste0("Mod.", mod.nms[1:length(args.all)]))
   
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
@@ -315,7 +315,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 #' @export
 mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE, formt = "raster", # , a.proj.l
                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                         mSel=c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                         mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                          numCores = 1, parallelTunning = TRUE){
 

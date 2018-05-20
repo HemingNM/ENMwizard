@@ -53,7 +53,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   
   # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
   #                   mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
-  mod.pred.nms <- c(if(grep("AICavg", mcm$mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  mod.pred.nms <- c(if(grep("AvgAIC", mcm$mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
                     mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
   
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
@@ -71,7 +71,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   #### 4.3.2 predictions
 
   # AIC AVG model
-  if(length(args.aicc)>1) {
+  if(grep("AvgAIC", mcm$mSel)>0) {
     avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
     if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
     filename.aicc <- paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/')#[1:length(args.aicc)]
@@ -109,7 +109,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
   #### AIC AVG model
-  if(length(args.aicc)>1) {
+  if(grep("AvgAIC", mcm$mSel)>0) {
     #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
     # create vector of model weights
     wv <- xsel.mdls[order(xsel.mdls$delta.AICc),"w.AIC"][seq_along(args.aicc)]
@@ -122,9 +122,16 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 
     # create averaged prediction map
     # print(mod.pred.nms[1])
-    mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
-                                                                 filename = filename.aicc, #paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/'),
-                                                                 format = formt, overwrite = T) )
+    if(length(args.aicc)>1){
+      mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
+                                                                   filename = filename.aicc, #paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/'),
+                                                                   format = formt, overwrite = T) )
+    } else {
+      mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask(Mod.AICc.stack, a.proj[[1]]),
+                                                                   filename = filename.aicc, #paste(avg.m.path, paste0(mod.pred.nms[1], ".", pred.nm,".grd"), sep='/'),
+                                                                   format = formt, overwrite = T) )
+    }
+      
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[1]
   }
 

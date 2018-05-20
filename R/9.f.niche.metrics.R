@@ -1,5 +1,5 @@
 # #### 5.3 comparar as distribuições (rasteres de adequabilidade) geradas por diferentes critérios de
-# ## seleção de modelo (AICAvg, AICLow, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10),
+# ## seleção de modelo (AvgAIC, AICLow, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10),
 # ## usando função ENMTools::raster.overlap(r1, r2).
 #' Raster overlap between models selected using different criteria
 #'
