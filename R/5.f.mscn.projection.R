@@ -44,7 +44,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 
   print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
 
-  mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"]) # paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  mod.nms <- paste0("Mod.", xsel.mdls$sel.cri) # paste(xsel.mdls$sel.cri) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   ## TO DO - change order of all stacks to c("Mod.AvgAICc", "Mod.LowAICc", "Mod.Mean.ORmin", "Mod.Mean.OR10", "Mod.Mean.AUCmin", "Mod.Mean.AUC10")
   # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
   # mod.pred.nms <- c(if(length(args.aicc)>0){

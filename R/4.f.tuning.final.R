@@ -160,7 +160,7 @@ f.args <- function(x, mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
 # #' @export
 mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, formt = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                   mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
                    responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                    numCores = 1, parallelTunning = TRUE){
 
@@ -206,10 +206,10 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   #   c("Mod.AvgAICc", "Mod.LowAICc")
   # }, mod.nms[(length(args.aicc)+1):length(args.all)])
   
-  # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  # # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
+  # #                   paste0("Mod.", mod.nms[1:length(args.all)]))
+  # mod.pred.nms <- c(if(grep("AvgAIC", mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
   #                   paste0("Mod.", mod.nms[1:length(args.all)]))
-  mod.pred.nms <- c(if(grep("AvgAIC", mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
-                    paste0("Mod.", mod.nms[1:length(args.all)]))
   
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
@@ -315,7 +315,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 #' @export
 mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE, formt = "raster", # , a.proj.l
                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                         mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                         mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                          numCores = 1, parallelTunning = TRUE){
 
@@ -328,7 +328,10 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.c","f.args"))
 
-    mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+    mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, 
+                                                                                             use.ENMeval.bgpts, formt, pred.args, 
+                                                                                             mSel, wAICsum, randomseed, responsecurves, 
+                                                                                             arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
       # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
 
@@ -353,7 +356,10 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
 
   } else {
 
-    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, use.ENMeval.bgpts, formt, pred.args, wAICsum, randomseed, responsecurves, arg1, arg2, numCores, parallelTunning){
+    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, 
+                                                                         use.ENMeval.bgpts, formt, pred.args, 
+                                                                         mSel, wAICsum, randomseed, responsecurves, 
+                                                                         arg1, arg2, numCores, parallelTunning){
       ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
       # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
       cat(c(names(ENMeval.o.l[i]), "\n"))
