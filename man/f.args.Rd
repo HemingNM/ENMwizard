@@ -4,7 +4,7 @@
 \alias{f.args}
 \title{Creating arguments for selected models}
 \usage{
-f.args(x, mSel = c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
+f.args(x, mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
   save = "B", randomseed = FALSE, responsecurves = TRUE,
   arg1 = "noaddsamplestobackground", arg2 = "noautofeature")
 }
@@ -12,7 +12,7 @@ f.args(x, mSel = c("AICavg", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
 \item{x}{Slot "results" of object of class ENMevaluation}
 
 \item{mSel}{character vector. Which criteria to use when selecting model(s). Currently implemented:
-"AICavg", "LowAIC", "OR", "AUC"}
+"AvgAIC", "LowAIC", "OR", "AUC"}
 
 \item{wAICsum}{cumulative sum of top ranked models for which arguments will be created}
 

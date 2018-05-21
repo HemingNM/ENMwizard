@@ -64,12 +64,12 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
   thrshld.nms <- paste(paste0(".",thrshld.nms), collapse = "|")
   # c.nms <- gsub(".mxnt.preds","",gsub(thrshld.nms,"",names(mtp.l[[1]][[1]][[2]][[1]]) ))
-  
+
   areas.occ.df <- vector("list")
 
-  area.occ.spp <- lapply(names(mtp.l), function(sp, mtp.l, areas, restrict, digits){ # species
+  area.occ.spp <- lapply(names(mtp.l), function(sp, mtp.l, restrict, digits){ # species, areas
     # for(sp in names(mtp.l)){ # species
-    
+
     c.nms <- names(mtp.l[[sp]][[1]][[2]][[1]])
     m.nms <- c("LowAICc", "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10", "test", "AvgAICc")
     invisible(sapply(seq_along(m.nms), function(i, x, y){
@@ -77,7 +77,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
         c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]
       }
     }, c.nms, m.nms))
-    
+
     areas <- array(dim=c(length(mtp.l[[sp]]), # rows for pred.scenario
                          length(mtp.l[[sp]][[1]][[2]]), # cols for threshold criteria
                          raster::nlayers(mtp.l[[sp]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
@@ -88,8 +88,8 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     # areas <- data.table::melt(areas)
     # colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
     thrshld.crit <- names(mtp.l[[sp]][[1]][[1]])
-    
-    
+
+
     print(sp)
     area.occ.spp[[sp]] <- areas
 
@@ -158,7 +158,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     colnames(areas.occ.df[[sp]]) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
     utils::write.csv(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/totalArea", sp, ".csv"))
     # } # species
-    return(area.occ.spp[[sp]]) }, mtp.l, areas, restrict, digits) # species
+    return(area.occ.spp[[sp]]) }, mtp.l, restrict, digits) # species, areas
 
   # if(save){
   names(area.occ.spp) <- names(mtp.l)
@@ -328,7 +328,7 @@ f.FPA <- function(mtp.l, digits = 3){
   df.FPA <- vector("list", length = length(mtp.l))
   names(df.FPA) <- names(mtp.l)
 
-  df.FPA <- lapply(names(mtp.l), function(sp, mtp.l, areas, digits){ # species
+  df.FPA <- lapply(names(mtp.l), function(sp, mtp.l, digits){ # species, areas
     # for(sp in names(mtp.l)){ # species
     print(sp)
     areas <- array(dim=c(length(mtp.l[[sp]]), # rows for pred.scenario
@@ -341,7 +341,7 @@ f.FPA <- function(mtp.l, digits = 3){
     #
     areas <- data.table::melt(areas) # reshape2::melt(areas)
     colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
-    
+
     df.FPA[[sp]] <- areas
 
     mtp.l.sp <- mtp.l[[sp]]
@@ -396,7 +396,7 @@ f.FPA <- function(mtp.l, digits = 3){
     # xlsx::write.xlsx(areas.occ.df[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/areaT.", sp, ".xlsx"))
 
     # } # species
-    return(df.FPA[[sp]]) }, mtp.l, areas, digits) # species
+    return(df.FPA[[sp]]) }, mtp.l, digits) # species, areas
 
 
   # if(save){

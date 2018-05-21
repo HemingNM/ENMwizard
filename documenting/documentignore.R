@@ -1,3 +1,4 @@
+install.packages("devtools")
 # library(devtools)
 # devtools::use_testthat()
 # devtools::use_vignette("introduction")

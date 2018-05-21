@@ -294,12 +294,12 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
 
+  mdl.crit <- grep(mod.sel, names(mtp.l[[sp]][[1]]$binary[[1]]))
 
   f.plot <- function(sp, mtp.l, mdl.crit=1, t.NMS, t.nms, thrshld.path,
-                     comb.plots, thrshld.nms.mod, basemap, make.underscript) { # climatic scenario
+                     thrshld.nms.mod, basemap, make.underscript) { # climatic scenario, comb.plots
     # for(sc in names(mtp.l[[sp]])){ # climatic scenario
 
-    mdl.crit <- grep(mod.sel, names(mtp.l[[sp]][[1]]$binary[[1]]))
 
     comb.plots <- utils::combn(length(mtp.l[[sp]]), 2)
     cli.scn.pres <- which(names(mtp.l[[sp]]) == sel.clim.scn)
@@ -372,7 +372,7 @@ f.plot.scn.diff <- function(mcmp.l, mtp.l, mod.sel="AvgAICc", sel.clim.scn="curr
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
 
     f.plot(sp, mtp.l, mdl.crit=mdl.crit, t.NMS, t.nms, thrshld.path,
-           comb.plots, thrshld.nms.mod, basemap, make.underscript)
+           thrshld.nms.mod, basemap, make.underscript) # comb.plots,
   }
 }
 
