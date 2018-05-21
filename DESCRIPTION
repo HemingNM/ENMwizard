@@ -35,6 +35,5 @@ Suggests:
     parallel,
     devtools
 Remotes:
-    github::mlammens/spThin (>= 1.0),
-    github::danlwarren/ENMTools
+    github::mlammens/spThin (>= 1.0)
 VignetteBuilder: knitr
