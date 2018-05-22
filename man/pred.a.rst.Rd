@@ -28,3 +28,4 @@ This function will use a single SpatialPolygon to crop/mask raster/brick objects
 \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 }
+

@@ -17,8 +17,8 @@
 #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf, scn.nm="current", 1)
 # #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf,
 # #' scn.nm=c("futAC5085", "futAC7085"), 3)
-#' @export
-f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
+# #' @export
+# f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
 # f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){
 #
 #   ovr.spp <- lapply(names(mcmp.l), function(sp, mcmp.l, comb.plots){ # , ovr.vl

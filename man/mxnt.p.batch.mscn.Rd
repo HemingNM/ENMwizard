@@ -33,3 +33,4 @@ mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mcm.l = mxnt.mdls.preds.lst, a.proj.l = 
 \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
 \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p}}
 }
+

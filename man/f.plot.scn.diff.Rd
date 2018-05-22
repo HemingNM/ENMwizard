@@ -37,3 +37,4 @@ f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 \seealso{
 \code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.mxnt.preds.mscn}}
 }
+

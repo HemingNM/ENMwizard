@@ -28,3 +28,4 @@ It works with a named list of pred.poly to delimit the projection area for each 
 area.projection <- pred.a.batch(pred.polys, env.uncut)
 plot(area.projection[[1]][[1]])
 }
+

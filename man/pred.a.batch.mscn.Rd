@@ -30,3 +30,4 @@ multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on
 \code{\link{pred.a}}, \code{\link{pred.a.batch}},
 \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 }
+

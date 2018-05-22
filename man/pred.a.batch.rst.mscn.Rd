@@ -39,3 +39,4 @@ to be used on model projections.
 \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
 \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}
 }
+

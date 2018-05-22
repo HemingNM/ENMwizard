@@ -30,3 +30,4 @@ f.plot.mxnt.preds.mscn(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWo
 \seealso{
 \code{\link{f.plot.mxnt.preds}}, \code{\link{f.plot.scn.diff}}
 }
+

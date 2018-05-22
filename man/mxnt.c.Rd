@@ -73,3 +73,4 @@ return selected maxent models calibrated.
 \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }
 \keyword{internal}
+

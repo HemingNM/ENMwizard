@@ -27,3 +27,4 @@ This function will use SpatialPolygons to crop/mask raster/brick objects to be u
 \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
 }
 \keyword{internal}
+

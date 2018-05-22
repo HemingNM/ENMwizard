@@ -28,3 +28,4 @@ f.OR(mtp.l=mods.thrshld.lst, occ.l=occ.locs, "current")
 \seealso{
 \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 }
+

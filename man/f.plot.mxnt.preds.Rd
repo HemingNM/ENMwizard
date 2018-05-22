@@ -28,3 +28,4 @@ f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 \code{\link{f.plot.mxnt.preds.mscn}}, \code{\link{f.plot.scn.diff}}
 }
 \keyword{internal}
+

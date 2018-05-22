@@ -74,3 +74,4 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCore
 \seealso{
 \code{\link[ENMeval]{ENMevaluate}}
 }
+

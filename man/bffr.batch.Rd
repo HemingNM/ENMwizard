@@ -42,3 +42,4 @@ occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
 \seealso{
 \code{\link[rgeos]{gBuffer}}, \code{\link{poly.c.batch}}
 }
+

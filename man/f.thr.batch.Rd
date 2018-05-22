@@ -37,3 +37,4 @@ mods.thrshld.lst <- f.thr.batch(mcmp.l=mxnt.mdls.preds.cf)
 \seealso{
 \code{\link{f.thr}}
 }
+

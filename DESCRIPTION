@@ -4,29 +4,35 @@ Title: Advanced Tecniques for Ecological Niche Modeling Made Easy
 Version: 0.1.7
 Author: Neander Marcel Heming, Eliécer E. Gutiérrez
 Maintainer: Neander Marcel Heming <neanderh@yahoo.com.br>
-Description: This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modeling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions for easier: 1. preparation of occurence and environmental data; 2. model tunning (thanks to the package ENMeval); 3. model fitting and projection. ENMwizard also implements methods described in Gutiérrez & Heming in prep. See 'readme' file in https://github.com/HemingNM/ENMwizard for a brief tutorial.
+Description: This package provides tools to facilitate the use of advanced
+    techiques related to Ecological Niche Modeling (ENM) and the automation of
+    repetitive tasks (when modeling several species). This package has functions
+    for easier: 1. preparation of occurence and environmental data; 2. model tunning
+    (thanks to the package ENMeval); 3. model fitting and projection. ENMwizard also
+    implements methods described in Gutiérrez & Heming in prep. See 'readme' file in
+    https://github.com/HemingNM/ENMwizard for a brief tutorial.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/HemingNM/ENMwizard
 BugReports: https://github.com/HemingNM/ENMwizard/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 5.0.1
 Imports:
-  dismo,
-  ENMeval,
-  rgdal,
-  raster,
-  sp,
-  rgeos,
-  maptools,
-  fields,
-  alphahull,
-  igraph,
-  GMD,
-  apcluster,
-  NbClust,
-  methods,
-  data.table
+    dismo,
+    ENMeval,
+    rgdal,
+    raster,
+    sp,
+    rgeos,
+    maptools,
+    fields,
+    alphahull,
+    igraph,
+    GMD,
+    apcluster,
+    NbClust,
+    methods,
+    data.table
 Suggests:
     rJava,
     testthat,
@@ -34,6 +40,5 @@ Suggests:
     rmarkdown,
     parallel,
     devtools
-Remotes:
-    github::mlammens/spThin (>= 1.0)
+Remotes: github::mlammens/spThin (>= 1.0)
 VignetteBuilder: knitr

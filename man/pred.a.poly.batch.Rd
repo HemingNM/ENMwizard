@@ -32,3 +32,4 @@ plot(area.projection[[1]][[1]])
 \seealso{
 \code{\link{pred.a.poly}}
 }
+

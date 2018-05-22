@@ -23,3 +23,4 @@ f.FPA(mtp.l=mods.thrshld.lst)
 \seealso{
 \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}
 }
+

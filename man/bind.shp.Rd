@@ -26,3 +26,4 @@ This function will bind a list of splitted polygons (from poly.splt()) into a si
 \code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 }
 \keyword{internal}
+
