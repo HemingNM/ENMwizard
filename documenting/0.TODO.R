@@ -20,17 +20,10 @@
 
 
 ############# TODO
-# 1.f.data.prep
-# create batch function ("poly.splt.batch") for  "poly.splt"
-# d <- cbind(spp.occ.list$Mleucophrys2$LONG, spp.occ.list$Mleucophrys2$LAT)
-#  # hclust.obj <- hclust(dist(d))
-#  apclus <- apcluster::apcluster(apcluster::negDistMat(r=2), d)
-#  plot(apclus, d)
-
-# 5.f.mscn.
-# function "mxnt.p"
-# paralelize line 58-64 & 107-118  ##### list of models to average
-
+# 7.f.plot
+# 1. create function to map uncertainties across models. This function was made for ENMavg paper
+# this function might compare projections among models (tuning), thresholds, climatic scenarios
+# 2. function to create consensual models across climatic scenarios
 
 ## 3.f.tuning
 # create class "ENMevaluation.list"

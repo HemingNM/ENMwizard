@@ -84,8 +84,8 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
     }, wv), nrow = 1, dimnames = list("AvgAICc", thrshld.nms) )
   } else {thrshld.crit <- thrshld.crit.v},
   thrshld.crit.v)
-
-  thrshld.mod.crt <- subset(thrshld.mod.crt, rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit))
+  thrshld.mod.crt <- subset(thrshld.mod.crt, grepl(paste0(mcmp.spi$mSel, collapse = "|"), rownames(thrshld.mod.crt)))
+  # thrshld.mod.crt <- subset(thrshld.mod.crt, rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit))
   # thrshld.mod.crt <- data.frame(x=thrshld.mod.crt[rownames(thrshld.mod.crt) %in% gsub("Mod.","",mod.sel.crit),])
   # thrshld.mod.crt <- thrshld.crit.v[1]
   # grep("LowAICc", names(pred.r))
@@ -177,7 +177,9 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   # names(mods.t) <- thrshld.nms
   # names(mods.t.b) <- thrshld.nms
   # return(list(continuous=mods.t, binary=mods.t.b))
-  names(mt$binary$mtp)
+  
+  # plot(mt$binary$x10ptp)
+  # names(mt$binary[[1]])
   return(mt)
 }
 
