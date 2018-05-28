@@ -21,16 +21,18 @@
 
 ############# TODO
 # 7.f.plot
-# 1. create function to map uncertainties across models. This function was made for ENMavg paper
+# A. create function to map uncertainties across models. This function was made for ENMavg paper
 # this function might compare projections among models (tuning), thresholds, climatic scenarios
-# 2. function to create consensual models across climatic scenarios
+# B. function to create consensual models across climatic scenarios
+# C.a function to get thresholds, climatic scenarios, model selection criteria;
+# C.b function to plot projections using 'C.a'
 
 ## 3.f.tuning
-# create class "ENMevaluation.list"
+# create class "ENMevaluation.list" # see 'documenting/all.classes.R'
 
 ## 4.f.tuning.final
 # create class "MaxEnt.list" (list of "MaxEnt" objects)
-# create class "ENM.w" with slots:
+# create class "ENMw" with slots:
 # "@selected.mdls"  = "data.frame"
 # "@MaxEnt.list" (currently "mxnt.mdls")
 # "@pred.args" = "character

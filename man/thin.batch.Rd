@@ -4,29 +4,40 @@
 \alias{thin.batch}
 \title{Spatially thin a list of species occurrence data}
 \usage{
-thin.batch(loc.data.lst, dist = 10000, method = "heuristic", nrep = 10,
-  great.circle.distance = FALSE, numCores = 1, ...)
+thin.batch(loc.data.lst = list(), spp, lat.col = NULL, long.col = NULL,
+  spec.col = NULL, thin.par = 10, reps = 10,
+  locs.thinned.list.return = TRUE, write.files = TRUE, max.files = 1,
+  write.log.file = TRUE)
 }
 \arguments{
 \item{loc.data.lst}{Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame
 of species occurence locations. Each data.frame can include several columnns, but must
 include at minimum a column of latitude and a column of longitude values}
 
-\item{dist}{\code{numeric} minimum distance (m) between records.}
+\item{lat.col}{Name of column of latitude values. Caps sensitive.}
 
-\item{method}{\code{character} name of method to solve problem: \itemize{
-    \item{'heuristic': data is thinned using a stingy heuristic algorithm; this involves sequentially removing points until the smallest distance between any point is greater than \code{mindist}.}
-    \item{'lpsolve': the problem is expressed as an integer programming problem and solved using LpSolve.}
-    \item{'gurobi': as above, but solved using Gurobi.}
-}}
+\item{long.col}{Name of column of longitude values. Caps sensitive.}
 
-\item{nrep}{\code{numeric} number of replicate thinned data sets to produce when using the \code{heuristic} method.}
+\item{spec.col}{Name of column of species name. Caps sensitive.}
 
-\item{great.circle.distance}{\code{logical} if \code{TRUE} great circle distances will be used for distance calculations, else euclidean distances will be be used.}
+\item{thin.par}{Thinning parameter - the distance (in kilometers) that you want
+records to be separated by.}
 
-\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+\item{reps}{The number of times to repete the thinning process. Given the random
+process of removing nearest-neighbors there should be 'rep' number of different
+sets of coordinates.}
 
-\item{...}{additional arguments passed to \code{\link[lpSolveAPI]{lp.control}} if method=='lpsolve' or gurobi::gurobi() if method=='gurobi'.}
+\item{locs.thinned.list.return}{TRUE/FALSE - If true, the `list` of
+the data.frame of thinned locs resulting from each replication
+is returned (see Returns below).}
+
+\item{write.files}{TRUE/FALSE - If true, new *.csv files will be
+written with the thinned locs data}
+
+\item{max.files}{The maximum number of *csv files to be written based on the
+thinned data}
+
+\item{write.log.file}{TRUE/FALSE create/append log file of thinning run}
 }
 \value{
 Named list containing thinned datasets for each species. See ?thin of spThin package.
@@ -47,6 +58,6 @@ plotThin(thinned.dataset.batch[[1]])
 length(thinned.dataset.batch[[1]])
 }
 \seealso{
-\code{\link[spThin]{spThin}}, \code{\link{loadTocc}}
+\code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 }
 

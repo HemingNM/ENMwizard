@@ -1,5 +1,5 @@
-install.packages("devtools")
-# library(devtools)
+# install.packages("devtools")
+library(devtools)
 # devtools::use_testthat()
 # devtools::use_vignette("introduction")
 # senha Git: GT!he36
@@ -14,6 +14,9 @@ devtools::check()
 
 # for building windows package
 devtools::build_win()
+path <- "../ENMwizard_src"
+if(dir.exists(path)==F){dir.create(path)}
+devtools::build(path=path)
 
 
 
