@@ -15,15 +15,8 @@ Run the following code from your R console:
 ```r
 install.packages("devtools")
 devtools::install_github("HemingNM/ENMwizard")
-devtools::install_github("danlwarren/ENMTools")
-devtools::install_github("mlammens/spThin")
+
 library(ENMwizard)
-```
-
-You also need to install ENMTools from GitHub.
-
-```r
-install_github("danlwarren/ENMTools")
 ```
 
 
@@ -58,7 +51,7 @@ Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 head(Bvarieg.occ)# Check first rows
 
 # Column names must be in capital letters
-colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT") # Change column names
+# colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT") # Change column names
 ```
 
 Now we make it a named list, where names correspond to species names.
