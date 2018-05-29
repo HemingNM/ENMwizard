@@ -59,7 +59,11 @@
 #
 #       # }  # climatic scenario
 #       return(r.o.s)}, mcmp.l, comb.plots, ovr.vl, sp)
-#
+#      ### CHECK HERE if  dim() of simplify2array(r.o.l) is NULL # if there is a
+#     # problem, see solution in f.area.occ.mscn
+#     # else if(is.null(dim(ar.mods.t.p))){
+#     # area.occ.spp[[sp]][] <- ar.mods.t.p
+#     # }
 #     r.o.l <- array(simplify2array(r.o.l), dim= dim(ovr.vl), dimnames = dimnames(ovr.vl))
 #
 #

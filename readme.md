@@ -162,7 +162,7 @@ After tuning MaxEnt models, we will calibrate them using all occurence data (i.e
 # Run model
 mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l = ENMeval.res.lst, 
                                     a.calib.l = occ.b.env, occ.l = occ.locs,
-                                    mSel = c("LowAIC"))# "LowAIC") # , "OR"
+                                    mSel = c("LowAIC", "AUC"))# "LowAIC") # , "OR"
 
 
 # # Comparing single core processing and multiple core processing
@@ -265,21 +265,21 @@ apply on the projections.
 # 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 # 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
 
-mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 4:5)
+mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 5)
 ```
 
 ## - 6. Visualizing
 ### - 6.1. Plotting one projection for current climate and another for a future climatic scenario
 ```r
-plot(mods.thrshld.lst$Bvarieg$current$binary$mtp)
-plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$mtp)
-# f.plot.mxnt.preds.mscn(mxnt.mdls.preds.cf, mods.thrshld.lst)
+plot(mods.thrshld.lst$Bvarieg$current$binary$x10ptp)
+plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
+plot.mdl.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 
 ```
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-# f.plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
+plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ```
 
 

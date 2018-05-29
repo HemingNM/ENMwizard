@@ -50,7 +50,7 @@
 #'
 #' Compute total suitable area for multiple climatic scenario, threshold and model criteria.
 #'
-#' @inheritParams f.plot.mxnt.preds
+#' @inheritParams plot.mdl.diff
 #' @param digits integer indicating the number of decimal places. see ?round for details.
 #' @param restrict a raster to select a region to compute area.
 #' @seealso \code{\link[raster]{area}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
@@ -71,7 +71,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     # for(sp in names(mtp.l)){ # species
 
     c.nms <- names(mtp.l[[sp]][[1]][[2]][[1]])
-    m.nms <- c("LowAICc", "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10", "test", "AvgAICc")
+    m.nms <- c("LowAICc", "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10", "AvgAICc") # , "test"
     invisible(sapply(seq_along(m.nms), function(i, x, y){
       if(sum(grepl(m.nms[i], c.nms))>0){
         c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]
@@ -137,11 +137,15 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     ar.mods.t.p <- simplify2array(ar.mods.t.p)
     if(length(dim(ar.mods.t.p))==2){
       dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1)
+      area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
     } else if(length(dim(ar.mods.t.p))==1){
       dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1, 1)
+      area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
+    } else if(is.null(dim(ar.mods.t.p))){
+      area.occ.spp[[sp]][] <- ar.mods.t.p
     }
 
-    area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
+
     # dim = dim(areas),
     # dimnames = list(names(mtp.l[[sp]]), # pred.scenario
     #                 names(mtp.l[[sp]][[1]][[2]]), # threshold criteria
@@ -383,11 +387,15 @@ f.FPA <- function(mtp.l, digits = 3){
     fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
     if(length(dim(fpa.mods.t.p))==2){
       dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
+      df.FPA[[sp]][,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
     } else if(length(dim(fpa.mods.t.p))==1){
       dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1, 1)
+      df.FPA[[sp]][,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+    } else if(is.null(dim(fpa.mods.t.p))){
+      df.FPA[[sp]][,ncol(areas)] <- fpa.mods.t.p
     }
 
-    df.FPA[[sp]][,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+
     # colnames(df.FPA[[sp]])[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
     # xlsx::write.xlsx(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".xlsx")) # reorder ds
     utils::write.csv(df.FPA[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/FracPredArea.", sp, ".csv")) # reorder ds

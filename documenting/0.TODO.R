@@ -20,6 +20,10 @@
 
 
 ############# TODO
+# 10. ensemble of selected models
+#
+#
+
 # 7.f.plot
 # A. create function to map uncertainties across models. This function was made for ENMavg paper
 # this function might compare projections among models (tuning), thresholds, climatic scenarios
