@@ -56,7 +56,7 @@
 #' @seealso \code{\link[raster]{area}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 #' @examples
-#' areas.occ.lst <- f.area.occ.mscn(mods.thrshld.lst)
+#' areas.occ.lst <- f.area.occ.mscn(mtp.l=mods.thrshld.lst)
 #' @export
 f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
   area.occ.spp <- vector("list", length = length(mtp.l))
@@ -71,7 +71,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     # for(sp in names(mtp.l)){ # species
 
     c.nms <- names(mtp.l[[sp]][[1]][[2]][[1]])
-    m.nms <- c("LowAICc", "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10", "AvgAICc") # , "test"
+    m.nms <- c("LowAICc", "ORmin", "OR10", "AUCmin", "AUC10", "AvgAICc") # , "test"
     invisible(sapply(seq_along(m.nms), function(i, x, y){
       if(sum(grepl(m.nms[i], c.nms))>0){
         c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]
@@ -135,7 +135,9 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
       return(ar.mods.t) }, mtp.l.sp, sp, restrict, digits, area.occ.spp) # pred.scenario
 
     ar.mods.t.p <- simplify2array(ar.mods.t.p)
-    if(length(dim(ar.mods.t.p))==2){
+    if(length(dim(ar.mods.t.p))==3){
+      area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
+    } else if(length(dim(ar.mods.t.p))==2){
       dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1)
       area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
     } else if(length(dim(ar.mods.t.p))==1){
@@ -385,7 +387,10 @@ f.FPA <- function(mtp.l, digits = 3){
       return(fpa.mods.t) }, mtp.l.sp, sp, digits, df.FPA) # pred.scenario
 
     fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
-    if(length(dim(fpa.mods.t.p))==2){
+    if(length(dim(fpa.mods.t.p))==3){
+      # dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
+      df.FPA[[sp]][,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+    } else if(length(dim(fpa.mods.t.p))==2){
       dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
       df.FPA[[sp]][,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
     } else if(length(dim(fpa.mods.t.p))==1){

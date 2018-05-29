@@ -693,7 +693,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
     
     return(th.ds)
   }
-  thinned_dataset_full <- lapply(1:length(spp.occ.list), t.loc, loc.data.lst=spp.occ.list, spp=spp )
+  thinned_dataset_full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
   names(thinned_dataset_full) <- spp
   return(thinned_dataset_full)
 }

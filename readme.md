@@ -279,7 +279,7 @@ plot.mdl.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
+plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=F)
 ```
 
 
