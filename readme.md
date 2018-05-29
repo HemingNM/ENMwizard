@@ -228,7 +228,8 @@ plot(occ.polys[[1]], add=T)
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
-pa.env.proj.l <- pred.a.batch.rst.mscn(poly.projection$Bvarieg, env.proj.l, occ.polys)
+proj.extent <- extent(c(-109.5, -26.2, -59.5, 18.1))
+pa.env.proj.l <- pred.a.batch.rst.mscn(proj.extent, env.proj.l, occ.polys)
 ```
 
 ### - 5.3 Model projections
@@ -273,8 +274,7 @@ mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 5)
 ```r
 plot(mods.thrshld.lst$Bvarieg$current$binary$x10ptp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
-plot.mdl.diff(mxnt.mdls.preds.cf, mods.thrshld.lst)
-
+plot.mdl.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ```
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated

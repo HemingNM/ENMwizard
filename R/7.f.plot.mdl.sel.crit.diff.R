@@ -124,7 +124,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' plot.mdl.diff(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
 # f.plot.mxnt.preds.mscn
 #' @export
-plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
+plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
   { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
@@ -168,10 +168,16 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
       thr.CRT <- t.NMS[which(t.nms %in% l)] #}
       cat(paste0(" - ", thr.CRT)) # cat(paste0(thr.CRT))
 
-      grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin.", sc, ".", thr.crt, ".pdf"), sep='/'),
-                     width = 20, height = 10)
+      n.t <- length(names(mods.thrshld$binary))
+      n.scn <- ncol(comb.plots)
+      if(save){
+        grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin.", sc, ".", thr.crt, ".pdf"), sep='/'),
+                       width = n.scn*5+2, height = n.t*5) # width = 20, height = 10)
+      }
+        
       # par(mfrow=c(3,5), mar=c(2,1,2,1), oma = c(1, 1, 4, 1))
-      graphics::par(mfrow=c(3,5), mar=c(2,4,2,5), oma = c(3.5, 0, 5.5, 2))
+      graphics::par(mfrow=c(n.t, n.scn), oma = c(3.5, 0, 5.5, 2)) # , mar=c(2,4,2,5)
+      # graphics::par(mfrow=c(3,5), mar=c(2,4,2,5), oma = c(3.5, 0, 5.5, 2))
 
       for(j in 1:ncol(comb.plots)){ #ncol(comb.plots)
         # r.dif <- mods.thrshld$binary[[l]][[comb.plots[1,j]]] - mods.thrshld$binary[[l]][[comb.plots[2,j]]]#, col=c("red", "white", "blue")
@@ -207,7 +213,10 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
                      breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
                      axis.args=list(at=seq(-1, 1), labels=c(make.underscript(n2), "equal", make.underscript(n1) )))
       }
-      grDevices::dev.off()
+      if(save){
+        grDevices::dev.off()
+      }
+        
     }
     # }
   }
@@ -282,7 +291,7 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, numCores=1){
 #' @examples
 #' plot.scn.diff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
 #' @export
-plot.scn.diff <- function(mcmp.l, mtp.l, sel.clim.scn="current", # , mod.sel=  "AvgAICc"
+plot.scn.diff <- function(mcmp.l, mtp.l, mdl.crit = "LowAIC", sel.clim.scn="current", # , mod.sel=  "AvgAICc"
                             basemap=NULL, save=FALSE, numCores=1){
   { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
@@ -312,7 +321,9 @@ plot.scn.diff <- function(mcmp.l, mtp.l, sel.clim.scn="current", # , mod.sel=  "
                      thrshld.nms.mod, basemap, make.underscript) { # climatic scenario, comb.plots
     # for(sc in names(mtp.l[[sp]])){ # climatic scenario
     mod.sel <- mcmp.l[[sp]]$mSel
-    mdl.crit <- grep(mod.sel, names(mtp.l[[sp]][[1]]$binary[[1]]))
+    ### TODO CHECK here
+    # mdl.crit <- grep(paste0(mod.sel,collapse = "|"), names(mtp.l[[sp]][[1]]$binary[[1]]))
+    mdl.crit <- grep(mdl.crit, names(mtp.l[[sp]][[1]]$binary[[1]]))
 
     comb.plots <- utils::combn(length(mtp.l[[sp]]), 2)
     cli.scn.pres <- which(names(mtp.l[[sp]]) == sel.clim.scn)
