@@ -227,7 +227,8 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
     N.mdls <- raster::nlayers(mtp.l[[sp]][[1]]$binary[[1]])
     if(N.mdls<2){
       m.nms <- names(mtp.l[[sp]][[1]]$binary[[1]])
-      stop("No models to compare. Just one model selected:\n",  m.nms, sep="")
+      stop("No models to compare. \nJust one model selected: ", m.nms,
+           "\nModel selection criteria: ", paste(mcmp.l[[sp]]$mSel, collapse = " "), sep="")
     }
     comb.plots <- utils::combn(N.mdls, 2)
 
