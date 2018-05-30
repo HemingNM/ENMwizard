@@ -4,14 +4,15 @@
 \alias{f.OR}
 \title{Compute "Omission Rate"}
 \usage{
-f.OR(mtp.l, occ.l, current.pred.nm = "current", digits = 3)
+f.OR(mtp.l, occ.l, clim.scn.nm = NULL, digits = 3)
 }
 \arguments{
 \item{mtp.l}{List of stack or brick of thresholded predictions}
 
 \item{occ.l}{list of species occurrence data.}
 
-\item{current.pred.nm}{name to locate climatic scenario (usually "current") used to calibrate maxent models}
+\item{clim.scn.nm}{name to locate climatic scenario from which Omission Rate will
+be extracted. Usually the scenario used to calibrate maxent models}
 
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}
 }

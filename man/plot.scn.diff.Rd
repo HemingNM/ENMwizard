@@ -4,14 +4,17 @@
 \alias{plot.scn.diff}
 \title{Plot differences between climatic scenarios}
 \usage{
-plot.scn.diff(mcmp.l, mtp.l, sel.clim.scn = "current", basemap = NULL,
-  save = FALSE, numCores = 1)
+plot.scn.diff(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn = "current",
+  basemap = NULL, save = FALSE, numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
 and model projections for each species.}
 
 \item{mtp.l}{List of stack or brick of thresholded predictions}
+
+\item{mSel}{Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
+Mean.OR10, Mean.ORmin}
 
 \item{sel.clim.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
 
@@ -20,9 +23,6 @@ and model projections for each species.}
 \item{save}{Export to pdf or not?}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
-
-\item{mod.sel}{Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
-Mean.OR10, Mean.ORmin}
 }
 \value{
 won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)

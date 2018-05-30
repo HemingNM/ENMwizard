@@ -283,7 +283,7 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 #' @inheritParams plot.mdl.diff
 #' @inheritParams mxnt.c
 #' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
-#' @param mod.sel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
+#' @param mSel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
 #' Mean.OR10, Mean.ORmin
 #' @param save Export to pdf or not?
 #' @seealso \code{\link{plot.mdl.diff}}
@@ -291,8 +291,12 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 #' @examples
 #' plot.scn.diff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
 #' @export
-plot.scn.diff <- function(mcmp.l, mtp.l, mdl.crit = "LowAIC", sel.clim.scn="current", # , mod.sel=  "AvgAICc"
+plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current", # , mSel=  "AvgAICc"
                             basemap=NULL, save=FALSE, numCores=1){
+  if(is.null(mSel)){
+    stop("Need to specify 'mSel'")
+  }
+  
   { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
@@ -317,12 +321,12 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mdl.crit = "LowAIC", sel.clim.scn="curr
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
 
 
-  f.plot <- function(sp, mtp.l, mdl.crit=1, t.NMS, t.nms, thrshld.path,
+  f.plot <- function(sp, mtp.l, mdl.crit=NULL, t.NMS, t.nms, thrshld.path,
                      thrshld.nms.mod, basemap, make.underscript) { # climatic scenario, comb.plots
     # for(sc in names(mtp.l[[sp]])){ # climatic scenario
-    mod.sel <- mcmp.l[[sp]]$mSel
+    
     ### TODO CHECK here
-    # mdl.crit <- grep(paste0(mod.sel,collapse = "|"), names(mtp.l[[sp]][[1]]$binary[[1]]))
+    # mdl.crit <- grep(paste0(mSel,collapse = "|"), names(mtp.l[[sp]][[1]]$binary[[1]]))
     mdl.crit <- grep(mdl.crit, names(mtp.l[[sp]][[1]]$binary[[1]]))
 
     comb.plots <- utils::combn(length(mtp.l[[sp]]), 2)
@@ -394,8 +398,12 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mdl.crit = "LowAIC", sel.clim.scn="curr
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
-
-    f.plot(sp, mtp.l, mdl.crit=mdl.crit, t.NMS, t.nms, thrshld.path,
+    mSel.crt <- mcmp.l[[sp]]$mSel
+    if(!mSel %in% mSel.crt){
+      stop("Need to specify 'mSel' correctly. \nOptions available from selected models are: ", paste(mSel.crt, collapse = " "))
+    }
+      
+    f.plot(sp, mtp.l, mdl.crit=mSel, t.NMS, t.nms, thrshld.path,
            thrshld.nms.mod, basemap, make.underscript) # comb.plots,
   }
 }

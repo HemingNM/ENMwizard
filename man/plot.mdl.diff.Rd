@@ -4,7 +4,7 @@
 \alias{plot.mdl.diff}
 \title{Plot differences between predictions of models selected from several criteria}
 \usage{
-plot.mdl.diff(mcmp.l, mtp.l, basemap = NULL, numCores = 1)
+plot.mdl.diff(mcmp.l, mtp.l, basemap = NULL, save = FALSE, numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models

@@ -260,14 +260,18 @@ f.var.ci <- function(mcmp.l){
 #'
 #' @inheritParams f.area.occ.mscn
 #' @param occ.l list of species occurrence data.
-#' @param current.pred.nm name to locate climatic scenario (usually "current") used to calibrate maxent models
+#' @param clim.scn.nm name to locate climatic scenario from which Omission Rate will
+#' be extracted. Usually the scenario used to calibrate maxent models
 #' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 #' @return A list of species' ORs computed for the selected (current) climatic scenario and
 #' each threshold and model criteria
 ##' @examples
 ##' f.OR(mtp.l=mods.thrshld.lst, occ.l=occ.locs, "current")
 #' @export
-f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , save=TRUE
+f.OR <- function(mtp.l, occ.l, clim.scn.nm = NULL, digits = 3){ # , save=TRUE
+  if(is.null(clim.scn.nm)){
+    stop("Need to specify 'clim.scn.nm'")
+  }
   df.OmR <- vector("list")
   # df.FPA <- df.OmR
   for(sp in names(mtp.l)){ # species
@@ -281,7 +285,10 @@ f.OR <- function(mtp.l, occ.l, current.pred.nm = "current", digits = 3){ # , sav
     # occ.spdf <- as.data.frame(occ.l[[sp]])
     # N.pts <- nrow(occ.spdf)
     # sp::coordinates(occ.spdf) <- ~LONG+LAT
-    ci <- grep(current.pred.nm, names(mtp.l[[sp]]))
+    ci <- grep(clim.scn.nm, names(mtp.l[[sp]]))
+    if(length(ci)<1){
+      stop("No climatic scenario named as: ", clim.scn.nm)
+    }
     trlds <- names(mtp.l[[sp]][[ci]]$binary)
     thrshld.nms <- paste0(".", trlds, collapse = "|") # c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
     mdls <- gsub(paste(c(thrshld.nms, "Mod.", ".current"), collapse = "|"), "", names(mtp.l[[sp]][[ci]]$binary[[1]]))
