@@ -274,12 +274,13 @@ mods.thrshld.lst <- f.thr.batch(mxnt.mdls.preds.cf, thrshld.i = 5)
 ```r
 plot(mods.thrshld.lst$Bvarieg$current$binary$x10ptp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
-plot.mdl.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
+plot.mdl.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=F)
 ```
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, save=F)
+plot.scn.diff(mxnt.mdls.preds.cf, mods.thrshld.lst, 
+              sel.clim.scn = "current", mSel = "LowAIC", save=F)
 ```
 
 
@@ -290,7 +291,7 @@ f.var.ci(mxnt.mdls.preds.lst)
 ```
 ### - Compute "Omission Rate"
 ```r
-f.OR(mods.thrshld.lst, occ.locs)
+f.OR(mods.thrshld.lst, occ.locs, clim.scn.nm = "current")
 ```
 
 ### - Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
