@@ -349,7 +349,9 @@ f.FPA <- function(mtp.l, digits = 3){
                          raster::nlayers(mtp.l[[sp]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
                    dimnames = list(names(mtp.l[[sp]]), # pred.scenario
                                    names(mtp.l[[sp]][[1]][[2]]), # threshold criteria
-                                   gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd"), collapse = "|"), "", names(mtp.l[[sp]][[1]][[2]][[1]]))
+                                   gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5", 
+                                                "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", 
+                                                "eetd", paste0(".", names(mtp.l[[sp]]), ".") ), collapse = "|"), "", names(mtp.l[[sp]][[1]][[2]][[1]]))
                    )) # model criteria
     #
     areas <- data.table::melt(areas) # reshape2::melt(areas)
