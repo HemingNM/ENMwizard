@@ -56,15 +56,15 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, cr
     ch <- grDevices::chull(u.pts)
     coords <- u.pts[c(ch, ch[1]),]
   }
-  occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID=1)))
-  occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data=data.frame(ID=1))
+  occ.poly <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(coords)), ID = 1)))
+  occ.poly <- sp::SpatialPolygonsDataFrame(occ.poly, data = data.frame(ID = 1, row.names = 1)) # , sp.nm = sp.nm
   raster::crs(occ.poly) <- raster::crs(crs.set)
   # if(!is.null(crs.set)){raster::projection(occ.poly) <- crs.set}
   # if(!is.null(o.path)){
   sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
   if(save){
-    raster::shapefile(occ.poly, filename = filename, overwrite=TRUE)
+    raster::shapefile(occ.poly, filename = filename, overwrite = TRUE)
   }
   # }
   return(occ.poly)
@@ -421,7 +421,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longl
     # Extract polygon ID's
     pid <- sapply(methods::slot(p, "polygons"), function(x) methods::slot(x, "ID"))
     # Create dataframe with correct rownames
-    p.df <- data.frame(ID=1:length(p), row.names = pid)
+    p.df <- data.frame(ID = 1:length(p), row.names = pid) # , sp.nm = sp.nm
     # Coersion
     p <- sp::SpatialPolygonsDataFrame(p, p.df)
   }
@@ -433,7 +433,7 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longl
   # writeOGR(p, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=TRUE, driver="ESRI Shapefile")
   # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
   if(save){
-    raster::shapefile(p, filename = filename, overwrite=TRUE)
+    raster::shapefile(p, filename = filename, overwrite = TRUE)
   }
   # return(raster::shapefile(x = filename))
   return(p)
@@ -677,8 +677,8 @@ thin.batch <- function(loc.data.lst = list(), spp,
     if(is.null(spec.col)){
       spec.col <- colnames(occ.spdf)[grep("^spec$|^species$|^especie$", colnames(occ.spdf), ignore.case = T)][1]
     }
-    
-    
+
+
     th.ds <- spThin::thin(occ.spdf, # loc.data.lst[[i]],
                           lat.col = lat.col, long.col = long.col,
                           spec.col = spec.col,
@@ -690,7 +690,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
                           out.base = paste0(spp[i], ".occ_thinned"),
                           log.file = paste0(out.dir, "/", spp[i], ".occ_thinned_full_log_file.txt"),
                           write.log.file = write.log.file)
-    
+
     return(th.ds)
   }
   thinned_dataset_full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
@@ -698,21 +698,21 @@ thin.batch <- function(loc.data.lst = list(), spp,
   return(thinned_dataset_full)
 }
 
-# thin.batch <- function(loc.data.lst, 
-#                        dist = 10000, method = "heuristic", nrep = 10, 
-#                        great.circle.distance = FALSE, 
+# thin.batch <- function(loc.data.lst,
+#                        dist = 10000, method = "heuristic", nrep = 10,
+#                        great.circle.distance = FALSE,
 #                        # lat.col = "lat", long.col = "lon", spec.col = "species",
 #                        # thin.par = 10, reps = 10, locs.thinned.list.return = TRUE,
 #                        # write.files = TRUE, max.files = 1, write.log.file = TRUE,
-#                        # # numCores = 1, 
+#                        # # numCores = 1,
 #                        ...) {
-# 
+#
 #   out.dir <- "1_sppData/occ.thinned.full"
 #   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
 #   if(dir.exists(out.dir)==FALSE) dir.create(out.dir)
-# 
+#
 #   spp <- names(loc.data.lst)
-# 
+#
 #   if(utils::packageVersion("spThin")>= 1.0){
 #     t.loc <- function(i, loc.data.lst,
 #                       dist, method, nrep, great.circle.distance,
@@ -721,14 +721,14 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #                       # thin.par, reps, locs.thinned.list.return,
 #                       # write.files, max.files, out.dir, write.log.file
 #     ){
-#       
+#
 #       occ.spdf <- loc.data.lst[[i]]
 #       if(!class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
 #         lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
 #         lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
 #         sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
 #       }
-#       
+#
 #       th.ds <- spThin::spThin(occ.spdf,
 #                               dist = dist, method = method, nrep = nrep,
 #                               great.circle.distance =  great.circle.distance, ...
@@ -737,7 +737,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #       utils::write.csv(as.data.frame(th.ds[[wtd]]), paste0(out.dir, "/", spp[i], ".occ.thinned.csv"))
 #       return(th.ds)
 #     }
-#     
+#
 #     thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
 #                                    function(i, loc.data.lst, # spp,
 #                                             dist, method, nrep, great.circle.distance,
@@ -746,7 +746,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #                                             # thin.par, reps, locs.thinned.list.return,
 #                                             # write.files, max.files, out.dir, write.log.file
 #                                    ){
-#                                      
+#
 #                                      t.loc(i, loc.data.lst, # spp,
 #                                            dist, method, nrep, great.circle.distance,
 #                                            spp, out.dir, ...
@@ -754,7 +754,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #                                            # thin.par, reps, locs.thinned.list.return,
 #                                            # write.files, max.files, out.dir, write.log.file
 #                                      )
-#                                      
+#
 #                                    }, loc.data.lst, #spp,
 #                                    dist, method, nrep, great.circle.distance,
 #                                    spp, out.dir, ...
@@ -762,16 +762,16 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #                                    # thin.par, reps, locs.thinned.list.return,
 #                                    # write.files, max.files, out.dir, write.log.file
 #     )
-#     
+#
 #   } else {
 #     t.loc <- function(i, loc.data.lst,
-#                       # dist, method, nrep, great.circle.distance, 
+#                       # dist, method, nrep, great.circle.distance,
 #                       # spp, out.dir
 #                       spp, lat.col, long.col, spec.col,
 #                       thin.par, reps, locs.thinned.list.return,
 #                       write.files, max.files, out.dir, write.log.file
 #     ){
-#       
+#
 #       occ.spdf <- loc.data.lst[[i]]
 #       if(class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
 #         occ.spdf <- as.data.frame(occ.spdf)
@@ -779,7 +779,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #         lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
 #         # sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
 #       }
-#       
+#
 #       spThin::thin(as.data.frame(loc.data.lst[[i]]),
 #                    lat.col = lat.col, long.col = long.col,
 #                    spec.col = spec.col,
@@ -792,37 +792,37 @@ thin.batch <- function(loc.data.lst = list(), spp,
 #                    log.file = paste0(out.dir, "/", spp[i], ".occ.thinned.full.log.file.txt"),
 #                    write.log.file = write.log.file)
 #     }
-#     
+#
 #     thinned.dataset.full <- lapply(base::seq_along(loc.data.lst),
 #                                    function(i, loc.data.lst,
-#                                             # dist, method, nrep, great.circle.distance, 
+#                                             # dist, method, nrep, great.circle.distance,
 #                                             # spp, out.dir
 #                                             spp, lat.col, long.col, spec.col,
 #                                             thin.par, reps, locs.thinned.list.return,
 #                                             write.files, max.files, out.dir, write.log.file
 #                                    ){
-#                                      
+#
 #                                      t.loc(i, loc.data.lst,
-#                                            # dist, method, nrep, great.circle.distance, 
+#                                            # dist, method, nrep, great.circle.distance,
 #                                            # spp, out.dir
 #                                            spp, lat.col, long.col, spec.col,
 #                                            thin.par, reps, locs.thinned.list.return,
 #                                            write.files, max.files, out.dir, write.log.file
 #                                      )
-#                                      
-#                                    }, loc.data.lst, 
-#                                    # dist, method, nrep, great.circle.distance, 
+#
+#                                    }, loc.data.lst,
+#                                    # dist, method, nrep, great.circle.distance,
 #                                    # spp, out.dir
 #                                    spp, lat.col, long.col, spec.col,
 #                                    thin.par, reps, locs.thinned.list.return,
 #                                    write.files, max.files, out.dir, write.log.file
 #     )
 #   }
-#   
+#
 #   # thinned.dataset.full <- vector(mode = "list", length = length(loc.data.lst))
 #   # thinned.dataset.full <- lapply(1:length(loc.data.lst), t.loc, loc.data.lst=loc.data.lst, spp=spp )
-# 
-# 
+#
+#
 #   names(thinned.dataset.full) <- spp
 #   return(thinned.dataset.full)
 # }

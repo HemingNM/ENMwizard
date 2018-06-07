@@ -23,7 +23,7 @@
 # #' @examples
 #' @keywords internal
 # #' @export
-mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster", 
+mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
                    numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
   # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   # wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
@@ -33,16 +33,17 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
   if(dir.exists(path.mdls)==FALSE) dir.create(path.mdls)
   pred.args <- mcm$pred.args
-  
+
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
-  f <- factor(xsel.mdls$features)
-  beta <- xsel.mdls$rm
+  # f <- factor(xsel.mdls$features)
+  # beta <- xsel.mdls$rm
+  # print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
+
   args.all <- mcm$mxnt.args
   # # args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
   # args.aicc <- grep("AIC", xsel.mdls$sel.cri)
   # args.or.auc <- grep("OR|AUC", xsel.mdls$sel.cri)
 
-  print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
 
   mod.nms <- paste0("Mod.", xsel.mdls$sel.cri) # paste(xsel.mdls$sel.cri) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   mod.nms2 <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
@@ -51,12 +52,12 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   # # mod.pred.nms <- c(if(length(args.aicc)>0){
   # #   c("Mod.AvgAICc", "Mod.LowAICc")
   # # }, mod.nms[(length(args.aicc)+1):length(args.all)])
-  # 
+  #
   # # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
   # #                   mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
   # mod.pred.nms <- c(if(length(grep("AvgAIC", mcm$mSel))>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
   #                   mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
-  
+
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -83,10 +84,10 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   # path2file <-paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)], sep='/')
   # filename.au.om <- paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)],
   #                         paste0(mod.nms[(length(args.aicc)+1):length(args.all)], ".", pred.nm,".grd"), sep='/')
-  
+
   filename.or.auc.laic <- paste(path.mdls, outpt, mod.nms,
                     paste0(mod.nms2, ".", pred.nm,".grd"), sep='/')
-  
+
 
   # filename <- c(filename.aicc, filename.au.om)
 
@@ -135,7 +136,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
                                                                    filename = filename.aicc, #paste(avg.m.path, paste0("Mod.AvgAICc", ".", pred.nm,".grd"), sep='/'),
                                                                    format = formt, overwrite = T) )
     }
-      
+
     names(mod.preds)[raster::nlayers(mod.preds)] <- "Mod.AvgAICc"
   }
 
@@ -266,6 +267,10 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                                        pred.nm <- names(a.proj.l[[i]])
                                        a.proj = a.proj.l[[i]]
 
+                                       f <- factor(mcm$selected.mdls$features)
+                                       beta <- mcm$selected.mdls$rm
+                                       print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
+
                                        for(j in 1:length(a.proj)){
                                          mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                                      sp.nm = sp.nm, pred.nm = pred.nm[j],
@@ -296,9 +301,13 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                        pred.nm <- names(a.proj.l[[i]])
                        a.proj <- a.proj.l[[i]]
 
+                       f <- factor(mcm$selected.mdls$features)
+                       beta <- mcm$selected.mdls$rm
+                       print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
+
                        for(j in 1:length(a.proj)){
-                         cat(c("\n", paste0("mxnt.pred.", names(a.proj)[j]), "\n",
-                               "projection ", j, " of ", length(a.proj), "\n"))
+                         cat(c("\n", "projection", j, "of", length(a.proj), "-",
+                               names(a.proj)[j], "\n"))
 
                          mxnt.preds.spi[j] <- mxnt.p(mcm = mcm,
                                                      sp.nm = sp.nm, pred.nm = pred.nm[j],

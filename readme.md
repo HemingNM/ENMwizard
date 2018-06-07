@@ -136,7 +136,7 @@ thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
 -----
 
 
-## - 3. Tunning Maxent's feauture classes and regularization multiplier via ENMeval
+## - 3. Tunning Maxent's feature classes and regularization multiplier via ENMeval
 ### - 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
 After thinning, we choose one dataset for each species for modelling.
 ```r

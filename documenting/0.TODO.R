@@ -20,6 +20,10 @@
 
 
 ############# TODO
+# 1.f.data.prep
+# use species names as data frames when creating spatialPolygonsDataFrames in functions:
+# poly.c (lines #59-60), bind.shp (lines #424)
+
 # 10. ensemble of selected models
 #
 #
