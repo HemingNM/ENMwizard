@@ -647,7 +647,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' plotThin(thinned.dataset.batch[[1]])
 #' length(thinned.dataset.batch[[1]])
 #' @export
-thin.batch <- function(loc.data.lst = list(), spp,
+thin.batch <- function(loc.data.lst = list(),
                        lat.col = NULL, long.col = NULL,
                        spec.col = NULL,
                        thin.par = 10, reps = 10, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
@@ -667,7 +667,7 @@ thin.batch <- function(loc.data.lst = list(), spp,
 
   t.loc <- function(i, loc.data.lst,  spp, ...){
     occ.spdf <- loc.data.lst[[i]]
-    if(class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
+    if(any(class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame"))){
       occ.spdf <- as.data.frame(occ.spdf)
     }
     if(is.null(lat.col) | is.null(long.col)) {
