@@ -120,7 +120,7 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
                      c.m, r, q, distance, min.nc, max.nc,
                      method, index, alphaBeale, plot){
     occ.spdf <- spp.occ.list[[i]]
-    if(!class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
+    if(!any(class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame"))){
       lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
       lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
       sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
