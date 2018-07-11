@@ -249,6 +249,8 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 # return(occ.polys.sp)
 # }
 #
+
+
 #' Create occ polygon for several species
 #'
 #' This function will use a list of coordinates of species occurence data and create minimum convex polygons

@@ -1,7 +1,8 @@
 #### 4.3.3 aplicar threshold
 # TODO examples
 # name of arg "mxnt.mdls.preds.sp[...]" shortened to "mcmp.spi"
-#' Apply threshold for a prediction
+
+#' Apply threshold for MaxEnt projections of a species
 #'
 #' This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp' object
 #' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
@@ -127,7 +128,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 # plot(mods.thrshld[[2]][[2]]) # binary
 
 #### 4.8.5 threshold for past and future pred
-#' Apply threshold for all predictions
+#' Apply threshold for MaxEnt projections across all species
 #'
 #' This function will apply the selected threshold criterias to MaxEnt model projection(s) of a 'mcmp.l' object
 #' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic

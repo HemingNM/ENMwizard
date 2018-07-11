@@ -4,7 +4,7 @@
 ## TODO remove args "wAICsum", "randomseed", "responsecurves", "arg1", and "arg2", by storing it on
 # replace by mcm$pred.args
 
-#' Projecting Calibrated MaxEnt Models
+#' Project calibrated MaxEnt models
 #'
 #' This function will read an object returned by "mxnt.c", read the calibrated models and project into
 #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
@@ -116,7 +116,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 }
 
 # #### for several species
-# #' Projecting calibrated MaxEnt models for several species
+# #' Project calibrated MaxEnt models for several species
 # #'
 # #' This function will read an object returned by "mxnt.c.batch", read the calibrated models and project into
 # #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
@@ -158,7 +158,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 
 
 
-#' Projecting calibrated MaxEnt models for several species onto multiple environmental scenarios
+#' Project calibrated MaxEnt models for several species onto multiple environmental scenarios
 #'
 #' This function will read an object returned by "mxnt.c.batch", read the calibrated models and project into
 #' several environmental (areas/climatic) scenarios (specified in a.proj.l). These new projections will be returned together with (appended to)
