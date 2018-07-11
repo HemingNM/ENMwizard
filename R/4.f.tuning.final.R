@@ -40,16 +40,12 @@ f.args <- function(x, mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
       wsum <- 1:length(x$w.AIC)
     }
 
-    # x.a.i <- x.a.i[wsum]
     x$sel.cri[wsum] <- paste0(x$sel.cri[wsum], paste0("AICc_", wsum))
 
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AICc")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
 
-  } # else {
-  #   x.a.i <- NULL
-  # }
-
+  }
   x <- x[order(x$ID),]
 
   # LowAIC
@@ -86,8 +82,6 @@ f.args <- function(x, mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
     xAUC10.i <- NULL
   }
 
-
-  # xsel.mdls <- x[x.a.i,] #[(unique(c(x.a.i, x.la.i, xORm.i, xOR10.i, xAUCmin.i, xAUC10.i))),]
   xsel.mdls <- x#[x$sel.cri!="",]
 
   f <- factor(xsel.mdls$features)
@@ -178,39 +172,23 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   }
 
   ENMeval.r <- ENMeval.o@results
-  # cat(c(names(ENMeval.r[i]), "\n"))
 
   mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
   ENMeval.r <- xsel.mdls[order(as.numeric(rownames(xsel.mdls))),]
-  # colnames(xsel.mdls)[colnames(xsel.mdls)== "sel.cri"] <- "opt.crit"
-  # ENMeval.r <- cbind(ENMeval.r[order(ENMeval.r$delta.AICc),], opt.crit=xsel.mdls$sel.cri, rankAICc=xsel.mdls$rankAICc)
   mdls.keep <- xsel.mdls$sel.cri!=""
   xsel.mdls <- xsel.mdls[mdls.keep,]
   args.all <- mdl.arg[[1]][mdls.keep]
   args.aicc <- grep("AIC", xsel.mdls$sel.cri)
 
   # exportar planilha de resultados
-  # write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.xlsx"))
-  # xlsx::write.xlsx(xsel.mdls, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
   res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "nparam", "rankAICc", "Mean.OR10", "Mean.ORmin", "Mean.AUC")]
   colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAICc", "NP", "Rank", "OR10", "ORLPT", "AUC")
-  # xlsx::write.xlsx(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".xlsx"))
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
 
   mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"]) # mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
-  # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
-  # mod.pred.nms <- c(if(length(args.aicc)>0){
-  #   c("Mod.AvgAICc", "Mod.LowAICc")
-  # }, mod.nms[(length(args.aicc)+1):length(args.all)])
-  
-  # # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
-  # #                   paste0("Mod.", mod.nms[1:length(args.all)]))
-  # mod.pred.nms <- c(if(grep("AvgAIC", mSel)>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
-  #                   paste0("Mod.", mod.nms[1:length(args.all)]))
-  
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -223,34 +201,19 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   #### AIC AVG model
   {
-    # if(length(args.aicc)>0) {
-    #   avg.m.path <- paste(path.mdls, outpt, mod.pred.nms[1], sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
-    #   if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
-    # }
-
-    ##### list of models to average
-    # mod.avg.i <- vector("list", length(args.aicc))
-    # filename <- paste(avg.m.path, mod.nms, paste0(mod.nms, ".grd"), sep='/')
-
     if(numCores>1 & parallelTunning){
 
       cl <- parallel::makeCluster(numCores)
 
       mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
-        # if(i<=length(args.aicc)){
-        #   path2file <- paste(avg.m.path, mod.nms[i], sep='/')
-        # }else{
-          path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-        # }
+        path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
 
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
         set.seed(1)
         resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
         return(resu)
-        # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-        #                            file = filename, format = formt, overwrite=TRUE)
       }, args.all, mod.nms, a.calib, occ, a) #)
 
       parallel::stopCluster(cl)
@@ -260,26 +223,20 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
     } else {
       mxnt.mdls <- lapply(seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
 
-        # if(i<=length(args.aicc)){
-        #   path2file <- paste(avg.m.path, mod.nms[i], sep='/')
-        # }else{
-          path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
-        # }
+        path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
 
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
         set.seed(1)
         resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
         return(resu)
-        # mod.avg.i[[i]] <<- dismo::predict(mxnt.mdls[[i]], a.proj, args=pred.args, progress='text',
-        #                            file = filename, format = formt, overwrite=TRUE)
       }, args.all, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
 
     } # closes else
 
 
   }
-  return(list(ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls, 
+  return(list(ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
               selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,
               mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
@@ -319,27 +276,16 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                          numCores = 1, parallelTunning = TRUE){
 
-  # path.res <- "3_out.MaxEnt"
-  # if(dir.exists(path.res)==FALSE) dir.create(path.res)
-  # path.mdls <- paste(path.res, paste0("Mdls.", names(ENMeval.res)), sep="/")
-
   if(numCores>1 & parallelTunning==FALSE){
 
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl,list("mxnt.c","f.args"))
 
-    mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, 
-                                                                                             use.ENMeval.bgpts, formt, pred.args, 
-                                                                                             mSel, wAICsum, randomseed, responsecurves, 
+    mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
+                                                                                             use.ENMeval.bgpts, formt, pred.args,
+                                                                                             mSel, wAICsum, randomseed, responsecurves,
                                                                                              arg1, arg2, numCores, parallelTunning){
-      ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-      # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
-
-      # a <- NULL
-      # if(use.ENMeval.bgpts){ a <- ENMeval.o.l[[i]]@bg.pts }
-
       cat(c(names(ENMeval.o.l[i]), "\n"))
-      # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
       # compute final models and predictions
       resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
@@ -350,59 +296,37 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
                      numCores = numCores, parallelTunning = parallelTunning)
 
       return(resu)
-    }, ENMeval.o.l, a.calib.l, occ.l, 
-    use.ENMeval.bgpts, formt, pred.args, 
-    mSel, wAICsum, randomseed, responsecurves, 
+    }, ENMeval.o.l, a.calib.l, occ.l,
+    use.ENMeval.bgpts, formt, pred.args,
+    mSel, wAICsum, randomseed, responsecurves,
     arg1, arg2, numCores, parallelTunning)
 
     parallel::stopCluster(cl)
 
   } else {
 
-    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l, 
-                                                                         use.ENMeval.bgpts, formt, pred.args, 
-                                                                         mSel, wAICsum, randomseed, responsecurves, 
+    mxnt.mdls.preds.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
+                                                                         use.ENMeval.bgpts, formt, pred.args,
+                                                                         mSel, wAICsum, randomseed, responsecurves,
                                                                          arg1, arg2, numCores, parallelTunning){
-      ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-      # ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
       cat(c(names(ENMeval.o.l[i]), "\n"))
-      # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
       # compute final models and predictions
       resu <- mxnt.c(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, formt = formt,
                      pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
-                     randomseed = randomseed, responsecurves = responsecurves, 
+                     randomseed = randomseed, responsecurves = responsecurves,
                      arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning=parallelTunning)
 
       return(resu)
-    }, ENMeval.o.l, a.calib.l, occ.l, 
-    use.ENMeval.bgpts, formt, pred.args, 
-    mSel, wAICsum, randomseed, responsecurves, 
+    }, ENMeval.o.l, a.calib.l, occ.l,
+    use.ENMeval.bgpts, formt, pred.args,
+    mSel, wAICsum, randomseed, responsecurves,
     arg1, arg2, numCores, parallelTunning)
 
 
   }
-
   names(mxnt.mdls.preds.lst) <- names(ENMeval.o.l)
-
-  # mxnt.mdls.preds.lst <- vector("list", length(ENMeval.o.l))
-  # names(mxnt.mdls.preds.lst) <- names(ENMeval.o.l)
-
-  # for(i in base::seq_along(ENMeval.o.l)){
-  #   ## TODO - check this, decide if keep other fields before or remove only here (in which use loop to get)
-  #   ENMeval.o.l[[i]] <- ENMeval.o.l[[i]]@results
-  #   cat(c(names(mxnt.mdls.preds.lst)[i], "\n"))
-  #   # if(dir.exists(path.mdls[i])==FALSE) dir.create(path.mdls[i])
-  #   # compute final models and predictions
-  #   mxnt.mdls.preds.lst[[i]] <- mxnt.c(x = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
-  #                                       a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
-  #                                       occ = occ.l[[i]], formt = formt,
-  #                                       pred.args = pred.args, wAICsum = wAICsum,
-  #                                       randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,numCores=numCores,parallelTunning=parallelTunning)
-  #   # mxnt.mdls.preds.lst[[i]]$pred.args <- pred.args
-  # }
-
   return(mxnt.mdls.preds.lst)
 }
 

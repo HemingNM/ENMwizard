@@ -38,7 +38,6 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
   if(length(bg.coords.l)!=length(occ.l)){ stop("bg.coords.l must contain one dataset of 'bg.coords' for each species")}
   ENMeval.res <- vector("list", length(occ.l))
   names(ENMeval.res) <- names(occ.l)
-  # ENMeval.occ.results <- ENMeval.res
 
   if(resultsOnly){
     for(i in 1:length(occ.l)){
@@ -64,7 +63,6 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                                                  kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                                  rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                                  progbar = progbar, updateProgress = updateProgress)
-        # ENMeval.occ.results[[i]] <- ENMeval.res[[i]]@results
       }
     }
   return(ENMeval.res)

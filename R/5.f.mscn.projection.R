@@ -25,9 +25,6 @@
 # #' @export
 mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
                    numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,
-  # pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  # wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature'){ # wAICsum=0.99,
-
   path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
@@ -35,28 +32,10 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   pred.args <- mcm$pred.args
 
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
-  # f <- factor(xsel.mdls$features)
-  # beta <- xsel.mdls$rm
-  # print(data.frame(features=f, beta, row.names = xsel.mdls$sel.cri))
-
   args.all <- mcm$mxnt.args
-  # # args.aicc <- args.all[grep("Mod.AIC", xsel.mdls$sel.cri)] #[1:2]
-  # args.aicc <- grep("AIC", xsel.mdls$sel.cri)
-  # args.or.auc <- grep("OR|AUC", xsel.mdls$sel.cri)
-
 
   mod.nms <- paste0("Mod.", xsel.mdls$sel.cri) # paste(xsel.mdls$sel.cri) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
   mod.nms2 <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
-  # ## TO DO - change order of all stacks to c("Mod.AvgAICc", "Mod.LowAICc", "Mod.Mean.ORmin", "Mod.Mean.OR10", "Mod.Mean.AUCmin", "Mod.Mean.AUC10")
-  # # mod.pred.nms <- c("Mod.AvgAICc", "Mod.LowAICc", mod.nms[(length(args.aicc)+1):length(args.all)])
-  # # mod.pred.nms <- c(if(length(args.aicc)>0){
-  # #   c("Mod.AvgAICc", "Mod.LowAICc")
-  # # }, mod.nms[(length(args.aicc)+1):length(args.all)])
-  #
-  # # mod.pred.nms <- c(if(length(args.aicc)>1){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
-  # #                   mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
-  # mod.pred.nms <- c(if(length(grep("AvgAIC", mcm$mSel))>0){"Mod.AvgAICc"}, # if(length(grep("LowAIC", xsel.mdls$sel.cri))>0){"Mod.LowAICc"},
-  #                   mod.nms)#paste0("Mod.", mod.nms[1:length(args.all)]))
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
@@ -68,8 +47,6 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 
   mxnt.mdls <- mcm$mxnt.mdls
 
-  # if(pred.nm != "") {pred.nm <- paste0(".", pred.nm)}
-
   #### 4.3.2 predictions
 
   # AIC AVG model
@@ -77,19 +54,9 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
     avg.m.path <- paste(path.mdls, outpt, "Mod.AvgAICc", sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
     if(dir.exists(avg.m.path)==FALSE) dir.create(avg.m.path)
     filename.aicc <- paste(avg.m.path, paste0("Mod.AvgAICc", ".", pred.nm,".grd"), sep='/')#[1:length(args.aicc)]
-  } # else {
-  # filename.aicc <- NULL
-  # }
-
-  # path2file <-paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)], sep='/')
-  # filename.au.om <- paste(path.mdls, outpt, mod.nms[(length(args.aicc)+1):length(args.all)],
-  #                         paste0(mod.nms[(length(args.aicc)+1):length(args.all)], ".", pred.nm,".grd"), sep='/')
-
+  }
   filename.or.auc.laic <- paste(path.mdls, outpt, mod.nms,
                     paste0(mod.nms2, ".", pred.nm,".grd"), sep='/')
-
-
-  # filename <- c(filename.aicc, filename.au.om)
 
   ##### list of models to PREDICT
   mod.all <- vector("list")
@@ -120,13 +87,10 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
     wv <- xsel.mdls[order(xsel.mdls$delta.AICc),"w.AIC"][seq_along(args.aicc)]
 
     ### stack prediction rasters (to create Average Model prediction)
-    # path2stk <- paste(avg.m.path, mod.nms[seq_along(args.aicc)], sep='/')
-    # filename <- paste(path2stk, paste0(mod.nms[seq_along(args.aicc)], ".", pred.nm,".grd"), sep='/')
     filename.avg.stk <- filename.or.auc.laic[args.aicc]
     Mod.AICc.stack <- raster::stack(filename.avg.stk)
 
     # create averaged prediction map
-    # print("Mod.AvgAICc")
     if(length(args.aicc)>1){
       mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AICc.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
                                                                    filename = filename.aicc, #paste(avg.m.path, paste0("Mod.AvgAICc", ".", pred.nm,".grd"), sep='/'),
@@ -145,49 +109,9 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   for(i in args.or.auc.laic){
     mod.preds <- raster::addLayer(mod.preds, mod.all[[i]] )
     names(mod.preds)[raster::nlayers(mod.preds)] <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms[i])
-    # mod.preds <- raster::addLayer(mod.preds, mod.all[[args.or.auc.laic]] )
-    # names(mod.preds) <- c("Mod.AvgAICc", mod.nms[args.or.auc.laic])
-  }
+    }
 
-
-  # #### LowAIC
-  # # if(i == 1) # usar if(low = T) pra escolher o low aic ou if(grep("low", Mod.pred))
-  # if(length(args.aicc)>0) {
-  #   path2file <- paste(path.mdls, outpt, mod.pred.nms[2], sep='/')
-  #   filename <- paste(path2file, paste0(mod.pred.nms[2], ".", pred.nm,".grd"), sep='/')
-  #   if(dir.exists(path2file) == FALSE) dir.create(path2file)
-  #
-  #   #### 4.3.2.1.1 create Low AIC model prediction on a specific path
-  #   # print(mod.pred.nms[2])
-  #   mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(mod.all[[1]],
-  #                                                                filename = filename,
-  #                                                                format = formt, overwrite = T) )
-  #   names(mod.preds)[raster::nlayers(mod.preds)] <- mod.pred.nms[2]
-  # }
-  #
-  #
-  # #### AUC OmR models
-  # if(length(args.or.auc) > 0){
-  #
-  #   for(i in args.or.auc){
-  #     # path2file <-paste(path.mdls, outpt, mod.nms[i], sep='/')
-  #     # filename <- paste(path2file, paste0(mod.nms[i], ".", pred.nm,".grd"), sep='/')
-  #     # if(dir.exists(path2file) == FALSE) dir.create(path2file)
-  #     # print(mod.nms[i])
-  #     mod.preds <- raster::addLayer(mod.preds, mod.all[[i]] )
-  #     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms[i]
-  #   }
-  # }
-
-  # also changed line 51
-  # mcm <- append(mcm, stats::setNames(list(mod.preds) , paste0("mxnt.preds", pred.nm)))
-
-  # if(is.null(mcm$mxnt.preds)){
-  #   mcm$mxnt.preds <- stats::setNames(list(mod.preds) , paste0(pred.nm))
-  # } else {
   mcm$mxnt.preds <- append(mcm$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))
-  # }
-
   return(mcm)
 }
 
@@ -280,10 +204,7 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                                        }
                                        names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                                       # resu <- append(mcm.l[[i]], mxnt.preds.spi)
-                                       # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
                                        mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-                                       # resu <- mcm.l[[i]]
                                        return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
 
 
@@ -317,17 +238,11 @@ mxnt.p.batch.mscn <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, p
                        }
                        names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                       # resu <- append(mcm.l[[i]], mxnt.preds.spi)
-                       # mcm.l[[i]]$mxnt.preds <- mxnt.preds.spi
                        mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-                       # resu <- mcm.l[[i]]
                        return(mcm.l[[i]])}, a.proj.l, mcm.l, formt)
 
   }
 
-  # names(mcm.l) <- mdl.names
   names(mcmp.l) <- mdl.names
-
-  # return(mcm.l)
   return(mcmp.l)
 }

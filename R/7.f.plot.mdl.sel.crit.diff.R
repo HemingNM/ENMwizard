@@ -139,20 +139,14 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
            "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5",
            "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 
-  # unlist(strsplit(names(mods.thrshld$binary[[2]]), "."))
-
   t.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
   t.NMS <- c("FCV1", "FCV5", "FCV10", "LPT (mtp)", "10P (x10ptp)", "ETSS (etss)", "MTSS", "BTO", "EETD")
   thrshld.nms.mod <- paste(c("Mod.", paste0(".",t.nms)), collapse ="|")
   thrshld.nms <- paste(t.nms, collapse = "|")
 
-  # ncol(comb.plots)
-
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
-  # pred.nm <- ifelse(pred.nm != "", paste0(".", pred.nm), pred.nm)
-  # cat(c("\n"))
 
   f.plot <- function(sc, sp, mtp.l, t.NMS, t.nms, thrshld.path,
                      comb.plots, thrshld.nms.mod, basemap, make.underscript) {
@@ -162,44 +156,32 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
     cat(c("\n", "Threshold Criterion: "))
 
     for(l in names(mods.thrshld$binary)){ # threshold criteria
-      thr.crt <- l #sub("x10ptp", "10P", sub("mtp", "LPT", l))  #grep(thrshld.nms,  unique(unlist(strsplit(names(mods.thrshld$binary[[l]]), "."))), value=TRUE)
-      #### TODO
-      # if(l %in% ta) {
+      thr.crt <- l
       thr.CRT <- t.NMS[which(t.nms %in% l)] #}
-      cat(paste0(" - ", thr.CRT)) # cat(paste0(thr.CRT))
+      cat(paste0(" - ", thr.CRT))
 
       n.t <- length(names(mods.thrshld$binary))
       n.scn <- ncol(comb.plots)
       if(save){
         grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin.", sc, ".", thr.crt, ".pdf"), sep='/'),
-                       width = n.scn*5+2, height = n.t*5) # width = 20, height = 10)
+                       width = n.scn*5+2, height = n.t*5)
       }
-        
-      # par(mfrow=c(3,5), mar=c(2,1,2,1), oma = c(1, 1, 4, 1))
-      graphics::par(mfrow=c(n.t, n.scn), oma = c(3.5, 0, 5.5, 2)) # , mar=c(2,4,2,5)
-      # graphics::par(mfrow=c(3,5), mar=c(2,4,2,5), oma = c(3.5, 0, 5.5, 2))
+      graphics::par(mfrow=c(n.t, n.scn), oma = c(3.5, 0, 5.5, 2))
 
       for(j in 1:ncol(comb.plots)){ #ncol(comb.plots)
-        # r.dif <- mods.thrshld$binary[[l]][[comb.plots[1,j]]] - mods.thrshld$binary[[l]][[comb.plots[2,j]]]#, col=c("red", "white", "blue")
         r.dif <- raster::overlay(mods.thrshld$binary[[l]][[comb.plots[1,j]]], mods.thrshld$binary[[l]][[comb.plots[2,j]]], fun=function(r1,r2) {r1-r2})
-        # n1 <- gsub(paste0(".",sc), "", sub("_", ".", sub("min", "Min", sub("Mean", "M", sub("OR", "or", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[1,j]]]))))))) # ".mxnt.preds|.mxnt.pred|mxnt.preds|mxnt.pred"
-        # n2 <- gsub(paste0(".",sc), "", sub("_", ".", sub("min", "Min", sub("Mean", "M", sub("OR", "or", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[2,j]]])))))))
         n1 <- gsub(paste0(".",sc), "", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[1,j]]]))  )
         n2 <- gsub(paste0(".",sc), "", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[2,j]]]))  )
         if(n1 %in% a) { n1 <- b[which(a %in% n1)] }
         if(n2 %in% a) { n2 <- b[which(a %in% n2)] }
 
         main.nms <- paste0( make.underscript(n1), " vs. ", make.underscript(n2))
-        # r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red")
         graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
         raster::plot(mods.thrshld$binary[[l]][[comb.plots[1,j]]], breaks= c(0, .5, 1), col=c("white", "gray90"),
                      legend=FALSE) # main= main.nms,
         if(j==1){
-          # title(paste0("Climatic scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "present", sc)), ".  Threshold criteria: ", thr.crt), line = 2, outer = T, cex.main=2)
-
           sc1 <- gsub("mxnt.pred.fut.|mxnt.pred.past.", "", sc)
-          if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] } # {paste0(scb[which(sca %in% sc1)], " (", sc, ")")} else {sc1 <- sc1}
-          # title(paste0("Species: " , names(mtp.l)[sp]), line = 3.5, outer = T, cex.main=2)
+          if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] }
           graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
           graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
         }
@@ -207,38 +189,33 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
         raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
                      legend=FALSE, add=TRUE) # main= main.nms,
 
-        graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
-        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=TRUE,#  c(.79, .80, .2, .8)
-                     xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
+        graphics::par(mar=c(2,1,2,6))
+        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75,
+                     xpd = TRUE, zlim=c(0, 1),
                      breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
                      axis.args=list(at=seq(-1, 1), labels=c(make.underscript(n2), "equal", make.underscript(n1) )))
       }
       if(save){
         grDevices::dev.off()
       }
-        
     }
-    # }
   }
 
-
   for(sp in 1:length(mtp.l)){ # species
-    # mcmp.l[[sp]]$mSel
     N.mdls <- raster::nlayers(mtp.l[[sp]][[1]]$binary[[1]])
+
     if(N.mdls<2){
       m.nms <- names(mtp.l[[sp]][[1]]$binary[[1]])
       stop("No models to compare. \nJust one model selected: ", m.nms,
            "\nModel selection criteria: ", paste(mcmp.l[[sp]]$mSel, collapse = " "), sep="")
     }
+
     comb.plots <- utils::combn(N.mdls, 2)
-
-
     thrshld.path <- paste(path.mdls[sp], outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
-    # cat(c("\n", "Climatic Scenario:"))
-    ## TODO use mclapply
 
+    ## TODO use mclapply
 
     if(numCores>1){
 
@@ -268,7 +245,6 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
              comb.plots, thrshld.nms.mod, basemap, make.underscript)
 
     }
-
   }
 }
 
@@ -293,16 +269,16 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 #' plot.scn.diff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
 #' @export
 plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current", # , mSel=  "AvgAICc"
-                            basemap=NULL, save=FALSE, numCores=1){
+                          basemap=NULL, save=FALSE, numCores=1){
   if(is.null(mSel)){
     stop("Need to specify 'mSel'")
   }
-  
+
   { path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==FALSE) dir.create(path.res)
-  path.sp.m <- paste0("Mdls.", names(mcmp.l))
-  path.mdls <- paste(path.res, path.sp.m, sep="/")
-  pred.args <- mcmp.l[[1]]$pred.args}
+    if(dir.exists(path.res)==FALSE) dir.create(path.res)
+    path.sp.m <- paste0("Mdls.", names(mcmp.l))
+    path.mdls <- paste(path.res, path.sp.m, sep="/")
+    pred.args <- mcmp.l[[1]]$pred.args}
 
   a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
@@ -323,11 +299,7 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current"
 
 
   f.plot <- function(sp, mtp.l, mdl.crit=NULL, t.NMS, t.nms, thrshld.path,
-                     thrshld.nms.mod, basemap, make.underscript) { # climatic scenario, comb.plots
-    # for(sc in names(mtp.l[[sp]])){ # climatic scenario
-    
-    ### TODO CHECK here
-    # mdl.crit <- grep(paste0(mSel,collapse = "|"), names(mtp.l[[sp]][[1]]$binary[[1]]))
+                     thrshld.nms.mod, basemap, make.underscript) {
     mdl.crit <- grep(mdl.crit, names(mtp.l[[sp]][[1]]$binary[[1]]))
 
     comb.plots <- utils::combn(length(mtp.l[[sp]]), 2)
@@ -335,7 +307,6 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current"
     sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==TRUE # rowsum(comb.plots == cli.scn.pres)==TRUE # comb.plots[, ]
     comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
     comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
-
 
     mods.thrshld <- mtp.l[[sp]][[comb.plots[1,1]]]
 
@@ -349,7 +320,7 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current"
 
     for(tc in names(mods.thrshld$binary)){ # threshold criteria
       thr.CRT <- t.NMS[which(t.nms %in% tc)] #}
-      cat(paste0(" - ", thr.CRT)) # cat(paste0(thr.CRT))
+      cat(paste0(" - ", thr.CRT))
 
       for(j in 1:n.scn){ # climatic scenario
 
@@ -357,33 +328,23 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current"
         mod.sc2 <- mtp.l[[sp]][[comb.plots[2,j]]]$binary[[tc]][[mdl.crit]]
 
         r.dif <- raster::overlay(mod.sc1, mod.sc2, fun=function(r1, r2) {r1-r2})
-        # thr.CRT <- t.NMS[which(t.nms %in% t.crit)] #}
 
         # clim.scn name
         n1 <- names(mtp.l[[sp]])[comb.plots[1,j]]
         n2 <- names(mtp.l[[sp]])[comb.plots[2,j]]
         main.nms <- paste0("Thres. crit.: ", thr.CRT, ". Clim. scen.: ", n1, " vs. ", n2)
 
-        #   # r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", "white", "red")
         graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
         raster::plot(mod.sc1, breaks= c(0, .5, 1), col=c("white", "gray90"),
                      main= main.nms, legend=FALSE) #
-        #   if(j==1){
-        #     # title(paste0("Climatic scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "present", sc)), ".  Threshold criteria: ", tc), line = 2, outer = T, cex.main=2)
-        #
-        #     sc1 <- gsub("mxnt.pred.fut.|mxnt.pred.past.", "", sc)
-        #     if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] } # {paste0(scb[which(sca %in% sc1)], " (", sc, ")")} else {sc1 <- sc1}
-        #     # title(paste0("Species: " , names(mtp.l)[sp]), line = 3.5, outer = T, cex.main=2)
-        #     graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
-        #     graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
-        #   }
+
         if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
         raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
                      legend=FALSE, add=TRUE) # main= main.nms,
         #
         graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
-        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75, #smallplot=c(.78, .79, .2, .8),  #horiz=TRUE,#  c(.79, .80, .2, .8)
-                     xpd = TRUE, zlim=c(0, 1),#legend.args=list(side=4),
+        raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75,
+                     xpd = TRUE, zlim=c(0, 1),
                      breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
                      axis.args=list(at=seq(-1, 1), labels=c(n2, "equal", n1 )))
       }  # climatic scenario
@@ -392,7 +353,6 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current"
     if(save){
       grDevices::dev.off()
     }
-    # }
   }
 
   for(sp in 1:length(mtp.l)){ # species
@@ -403,7 +363,7 @@ plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current"
     if(!mSel %in% mSel.crt){
       stop("Need to specify 'mSel' correctly. \nOptions available from selected models are: ", paste(mSel.crt, collapse = " "))
     }
-      
+
     f.plot(sp, mtp.l, mdl.crit=mSel, t.NMS, t.nms, thrshld.path,
            thrshld.nms.mod, basemap, make.underscript) # comb.plots,
   }

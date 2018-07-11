@@ -35,9 +35,7 @@
 pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ #, o.path = "occ.poly"
   path.proj <- "1_sppData/area.proj.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
-  # if(dir.exists("1_sppData/area.proj")==FALSE) dir.create("1_sppData/area.proj")
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
-  # if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
 
   # pensar melhor como projetar
   #if(is.na(projection(occ.poly))){print} # projection(occ.poly) <- crs.set
@@ -73,7 +71,6 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALS
     print(ext.proj)
     area.p <- methods::as(ext.proj, "SpatialPolygons")
     raster::projection(area.p) <- raster::projection(occ.poly)
-    # area.p <- raster::shapefile(paste(o.path, paste0(sp.nm, ".sel.area", ".shp"), sep = "/" ))
   } else {
     area.p <- rgeos::gBuffer(occ.poly, width = deg.incr*mult, quadsegs=100)
     cat("\n", paste("New extent"), "\n")
@@ -81,7 +78,6 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALS
     raster::projection(area.p) <- raster::projection(occ.poly)
   }
   raster::shapefile(area.p, filename = paste(path.proj, paste0(sp.nm, ".a.proj", ".shp"), sep = "/" ), overwrite=TRUE)
-  # area.p <- raster::shapefile(paste(path.proj, paste0(sp.nm, ".a.proj", ".shp"), sep = "/" ))
   return(area.p)
 }
 
@@ -150,10 +146,8 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
                      c(sp::bbox(pred.poly)[1,2], sp::bbox(pred.poly)[2,1]),
                      c(sp::bbox(pred.poly)[1,1], sp::bbox(pred.poly)[2,1])))
   p <- sp::SpatialPolygons(list(sp::Polygons(list(p), ID = 1)))
-  # # p <- methods::as(ext.proj, "SpatialPolygons")
 
   if(identical(pred.poly, p)){
-  # if(mask==FALSE){
     area.p <- raster::crop(env.uncut, p,
                            file= paste(path.proj, sp.nm, gsub("^\\.|\\.\\.\\.|\\.\\.", ".", paste0("areaProj.", sp.nm, ".", prj.nm,".grd")), sep="/"),
                            format="raster", overwrite=TRUE)
@@ -226,25 +220,19 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj
   names(area.pl) <- names(pred.polys)
   for(i in base::seq_along(pred.polys)){
     area.p.spi <- vector("list", length(env.uncut.l))
-    # names(area.p.spi) <- names(env.uncut.l)
-    # for(j in seq_along(area.p.spi)){
     if(numCores>1){
       area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
-        # prj.nm.j <- gsub("^\\.|\\.\\.\\.|\\.\\.",".",paste(prj.nm, names(env.uncut.l)[j], sep="."))
         prj.nm.j <- names(env.uncut.l)[j]
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.", "", prj.nm.j)) # paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
     } else {
       area.pl[[i]] <- unlist(lapply(base::seq_along(area.p.spi), function(j){
-        # prj.nm.j <- gsub("^\\.|\\.\\.\\.|\\.\\.",".",paste(prj.nm, names(env.uncut.l)[j], sep="."))
         prj.nm.j <- names(env.uncut.l)[j]
         area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.", "", prj.nm.j)) #paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
     }
-
-    # area.pl[[i]] <- area.p.spi
   }
   return(area.pl)
 }
@@ -317,16 +305,9 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=""
     area.p <- methods::as(raster::extent(area.p), "SpatialPolygons")
   }
 
-  # for(i in 1:length(occ.polys)){
-  #   cat(c("\n","Creating projection area for", names(occ.polys)[i],"\n",  "Species",  i, "of", length(occ.polys),"\n"))
-  #   area.pl[[i]] <- pred.a.rst(area.p, env.uncut, occ.polys = occ.polys[[i]], mask=mask, prj.nm = prj.nm, sp.nm = names(occ.polys)[i])
-  # }
-
   cat(c("\n","Creating projection area","\n"))
-  # area.pl[[1]] <- pred.a.rst(area.p, env.uncut, mask=mask, prj.nm = prj.nm, sp.nm = sp.nm)
   area.pl[[1]] <- pred.a(area.p, env.uncut, prj.nm = prj.nm, sp.nm = sp.nm)
   for(i in 2:length(occ.polys)){
-    # cat(c("\n","Creating projection area for", names(occ.polys)[i],"\n",  "Species",  i, "of", length(occ.polys),"\n"))
     area.pl[[i]] <- area.pl[[1]]
   }
   return(area.pl)
@@ -354,7 +335,6 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=""
 #' @export
 pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
                                   prj.nm="", sp.nm = "mult.spp", numCores=1){
-  # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   area.pl <- vector("list", length(occ.polys))
@@ -364,31 +344,16 @@ pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
     area.p <- methods::as(raster::extent(area.p), "SpatialPolygons")
   }
 
-  # for(i in 1:length(occ.polys)){
-  #   cat(c("\n","Creating projection area for", names(occ.polys)[i],"\n",  "Species",  i, "of", length(occ.polys),"\n"))
-  #   area.p.spi <- vector("list", length(env.uncut.l))
-  #
-  #
-  #   area.pl[[i]] <- unlist(parallel::mclapply(seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(cores)), function(j){
-  #     prj.nm.j <- paste("", prj.nm, names(env.uncut.l)[j], sep=".")
-  #     area.p.spi[[j]] <- pred.a.rst(area.p, env.uncut.l[[j]], occ.polys[[i]], mask=mask, prj.nm = prj.nm.j, sp.nm = names(occ.polys)[i])
-  #     area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
-  #   } ) )
-  #
-  # }
   cat(c("\n","Creating projection area","\n"))
   area.p.spi <- vector("list", length(env.uncut.l))
 
   p.area <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
     prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")
-    # area.p.spi[[j]] <- pred.a.rst(area.p, env.uncut.l[[j]], occ.polys[[1]], mask=mask, prj.nm = prj.nm.j, sp.nm = sp.nm)
     area.p.spi[[j]] <- pred.a(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
-    # area.p.spi[[j]] <- stats::setNames(area.p.spi[j], paste0(prj.nm, ".", names(env.uncut.l)[j]) )
     area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(names(env.uncut.l)[j])) )
   } ) )
 
   for(i in 1:length(occ.polys)){
-    # cat(c("\n","Creating projection area for", names(occ.polys)[i],"\n",  "Species",  i, "of", length(occ.polys),"\n"))
     area.pl[[i]] <- p.area
   }
   return(area.pl)

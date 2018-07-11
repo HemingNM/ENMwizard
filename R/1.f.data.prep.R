@@ -114,7 +114,6 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
     if(dir.exists(o.path.pts)==FALSE) dir.create(o.path.pts)
   }
   #
-  # for(i in 1:length(spp.occ.list)){
   f.poly <- function(i, spp.occ.list, o.path.pts, k,
                      sp.nm, convex, alpha, save, save.pts, crs.set,
                      c.m, r, q, distance, min.nc, max.nc,
@@ -125,15 +124,10 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
       lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
       sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
     }
-    # occ.spdf <- data.frame(spp.occ.list[[i]])
-    # sp::coordinates(occ.spdf) <- ~LONG+LAT
     if(save.pts){
       raster::shapefile(occ.spdf, filename = paste(o.path.pts, paste0(paste(names(spp.occ.list)[i], "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
-    }# else {
-    #   raster::shapefile(occ.spdf)
-    # }
-    # raster::crs(occ.spdf) <- crs.set
-    # if(!is.null(crs.set)){raster::projection(occ.spdf) <- crs.set}
+    }
+
     if(k == 1){
       resu <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
     } else if (k != 1) {
@@ -230,7 +224,6 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
                       convex=TRUE, alpha=10, sp.nm = "sp.nm", save = T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
 
-  # u.pts <- sp::coordinates(occ.spdf)
   if(is.null(nm.col.dt)){
     u.pts <- as.data.frame(unique(sp::coordinates(occ.spdf)))
   } else {
@@ -274,7 +267,6 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
     }
   } else { # Hierarchical Clustering
     # https://stackoverflow.com/questions/28672399/spatial-clustering-in-r-simple-example
-    # u.pts <- cbind(occ.spdf$LONG, occ.spdf$LAT)
     hclust.obj <- stats::hclust(stats::dist(u.pts))
     clust <- stats::cutree(hclust.obj, k)
   }
@@ -289,14 +281,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
     occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
   } else {
     occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
-    # occ.polys.sp  <- occ.polys.lst
   }
-  # raster::crs(occ.polys.sp) <- crs.set
-  # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
-  #  sp::plot(occ.polys.sp)
-  # occ.spdf <- as.data.frame(occ.spdf)
-  # sp::coordinates(occ.spdf) <- ~LONG+LAT
-  #  sp::plot(occ.spdf, col="red", add=TRUE)
   return(occ.polys.sp)
 }
 
@@ -425,17 +410,12 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longl
     # Coersion
     p <- sp::SpatialPolygonsDataFrame(p, p.df)
   }
-  # raster::crs(poly.data) <- crs.set
-  # if(!is.null(crs.set)){raster::projection(poly.data) <- crs.set}
   sp.nm <- paste(sp.nm, "occ.poly", sep = ".")
   filename <- paste(o.path, paste0(sp.nm,".shp"), sep = "/" )
 
-  # writeOGR(p, dsn=o.path, layer=paste0(sp.nm), overwrite_layer=TRUE, driver="ESRI Shapefile")
-  # return(rgdal::readOGR(paste(o.path, paste0(sp.nm, ".shp"), sep="/")) )
   if(save){
     raster::shapefile(p, filename = filename, overwrite = TRUE)
   }
-  # return(raster::shapefile(x = filename))
   return(p)
 }
 
@@ -472,17 +452,10 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
 
   # https://gis.stackexchange.com/questions/194848/creating-outside-only-buffer-around-polygon-using-r
-  # occ.b <- vector("list", length(occ.polys))
   occ.b <- vector("list")
-  # names(occ.b) <- names(occ.polys)
-  # if(dir.exists(o.path)==FALSE) dir.create(o.path)
-  # bf.path <- paste(o.path,"bffr", sep = "/" )
-  # if(dir.exists(bf.path)==FALSE) dir.create(bf.path)
-
   if(length(mult)==1){ mult <- rep(mult, length(occ.polys))}
   TF.b.w <- is.null(bffr.width)
 
-  # for(i in 1:length(occ.polys)){
   f.bffr <- function(i, occ.polys, crs.set, TF.b.w, bffr.width,
                      quadsegs, mult, o.path){
     n.occp.i <- names(occ.polys)[i]
@@ -494,8 +467,6 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
     }
     cat(c("Buffer width for", n.occp.i, "is", bffr.width, "\n"))
     occ.b.i <- rgeos::gBuffer(occ.polys.i, width=bffr.width, quadsegs=quadsegs)
-    # raster::crs(occ.b[[i]]) <- crs.set
-    # if(!is.null(crs.set)){raster::projection(occ.b[[i]]) <- crs.set}
     raster::shapefile(occ.b.i, filename = paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ), overwrite=TRUE)
     occ.b.i <- raster::shapefile(paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ))
 
@@ -572,19 +543,13 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
   if(dir.exists(path.env.out)==FALSE) dir.create(path.env.out)
   ## Clipping rasters for each species
   occ.b.env <- vector("list")
-  # occ.b.env <- vector("list", length(occ.b))
-  # names(occ.b.env) <- names(occ.b)
 
-  # for(i in 1:length(occ.b)){
   f.cut <- function(i, occ.b, env.uncut, path.env.out){
     n.occ.b.i <- names(occ.b)[i]
     occ.b.i <- occ.b[[i]]
     cat(c("Cutting environmental variables of species", i, "of", length(occ.b), "\n"))
-    # occ.b[[i]] <- sp::spTransform(occ.b[[i]], raster::crs(env.uncut))
     env.i <- raster::crop(env.uncut, raster::extent(occ.b.i))
     env.i <- raster::mask(env.i, occ.b.i)
-    # raster::crs(env.i) <- raster::crs(env.uncut)
-    # if(dir.exists(paste("2_envData", names(spp.occ.list)[i], sep = "/") )==FALSE) dir.create(paste("2_envData", names(spp.occ.list)[i], sep = "/"))
     env.i <- raster::writeRaster(env.i,
                                  filename = paste(path.env.out, paste("envData.", n.occ.b.i, ".grd", sep=''), sep='/'),
                                  format = "raster", overwrite = T)
