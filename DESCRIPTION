@@ -32,6 +32,7 @@ Imports:
     apcluster,
     NbClust,
     methods,
+    spThin,
     data.table
 Suggests:
     rJava,
@@ -40,5 +41,5 @@ Suggests:
     rmarkdown,
     parallel,
     devtools
-Remotes: github::mlammens/spThin (>= 1.0)
+Remotes: github::danlwarren/ENMTools
 VignetteBuilder: knitr

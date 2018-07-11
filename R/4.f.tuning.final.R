@@ -279,7 +279,7 @@ mxnt.c.batch <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts
   if(numCores>1 & parallelTunning==FALSE){
 
     cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl,list("mxnt.c","f.args"))
+    parallel::clusterExport(cl, list("mxnt.c","f.args"))
 
     mxnt.mdls.preds.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                                              use.ENMeval.bgpts, formt, pred.args,

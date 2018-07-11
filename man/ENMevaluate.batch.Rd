@@ -5,12 +5,12 @@
 \title{Tuning and evaluation of ENMs with Maxent for several species using ENMeval}
 \usage{
 ENMevaluate.batch(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
-  bg.grp = NULL, RMvalues = seq(0.5, 4, 0.5), fc = c("L", "LQ", "H",
-  "LQH", "LQHP", "LQHPT"), categoricals = NULL, n.bg = 10000,
-  method = "block", overlap = FALSE, aggregation.factor = c(2, 2),
-  kfolds = NA, bin.output = FALSE, clamp = TRUE, rasterPreds = TRUE,
-  parallel = FALSE, numCores = NULL, progbar = TRUE,
-  updateProgress = FALSE, resultsOnly = F, ...)
+  bg.grp = NULL, RMvalues = seq(0.5, 4.5, 0.5), fc = c("L", "P", "Q", "H",
+  "LP", "LQ", "LH", "PQ", "PH", "QH", "LPQ", "LPH", "LQH", "PQH", "LPQH"),
+  categoricals = NULL, n.bg = 10000, method = "block", overlap = FALSE,
+  aggregation.factor = c(2, 2), kfolds = NA, bin.output = FALSE,
+  clamp = TRUE, rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
+  progbar = TRUE, updateProgress = FALSE, resultsOnly = F, ...)
 }
 \arguments{
 \item{occ.l}{list of species occurrence data}

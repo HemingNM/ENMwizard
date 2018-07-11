@@ -4,7 +4,7 @@
 \alias{thin.batch}
 \title{Spatially thin a list of species occurrence data}
 \usage{
-thin.batch(loc.data.lst = list(), spp, lat.col = NULL, long.col = NULL,
+thin.batch(loc.data.lst = list(), lat.col = NULL, long.col = NULL,
   spec.col = NULL, thin.par = 10, reps = 10,
   locs.thinned.list.return = TRUE, write.files = TRUE, max.files = 1,
   write.log.file = TRUE)

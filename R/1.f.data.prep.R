@@ -71,126 +71,6 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, cr
 }
 
 
-#' Create occ polygon for several species
-#'
-#' This function will use a list of coordinates of species occurence data and create minimum convex polygons
-#' for each element in the list.
-#' It is possible to create concave or convex polygons, create several small polygons based on clusters
-#' of points.
-#'
-#' @param spp.occ.list A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"
-#' @param plot logical. Plot results or not?
-#' @param save.pts logical. Save each species' occurence points as shapefile?
-#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
-#' @inheritParams poly.c
-#' @inheritParams poly.splt
-# #' @inheritParams mxnt.c.batch
-#'
-#' @seealso \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
-#' #' @return A named list of spatial polygons built using coordinates
-#' @examples
-#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
-#'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
-#' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
-#' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-#' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.polys <- poly.c.batch(spp.occ.list, convex=TRUE, alpha=10)
-#' @export
-poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
-                         distance = "euclidean", min.nc = 2, max.nc = 20,
-                         method = "mcquitty", index = "all", alphaBeale = 0.1,
-                         convex = T, alpha = 10,
-                         plot = T, save = T, save.pts = F, numCores = 1,
-                         crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
-
-  occ.pgns <- vector("list", length(spp.occ.list)) # , names=
-  sp.nm <- names(spp.occ.list)
-  # sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
-
-
-  o.path.pts <- "1_sppData/occ.pts"
-  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
-  if(save.pts){
-    if(dir.exists(o.path.pts)==FALSE) dir.create(o.path.pts)
-  }
-  #
-  f.poly <- function(i, spp.occ.list, o.path.pts, k,
-                     sp.nm, convex, alpha, save, save.pts, crs.set,
-                     c.m, r, q, distance, min.nc, max.nc,
-                     method, index, alphaBeale, plot){
-    occ.spdf <- spp.occ.list[[i]]
-    if(!any(class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame"))){
-      lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
-      lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
-      sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
-    }
-    if(save.pts){
-      raster::shapefile(occ.spdf, filename = paste(o.path.pts, paste0(paste(names(spp.occ.list)[i], "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
-    }
-
-    if(k == 1){
-      resu <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
-    } else if (k != 1) {
-      resu <-  poly.splt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
-                                  distance = distance, min.nc = min.nc, max.nc = max.nc,
-                                  method = method, index = index, alphaBeale = alphaBeale,
-                                  convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
-    }
-
-    if(plot){
-      sp::plot(resu, main=names(spp.occ.list)[i])
-      sp::plot(occ.spdf, col="red", add=TRUE)
-    }
-    return(resu)
-  }
-
-  if(numCores>1){
-    plot <- F
-
-    cl<-parallel::makeCluster(numCores)
-
-    occ.pgns <- parallel::clusterApply(cl, base::seq_along(spp.occ.list),
-                                       function(i, spp.occ.list, o.path.pts, k,
-                                                sp.nm, convex, alpha, save, save.pts, crs.set,
-                                                c.m, r, q, distance, min.nc, max.nc,
-                                                method, index, alphaBeale, plot){
-
-                                         f.poly(i, spp.occ.list, o.path.pts, k,
-                                                sp.nm, convex, alpha, save, save.pts, crs.set,
-                                                c.m, r, q, distance, min.nc, max.nc,
-                                                method, index, alphaBeale, plot)
-
-                                       }, spp.occ.list, o.path.pts, k,
-                                       sp.nm, convex, alpha, save, save.pts, crs.set,
-                                       c.m, r, q, distance, min.nc, max.nc,
-                                       method, index, alphaBeale, plot)
-
-    parallel::stopCluster(cl)
-
-  } else {
-    occ.pgns <- lapply(base::seq_along(spp.occ.list),
-                       function(i, spp.occ.list, o.path.pts, k,
-                                sp.nm, convex, alpha, save, save.pts, crs.set,
-                                c.m, r, q, distance, min.nc, max.nc,
-                                method, index, alphaBeale, plot){
-
-                         f.poly(i, spp.occ.list, o.path.pts, k,
-                                sp.nm, convex, alpha, save, save.pts, crs.set,
-                                c.m, r, q, distance, min.nc, max.nc,
-                                method, index, alphaBeale, plot)
-
-                       }, spp.occ.list, o.path.pts, k,
-                       sp.nm, convex, alpha, save, save.pts, crs.set,
-                       c.m, r, q, distance, min.nc, max.nc,
-                       method, index, alphaBeale, plot)
-
-  }
-
-  names(occ.pgns) <- names(spp.occ.list)
-  return(occ.pgns)
-}
-
-
 #' Split a species occ polygon (whenever distribution seems disjoint) into K polygons and save in a single .shp
 #'
 #' Cluster points and create several small polygons. Implemented methods are 'Hierarchical Clustering' (when 'k'
@@ -285,7 +165,8 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
   return(occ.polys.sp)
 }
 
-# ## for a package see:
+
+### for a package see:
 # # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
 #
 # # for methods
@@ -368,6 +249,125 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 # return(occ.polys.sp)
 # }
 #
+#' Create occ polygon for several species
+#'
+#' This function will use a list of coordinates of species occurence data and create minimum convex polygons
+#' for each element in the list.
+#' It is possible to create concave or convex polygons, create several small polygons based on clusters
+#' of points.
+#'
+#' @param spp.occ.list A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"
+#' @param plot logical. Plot results or not?
+#' @param save.pts logical. Save each species' occurence points as shapefile?
+#' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
+#' @inheritParams poly.c
+#' @inheritParams poly.splt
+# #' @inheritParams mxnt.c.batch
+#'
+#' @seealso \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
+#' #' @return A named list of spatial polygons built using coordinates
+#' @examples
+#' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
+#'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
+#' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
+#' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
+#' occ.polys <- poly.c.batch(spp.occ.list)
+#' occ.polys <- poly.c.batch(spp.occ.list, convex=TRUE, alpha=10)
+#' @export
+poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
+                         distance = "euclidean", min.nc = 2, max.nc = 20,
+                         method = "mcquitty", index = "all", alphaBeale = 0.1,
+                         convex = T, alpha = 10,
+                         plot = T, save = T, save.pts = F, numCores = 1,
+                         crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
+
+  occ.pgns <- vector("list", length(spp.occ.list)) # , names=
+  sp.nm <- names(spp.occ.list)
+  # sp.nm2 <- paste(sp.nm, "occ.poly", sep = ".")
+
+
+  o.path.pts <- "1_sppData/occ.pts"
+  if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
+  if(save.pts){
+    if(dir.exists(o.path.pts)==FALSE) dir.create(o.path.pts)
+  }
+  #
+  f.poly <- function(i, spp.occ.list, o.path.pts, k,
+                     sp.nm, convex, alpha, save, save.pts, crs.set,
+                     c.m, r, q, distance, min.nc, max.nc,
+                     method, index, alphaBeale, plot){
+    occ.spdf <- spp.occ.list[[i]]
+    if(!any(class(occ.spdf) %in% c("SpatialPoints", "SpatialPointsDataFrame"))){
+      lon.col <- colnames(occ.spdf)[grep("^lon$|^long$|^longitude$", colnames(occ.spdf), ignore.case = T, fixed = F)][1]
+      lat.col <- colnames(occ.spdf)[grep("^lat$|^latitude$", colnames(occ.spdf), ignore.case = T)][1]
+      sp::coordinates(occ.spdf) <- c(lon.col, lat.col)
+    }
+    if(save.pts){
+      raster::shapefile(occ.spdf, filename = paste(o.path.pts, paste0(paste(names(spp.occ.list)[i], "occ.pts", sep = "."),".shp"), sep = "/" ), overwrite=TRUE)
+    }
+
+    if(k == 1){
+      resu <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
+    } else if (k != 1) {
+      resu <-  poly.splt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
+                         distance = distance, min.nc = min.nc, max.nc = max.nc,
+                         method = method, index = index, alphaBeale = alphaBeale,
+                         convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
+    }
+
+    if(plot){
+      sp::plot(resu, main=names(spp.occ.list)[i])
+      sp::plot(occ.spdf, col="red", add=TRUE)
+    }
+    return(resu)
+  }
+
+  if(numCores>1){
+    plot <- F
+
+    cl<-parallel::makeCluster(numCores)
+
+    occ.pgns <- parallel::clusterApply(cl, base::seq_along(spp.occ.list),
+                                       function(i, spp.occ.list, o.path.pts, k,
+                                                sp.nm, convex, alpha, save, save.pts, crs.set,
+                                                c.m, r, q, distance, min.nc, max.nc,
+                                                method, index, alphaBeale, plot){
+
+                                         f.poly(i, spp.occ.list, o.path.pts, k,
+                                                sp.nm, convex, alpha, save, save.pts, crs.set,
+                                                c.m, r, q, distance, min.nc, max.nc,
+                                                method, index, alphaBeale, plot)
+
+                                       }, spp.occ.list, o.path.pts, k,
+                                       sp.nm, convex, alpha, save, save.pts, crs.set,
+                                       c.m, r, q, distance, min.nc, max.nc,
+                                       method, index, alphaBeale, plot)
+
+    parallel::stopCluster(cl)
+
+  } else {
+    occ.pgns <- lapply(base::seq_along(spp.occ.list),
+                       function(i, spp.occ.list, o.path.pts, k,
+                                sp.nm, convex, alpha, save, save.pts, crs.set,
+                                c.m, r, q, distance, min.nc, max.nc,
+                                method, index, alphaBeale, plot){
+
+                         f.poly(i, spp.occ.list, o.path.pts, k,
+                                sp.nm, convex, alpha, save, save.pts, crs.set,
+                                c.m, r, q, distance, min.nc, max.nc,
+                                method, index, alphaBeale, plot)
+
+                       }, spp.occ.list, o.path.pts, k,
+                       sp.nm, convex, alpha, save, save.pts, crs.set,
+                       c.m, r, q, distance, min.nc, max.nc,
+                       method, index, alphaBeale, plot)
+
+  }
+
+  names(occ.pgns) <- names(spp.occ.list)
+  return(occ.pgns)
+}
+
 
 
 #' Bind list of SpatialPolygons into a single SpatialPolygons object
@@ -558,7 +558,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 
   if(numCores>1){
 
-    cl<-parallel::makeCluster(numCores)
+    cl <- parallel::makeCluster(numCores)
 
     occ.b.env <- parallel::clusterApply(cl, base::seq_along(occ.b),
                                     function(i, occ.b, env.uncut, path.env.out){
@@ -801,8 +801,8 @@ thin.batch <- function(loc.data.lst = list(),
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
 # #' @param wtd : which thinned dataset?
 #'
-# #' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
-#' @seealso \code{\link[spThin]{spThin}}, \code{\link{thin.batch}}
+#' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
+# #' @seealso \code{\link[spThin]{spThin}}, \code{\link{thin.batch}}
 #' @return named list of thinned occurence data for each species in the list
 #' @examples
 #' occ.locs <- loadTocc(thinned.dataset.batch)

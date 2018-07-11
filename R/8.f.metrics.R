@@ -50,7 +50,7 @@
 #'
 #' Compute total suitable area for multiple climatic scenario, threshold and model criteria.
 #'
-#' @inheritParams plot.mdl.diff
+#' @inheritParams plotMdlDiff
 #' @param digits integer indicating the number of decimal places. see ?round for details.
 #' @param restrict a raster to select a region to compute area.
 #' @seealso \code{\link[raster]{area}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}

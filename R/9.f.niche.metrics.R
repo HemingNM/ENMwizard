@@ -10,7 +10,7 @@
 #' @param scn.nm name of climatic scenarios to compute overlap.
 #' @param model.compare Reference model to be compared (AvgAICc, LowAICc, Mean.ORmin,
 #'  Mean.OR10, Mean.AUCmin, Mean.AUC10)
-#' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}
+# #' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}
 #' @return A list of matrices containing the three metrics (I, D, and Spearman rank correlation)
 #' for each climatic scenario
 #' @examples
@@ -18,7 +18,7 @@
 # #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf,
 # #' scn.nm=c("futAC5085", "futAC7085"), 3)
 # #' @export
-# f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
+f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
 # f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){
 #
 #   ovr.spp <- lapply(names(mcmp.l), function(sp, mcmp.l, comb.plots){ # , ovr.vl

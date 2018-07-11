@@ -19,7 +19,7 @@ Format (underscript) selected texts (criteria used to select models) to be used 
 make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 }
 \seealso{
-\code{\link{plot.mdl.diff}}, \code{\link{plot.scn.diff}}
+\code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
 }
 \keyword{internal}
 

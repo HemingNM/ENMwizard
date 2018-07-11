@@ -4,7 +4,7 @@
 #' Format (underscript) selected texts (criteria used to select models) to be used on plotting.
 #'
 #' @param x list of text to be formatted
-#' @seealso \code{\link{plot.mdl.diff}}, \code{\link{plot.scn.diff}}
+#' @seealso \code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
 #' @return list of formatted text
 #' @examples
 #' make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
@@ -37,7 +37,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param mtp.l List of stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
-#' @seealso \code{\link{plot.mdl.diff}}, \code{\link{plot.scn.diff}}
+#' @seealso \code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions
 #' @examples
 #' f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
@@ -114,17 +114,16 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #'
 # #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams f.thr.batch
-#' @inheritParams mxnt.c
 #' @param mtp.l List of stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
-#' @seealso \code{\link{plot.scn.diff}}
+#' @param save Logical. If TRUE will save plots in pdf.
+#' @seealso \code{\link{plotScnDiff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
-#' plot.mdl.diff(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
-#' plot.mdl.diff(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
-# f.plot.mxnt.preds.mscn
+#' plotMdlDiff(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
+#' plotMdlDiff(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
 #' @export
-plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
+plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
   { path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
@@ -257,18 +256,18 @@ plot.mdl.diff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 #' Plot differences between a selected climatic scenario and all other climatic scenarios for each species.
 #' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
 #'
-#' @inheritParams plot.mdl.diff
+#' @inheritParams plotMdlDiff
 #' @inheritParams mxnt.c
 #' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
 #' @param mSel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
 #' Mean.OR10, Mean.ORmin
 #' @param save Export to pdf or not?
-#' @seealso \code{\link{plot.mdl.diff}}
+#' @seealso \code{\link{plotMdlDiff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
-#' plot.scn.diff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
+#' plotScnDiff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
 #' @export
-plot.scn.diff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current", # , mSel=  "AvgAICc"
+plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
                           basemap=NULL, save=FALSE, numCores=1){
   if(is.null(mSel)){
     stop("Need to specify 'mSel'")
