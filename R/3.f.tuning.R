@@ -21,8 +21,12 @@
 #' ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
 #' @export
 ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
-                              bg.grp = NULL, RMvalues = seq(0.5, 4, 0.5),
-                              fc = c("L", "LQ", "H", "LQH", "LQHP", "LQHPT"),
+                              bg.grp = NULL, RMvalues = seq(0.5, 4.5, 0.5),
+                              fc = c("L", "P", "Q", "H",
+                                     "LP", "LQ", "LH",
+                                     "PQ", "PH", "QH",
+                                     "LPQ", "LPH", "LQH", "PQH",
+                                     "LPQH"),
                               categoricals = NULL, n.bg = 10000, method = "block",
                               overlap = FALSE, aggregation.factor = c(2, 2),
                               kfolds = NA, bin.output = FALSE, clamp = TRUE,
