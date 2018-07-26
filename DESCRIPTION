@@ -1,8 +1,8 @@
 Package: ENMwizard
 Type: Package
 Title: Advanced Tecniques for Ecological Niche Modeling Made Easy
-Version: 0.1.7
-Author: Neander Marcel Heming, Eliécer E. Gutiérrez
+Version: 0.1.8
+Author: Neander Marcel Heming, Cristian Dambros, Eliécer E. Gutiérrez
 Maintainer: Neander Marcel Heming <neanderh@yahoo.com.br>
 Description: This package provides tools to facilitate the use of advanced
     techiques related to Ecological Niche Modeling (ENM) and the automation of
