@@ -22,4 +22,3 @@ f.var.ci(mcmp.l = mxnt.mdls.preds.lst)
 \seealso{
 \code{\link[dismo]{maxent}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 }
-

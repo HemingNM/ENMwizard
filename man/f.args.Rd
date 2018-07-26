@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.f.tuning.final.R
 \name{f.args}
 \alias{f.args}
-\title{Creating arguments for selected models}
+\title{Create arguments for selected models}
 \usage{
 f.args(x, mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
   save = "B", randomseed = FALSE, responsecurves = TRUE,
@@ -42,4 +42,3 @@ ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCore
 f.args(ENMeval.res.lst[[1]]@results)
 }
 \keyword{internal}
-

@@ -31,4 +31,3 @@ list of environmental layers (raster/brick) cutted
 \description{
 This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 }
-

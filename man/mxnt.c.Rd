@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.f.tuning.final.R
 \name{mxnt.c}
 \alias{mxnt.c}
-\title{Calibrating selected models}
+\title{Calibrate MaxEnt models based on model selection criteria}
 \usage{
 mxnt.c(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TRUE,
   nbg = 10000, formt = "raster", pred.args = c("outputformat=cloglog",
@@ -73,4 +73,3 @@ return selected maxent models calibrated.
 \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }
 \keyword{internal}
-

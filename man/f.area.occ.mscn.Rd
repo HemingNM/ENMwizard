@@ -25,4 +25,3 @@ areas.occ.lst <- f.area.occ.mscn(mtp.l=mods.thrshld.lst)
 \seealso{
 \code{\link[raster]{area}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
 }
-

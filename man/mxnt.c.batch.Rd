@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.f.tuning.final.R
 \name{mxnt.c.batch}
 \alias{mxnt.c.batch}
-\title{Calibrating and predicting selected models for several species}
+\title{Calibrate MaxEnt models based on model selection criteria for several species}
 \usage{
 mxnt.c.batch(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE,
   formt = "raster", pred.args = c("outputformat=cloglog", "doclamp=true",
@@ -70,4 +70,3 @@ plot(mxnt.mdls.preds.lst[[1]][[4]]) # MaxEnt predictions, based on the model sel
 \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 }
-

@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.f.mscn.projection.R
 \name{mxnt.p.batch.mscn}
 \alias{mxnt.p.batch.mscn}
-\title{Projecting calibrated MaxEnt models for several species onto multiple environmental scenarios}
+\title{Project calibrated MaxEnt models for several species onto multiple environmental scenarios}
 \usage{
 mxnt.p.batch.mscn(mcm.l, a.proj.l, formt = "raster", numCores = 1,
   parallelTunning = TRUE)
@@ -33,4 +33,3 @@ mxnt.mdls.preds.pf <- mxnt.p.batch.Mscn(mcm.l = mxnt.mdls.preds.lst, a.proj.l = 
 \code{\link{f.args}}, \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}},
 \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p}}
 }
-

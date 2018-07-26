@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.f.mscn.projection.R
 \name{mxnt.p}
 \alias{mxnt.p}
-\title{Projecting Calibrated MaxEnt Models}
+\title{Project calibrated MaxEnt models}
 \usage{
 mxnt.p(mcm, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
   numCores = 1, parallelTunning = TRUE)
@@ -37,4 +37,3 @@ the original object.
 \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p.batch.mscn}}
 }
 \keyword{internal}
-

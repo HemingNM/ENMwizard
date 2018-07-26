@@ -18,4 +18,3 @@ Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too 
 \seealso{
 \code{\link{ENMevaluate.batch}}, \code{\link[ENMeval]{ENMevaluate}},
 }
-

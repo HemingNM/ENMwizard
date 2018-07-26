@@ -60,4 +60,3 @@ length(thinned.dataset.batch[[1]])
 \seealso{
 \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 }
-

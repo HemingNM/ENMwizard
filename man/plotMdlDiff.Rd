@@ -33,6 +33,8 @@ This function will save the figures on pdf files in the folder "Mdls.thrshld/fig
 }
 \examples{
 f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
+plotMdlDiff(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
+plotMdlDiff(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
 }
 \seealso{
 \code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
@@ -73,4 +75,3 @@ f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
 \keyword{the}
 \keyword{using}
 \keyword{will}
-

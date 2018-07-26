@@ -76,4 +76,3 @@ occ.polys <- poly.c.batch(spp.occ.list, convex=TRUE, alpha=10)
 \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
 #' @return A named list of spatial polygons built using coordinates
 }
-

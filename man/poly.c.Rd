@@ -34,4 +34,3 @@ plot(occ.poly)
 \code{\link{poly.c.batch}}, \code{\link{poly.splt}}
 }
 \keyword{internal}
-

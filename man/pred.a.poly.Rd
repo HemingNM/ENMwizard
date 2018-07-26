@@ -39,4 +39,3 @@ But the exact value can be defined through "deg.incr" and "mult". This method ta
 \code{\link{pred.a.poly.batch}}
 }
 \keyword{internal}
-

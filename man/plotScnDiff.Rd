@@ -37,4 +37,3 @@ plotScnDiff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
 \seealso{
 \code{\link{plotMdlDiff}}
 }
-

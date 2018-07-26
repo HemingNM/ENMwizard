@@ -22,4 +22,3 @@ make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 \code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
 }
 \keyword{internal}
-

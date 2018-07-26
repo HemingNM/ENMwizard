@@ -77,4 +77,3 @@ occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 \code{\link{poly.c}}, \code{\link{poly.c.batch}}, \code{\link[NbClust]{NbClust}}
 }
 \keyword{internal}
-

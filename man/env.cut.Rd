@@ -38,4 +38,3 @@ for(i in 1:length(occ.b.env)){
 \seealso{
 \code{\link[raster]{crop}}, \code{\link{bffr.batch}}
 }
-

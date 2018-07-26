@@ -2,7 +2,7 @@
 % Please edit documentation in R/6.f.threshold.R
 \name{f.thr.batch}
 \alias{f.thr.batch}
-\title{Apply threshold for all predictions}
+\title{Apply threshold for MaxEnt projections across all species}
 \usage{
 f.thr.batch(mcmp.l, thrshld.i = 4:6, numCores = 1)
 }
@@ -37,4 +37,3 @@ mods.thrshld.lst <- f.thr.batch(mcmp.l=mxnt.mdls.preds.cf)
 \seealso{
 \code{\link{f.thr}}
 }
-

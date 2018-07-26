@@ -2,7 +2,7 @@
 % Please edit documentation in R/6.f.threshold.R
 \name{f.thr}
 \alias{f.thr}
-\title{Apply threshold for a prediction}
+\title{Apply threshold for MaxEnt projections of a species}
 \usage{
 f.thr(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL)
 }
@@ -42,4 +42,3 @@ plot(mods.thrshld[[2]][[2]]) # binary
 \code{\link{f.thr.batch}}
 }
 \keyword{internal}
-

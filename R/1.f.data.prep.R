@@ -119,14 +119,15 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
     # for a package for further improvements see:
     # https://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf
 
-    if(c.m == "E"){ ## ELBOW method
-      dist.obj <- stats::dist(u.pts)
-      hclust.obj <- stats::hclust(dist.obj)
-      css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
-      elbow.obj <- GMD::elbow.batch(css.obj)
-      k <- elbow.obj$k
-      clust <- stats::cutree(hclust.obj, k)
-    } else if (c.m == "AP") { # Affinity Propagation (AP)
+    # if(c.m == "E"){ ## ELBOW method
+    #   dist.obj <- stats::dist(u.pts)
+    #   hclust.obj <- stats::hclust(dist.obj)
+    #   css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
+    #   elbow.obj <- GMD::elbow.batch(css.obj)
+    #   k <- elbow.obj$k
+    #   clust <- stats::cutree(hclust.obj, k)
+    # } else
+    if (c.m == "AP") { # Affinity Propagation (AP)
       apclus <- apcluster::apcluster(apcluster::negDistMat(r=r), u.pts)
       # apclus <- apcluster::apcluster(apcluster::expSimMat(r=2, w=10), u.pts)
       apclus <- apcluster::apcluster(apclus@sim, q=q)
