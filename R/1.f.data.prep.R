@@ -121,14 +121,18 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 
     if(c.m == "E"){ ## ELBOW method
       stop("Currently not available. Leave NULL for using Hierarquical clustering or choose between AP or NB")
-    # package GMD is not available on cran
-    # for alternative: https://cran.r-project.org/web/packages/uHMM/uHMM.pdf - uHMM::KmeansAutoElbow(u.pts, 20, .75, T)
-    #   dist.obj <- stats::dist(u.pts)
-    #   hclust.obj <- stats::hclust(dist.obj)
-    #   css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
-    #   elbow.obj <- GMD::elbow.batch(css.obj)
-    #   k <- elbow.obj$k
-    #   clust <- stats::cutree(hclust.obj, k)
+      # package GMD is not available on cran
+      # for alternative: https://cran.r-project.org/web/packages/uHMM/uHMM.pdf - uHMM::KmeansAutoElbow(u.pts, 20, .75, T)
+      #   dist.obj <- stats::dist(u.pts)
+      #   hclust.obj <- stats::hclust(dist.obj)
+      #   css.obj <- GMD::css.hclust(dist.obj, hclust.obj)
+      #   elbow.obj <- GMD::elbow.batch(css.obj)
+      #   k <- elbow.obj$k
+
+      # elbow.obj <- uHMM::KmeansAutoElbow(u.pts, round(nrow(u.pts)/2), .75, F)
+      # k <- elbow.obj$K
+
+      clust <- stats::cutree(hclust.obj, k)
     } else if (c.m == "AP") { # Affinity Propagation (AP)
       apclus <- apcluster::apcluster(apcluster::negDistMat(r=r), u.pts)
       # apclus <- apcluster::apcluster(apcluster::expSimMat(r=2, w=10), u.pts)
