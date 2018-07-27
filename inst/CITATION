@@ -5,7 +5,7 @@ citEntry(entry	= "Misc", # "Article"
          author 	= personList(person("Neander", "Heming", "Marcel",
                                      email="neanderh@yahoo.com.br", role="aut"),
                               person("Cristian", "Dambros", role="ctb"),
-                              person("Eliécer", "Gutiérrez", "Eduardo", role="ctb")),
+                              person("Eliecer", "Gutierrez", "Eduardo", role="ctb")),
          journal	= "in prep",
          year 		= "2018",
          volume	= "",
