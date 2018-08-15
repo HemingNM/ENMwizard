@@ -268,7 +268,7 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 #' @examples
 #' plotScnDiff(mcmp.l=mxnt.mdls.preds.cf, mtp.l=mods.thrshld.lst)
 #' @export
-plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
+plotScnDiff <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="current",
                           basemap=NULL, save=FALSE, numCores=1){
   if(is.null(mSel)){
     stop("Need to specify 'mSel'")
@@ -300,6 +300,7 @@ plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
 
   f.plot <- function(sp, mtp.l, mdl.crit=NULL, t.NMS, t.nms, thrshld.path,
                      thrshld.nms.mod, basemap, make.underscript) {
+    mSel <- mdl.crit
     mdl.crit <- grep(mdl.crit, names(mtp.l[[sp]][[1]]$binary[[1]]))
 
     comb.plots <- utils::combn(length(mtp.l[[sp]]), 2)
@@ -320,7 +321,7 @@ plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
 
     for(tc in names(mods.thrshld$binary)){ # threshold criteria
       thr.CRT <- t.NMS[which(t.nms %in% tc)] #}
-      cat(paste0(" - ", thr.CRT))
+      cat(paste0(" - ", thr.CRT, ":", mSel))
 
       for(j in 1:n.scn){ # climatic scenario
 
@@ -332,7 +333,7 @@ plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
         # clim.scn name
         n1 <- names(mtp.l[[sp]])[comb.plots[1,j]]
         n2 <- names(mtp.l[[sp]])[comb.plots[2,j]]
-        main.nms <- paste0("Thres. crit.: ", thr.CRT, ". Clim. scen.: ", n1, " vs. ", n2)
+        main.nms <- paste0("Threshold: ", thr.CRT, "\nMod. Sel. Crit: ", mSel) #, "\nClim. scen.: ", n1, " vs. ", n2)
 
         graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
         raster::plot(mod.sc1, breaks= c(0, .5, 1), col=c("white", "gray90"),
@@ -360,12 +361,14 @@ plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , names(mtp.l)[sp]))
     mSel.crt <- mcmp.l[[sp]]$mSel
-    if(!mSel %in% mSel.crt){
+    if(all(!mSel %in% mSel.crt)){
       stop("Need to specify 'mSel' correctly. \nOptions available from selected models are: ", paste(mSel.crt, collapse = " "))
     }
-
-    f.plot(sp, mtp.l, mdl.crit=mSel, t.NMS, t.nms, thrshld.path,
-           thrshld.nms.mod, basemap, make.underscript) # comb.plots,
+    mSel <- mSel[mSel %in% mSel.crt]
+    for(m in mSel){
+      f.plot(sp, mtp.l, mdl.crit=m, t.NMS, t.nms, thrshld.path,
+             thrshld.nms.mod, basemap, make.underscript) # comb.plots,
+    }
   }
 }
 

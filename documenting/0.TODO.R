@@ -24,6 +24,11 @@
 # use species names as data frames when creating spatialPolygonsDataFrames in functions:
 # poly.c (lines #59-60), bind.shp (lines #424)
 
+# 4.f.tunning.final
+# lines 216 and 232: 'resu <- dismo::maxent'
+# Add option to use 'maxnet::maxnet', based on 'algorithm' [line 175] returned from [ENMeval 0.3.0], which allows use of maxnet
+# instead of 'dismo::maxent'
+
 # 10. ensemble of selected models
 #
 #

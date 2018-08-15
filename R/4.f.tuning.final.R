@@ -172,6 +172,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   }
 
   ENMeval.r <- ENMeval.o@results
+  algorithm <- ENMeval.o@algorithm
 
   mdl.arg <- f.args(x=ENMeval.r, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2)
   xsel.mdls <- mdl.arg[[2]]
@@ -236,7 +237,8 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
 
   }
-  return(list(ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
+  return(list(algorithm = algorithm, 
+              ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
               selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,
               mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
