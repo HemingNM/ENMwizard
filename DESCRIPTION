@@ -19,7 +19,7 @@ BugReports: https://github.com/HemingNM/ENMwizard/issues
 RoxygenNote: 6.0.1
 Imports:
     dismo,
-    ENMeval,
+    ENMeval (<= 0.2.2),
     rgdal,
     raster,
     sp,
