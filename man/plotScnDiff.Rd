@@ -4,8 +4,9 @@
 \alias{plotScnDiff}
 \title{Plot differences between climatic scenarios}
 \usage{
-plotScnDiff(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn = "current",
-  basemap = NULL, save = FALSE, numCores = 1)
+plotScnDiff(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel,
+  sel.clim.scn = "current", basemap = NULL, save = FALSE,
+  numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
