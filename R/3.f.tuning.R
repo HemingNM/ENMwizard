@@ -28,7 +28,7 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
                                      "LPQ", "LPH", "LQH", "PQH",
                                      "LPQH"),
                               categoricals = NULL, n.bg = 10000, method = "block",
-                              overlap = FALSE, aggregation.factor = c(2, 2),
+                              algorithm = 'maxnet', overlap = FALSE, aggregation.factor = c(2, 2),
                               kfolds = NA, bin.output = FALSE, clamp = TRUE,
                               rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
                               progbar = TRUE, updateProgress = FALSE,
@@ -45,7 +45,7 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
       eval <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                    occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
                                    fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
-                                   overlap = overlap, aggregation.factor = aggregation.factor,
+                                   algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                    progbar = progbar, updateProgress = updateProgress)
@@ -59,7 +59,7 @@ ENMevaluate.batch <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NU
         ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                                  occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
                                                  fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
-                                                 overlap = overlap, aggregation.factor = aggregation.factor,
+                                                 algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                                  kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                                  rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                                  progbar = progbar, updateProgress = updateProgress)
