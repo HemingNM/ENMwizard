@@ -25,7 +25,7 @@ mxnt.p(mcm, sp.nm, pred.nm = "fut", a.proj, formt = "raster",
 \value{
 A list containing all the items returned from function "mxnt.c", plus the projection specified in a.proj.
 Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
-a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
+a specific model selection criteria (i.e. AvgAICc, LowAICc, avg.test.orMTP, avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)
 }
 \description{
 This function will read an object returned by "mxnt.c", read the calibrated models and project into

@@ -5,9 +5,9 @@
 \title{Create occ polygon for several species}
 \usage{
 poly.c.batch(spp.occ.list, k = 1, c.m = "AP", r = 2, q = 0.3,
-  distance = "euclidean", min.nc = 2, max.nc = 20, method = "mcquitty",
-  index = "all", alphaBeale = 0.1, convex = T, alpha = 10, plot = T,
-  save = T, save.pts = F, numCores = 1,
+  distance = "euclidean", min.nc = 2, max.nc = 20,
+  method = "mcquitty", index = "all", alphaBeale = 0.1, convex = T,
+  alpha = 10, plot = T, save = T, save.pts = F, numCores = 1,
   crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{

@@ -19,7 +19,7 @@
 #' \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A list containing all the items returned from function "mxnt.c", plus the projection specified in a.proj.
 #' Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
-#' a specific model selection criteria (i.e. AvgAICc, LowAICc, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10)
+#' a specific model selection criteria (i.e. AvgAICc, LowAICc, avg.test.orMTP, avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)
 # #' @examples
 #' @keywords internal
 # #' @export
@@ -34,7 +34,7 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   args.all <- mcm$mxnt.args
 
-  mod.nms <- paste0("Mod.", xsel.mdls$sel.cri) # paste(xsel.mdls$sel.cri) # paste0("Mod.", c(1:length(args.aicc), "Mean.ORmin", "Mean.OR10", "Mean.AUCmin", "Mean.AUC10"))
+  mod.nms <- paste0("Mod.", xsel.mdls$sel.cri) # paste(xsel.mdls$sel.cri) # paste0("Mod.", c(1:length(args.aicc), "avg.test.orMTP", "avg.test.or10pct", "avg.test.AUC.MTP", "avg.test.AUC10pct"))
   mod.nms2 <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))

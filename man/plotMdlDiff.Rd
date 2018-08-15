@@ -4,7 +4,8 @@
 \alias{plotMdlDiff}
 \title{Plot differences between predictions of models selected from several criteria}
 \usage{
-plotMdlDiff(mcmp.l, mtp.l, basemap = NULL, save = FALSE, numCores = 1)
+plotMdlDiff(mcmp.l, mtp.l, basemap = NULL, save = FALSE,
+  numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
@@ -33,8 +34,8 @@ This function will save the figures on pdf files in the folder "Mdls.thrshld/fig
 }
 \examples{
 f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
-plotMdlDiff(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
-plotMdlDiff(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
+plotMdlDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
+plotMdlDiff(mcmp.l=mxnt.mdls.preds.pf[1], mtp.l=mods.thrshld.lst[1], basemap=NewWorld)
 }
 \seealso{
 \code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}

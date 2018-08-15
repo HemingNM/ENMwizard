@@ -12,8 +12,8 @@ and model projections for each species.}
 
 \item{scn.nm}{name of climatic scenarios to compute overlap.}
 
-\item{model.compare}{Reference model to be compared (AvgAICc, LowAICc, Mean.ORmin,
-Mean.OR10, Mean.AUCmin, Mean.AUC10)}
+\item{model.compare}{Reference model to be compared (AvgAICc, LowAICc, avg.test.orMTP,
+avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)}
 }
 \value{
 A list of matrices containing the three metrics (I, D, and Spearman rank correlation)

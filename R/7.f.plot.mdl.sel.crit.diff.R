@@ -120,8 +120,8 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @seealso \code{\link{plotScnDiff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
-#' plotMdlDiff(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
-#' plotMdlDiff(mxnt.mdls.preds.pf[1], mods.thrshld.lst[1], basemap=NewWorld)
+#' plotMdlDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
+#' plotMdlDiff(mcmp.l=mxnt.mdls.preds.pf[1], mtp.l=mods.thrshld.lst[1], basemap=NewWorld)
 #' @export
 plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
   { path.res <- "3_out.MaxEnt"
@@ -130,7 +130,7 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
   path.mdls <- paste(path.res, path.sp.m, sep="/")
   pred.args <- mcmp.l[[1]]$pred.args}
 
-  a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
+  a <- c("avg.test.AUC10pct", "avg.test.AUC.MTP", "avg.test.or10pct", "avg.test.orMTP")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
   sca <- c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70", "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_", "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds")
   scb <- c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
@@ -140,7 +140,8 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 
   t.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
   t.NMS <- c("FCV1", "FCV5", "FCV10", "LPT (mtp)", "10P (x10ptp)", "ETSS (etss)", "MTSS", "BTO", "EETD")
-  thrshld.nms.mod <- paste(c("Mod.", paste0(".",t.nms)), collapse ="|")
+  thrshld.nms.mod <- paste(c("Mod\\.", paste0("\\.",t.nms)), collapse ="|")
+  # thrshld.nms.mod <- paste(c("Mod.", paste0(".",t.nms)), collapse ="|")
   thrshld.nms <- paste(t.nms, collapse = "|")
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -152,7 +153,7 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
     # for(sc in names(mtp.l[[sp]])){ # climatic scenario
     mods.thrshld <- mtp.l[[sp]][[sc]]
     cat(c("\n", "Climatic Scenario: ", sc))
-    cat(c("\n", "Threshold Criterion: "))
+    cat(c("\n", "Threshold: "))
 
     for(l in names(mods.thrshld$binary)){ # threshold criteria
       thr.crt <- l
@@ -169,8 +170,8 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 
       for(j in 1:ncol(comb.plots)){ #ncol(comb.plots)
         r.dif <- raster::overlay(mods.thrshld$binary[[l]][[comb.plots[1,j]]], mods.thrshld$binary[[l]][[comb.plots[2,j]]], fun=function(r1,r2) {r1-r2})
-        n1 <- gsub(paste0(".",sc), "", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[1,j]]]))  )
-        n2 <- gsub(paste0(".",sc), "", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[2,j]]]))  )
+        n1 <- gsub(paste0("\\.",sc), "", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[1,j]]]) )  )
+        n2 <- gsub(paste0("\\.",sc), "", gsub(thrshld.nms.mod, "", names(mods.thrshld$binary[[l]][[comb.plots[2,j]]]) )  )
         if(n1 %in% a) { n1 <- b[which(a %in% n1)] }
         if(n2 %in% a) { n2 <- b[which(a %in% n2)] }
 
@@ -182,7 +183,7 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
           sc1 <- gsub("mxnt.pred.fut.|mxnt.pred.past.", "", sc)
           if(sc1 %in% sca) { sc1 <-  scb[which(sca %in% sc1)] }
           graphics::title(paste0("Climatic Scenario: ", sub("mxnt.pred.", "", sub("mxnt.preds", "bioclim", sc1))), line = 1.5, outer = T, cex.main=2)
-          graphics::title(paste0("Threshold Criterion: ", thr.CRT), line = -.5, outer = T, cex.main=2)
+          graphics::title(paste0("Threshold: ", thr.CRT), line = -.5, outer = T, cex.main=2)
         }
         if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
         raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
@@ -259,8 +260,8 @@ plotMdlDiff <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1){
 #' @inheritParams plotMdlDiff
 #' @inheritParams mxnt.c
 #' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
-#' @param mSel Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
-#' Mean.OR10, Mean.ORmin
+#' @param mSel Name of selection criteria to be compared: AvgAICc, LowAICc, avg.test.AUC10pct, avg.test.AUC.MTP,
+#' avg.test.or10pct, avg.test.orMTP
 #' @param save Export to pdf or not?
 #' @seealso \code{\link{plotMdlDiff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
@@ -279,7 +280,7 @@ plotScnDiff <- function(mcmp.l, mtp.l, mSel = "LowAIC", sel.clim.scn="current",
     path.mdls <- paste(path.res, path.sp.m, sep="/")
     pred.args <- mcmp.l[[1]]$pred.args}
 
-  a <- c("Mean.AUC10", "Mean.AUCmin", "Mean.OR10", "Mean.ORmin")
+  a <- c("avg.test.AUC10pct", "avg.test.AUC.MTP", "avg.test.or10pct", "avg.test.orMTP")
   b <- c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)")
   sca <- c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70", "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_", "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds")
   scb <- c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",

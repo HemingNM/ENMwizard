@@ -13,8 +13,8 @@ and model projections for each species.}
 
 \item{mtp.l}{List of stack or brick of thresholded predictions}
 
-\item{mSel}{Name of selection criteria to be compared: AvgAICc, LowAICc, Mean.AUC10, Mean.AUCmin,
-Mean.OR10, Mean.ORmin}
+\item{mSel}{Name of selection criteria to be compared: AvgAICc, LowAICc, avg.test.AUC10pct, avg.test.AUC.MTP,
+avg.test.or10pct, avg.test.orMTP}
 
 \item{sel.clim.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
 

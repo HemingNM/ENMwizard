@@ -4,12 +4,13 @@
 \alias{mxnt.c.batch}
 \title{Calibrate MaxEnt models based on model selection criteria for several species}
 \usage{
-mxnt.c.batch(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE,
-  formt = "raster", pred.args = c("outputformat=cloglog", "doclamp=true",
-  "pictures=true"), mSel = c("AvgAIC", "LowAIC", "OR", "AUC"),
-  wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature", numCores = 1,
-  parallelTunning = TRUE)
+mxnt.c.batch(ENMeval.o.l, a.calib.l, occ.l = NULL,
+  use.ENMeval.bgpts = TRUE, formt = "raster",
+  pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
+  mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
+  randomseed = FALSE, responsecurves = TRUE,
+  arg1 = "noaddsamplestobackground", arg2 = "noautofeature",
+  numCores = 1, parallelTunning = TRUE)
 }
 \arguments{
 \item{ENMeval.o.l}{List of objects of class ENMevaluation}

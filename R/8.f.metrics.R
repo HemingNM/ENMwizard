@@ -69,7 +69,7 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
   area.occ.spp <- lapply(names(mtp.l), function(sp, mtp.l, restrict, digits){ # species, areas
 
     c.nms <- names(mtp.l[[sp]][[1]][[2]][[1]])
-    m.nms <- c("LowAICc", "ORmin", "OR10", "AUCmin", "AUC10", "AvgAICc") # , "test"
+    m.nms <- c("LowAICc", "ORmtp", "OR10", "AUCmtp", "AUC10", "AvgAICc") # , "test"
     invisible(sapply(seq_along(m.nms), function(i, x, y){
       if(sum(grepl(m.nms[i], c.nms))>0){
         c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]

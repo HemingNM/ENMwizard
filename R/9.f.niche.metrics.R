@@ -1,5 +1,5 @@
 # #### 5.3 comparar as distribuições (rasteres de adequabilidade) geradas por diferentes critérios de
-# ## seleção de modelo (AvgAIC, AICLow, Mean.ORmin, Mean.OR10, Mean.AUCmin, Mean.AUC10),
+# ## seleção de modelo (AvgAIC, AICLow, avg.test.orMTP, avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct),
 # ## usando função ENMTools::raster.overlap(r1, r2).
 #' Raster overlap between models selected using different criteria
 #'
@@ -8,8 +8,8 @@
 #'
 #' @inheritParams f.thr.batch
 #' @param scn.nm name of climatic scenarios to compute overlap.
-#' @param model.compare Reference model to be compared (AvgAICc, LowAICc, Mean.ORmin,
-#'  Mean.OR10, Mean.AUCmin, Mean.AUC10)
+#' @param model.compare Reference model to be compared (AvgAICc, LowAICc, avg.test.orMTP,
+#'  avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)
 # #' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}
 #' @return A list of matrices containing the three metrics (I, D, and Spearman rank correlation)
 #' for each climatic scenario

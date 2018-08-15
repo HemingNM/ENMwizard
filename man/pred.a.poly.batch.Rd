@@ -4,8 +4,8 @@
 \alias{pred.a.poly.batch}
 \title{Select area for projection based on the extent of occ points}
 \usage{
-pred.a.poly.batch(occ.polys, deg.incr = NULL, mult = 1, buffer = FALSE,
-  same = TRUE)
+pred.a.poly.batch(occ.polys, deg.incr = NULL, mult = 1,
+  buffer = FALSE, same = TRUE)
 }
 \arguments{
 \item{occ.polys}{list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.}
