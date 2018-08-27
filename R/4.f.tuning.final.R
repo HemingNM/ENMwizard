@@ -267,7 +267,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 #' \code{\link[dismo]{maxent}}, \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @return A 'mcm.l' object. A list of 'mcm' (mxnt.c.mdls, Maxent Calibrated Models), returned from function "mxnt.c"
 #' @examples
-#' mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o=ENMeval.res.lst,
+#' mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l=ENMeval.res.lst,
 #' a.calib.l=occ.b.env, a.proj.l=areas.projection, occ.l=occ, wAICsum=0.99)
 #' mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of wAICc
 #' mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models
