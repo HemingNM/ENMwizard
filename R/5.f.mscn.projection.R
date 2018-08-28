@@ -33,10 +33,15 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
 
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   args.all <- mcm$mxnt.args
-
-  mod.nms <- paste0("Mod.", xsel.mdls$sel.cri) # paste(xsel.mdls$sel.cri) # paste0("Mod.", c(1:length(args.aicc), "avg.test.orMTP", "avg.test.or10pct", "avg.test.AUC.MTP", "avg.test.AUC10pct"))
-  mod.nms2 <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
-
+  
+  # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"])
+  mod.nms <- paste0("Mod.", xsel.mdls$sel.cri)
+  # mod.nms2 <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
+  ens2gsub <- paste0(c("AICc_", "WAAUC_", "EBPM_"), rep(1:length(xsel.mdls$sel.cri),each=3), "." , collapse = "|")
+  mod.nms2 <- gsub(ens2gsub, "", mod.nms)
+  mod.nms2 <- gsub(paste0("\\.{", 1:length(xsel.mdls$sel.cri), "}" , collapse = "|"), ".", mod.nms2)
+  
+  
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -79,12 +84,13 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
   }
 
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
-  #### AIC AVG model
+  
+  #### Ensemble models (AICavg, WAAUC, EBPM)
   if(length(grep("AvgAIC", mcm$mSel))>0) {
     #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
-    args.aicc <- grep("AIC", xsel.mdls$sel.cri)
+    args.aicc <- order(xsel.mdls$delta.AICc) # args.aicc <- grep("AIC", xsel.mdls$sel.cri) #
     # create vector of model weights
-    wv <- xsel.mdls[order(xsel.mdls$delta.AICc),"w.AIC"][seq_along(args.aicc)]
+    wv <- xsel.mdls[args.aicc,"w.AIC"] #[seq_along(args.aicc)]
 
     ### stack prediction rasters (to create Average Model prediction)
     filename.avg.stk <- filename.or.auc.laic[args.aicc]
@@ -104,11 +110,11 @@ mxnt.p <- function(mcm, sp.nm, pred.nm="fut", a.proj, formt = "raster",
     names(mod.preds)[raster::nlayers(mod.preds)] <- "Mod.AvgAICc"
   }
 
-  #### AUC OmR & LowAIC models
-  args.or.auc.laic <- grep("LowAICc|AUC|OR", mod.nms)
+  #### AUC OR & LowAIC models
+  args.or.auc.laic <- grep("LowAICc|AUC10|AUCmtp|OR10|ORmtp", mod.nms)
   for(i in args.or.auc.laic){
     mod.preds <- raster::addLayer(mod.preds, mod.all[[i]] )
-    names(mod.preds)[raster::nlayers(mod.preds)] <- gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms[i])
+    names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms2[i]# gsub(paste0("AICc_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms[i])
     }
 
   mcm$mxnt.preds <- append(mcm$mxnt.preds, stats::setNames(list(mod.preds) , paste0(pred.nm)))

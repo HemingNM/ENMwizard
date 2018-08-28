@@ -180,17 +180,19 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   mdls.keep <- xsel.mdls$sel.cri!=""
   xsel.mdls <- xsel.mdls[mdls.keep,]
   args.all <- mdl.arg[[1]][mdls.keep]
-  args.aicc <- grep("AIC", xsel.mdls$sel.cri)
-
+  # args.aicc <- grep("AIC", xsel.mdls$sel.cri)
+  # args.WAAUC <- grep("WAAUC", xsel.mdls$sel.cri)
+  # args.EBPM <- grep("EBPM", xsel.mdls$sel.cri)
+  
   # exportar planilha de resultados
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
   res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "parameters", "rankAICc", "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
   colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAICc", "NP", "Rank", "OR10", "ORLPT", "AUC")
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
-
-  mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"]) # mod.nms <- paste(xsel.mdls[, "sel.cri"]) # paste0("Mod.", c(1:length(args.aicc), "avg.test.orMTP", "avg.test.or10pct", "avg.test.AUC.MTP", "avg.test.AUC10pct"))
-  mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
+  # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"])
+  mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"])
+  mod.preds <- raster::stack()
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
@@ -200,7 +202,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
   mxnt.mdls <- vector("list", length(args.all))
 
-  #### AIC AVG model
+  #### Calibrate ALL selected models
   {
     if(numCores>1 & parallelTunning){
 
