@@ -57,7 +57,8 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
 
   if(dir.exists(thrshld.path)==FALSE) {dir.create(thrshld.path)}
 
-  thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
+  # thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
+  thrshld.nms <- tnm[thrshld.i]
   thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl("Cloglog", rownames(mxnt.mdls[[1]]@results)) & # TODO use "outpt" variable
                                                      grepl("threshold", rownames(mxnt.mdls[[1]]@results))][thrshld.i]
 
