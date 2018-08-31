@@ -12,6 +12,8 @@ f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
 
 \item{mtp}{Stack or brick of thresholded predictions}
 
+\item{sel.clim.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
+
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 
 \item{thrshld.path}{path to threshold projections}
