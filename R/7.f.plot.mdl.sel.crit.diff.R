@@ -370,7 +370,7 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
 #' @inheritParams plotScnDiff
 #' @inheritParams plotMdlDiffB
 #' @param m Index of model selection criteria to be plotted
-#' #' @keywords internal
+#' @keywords internal
 f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thrshld.nms.mod,
                       save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
 

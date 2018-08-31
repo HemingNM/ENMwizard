@@ -80,6 +80,7 @@ ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
 #' @inheritParams mxntCalibB
 #'
 #' @seealso \code{\link{ENMevaluateB}}, \code{\link[ENMeval]{ENMevaluate}},
+#' @keywords internal
 #' @export
 optENMevalObjL <- function (ENMeval.o.l) {
   ENMeval.res <- vector("list", length(ENMeval.o.l))

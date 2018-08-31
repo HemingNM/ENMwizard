@@ -18,3 +18,4 @@ Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too 
 \seealso{
 \code{\link{ENMevaluateB}}, \code{\link[ENMeval]{ENMevaluate}},
 }
+\keyword{internal}

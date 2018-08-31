@@ -8,8 +8,7 @@ f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
   thrshld.nms.mod, save, msnm, msr, scnm, scr)
 }
 \arguments{
-\item{m}{Index of model selection criteria to be plotted
-#' @keywords internal}
+\item{m}{Index of model selection criteria to be plotted}
 
 \item{mtp}{Stack or brick of thresholded predictions}
 
@@ -37,3 +36,4 @@ be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5
 \description{
 internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
 }
+\keyword{internal}
