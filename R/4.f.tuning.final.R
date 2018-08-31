@@ -2,7 +2,7 @@
 #' Model selection and creation of MaxEnt arguments for selected models
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
-#' return the results table with models selected by the chosen criteria. It can also return the 
+#' return the results table with models selected by the chosen criteria. It can also return the
 #' necessary arguments for final model calibration and predictions.
 #'
 #' @param x Object of class ENMevaluation
@@ -29,11 +29,11 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
   x <- x@results
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
-  
+
   x.a.i <- order(x$delta.AICc)
   x <- x[x.a.i,]
   if(is.null(x$rankAIC)) {x$rankAIC <- 1:nrow(x)} # if something goes wrong with function mxntCalib, check this line
-  
+
   # AvgAIC
   if("AvgAIC" %in% mSel){
     if(any(cumsum(x$w.AIC) >= wAICsum)){
@@ -41,15 +41,15 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
     } else {
       wsum <- 1:length(x$w.AIC)
     }
-    
+
     x$sel.cri[wsum] <- paste0(x$sel.cri[wsum], paste0("AIC_", wsum))
-    
+
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AIC")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
-    
+
   }
   x <- x[order(x$ID),]
-  
+
   # WA consensus through AUC - Marmion et al 2009
   # get half of top AUC models
   if("WAAUC" %in% mSel){
@@ -60,8 +60,8 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
     # sum(auc2*mji2)/sum(auc2)
     # x$sel.cri[xAUCmtp.i] <- sub("^\\.", "", paste(x$sel.cri[xAUCmtp.i], "AUCmtp", sep = "."))
   }
-  
-  # EBPM (Ensemble of best-performing models) - Boria et al 2016 
+
+  # EBPM (Ensemble of best-performing models) - Boria et al 2016
   # 10% top-performing models based on the sequential criteria:
   # Lowest average omission rate (OR) and, subsequently, the highest average AUCevaluation
   if("EBPM" %in% mSel){
@@ -72,19 +72,19 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
     # } else {
     x$sel.cri[EBPM] <- sub("^\\.", "", paste(x$sel.cri[EBPM], paste0("EBPM_", 1:length(EBPM)), sep = "."))
     # }
-  }  
-  
-  
+  }
+
+
   # # Mean ALL - Marmion et al 2009
   # mean(mji)
   # # Median ALL - Marmion et al 2009
   # median(mji)
-  # 
+  #
   # # Median(PCA) - Marmion et al 2009
   # # Runs PCA on suitability values:
   # # Selects half models for which the variance of predictions along PC1 is the greatest
-  
-  
+
+
   # LowAIC
   if("LowAIC" %in% mSel){
     x.la.i <- x.a.i[1]
@@ -92,7 +92,7 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
   } else {
     x.la.i <- NULL
   }
-  
+
   # OR
   if("OR" %in% mSel){
     # seq
@@ -105,7 +105,7 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
     xORm.i <- NULL
     xOR10.i <- NULL
   }
-  
+
   # AUC
   if("AUC" %in% mSel){
     #AUCmtp
@@ -118,15 +118,15 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
     xAUCmtp.i <- NULL
     xAUC10.i <- NULL
   }
-  
+
   xsel.mdls <- x#[x$sel.cri!="",]
-  
+
   f <- factor(xsel.mdls$features)
   beta <- c(xsel.mdls$rm)
   cat("\n", "arguments used for building models", "\n")
   print(data.frame(ID=xsel.mdls$ID, optimality.criteria = xsel.mdls$sel.cri, features=xsel.mdls$features, beta=xsel.mdls$rm))
   xsel.mdls$ID <- NULL
-  
+
   cat("\n")
   args <- paste(paste0(arg1), paste0(arg2),
                 ifelse(grepl("H", f), paste("hinge"), paste("nohinge")),
@@ -138,7 +138,7 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
                 paste0("responsecurves=", ifelse(responsecurves==TRUE, "true", "false")),
                 paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
-  
+
   if(save == "A"){
     return(c(strsplit(args, ",")))
   } else if(save == "M"){
@@ -187,7 +187,6 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
 #' \code{\link[dismo]{maxent}}, \code{\link{mxntProj}}, \code{\link{mxntProjB}}
 #' @return A 'mcm' (mxntCalib.mdls, Maxent Calibrated Models). A list containing the models ('selected.mdls') used for model calibration,
 #' calibrated maxent models ('mxnt.mdls'), and arguments used for calibration ('pred.args').
-#' @keywords internal
 #' @export
 mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, formt = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
@@ -220,7 +219,7 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
   # args.aicc <- grep("AIC", xsel.mdls$sel.cri)
   # args.WAAUC <- grep("WAAUC", xsel.mdls$sel.cri)
   # args.EBPM <- grep("EBPM", xsel.mdls$sel.cri)
-  
+
   # exportar planilha de resultados
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
   res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "parameters", "rankAIC", "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
@@ -276,7 +275,7 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 
 
   }
-  return(list(algorithm = algorithm, 
+  return(list(algorithm = algorithm,
               ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
               selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,

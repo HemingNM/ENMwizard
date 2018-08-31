@@ -30,7 +30,6 @@
 #' @return  SpatialPolygons (enlarged occ.poly)
 # #' @examples
 #'
-#' @keywords internal
 #' @export
 predArPoly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ #, o.path = "occ.poly"
   path.proj <- "1_sppData/area.proj.poly"
@@ -134,8 +133,7 @@ predArPolyB <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, same=TRU
 # #' @examples
 #'
 #' @keywords internal
-#' @export
-predAr <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
+predAr <- function(pred.poly, env.uncut, prj.nm="", sp.nm="species"){
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
@@ -256,7 +254,7 @@ predArMscnB <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj=NULL,
 # #' @examples
 #'
 #' @export
-predArRst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp"){ # , crs.set
+predArRst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="species"){ # , crs.set
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))

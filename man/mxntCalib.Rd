@@ -73,4 +73,3 @@ calibrate the selected maxent models.
 \code{\link{modSel}}, \code{\link{mxntCalibB}}, \code{\link{ENMevaluateB}}, \code{\link[ENMeval]{ENMevaluate}},
 \code{\link[dismo]{maxent}}, \code{\link{mxntProj}}, \code{\link{mxntProjB}}
 }
-\keyword{internal}

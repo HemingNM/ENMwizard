@@ -14,9 +14,8 @@
 #' @examples
 #' occ.poly <- polyC(occ.spdf, sp.nm="occ.poly")
 #' plot(occ.poly)
-#' @keywords internal
 #' @export
-polyC <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
+polyC <- function(occ.spdf, sp.nm="species", convex=TRUE, alpha=10, save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
@@ -97,11 +96,10 @@ polyC <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, crs
 #' occ.polys <- polyCB(spp.occ.list)
 #' occ.polys$Bvarieg <- polySplt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @keywords internal
-#' @export
 polySplt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 1, max.nc = 20,
                       method = "centroid", index = "trcovw", alphaBeale = 0.1,
-                      convex=TRUE, alpha=10, sp.nm = "sp.nm", save = T,
+                      convex=TRUE, alpha=10, sp.nm = "species", save = T,
                       crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
 
   if(is.null(nm.col.dt)){
@@ -389,8 +387,7 @@ polyCB <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 #' @seealso \code{\link{polyCB}}, \code{\link{polyC}}, \code{\link{polySplt}}, \code{\link[NbClust]{NbClust}}
 #' @return shapefile with binded polygons
 #' @keywords internal
-#' @export
-bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
+bind.shp <- function(occ.polys, sp.nm="species", save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
@@ -804,7 +801,7 @@ thinB <- function(loc.data.lst = list(),
 
 
 #' Load filtered occurrence data
-#' 
+#'
 #' Load filtered occurrence data from object returned by "thinB" function
 #'
 #' @param occ.list.thin named list returned from "thinB"

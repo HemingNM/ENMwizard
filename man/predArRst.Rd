@@ -4,7 +4,8 @@
 \alias{predArRst}
 \title{Cut a projection area based on a SpatialPolygon (e.g. Ecoregion)}
 \usage{
-predArRst(area.p, env.uncut, mask = FALSE, prj.nm = "", sp.nm = "sp")
+predArRst(area.p, env.uncut, mask = FALSE, prj.nm = "",
+  sp.nm = "species")
 }
 \arguments{
 \item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}

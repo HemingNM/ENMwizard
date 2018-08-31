@@ -25,6 +25,8 @@ calibrated models and model projections for each species}
 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).}
 
 \item{path.mdls}{Path where thresholded rasters will be saved}
+
+\item{sp.nm}{Species name. Used to name the output folder}
 }
 \value{
 Stack or brick of thresholded predictions
@@ -42,4 +44,3 @@ plot(mods.thrshld[[2]][[2]]) # binary
 \seealso{
 \code{\link{thrB}}
 }
-\keyword{internal}

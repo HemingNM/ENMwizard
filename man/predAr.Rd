@@ -4,7 +4,7 @@
 \alias{predAr}
 \title{Cut area for projection based on SpatialPolygons}
 \usage{
-predAr(pred.poly, env.uncut, prj.nm = "", sp.nm = "sp")
+predAr(pred.poly, env.uncut, prj.nm = "", sp.nm = "species")
 }
 \arguments{
 \item{pred.poly}{list of SpatialPolygons (usually of based on species occ points)}

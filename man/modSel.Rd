@@ -33,7 +33,7 @@ a list with both, args and selected models, (if save="B")
 }
 \description{
 This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
-return the results table with models selected by the chosen criteria. It can also return the 
+return the results table with models selected by the chosen criteria. It can also return the
 necessary arguments for final model calibration and predictions.
 }
 \seealso{

@@ -36,4 +36,3 @@ the original object.
 \code{\link{modSel}}, \code{\link{mxntCalib}}, \code{\link{mxntCalibB}}, \code{\link[dismo]{maxent}},
 \code{\link[ENMeval]{ENMevaluate}}, \code{\link{mxntProjB}}
 }
-\keyword{internal}

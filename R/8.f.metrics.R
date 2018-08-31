@@ -61,8 +61,8 @@
 cSArea <- function(mtp.l, restrict=NULL, digits=0){
   area.occ.spp <- vector("list", length = length(mtp.l))
   names(area.occ.spp) <- names(mtp.l)
-  thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
-  thrshld.nms <- paste(paste0(".",thrshld.nms), collapse = "|")
+  # thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
+  thrshld.nms <- paste(paste0(".", tnm), collapse = "|")
 
   areas.occ.df <- vector("list")
 

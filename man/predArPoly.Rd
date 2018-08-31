@@ -38,4 +38,3 @@ But the exact value can be defined through "deg.incr" and "mult". This method ta
 \seealso{
 \code{\link{predArPolyB}}
 }
-\keyword{internal}

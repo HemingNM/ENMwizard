@@ -4,7 +4,7 @@
 \alias{polyC}
 \title{Create minimum convex polygon based on species occurence data}
 \usage{
-polyC(occ.spdf, sp.nm = "sp.nm", convex = TRUE, alpha = 10,
+polyC(occ.spdf, sp.nm = "species", convex = TRUE, alpha = 10,
   save = TRUE, crs.set = "+proj=longlat +datum=WGS84")
 }
 \arguments{
@@ -33,4 +33,3 @@ plot(occ.poly)
 \seealso{
 \code{\link{polyCB}}, \code{\link{polySplt}}
 }
-\keyword{internal}

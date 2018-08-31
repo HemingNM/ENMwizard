@@ -147,6 +147,7 @@ plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, nu
 #' @param thrshld.path path to threshold projections
 #' @param thrshld.nms.mod names of threshold models
 #' @param sc Index of climatic scenario to be plotted
+#' @keywords internal
 f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
                       save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
   # for(sc in names(mtp)){ # climatic scenario
@@ -369,6 +370,7 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
 #' @inheritParams plotScnDiff
 #' @inheritParams plotMdlDiffB
 #' @param m Index of model selection criteria to be plotted
+#' #' @keywords internal
 f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thrshld.nms.mod,
                       save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
 
@@ -524,6 +526,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #'   Sys.sleep(1)
 #' }
 # #' @export
+#' @keywords internal
 auto.layout <- function(n, layout=T){
   ### figure out how many rows
   sq = sqrt(n)

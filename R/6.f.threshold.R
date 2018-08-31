@@ -8,6 +8,7 @@
 #' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
+#' @inheritParams mxntCalib
 #' @param mcmp Species "i" of a object returned by "mxntProjB", containing a list of
 #' calibrated models and model projections for each species
 #' @param scn.nm Name of climatic scenario to be looked for
@@ -29,8 +30,7 @@
 #' mods.thrshld <- thr(mcmp=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
-#' @keywords internal
-# #' @export
+#' @export
 thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="species") {
   if(is.null(path.mdls)){
     path.mdls <- paste("3_out.MaxEnt", paste0("Mdls.",sp.nm), sep = "/")
@@ -94,7 +94,7 @@ thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="spe
       }, wv.bp), nrow = 1, dimnames = list("EBPM", thrshld.nms) )
     } ,
     thrshld.crit.v)
-  
+
   ### subset thrshld.mod.crt
   s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC$", "^EBPM$", "^WAAUC$")
   thrshld.mod.crt <- subset(thrshld.mod.crt, grepl(paste0(s.nms, collapse = "|"), rownames(thrshld.mod.crt)))
@@ -210,7 +210,9 @@ thrB <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
 
 
 ### threshold names to sub
+#' @keywords internal
 tnm <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
+#' @keywords internal
 tr <- c("FCV1", "FCV5", "FCV10", "LPT (mtp)", "10P (x10ptp)", "ETSS (etss)", "MTSS", "BTO", "EETD")
 
 

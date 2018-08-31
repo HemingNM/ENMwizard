@@ -8,7 +8,8 @@ f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
   thrshld.nms.mod, save, msnm, msr, scnm, scr)
 }
 \arguments{
-\item{m}{Index of model selection criteria to be plotted}
+\item{m}{Index of model selection criteria to be plotted
+#' @keywords internal}
 
 \item{mtp}{Stack or brick of thresholded predictions}
 

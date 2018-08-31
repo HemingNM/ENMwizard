@@ -21,7 +21,6 @@
 #' Each projection is a raster stack containing model projections ('mxnt.preds'), where each layer is a projection based on
 #' a specific model selection criteria (i.e. AvgAIC, LowAIC, avg.test.orMTP, avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)
 # #' @examples
-#' @keywords internal
 #' @export
 mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raster",
                    numCores = 1, parallelTunning = TRUE){ # , #, ENMeval.occ.results, occ.b.env, occ.locs,

@@ -37,3 +37,4 @@ be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5
 \description{
 internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
 }
+\keyword{internal}
