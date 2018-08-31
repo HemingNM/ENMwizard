@@ -4,7 +4,7 @@
 # 4.1 save rasters onto which the model will be projected in an elements called "area.proj"
 # 4.1.1 select area for projection based on the extent of occ points
 
-# "f.a.proj" names changed to "pred.a"
+# "f.a.proj" names changed to "predAr"
 
 #' Select area for projection based on the extent of occ points
 #'
@@ -26,13 +26,13 @@
 #' @param buffer should the area be cut using a buffer around occ.poly?
 #' @param same should latitudinal and longitudinal increase vary independently?
 #'
-#' @seealso \code{\link{pred.a.poly.batch}}
+#' @seealso \code{\link{predArPolyB}}
 #' @return  SpatialPolygons (enlarged occ.poly)
 # #' @examples
 #'
 #' @keywords internal
-# #' @export
-pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ #, o.path = "occ.poly"
+#' @export
+predArPoly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ #, o.path = "occ.poly"
   path.proj <- "1_sppData/area.proj.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
@@ -82,22 +82,22 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALS
 }
 
 
-#' Select area for projection based on the extent of occ points
+#' Select area for projection based on the extent of occ points for multiple species
 #'
-#' This function is a wrapper for "pred.a". See ?pred.a
+#' This function is a wrapper for "predAr". See ?predAr
 #' It works with a named list of occ.polys to delimit the projection area for each of the species.
 #'
-#' @param occ.polys list of occ.poly SpatialPolygons.  see ?pred.a.poly for details.
-#' @inheritParams pred.a.poly
+#' @param occ.polys list of occ.poly SpatialPolygons.  see ?predArPoly for details.
+#' @inheritParams predArPoly
 #'
-#' @seealso \code{\link{pred.a.poly}}
+#' @seealso \code{\link{predArPoly}}
 #' @return  named list of SpatialPolygons (enlarged occ.poly)
 # TODO - examples
 #' @examples
-#'area.projection <- pred.a.poly.batch(occ.polys, mult=.55, buffer=FALSE)
+#'area.projection <- predArPolyB(occ.polys, mult=.55, buffer=FALSE)
 #'plot(area.projection[[1]][[1]])
 #' @export
-pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ # , o.path = "occ.poly"
+predArPolyB <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ # , o.path = "occ.poly"
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
   # cat("\n", deg.incr, "\n")
@@ -111,7 +111,7 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, sa
       deg.incr.i <- deg.incr[i]
     }
     cat(c("\n", "Creating projection area for", names(occ.polys)[i],"\n",  "Species",  i, "of", length(occ.polys),"\n"))
-    area.pl[[i]] <- pred.a.poly(occ.polys[[i]], deg.incr=deg.incr.i, mult=mult, sp.nm = names(occ.polys)[i], buffer = buffer) #, o.path = o.path
+    area.pl[[i]] <- predArPoly(occ.polys[[i]], deg.incr=deg.incr.i, mult=mult, sp.nm = names(occ.polys)[i], buffer = buffer) #, o.path = o.path
   }
   return(area.pl)
 }
@@ -126,16 +126,16 @@ pred.a.poly.batch <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, sa
 #' @param prj.nm climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario
 #' @param sp.nm name (of species) to give to saved object
 #'
-#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
-#' \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
-#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+#' @seealso \code{\link{predArPoly}}, \code{\link{predArPolyB}},
+#' \code{\link{predArB}}, \code{\link{predArMscnB}},
+#' \code{\link{predArRst}}, \code{\link{predArRstB}}, \code{\link{predArRstMscnB}}
 #' @return  raster or brick cropped based on SpatialPolygons
 # TODO - examples
 # #' @examples
 #'
 #' @keywords internal
-# #' @export
-pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
+#' @export
+predAr <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
@@ -165,27 +165,27 @@ pred.a <- function(pred.poly, env.uncut, prj.nm="", sp.nm="sp"){
 ### TODO -  descriptions
 #' Cut area for projection based on a list of SpatialPolygons
 #'
-#' This function is a wrapper for "pred.a". See ?pred.a
+#' This function is a wrapper for "predAr". See ?predAr
 #' It works with a named list of pred.poly to delimit the projection area for each of the species.
 #'
-#' @inheritParams pred.a
+#' @inheritParams predAr
 #' @param pred.polys list of SpatialPolygons (usually of based on species occ points)
 #'
-#' #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
-#' \code{\link{pred.a}}, \code{\link{pred.a.batch.mscn}},
-#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+#' #' @seealso \code{\link{predArPoly}}, \code{\link{predArPolyB}},
+#' \code{\link{predAr}}, \code{\link{predArMscnB}},
+#' \code{\link{predArRst}}, \code{\link{predArRstB}}, \code{\link{predArRstMscnB}}
 #' @return  named list of cropped raster or brick
 #' @examples
-#' area.projection <- pred.a.batch(pred.polys, env.uncut)
+#' area.projection <- predArB(pred.polys, env.uncut)
 #' plot(area.projection[[1]][[1]])
 #' @export
-pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, prj.nm="", sp.nm="sp"
+predArB <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, prj.nm="", sp.nm="sp"
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(pred.polys))
   names(area.pl) <- names(pred.polys)
   for(i in 1:length(pred.polys)){
     cat(c("\n", "Creating projection area for", names(pred.polys)[i],"\n",  "Species",  i, "of", length(pred.polys),"\n"))
-    area.pl[[i]] <- pred.a(pred.polys[[i]], env.uncut, prj.nm = prj.nm, sp.nm = names(pred.polys)[i])
+    area.pl[[i]] <- predAr(pred.polys[[i]], env.uncut, prj.nm = prj.nm, sp.nm = names(pred.polys)[i])
   }
   return(area.pl)
 }
@@ -195,24 +195,24 @@ pred.a.batch <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.unc
 ### TODO - update description
 #' Cut multiple projection areas (climatic scenarios) for multiple species (list of SpatialPolygons)
 #'
-#' This function is a wrapper for "pred.a". See ?pred.a. This function delimits the projection area for
+#' This function is a wrapper for "predAr". See ?predAr. This function delimits the projection area for
 #' each of the species contained in the pred.polys named list and crops
 #' multiple rasters/bricks (i.e. representing distinct climatic scenaries) based on the same criteria for each species.
 #'
-#' @inheritParams pred.a.batch
+#' @inheritParams predArB
 #' @param env.uncut.l list of raster/brick of environmental variables to be cut
 #' @param numCores specify number of cores if aim run in parallel
 #'
-#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
-#' \code{\link{pred.a}}, \code{\link{pred.a.batch}},
-#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+#' @seealso \code{\link{predArPoly}}, \code{\link{predArPolyB}},
+#' \code{\link{predAr}}, \code{\link{predArB}},
+#' \code{\link{predArRst}}, \code{\link{predArRstB}}, \code{\link{predArRstMscnB}}
 # #' @param ext.proj
 #' @return  named list of cropped list of raster/brick of environmental variables
 # TODO - examples
 # #' @examples
 #'
 #' @export
-pred.a.batch.mscn <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj=NULL, prj.nm=""
+predArMscnB <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj=NULL, prj.nm=""
   # if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
@@ -223,13 +223,13 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj
     if(numCores>1){
       area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
         prj.nm.j <- names(env.uncut.l)[j]
-        area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
+        area.p.spi[[j]] <- predAr(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.", "", prj.nm.j)) # paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
     } else {
       area.pl[[i]] <- unlist(lapply(base::seq_along(area.p.spi), function(j){
         prj.nm.j <- names(env.uncut.l)[j]
-        area.p.spi[[j]] <- pred.a(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
+        area.p.spi[[j]] <- predAr(pred.polys[[i]], env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(pred.polys)[i]) # ext.proj,
         area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.", "", prj.nm.j)) #paste0(prj.nm, ".", names(env.uncut.l)[j]) )
       } ) )
     }
@@ -238,25 +238,25 @@ pred.a.batch.mscn <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.proj
 }
 
 ### TODO - update description
-### TODO - check this function became very similar to pred.a
+### TODO - check this function became very similar to predAr
 #' Cut a projection area based on a SpatialPolygon (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 #'
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
-#' @inheritParams pred.a
-#' @inheritParams pred.a.batch
+#' @inheritParams predAr
+#' @inheritParams predArB
 #' @param mask should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details
 #'
-#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
-#' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
-#' \code{\link{pred.a.batch.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+#' @seealso \code{\link{predArPoly}}, \code{\link{predArPolyB}},
+#' \code{\link{predAr}}, \code{\link{predArB}}, \code{\link{predArMscnB}},
+#' \code{\link{predArRstB}}, \code{\link{predArRstMscnB}}
 #' @return environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples
 #'
 #' @export
-pred.a.rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp"){ # , crs.set
+predArRst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp"){ # , crs.set
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
@@ -277,26 +277,26 @@ pred.a.rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp"){ # 
 }
 
 ### TODO - update description
-#' Cut projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)
+#' Cut projection areas of multiple species based on a single SpatialPolygon object (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 #'
 #' @param area.p SpatialPolygon to be used as reference to crop/mask environmental variables of all species
-#' @inheritParams pred.a
-#' @inheritParams pred.a.batch
-#' @inheritParams pred.a.poly.batch
+#' @inheritParams predAr
+#' @inheritParams predArB
+#' @inheritParams predArPolyB
 #' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or
 #' use all spatial extent of area.p
 #'
-#' #' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
-#' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
-#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst.mscn}}
+#' #' @seealso \code{\link{predArPoly}}, \code{\link{predArPolyB}},
+#' \code{\link{predAr}}, \code{\link{predArB}}, \code{\link{predArMscnB}},
+#' \code{\link{predArRst}}, \code{\link{predArRstMscnB}}
 #' @return list of environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples
 #'
 #' @export
-pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm="", sp.nm = "mult.spp"){
+predArRstB <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm="", sp.nm = "mult.spp"){
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
@@ -306,7 +306,7 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=""
   }
 
   cat(c("\n","Creating projection area","\n"))
-  area.pl[[1]] <- pred.a(area.p, env.uncut, prj.nm = prj.nm, sp.nm = sp.nm)
+  area.pl[[1]] <- predAr(area.p, env.uncut, prj.nm = prj.nm, sp.nm = sp.nm)
   for(i in 2:length(occ.polys)){
     area.pl[[i]] <- area.pl[[1]]
   }
@@ -315,25 +315,25 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=""
 
 #### 4.8.3 function to cut multiple environmental layers based on pred.polys
 ### TODO - update description
-#' Cut multiple projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)
+#' Cut multiple projection areas of multiple species based on a single SpatialPolygon object (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask multiple raster/brick objects
 #' to be used on model projections.
 #'
-#' @inheritParams pred.a.batch.mscn
-#' @inheritParams pred.a.poly.batch
-#' @inheritParams pred.a.batch.rst
-#' @inheritParams mxnt.c.batch
+#' @inheritParams predArMscnB
+#' @inheritParams predArPolyB
+#' @inheritParams predArRstB
+#' @inheritParams mxntCalibB
 #'
-#' @seealso \code{\link{pred.a.poly}}, \code{\link{pred.a.poly.batch}},
-#' \code{\link{pred.a}}, \code{\link{pred.a.batch}}, \code{\link{pred.a.batch.mscn}},
-#' \code{\link{pred.a.rst}}, \code{\link{pred.a.batch.rst}}
+#' @seealso \code{\link{predArPoly}}, \code{\link{predArPolyB}},
+#' \code{\link{predAr}}, \code{\link{predArB}}, \code{\link{predArMscnB}},
+#' \code{\link{predArRst}}, \code{\link{predArRstB}}
 #' @return list of list with multiple environmental layers (raster/brick) cutted
 # TODO - examples
 # #' @examples
 #'
 #' @export
-pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
+predArRstMscnB <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
                                   prj.nm="", sp.nm = "mult.spp", numCores=1){
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
@@ -349,7 +349,7 @@ pred.a.batch.rst.mscn <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
 
   p.area <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
     prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")
-    area.p.spi[[j]] <- pred.a(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
+    area.p.spi[[j]] <- predAr(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
     area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(names(env.uncut.l)[j])) )
   } ) )
 

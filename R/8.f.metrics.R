@@ -1,9 +1,9 @@
 # # ##### 5. METRICS
 
-# TO DO - f.area.occ.mscn;
+# TO DO - cSArea;
 # In area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3, 2, 1))) :
 #   number of items to replace is not a multiple of replacement length
-# TO DO - f.FPA
+# TO DO - cFPA
 # Error in `[<-.data.frame`(`*tmp*`, , ncol(areas), value = c(0.526, 0.461,  :
 #   replacement has 6 rows, data has 8
 
@@ -53,12 +53,12 @@
 #' @inheritParams plotMdlDiff
 #' @param digits integer indicating the number of decimal places. see ?round for details.
 #' @param restrict a raster to select a region to compute area.
-#' @seealso \code{\link[raster]{area}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
+#' @seealso \code{\link[raster]{area}}, \code{\link{cVarCI}}, \code{\link{cOR}}, \code{\link{cFPA}}, \code{\link{cRasterOverlap}}
 #' @return List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 #' @examples
-#' areas.occ.lst <- f.area.occ.mscn(mtp.l=mods.thrshld.lst)
+#' areas.occ.lst <- cSArea(mtp.l=mods.thrshld.lst)
 #' @export
-f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
+cSArea <- function(mtp.l, restrict=NULL, digits=0){
   area.occ.spp <- vector("list", length = length(mtp.l))
   names(area.occ.spp) <- names(mtp.l)
   thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
@@ -68,14 +68,17 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 
   area.occ.spp <- lapply(names(mtp.l), function(sp, mtp.l, restrict, digits){ # species, areas
 
-    c.nms <- names(mtp.l[[sp]][[1]][[2]][[1]])
-    m.nms <- c("LowAICc", "ORmtp", "OR10", "AUCmtp", "AUC10", "AvgAICc") # , "test"
-    invisible(sapply(seq_along(m.nms), function(i, x, y){
-      if(sum(grepl(m.nms[i], c.nms))>0){
-        c.nms[grepl(m.nms[i], c.nms)] <<- m.nms[i]
+    c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mtp.l[[sp]][[1]][[2]][[1]]))
+    c.nms2 <- vector("character", length(c.nms))
+    s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC", "^EBPM", "^WAAUC")
+    invisible(sapply(seq_along(s.nms), function(i, x, y, z){
+      si <- grepl(s.nms[i], c.nms)
+      if(sum(si)>0){
+        c.nms2[si] <<- gsub("\\^|^\\.", "", paste(c.nms2[si], s.nms[i], sep = "."))
       }
-    }, c.nms, m.nms))
-
+    }, c.nms, s.nms, c.nms2))
+    c.nms <- c.nms2
+    
     areas <- array(dim=c(length(mtp.l[[sp]]), # rows for pred.scenario
                          length(mtp.l[[sp]][[1]][[2]]), # cols for threshold criteria
                          raster::nlayers(mtp.l[[sp]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
@@ -132,8 +135,13 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
     return(area.occ.spp[[sp]]) }, mtp.l, restrict, digits) # species, areas
 
   names(area.occ.spp) <- names(mtp.l)
-  area.occ.spp.c <- data.table::rbindlist(lapply(area.occ.spp, function(x) data.table::melt(x)), idcol = "sp")
-  colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
+  # area.occ.spp <- lapply(area.occ.spp, function(x) data.table::melt(x))
+  area.occ.spp <- lapply(area.occ.spp, function(x) data.table::melt(x)) # , cols=c("Clim.scen", "threshold", "Model"), value.name="TotSuitArea")
+  area.occ.spp <- lapply(area.occ.spp, function(x) {
+    colnames(x) <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
+    return(x)})
+  area.occ.spp.c <- data.table::rbindlist(area.occ.spp, idcol = "sp")
+  # colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
   utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/totalArea.csv")) # reorder ds
 
   return(area.occ.spp)
@@ -144,29 +152,38 @@ f.area.occ.mscn <- function(mtp.l, restrict=NULL, digits=0){
 # #### 4.7 extract model results
 # ### 4.7.1 variable contribution and importance
 
-#' Compute variable contribution and importance
+#' Compute variable contribution and permutation importance
 #'
 #' Compute variable contribution and importance for each model
 #'
 # #' @param mcmp.l Stack or brick of predictions to apply the threshold
-#' @inheritParams f.thr.batch
-#' @seealso \code{\link[dismo]{maxent}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.OR}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
+#' @inheritParams thrB
+#' @seealso \code{\link[dismo]{maxent}}, \code{\link{cSArea}}, \code{\link{cOR}}, \code{\link{cFPA}}, \code{\link{cRasterOverlap}}
 #' @return List of arrays containing variable contribution and importance for each species
 #' @examples
-#' f.var.ci(mcmp.l = mxnt.mdls.preds.lst)
+#' cVarCI(mcmp.l = mxnt.mdls.preds.lst)
 #' @export
-f.var.ci <- function(mcmp.l){
+cVarCI <- function(mcmp.l){
   path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
-
+  
   var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
   for(sp in names(mcmp.l)){
     mxnt.mdls <- mcmp.l[[sp]]$mxnt.mdls
     mod.nms <- paste0("Mod.", mcmp.l[[sp]]$selected.mdls$sel.cri)
     pred.nms <- names(mcmp.l[[sp]]$mxnt.preds[[1]])
     var.nms <- gsub( ".contribution", "", rownames(mxnt.mdls[[1]]@results)[grepl("contribution", rownames(mxnt.mdls[[1]]@results))])
-    w.mdls <- mcmp.l[[sp]]$selected.mdls$w.AIC
-
+    # w.mdls <- mcmp.l[[sp]]$selected.mdls$w.AIC
+    if(sum(grepl("AvgAIC", pred.nms))>0) {
+      wv.aic <- mcmp.l[[sp]][["selected.mdls"]][grep("AIC_", mcmp.l[[sp]][["selected.mdls"]]$sel.cri),"w.AIC"]
+    }
+    if(sum(grepl("WAAUC", pred.nms))>0) {
+      wv.wa <- mcmp.l[[sp]][["selected.mdls"]][grep("WAAUC_", mcmp.l[[sp]][["selected.mdls"]]$sel.cri),"avg.test.AUC"]
+    }
+    if(sum(grepl("EBPM", pred.nms))>0) {
+      wv.bp <- rep(1, length(grep("EBPM", mcmp.l[[sp]][["selected.mdls"]]$sel.cri)))
+    }
+    
     ## variable contributions and importance
     var.cont.df <- matrix(nrow = length(mxnt.mdls), ncol = length(var.nms))
     rownames(var.cont.df) <- mod.nms
@@ -177,18 +194,38 @@ f.var.ci <- function(mcmp.l){
       var.cont.df[i,] <- mxnt.mdls[[i]]@results[grepl("contribution", rownames(mxnt.mdls[[i]]@results))]
       var.permImp.df[i,] <- mxnt.mdls[[i]]@results[grepl("permutation.importance", rownames(mxnt.mdls[[i]]@results))]
     }
-
-    var.cont.df <- rbind( if(sum(grepl("AvgAIC", pred.nms))>0){
-      matrix(apply(data.frame(var.cont.df[grep("AICc_",mod.nms),]), 2,
-                           function(x) sum(x*w.mdls[grep("AICc_", mod.nms)])), nrow = 1, dimnames = list("Mod.Avg.AICc", var.nms) )
-    },
-    var.cont.df)
-
-    var.permImp.df <- rbind(if(sum(grepl("AvgAIC", pred.nms))>0){
-      matrix(apply(data.frame(var.permImp.df[grep("AICc_", mod.nms),]), 2,
-                           function(x) sum(x*w.mdls[grep("AICc_", mod.nms)])), nrow = 1, dimnames = list("Mod.Avg.AICc", var.nms) )
-    },
-    var.permImp.df)
+    
+    f.wm <- function(pattern="AIC_", pred.nms, mod.nms, var.nms, wv, df, dimnames1="Mod.AvgAIC" ){
+      matrix(apply(data.frame(matrix(df[grep(pattern, mod.nms),], 
+                                     nrow = sum(grepl(pattern, mod.nms)), byrow = FALSE ) ), 2, function(x, wv) {
+                                       stats::weighted.mean(x, wv)
+                                     }, wv), nrow = 1, dimnames = list(dimnames1, var.nms) )
+    }
+    
+    var.cont.df <- rbind(
+      if(sum(grepl("AvgAIC", pred.nms))>0){
+        f.wm("AIC_", pred.nms, mod.nms, var.nms, wv.aic, var.cont.df, dimnames1="Mod.AvgAIC")
+      },
+      if(sum(grepl("WAAUC", pred.nms))>0){
+        f.wm("WAAUC_", pred.nms, mod.nms, var.nms, wv.wa, var.cont.df, dimnames1="Mod.WAAUC")
+      },
+      if(sum(grepl("EBPM", pred.nms))>0){
+        f.wm("EBPM_", pred.nms, mod.nms, var.nms, wv.bp, var.cont.df, dimnames1="Mod.EBPM")
+      },
+      var.cont.df)
+    
+    var.permImp.df <- rbind(
+      if(sum(grepl("AvgAIC", pred.nms))>0){
+        f.wm("AIC_", pred.nms, mod.nms, var.nms, wv.aic, var.permImp.df, dimnames1="Mod.AvgAIC")
+      },
+      if(sum(grepl("WAAUC", pred.nms))>0){
+        f.wm("WAAUC_", pred.nms, mod.nms, var.nms, wv.wa, var.permImp.df, dimnames1="Mod.WAAUC")
+      },
+      if(sum(grepl("EBPM", pred.nms))>0){
+        f.wm("EBPM_", pred.nms, mod.nms, var.nms, wv.bp, var.permImp.df, dimnames1="Mod.EBPM")
+      },
+      var.permImp.df)
+    
     var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
     utils::write.csv(var.cont.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.Contribution.", sp, ".csv"))
     utils::write.csv(var.permImp.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.PermImportance", sp, ".csv"))
@@ -202,17 +239,17 @@ f.var.ci <- function(mcmp.l){
 #'
 #' Compute "Omission Rate" of species occurence points for a climatic scenario (usually "current")
 #'
-#' @inheritParams f.area.occ.mscn
+#' @inheritParams cSArea
 #' @param occ.l list of species occurrence data.
 #' @param clim.scn.nm name to locate climatic scenario from which Omission Rate will
 #' be extracted. Usually the scenario used to calibrate maxent models
-#' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.FPA}}, \code{\link{f.raster.overlap.mscn}}
+#' @seealso \code{\link{cSArea}}, \code{\link{cVarCI}}, \code{\link{cFPA}}, \code{\link{cRasterOverlap}}
 #' @return A list of species' ORs computed for the selected (current) climatic scenario and
 #' each threshold and model criteria
 ##' @examples
-##' f.OR(mtp.l=mods.thrshld.lst, occ.l=occ.locs, "current")
+##' cOR(mtp.l=mods.thrshld.lst, occ.l=occ.locs, "current")
 #' @export
-f.OR <- function(mtp.l, occ.l, clim.scn.nm = NULL, digits = 3){ # , save=TRUE
+cOR <- function(mtp.l, occ.l, clim.scn.nm = NULL, digits = 3){ # , save=TRUE
   if(is.null(clim.scn.nm)){
     stop("Need to specify 'clim.scn.nm'")
   }
@@ -254,17 +291,17 @@ f.OR <- function(mtp.l, occ.l, clim.scn.nm = NULL, digits = 3){ # , save=TRUE
 
 
 
-#' Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
+#' Compute "Fractional predicted area" ('n of occupied pixels'/n)
 #'
 #' Compute "Fractional predicted area" ('n of occupied pixels'/total n) or ('area of occupied pixels'/total area)
 #'
-#' @inheritParams f.OR
-#' @seealso \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.raster.overlap.mscn}}
+#' @inheritParams cOR
+#' @seealso \code{\link{cSArea}}, \code{\link{cVarCI}}, \code{\link{cOR}}, \code{\link{cRasterOverlap}}
 #' @return A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 #' @examples
-#' f.FPA(mtp.l=mods.thrshld.lst)
+#' cFPA(mtp.l=mods.thrshld.lst)
 #' @export
-f.FPA <- function(mtp.l, digits = 3){
+cFPA <- function(mtp.l, digits = 3){
   df.FPA <- vector("list", length = length(mtp.l))
   names(df.FPA) <- names(mtp.l)
 
@@ -320,6 +357,7 @@ f.FPA <- function(mtp.l, digits = 3){
   names(df.FPA) <- names(mtp.l)
   df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
   utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
+  
   return(df.FPA)
 }
 

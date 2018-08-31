@@ -1,25 +1,25 @@
 # #### 5.3 comparar as distribuições (rasteres de adequabilidade) geradas por diferentes critérios de
-# ## seleção de modelo (AvgAIC, AICLow, avg.test.orMTP, avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct),
+# ## seleção de modelo (AvgAIC, LowAIC, avg.test.orMTP, avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct),
 # ## usando função ENMTools::raster.overlap(r1, r2).
 #' Raster overlap between models selected using different criteria
 #'
 #' Measures overlap between two ENMs. Used to compare differences among model selection criteria.
 #' See ?ENMTools::raster.overlap for details.
 #'
-#' @inheritParams f.thr.batch
+#' @inheritParams thrB
 #' @param scn.nm name of climatic scenarios to compute overlap.
-#' @param model.compare Reference model to be compared (AvgAICc, LowAICc, avg.test.orMTP,
+#' @param model.compare Reference model to be compared (AvgAIC, LowAIC, avg.test.orMTP,
 #'  avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)
-# #' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{f.area.occ.mscn}}, \code{\link{f.var.ci}}, \code{\link{f.OR}}, \code{\link{f.FPA}}
+# #' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{cSArea}}, \code{\link{cVarCI}}, \code{\link{cOR}}, \code{\link{cFPA}}
 #' @return A list of matrices containing the three metrics (I, D, and Spearman rank correlation)
 #' for each climatic scenario
 #' @examples
-#' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf, scn.nm="current", 1)
-# #' mxnt.mdls.ovlp <- f.raster.overlap.mscn(mxnt.mdls.preds.pf,
+#' mxnt.mdls.ovlp <- cRasterOverlap(mxnt.mdls.preds.pf, scn.nm="current", 1)
+# #' mxnt.mdls.ovlp <- cRasterOverlap(mxnt.mdls.preds.pf,
 # #' scn.nm=c("futAC5085", "futAC7085"), 3)
 # #' @export
-f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
-# f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){
+cRasterOverlap <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
+# cRasterOverlap <- function(mcmp.l, scn.nm="current", model.compare=1){
 #
 #   ovr.spp <- lapply(names(mcmp.l), function(sp, mcmp.l, comb.plots){ # , ovr.vl
 #     ovr.vl <- array(dim= c(length(clim.scn), # rows for pred.scenario
@@ -52,5 +52,5 @@ f.raster.overlap.mscn <- function(mcmp.l, scn.nm="current", model.compare=1){pri
 #   return(ovr.spp)
 # }
 
-# f.raster.overlap.mscn(mcmp.l, scn.nm=c("futAC5085", "futAC7085"), 3)
+# cRasterOverlap(mcmp.l, scn.nm=c("futAC5085", "futAC7085"), 3)
 

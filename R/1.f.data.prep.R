@@ -9,14 +9,14 @@
 #' @param save Should save polygons on disk?
 #' @param crs.set set the coordinate reference system (CRS) of the polygons
 #'
-#' @seealso \code{\link{poly.c.batch}}, \code{\link{poly.splt}}
+#' @seealso \code{\link{polyCB}}, \code{\link{polySplt}}
 #' @return An object of class SpatialPolygons or SpatialPolygonsDataFrame. Polygon built using coordinates of species occurence data
 #' @examples
-#' occ.poly <- poly.c(occ.spdf, sp.nm="occ.poly")
+#' occ.poly <- polyC(occ.spdf, sp.nm="occ.poly")
 #' plot(occ.poly)
 #' @keywords internal
 #' @export
-poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
+polyC <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, crs.set = "+proj=longlat +datum=WGS84"){ # , o.path = NULL
   o.path <- "1_sppData/occ.poly"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
@@ -81,24 +81,24 @@ poly.c <- function(occ.spdf, sp.nm="sp.nm", convex=TRUE, alpha=10, save=TRUE, cr
 #' @param k number of polygons to create based on coordinates
 #' @param c.m clustering method to find the best number of clusters (k). Currently E (Elbow) or (Affinity Propagation).
 #' @param nm.col.dt "character". Name of a numeric column to use as grouping variable in addition to coordinates.
-#' @inheritParams poly.c
+#' @inheritParams polyC
 #' @inheritParams bind.shp
 #' @inheritParams apcluster::negDistMat
 #' @inheritParams apcluster::apcluster
 #' @inheritParams NbClust::NbClust
 #'
-#' @seealso \code{\link{poly.c}}, \code{\link{poly.c.batch}}, \code{\link[NbClust]{NbClust}}
+#' @seealso \code{\link{polyC}}, \code{\link{polyCB}}, \code{\link[NbClust]{NbClust}}
 #' @return spatial polygons built using coordinates
 #' @examples
 #' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 #'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-#' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.polys$Bvarieg <- poly.splt(occ.spdf = spp.occ.list$Bvarieg, k=5)
+#' occ.polys <- polyCB(spp.occ.list)
+#' occ.polys$Bvarieg <- polySplt(occ.spdf = spp.occ.list$Bvarieg, k=5)
 #' @keywords internal
 #' @export
-poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0.3,
+polySplt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0.3,
                       distance = "euclidean", min.nc = 1, max.nc = 20,
                       method = "centroid", index = "trcovw", alphaBeale = 0.1,
                       convex=TRUE, alpha=10, sp.nm = "sp.nm", save = T,
@@ -163,7 +163,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 
   spp.k.list <- lapply(1:k, function(i){u.pts[clust==i,]})
   names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
-  occ.polys.lst <- poly.c.batch(spp.k.list, k=1, convex=convex, alpha=alpha, plot=FALSE, save=FALSE)
+  occ.polys.lst <- polyCB(spp.k.list, k=1, convex=convex, alpha=alpha, plot=FALSE, save=FALSE)
   if(length(occ.polys.lst)>1){
     occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, save=save, crs.set = crs.set) # , o.path = o.path
   } else {
@@ -209,7 +209,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #
 # # function to create N polygons for a species (whenever distribution seems disjoint) and save in a single .shp
 #                       (spp.occ, k=2, convex=TRUE, alpha=10, sp.nm = "sp1", crs.set = NULL)
-# poly.splt <- function(spp.occ, k=NULL, c.m="AP", convex=TRUE, alpha=10, sp.nm = "sp1", crs.set = NA){
+# polySplt <- function(spp.occ, k=NULL, c.m="AP", convex=TRUE, alpha=10, sp.nm = "sp1", crs.set = NA){
 #   # We need to create separated polygons, because we don't want such large area without points.
 #
 #   if(is.null(k)){
@@ -245,7 +245,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #   # create one polygon for each set of points
 # spp.k.list <- lapply(1:k, function(i){spp.occ[clust==i,]})
 # names(spp.k.list) <- paste0(sp.nm, seq_along(spp.k.list))
-# occ.polys.lst <- poly.c.batch(spp.k.list, convex=convex, alpha=alpha, plot=FALSE, save=FALSE)
+# occ.polys.lst <- polyCB(spp.k.list, convex=convex, alpha=alpha, plot=FALSE, save=FALSE)
 # occ.polys.sp <- bind.shp(occ.polys.lst, sp.nm = sp.nm, crs.set = crs.set) # , o.path = o.path
 # # raster::crs(occ.polys.sp) <- crs.set
 # # if(!is.null(crs.set)){raster::projection(occ.polys.sp) <- crs.set}
@@ -258,7 +258,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #
 
 
-#' Create occ polygon for several species
+#' Create minimum convex polygon based on coordinates of species occurence data for several species
 #'
 #' This function will use a list of coordinates of species occurence data and create minimum convex polygons
 #' for each element in the list.
@@ -269,21 +269,21 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #' @param plot logical. Plot results or not?
 #' @param save.pts logical. Save each species' occurence points as shapefile?
 #' @param numCores Number of cores to use for parallelization. If set to 1, no paralellization is performed
-#' @inheritParams poly.c
-#' @inheritParams poly.splt
-# #' @inheritParams mxnt.c.batch
+#' @inheritParams polyC
+#' @inheritParams polySplt
+# #' @inheritParams mxntCalibB
 #'
-#' @seealso \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
+#' @seealso \code{\link{polyC}}, \code{\link{polySplt}}, \code{\link[NbClust]{NbClust}}
 #' #' @return A named list of spatial polygons built using coordinates
 #' @examples
 #' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 #'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-#' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.polys <- poly.c.batch(spp.occ.list, convex=TRUE, alpha=10)
+#' occ.polys <- polyCB(spp.occ.list)
+#' occ.polys <- polyCB(spp.occ.list, convex=TRUE, alpha=10)
 #' @export
-poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
+polyCB <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
                          distance = "euclidean", min.nc = 2, max.nc = 20,
                          method = "mcquitty", index = "all", alphaBeale = 0.1,
                          convex = T, alpha = 10,
@@ -316,9 +316,9 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
     }
 
     if(k == 1){
-      resu <- poly.c(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
+      resu <- polyC(occ.spdf, sp.nm=sp.nm[i], convex=convex, alpha=alpha, save=save, crs.set=crs.set) # , o.path=o.path
     } else if (k != 1) {
-      resu <-  poly.splt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
+      resu <-  polySplt(occ.spdf, k = k, c.m = c.m, r = r, q = q,
                          distance = distance, min.nc = min.nc, max.nc = max.nc,
                          method = method, index = index, alphaBeale = alphaBeale,
                          convex=convex, alpha=alpha, sp.nm=sp.nm[i], save=save, crs.set=crs.set)
@@ -381,12 +381,12 @@ poly.c.batch <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 
 #' Bind list of SpatialPolygons into a single SpatialPolygons object
 #'
-#' This function will bind a list of splitted polygons (from poly.splt()) into a single SpatialPolygons object.
+#' This function will bind a list of splitted polygons (from polySplt()) into a single SpatialPolygons object.
 #'
 #' @param occ.polys list of SpatialPolygons to bind
-#' @inheritParams poly.c
+#' @inheritParams polyC
 #'
-#' @seealso \code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
+#' @seealso \code{\link{polyCB}}, \code{\link{polyC}}, \code{\link{polySplt}}, \code{\link[NbClust]{NbClust}}
 #' @return shapefile with binded polygons
 #' @keywords internal
 #' @export
@@ -436,26 +436,26 @@ bind.shp <- function(occ.polys, sp.nm="sp.nm", save=TRUE, crs.set = "+proj=longl
 #' If width is calculated based on the extent of the SpatialPolygons object, it can be adjusted (enlarged or reduced)
 #' using 'mult' argument.
 #'
-#' @param occ.polys list of SpatialPolygons, usually obj returned from poly.c.batch()
+#' @param occ.polys list of SpatialPolygons, usually obj returned from polyCB()
 #' @param bffr.width Buffer width. See 'width' of ?rgeos::gBuffer
 #' @param mult How much expand bffr.width
 # #' @param plot Boolean, to draw plots or not
 # #' @param quadsegs see ?rgeos::gBuffer
 #' @inheritParams rgeos::gBuffer
-#' @inheritParams poly.c
-#' @inheritParams poly.c.batch
+#' @inheritParams polyC
+#' @inheritParams polyCB
 #'
-#' @seealso \code{\link[rgeos]{gBuffer}}, \code{\link{poly.c.batch}}
+#' @seealso \code{\link[rgeos]{gBuffer}}, \code{\link{polyCB}}
 #' @return A named list of SpatialPolygons
 #' @examples
 #' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 #'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-#' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
+#' occ.polys <- polyCB(spp.occ.list)
+#' occ.b <- bffrB(occ.polys, bffr.width=1.5)
 #' @export
-bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
+bffrB <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.bffr"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
@@ -526,27 +526,27 @@ bffr.batch <- function(occ.polys, bffr.width = NULL, mult = .2, quadsegs = 100, 
 ## #' Crop environmental variables for each species
 #' Use a list of SpatialPolygons to crop environmental variables for each species.
 #'
-#' @param occ.b list of SpatialPolygons, usually returned from "bffr.batch" function
+#' @param occ.b list of SpatialPolygons, usually returned from "bffrB" function
 #' @param env.uncut raster brick or stack to be cropped
-#' @inheritParams poly.c.batch
+#' @inheritParams polyCB
 #'
-#' @seealso \code{\link[raster]{crop}}, \code{\link{bffr.batch}}
+#' @seealso \code{\link[raster]{crop}}, \code{\link{bffrB}}
 #' @return list [one element for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
 #' Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 #'  "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
-#' occ.polys <- poly.c.batch(spp.occ.list)
-#' occ.b <- bffr.batch(occ.polys, bffr.width=1.5)
+#' occ.polys <- polyCB(spp.occ.list)
+#' occ.b <- bffrB(occ.polys, bffr.width=1.5)
 #' env.uncut <- brick("path/to/env")
-#' occ.b.env <- env.cut(occ.b, env.uncut)
+#' occ.b.env <- envCut(occ.b, env.uncut)
 #' for(i in 1:length(occ.b.env)){
 #'    plot(occ.b.env[[i]][[1]])
 #'    plot(occ.b[[i]], add=TRUE)
 #' }
 #' @export
-env.cut <- function(occ.b, env.uncut, numCores = 1){
+envCut <- function(occ.b, env.uncut, numCores = 1){
   path.env.out <- "2_envData/area.calib"
   if(dir.exists("2_envData")==FALSE) dir.create("2_envData")
   if(dir.exists(path.env.out)==FALSE) dir.create(path.env.out)
@@ -610,18 +610,18 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 #' include at minimum a column of latitude and a column of longitude values
 #' @inheritParams spThin::thin
 # #' @inheritParams spThin::spThin
-#' @inheritParams poly.c.batch
+#' @inheritParams polyCB
 #'
 #' @seealso \code{\link[spThin]{thin}}, \code{\link{loadTocc}}
 # #' @seealso \code{\link[spThin]{spThin}}, \code{\link{loadTocc}}
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package.
 # #'  Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
-#' thinned.dataset.batch <- thin.batch(loc.data.lst = spp.occ.list)
+#' thinned.dataset.batch <- thinB(loc.data.lst = spp.occ.list)
 #' plotThin(thinned.dataset.batch[[1]])
 #' length(thinned.dataset.batch[[1]])
 #' @export
-thin.batch <- function(loc.data.lst = list(),
+thinB <- function(loc.data.lst = list(),
                        lat.col = NULL, long.col = NULL,
                        spec.col = NULL,
                        thin.par = 10, reps = 10, # reps = 1000 thin.par 'é a distancia min (km) para considerar pontos distintos
@@ -672,7 +672,7 @@ thin.batch <- function(loc.data.lst = list(),
   return(thinned_dataset_full)
 }
 
-# thin.batch <- function(loc.data.lst,
+# thinB <- function(loc.data.lst,
 #                        dist = 10000, method = "heuristic", nrep = 10,
 #                        great.circle.distance = FALSE,
 #                        # lat.col = "lat", long.col = "lon", spec.col = "species",
@@ -803,15 +803,16 @@ thin.batch <- function(loc.data.lst = list(),
 
 
 
-
-#' Load "thin.batch" filtered occurrence data
+#' Load filtered occurrence data
+#' 
+#' Load filtered occurrence data from object returned by "thinB" function
 #'
-#' @param occ.list.thin named list returned from "thin.batch"
+#' @param occ.list.thin named list returned from "thinB"
 #' @param from.disk boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj
 # #' @param wtd : which thinned dataset?
 #'
-#' @seealso \code{\link[spThin]{thin}}, \code{\link{thin.batch}}
-# #' @seealso \code{\link[spThin]{spThin}}, \code{\link{thin.batch}}
+#' @seealso \code{\link[spThin]{thin}}, \code{\link{thinB}}
+# #' @seealso \code{\link[spThin]{spThin}}, \code{\link{thinB}}
 #' @return named list of thinned occurence data for each species in the list
 #' @examples
 #' occ.locs <- loadTocc(thinned.dataset.batch)
