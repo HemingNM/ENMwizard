@@ -50,7 +50,7 @@
 #'
 #' Compute total suitable area for multiple climatic scenario, threshold and model criteria.
 #'
-#' @inheritParams plotMdlDiff
+#' @inheritParams plotMdlDiffB
 #' @param digits integer indicating the number of decimal places. see ?round for details.
 #' @param restrict a raster to select a region to compute area.
 #' @seealso \code{\link[raster]{area}}, \code{\link{cVarCI}}, \code{\link{cOR}}, \code{\link{cFPA}}, \code{\link{cRasterOverlap}}
@@ -78,7 +78,7 @@ cSArea <- function(mtp.l, restrict=NULL, digits=0){
       }
     }, c.nms, s.nms, c.nms2))
     c.nms <- c.nms2
-    
+
     areas <- array(dim=c(length(mtp.l[[sp]]), # rows for pred.scenario
                          length(mtp.l[[sp]][[1]][[2]]), # cols for threshold criteria
                          raster::nlayers(mtp.l[[sp]][[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
@@ -158,6 +158,7 @@ cSArea <- function(mtp.l, restrict=NULL, digits=0){
 #'
 # #' @param mcmp.l Stack or brick of predictions to apply the threshold
 #' @inheritParams thrB
+#' @inheritParams cSArea
 #' @seealso \code{\link[dismo]{maxent}}, \code{\link{cSArea}}, \code{\link{cOR}}, \code{\link{cFPA}}, \code{\link{cRasterOverlap}}
 #' @return List of arrays containing variable contribution and importance for each species
 #' @examples
@@ -166,7 +167,7 @@ cSArea <- function(mtp.l, restrict=NULL, digits=0){
 cVarCI <- function(mcmp.l){
   path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
-  
+
   var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
   for(sp in names(mcmp.l)){
     mxnt.mdls <- mcmp.l[[sp]]$mxnt.mdls
@@ -183,7 +184,7 @@ cVarCI <- function(mcmp.l){
     if(sum(grepl("EBPM", pred.nms))>0) {
       wv.bp <- rep(1, length(grep("EBPM", mcmp.l[[sp]][["selected.mdls"]]$sel.cri)))
     }
-    
+
     ## variable contributions and importance
     var.cont.df <- matrix(nrow = length(mxnt.mdls), ncol = length(var.nms))
     rownames(var.cont.df) <- mod.nms
@@ -194,14 +195,14 @@ cVarCI <- function(mcmp.l){
       var.cont.df[i,] <- mxnt.mdls[[i]]@results[grepl("contribution", rownames(mxnt.mdls[[i]]@results))]
       var.permImp.df[i,] <- mxnt.mdls[[i]]@results[grepl("permutation.importance", rownames(mxnt.mdls[[i]]@results))]
     }
-    
+
     f.wm <- function(pattern="AIC_", pred.nms, mod.nms, var.nms, wv, df, dimnames1="Mod.AvgAIC" ){
-      matrix(apply(data.frame(matrix(df[grep(pattern, mod.nms),], 
+      matrix(apply(data.frame(matrix(df[grep(pattern, mod.nms),],
                                      nrow = sum(grepl(pattern, mod.nms)), byrow = FALSE ) ), 2, function(x, wv) {
                                        stats::weighted.mean(x, wv)
                                      }, wv), nrow = 1, dimnames = list(dimnames1, var.nms) )
     }
-    
+
     var.cont.df <- rbind(
       if(sum(grepl("AvgAIC", pred.nms))>0){
         f.wm("AIC_", pred.nms, mod.nms, var.nms, wv.aic, var.cont.df, dimnames1="Mod.AvgAIC")
@@ -213,7 +214,7 @@ cVarCI <- function(mcmp.l){
         f.wm("EBPM_", pred.nms, mod.nms, var.nms, wv.bp, var.cont.df, dimnames1="Mod.EBPM")
       },
       var.cont.df)
-    
+
     var.permImp.df <- rbind(
       if(sum(grepl("AvgAIC", pred.nms))>0){
         f.wm("AIC_", pred.nms, mod.nms, var.nms, wv.aic, var.permImp.df, dimnames1="Mod.AvgAIC")
@@ -225,7 +226,7 @@ cVarCI <- function(mcmp.l){
         f.wm("EBPM_", pred.nms, mod.nms, var.nms, wv.bp, var.permImp.df, dimnames1="Mod.EBPM")
       },
       var.permImp.df)
-    
+
     var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
     utils::write.csv(var.cont.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.Contribution.", sp, ".csv"))
     utils::write.csv(var.permImp.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.PermImportance", sp, ".csv"))
@@ -240,7 +241,7 @@ cVarCI <- function(mcmp.l){
 #' Compute "Omission Rate" of species occurence points for a climatic scenario (usually "current")
 #'
 #' @inheritParams cSArea
-#' @param occ.l list of species occurrence data.
+#' @inheritParams ENMevaluateB
 #' @param clim.scn.nm name to locate climatic scenario from which Omission Rate will
 #' be extracted. Usually the scenario used to calibrate maxent models
 #' @seealso \code{\link{cSArea}}, \code{\link{cVarCI}}, \code{\link{cFPA}}, \code{\link{cRasterOverlap}}
@@ -357,7 +358,7 @@ cFPA <- function(mtp.l, digits = 3){
   names(df.FPA) <- names(mtp.l)
   df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
   utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/FracPredArea.csv")) # reorder ds
-  
+
   return(df.FPA)
 }
 

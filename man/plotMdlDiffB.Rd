@@ -31,7 +31,7 @@ and model projections for each species.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
-\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in 
+\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in
 Model names (ex. AUC10, AUCmtp, OR10, ORmtp)}
 
 \item{msr}{Character vector. Long names of model selection criteria to replace the short names. Must
@@ -52,7 +52,7 @@ Plot differences between predictions of models selected using distinct
 criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios and multiple species
 
 A panel for each combination of climatic scenario and threshold criteria will be created.
-Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will 
+Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will
 be plotted
 }
 \examples{

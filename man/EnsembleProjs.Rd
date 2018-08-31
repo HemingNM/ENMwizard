@@ -4,14 +4,15 @@
 \alias{EnsembleProjs}
 \title{Ensemble models (AvgAIC, WAAUC, EBPM)}
 \usage{
-EnsembleProjs(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, formt)
+EnsembleProjs(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, pred.nm,
+  formt)
 }
 \arguments{
 \item{mcm}{Objects returned by "mxntCalib", containing calibrated models.}
 
-\item{pred.nm}{Character. Prefix to add to projection name (e.g. "current", "fut", or "past")}
-
 \item{a.proj}{A Raster* object or a data.frame where models will be projected. Argument 'x' of dismo::predict}
+
+\item{pred.nm}{Character. Prefix to add to projection name (e.g. "current", "fut", or "past")}
 }
 \value{
 A list containing all the items returned from function "mxntCalib", plus the projection specified in a.proj.

@@ -15,7 +15,7 @@
 #'  using distinct model selection criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for
 #'  multiple climatic scenarios.
 #' @details A panel for each combination of climatic scenario and threshold criteria will be created.
-#' Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will 
+#' Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will
 #' be plotted
 #' @examples
 #' plotMdlDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
@@ -28,42 +28,43 @@ plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
                                   "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
                          scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                  "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
-                                 "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", 
+                                 "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                  "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
                                  "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 ){
-  
-  
+
+
   sp.nm.l <- names(mcmp.l)
-  
+
   for(sp in 1:length(mtp.l)){ # species
-    
-    
+
+
     mcmp <- mcmp.l[[sp]]
     mtp <- mtp.l[[sp]]
     sp.nm <- sp.nm.l[sp]
-    
+
     ##### function begins here:
     plotMdlDiff(mcmp, mtp, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
-    
+
   } # fecha # species
 } # fecha function
 
-  
-  
-  
+
+
+
 #### 4.8.6 plot prediction diff between models
 #' Plot differences in suitable areas between models selected using distinct criteria
-#' 
+#'
 #' Plot differences between predictions of models selected using distinct
 #' criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios
 #'
 # #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams thr
+#' @inheritParams mxntCalib
 #' @param mtp Stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
 #' @param save Logical. If TRUE will save plots in pdf.
-#' @param msnm Character vector. Short names of model selection criteria to be replaced. Same as given in 
+#' @param msnm Character vector. Short names of model selection criteria to be replaced. Same as given in
 #' Model names (ex. AUC10, AUCmtp, OR10, ORmtp)
 #' @param msr Character vector. Long names of model selection criteria to replace the short names. Must
 #'  be in same order of argument 'msnm'
@@ -72,12 +73,12 @@ plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 #'  be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5"
 #' @seealso \code{\link{plotScnDiffB}}
 #' @description  Will plot (or save as PDF) differences between predictions of models selected
-#'  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved 
+#'  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
 #'  within the folder 'Mdls.thrshld/figs'.
 #' @examples
 #' plotMdlDiff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
-#' @export  
-plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, numCores=1, 
+#' @export
+plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
@@ -85,72 +86,74 @@ plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, nu
                                  "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
                         scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                 "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
-                                "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", 
+                                "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                 "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present") 
+                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
                         ){
-  { 
+  {
     path.res <- "3_out.MaxEnt"
     if(dir.exists(path.res)==FALSE) dir.create(path.res)
     path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
     thrshld.nms.mod <- paste(c("Mod\\.", paste0("\\.",tnm)), collapse ="|")
     thrshld.nms <- paste(tnm, collapse = "|")
-    
+
     pred.args <- mcmp$pred.args
     outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                     ifelse(grep("logistic", pred.args)==1, 'logistic',
                            ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
-    
+
     thrshld.path <- paste(path.mdls, outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , sp.nm))
   }
-  
+
   if(numCores>1 & save){
-    
+
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("f.plotMdl")) # , "tnm", "tr", "auto.layout", "make.underscript"
-    
+
     parallel::clusterApply(cl, names(mtp), # climatic scenario
-                           function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-                                    save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript){
-                             
-                             f.plotMdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-                                       save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
-                             
-                           }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-                           save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
-    
+                           function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+
+                             f.plotMdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+
+                           }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                           save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+
     parallel::stopCluster(cl)
-    
+
   } else {
-    
+
     lapply(names(mtp), # climatic scenario
-         function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-                  save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript){
-           
-           f.plotMdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-                     save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
-           
-         }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-         save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
+         function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                  save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+
+           f.plotMdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                     save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+
+         }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+         save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
   } # fecha else
-  
+
   if(save) cat(c("\n", "Figures saved in:", "\n", thrshld.path))
 } # fecha function
-  
+
 
 #' internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
 #' @inheritParams plotMdlDiff
 #' @inheritParams plotMdlDiffB
+#' @param thrshld.path path to threshold projections
+#' @param thrshld.nms.mod names of threshold models
 #' @param sc Index of climatic scenario to be plotted
-f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, 
-                      save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript){
+f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
   # for(sc in names(mtp)){ # climatic scenario
   mtp.sc <- mtp[[sc]]
   cat(c("\n", "Climatic Scenario: ", sc))
   cat(c("\n", "Threshold: "))
-  
+
   N.mdls <- raster::nlayers(mtp.sc$binary[[1]]) # get n models of climatic scenario
   if(N.mdls<2){
     m.nms <- names(mtp.sc$binary[[1]])
@@ -158,12 +161,12 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
          "\nModel selection criteria: ", paste(mcmp$mSel, collapse = " "), sep="")
   }
   comb.plots <- utils::combn(N.mdls, 2)
-  
+
   for(l in names(mtp.sc$binary)){ # threshold criteria
     thr.crt <- l
     thr.CRT <- tr[which(tnm %in% l)] #}
     cat(paste0(" - ", thr.CRT))
-    
+
     lm <- auto.layout(ncol(comb.plots), F)
     n.t <- nrow(lm)
     n.scn <- ncol(lm)
@@ -174,14 +177,14 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
                      width = n.scn*5+2, height = n.t*5)
     }
     graphics::par(mfrow=c(n.t, n.scn), oma = c(3.5, 0, 5.5, 2))
-    
+
     for(j in 1:ncol(comb.plots)){ #ncol(comb.plots)
       r.dif <- raster::overlay(mtp.sc$binary[[l]][[comb.plots[1,j]]], mtp.sc$binary[[l]][[comb.plots[2,j]]], fun=function(r1,r2) {r1-r2})
       n1 <- gsub(paste0("\\.",sc), "", gsub(thrshld.nms.mod, "", names(mtp.sc$binary[[l]][[comb.plots[1,j]]]) )  )
       n2 <- gsub(paste0("\\.",sc), "", gsub(thrshld.nms.mod, "", names(mtp.sc$binary[[l]][[comb.plots[2,j]]]) )  )
       if(n1 %in% msnm) { n1 <- msr[which(msnm %in% n1)] }
       if(n2 %in% msnm) { n2 <- msr[which(msnm %in% n2)] }
-      
+
       main.nms <- paste0( make.underscript(n1), " vs. ", make.underscript(n2))
       graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
       raster::plot(mtp.sc$binary[[l]][[comb.plots[1,j]]], breaks= c(0, .5, 1), col=c("white", "gray90"),
@@ -195,7 +198,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
       if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
       raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
                    legend=FALSE, add=TRUE) # main= main.nms,
-      
+
       graphics::par(mar=c(2,1,2,6))
       raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75,
                    xpd = TRUE, zlim=c(0, 1),
@@ -206,7 +209,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
       grDevices::dev.off()
     }
   } # fecha # threshold criteria
-  
+
 } # fecha # climatic scenario
 
 
@@ -236,26 +239,26 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="c
                                  "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
                         scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                 "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
-                                "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", 
+                                "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                 "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present") 
+                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
                         ){
   if(is.null(mSel)){
     stop("Need to specify 'mSel'")
   }
-  
+
   sp.nm.l <- names(mcmp.l)
-  
+
   for(sp in 1:length(mtp.l)){ # species
-    
-    
+
+
     mcmp <- mcmp.l[[sp]]
     mtp <- mtp.l[[sp]]
     sp.nm <- sp.nm.l[sp]
-    
+
     ##### function begins here:
     plotScnDiff(mcmp, mtp, mSel, sel.clim.scn, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
-    
+
   } # fecha # species
 }
 
@@ -277,7 +280,7 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="c
 #' @examples
 # plotScnDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' @export
-plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1, 
+plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
@@ -285,29 +288,29 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
                                  "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
                         scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                 "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
-                                "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0", 
+                                "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                 "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present") 
+                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 ){
   # numCores=1
-  { 
+  {
     path.res <- "3_out.MaxEnt"
     if(dir.exists(path.res)==FALSE) dir.create(path.res)
     path.mdls <- paste(path.res, paste0("Mdls.", sp.nm), sep="/")
     thrshld.nms.mod <- paste(c("Mod\\.", paste0("\\.",tnm)), collapse ="|")
     thrshld.nms <- paste(tnm, collapse = "|")
-    
+
     pred.args <- mcmp$pred.args
     outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                     ifelse(grep("logistic", pred.args)==1, 'logistic',
                            ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
-    
+
     thrshld.path <- paste(path.mdls, outpt, "Mdls.thrshld", "figs", sep='/')
     if(dir.exists(thrshld.path)==FALSE) dir.create(thrshld.path)
     cat(c("\n", "Species: " , sp.nm))
   }
-  
-  
+
+
   # for(sp in 1:length(mtp.l)){ # species
   mSel.crt <- mcmp$mSel
   if(all(!mSel %in% mSel.crt)){
@@ -326,63 +329,64 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
   if(any(grepl("^OR", mSel))){
     mSel <- c(mSel[!grepl("^OR", mSel)], c("ORmtp", "OR10"))
   }
-  
+
   if(numCores>1 & save){
-    
+
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("f.plotScn"))# , "tnm", "tr", "auto.layout", "make.underscript"))
     # , f.plotScn, tnm, tr, auto.layout, make.underscript
-    
+
     parallel::clusterApply(cl, mSel,  # model selection criteria
-                           function(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod, 
-                                    save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript){
-                             
-                             f.plotScn(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod, 
-                                       save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
-                             
-                           }, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod, 
-                           save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
-    
+                           function(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+
+                             f.plotScn(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+
+                           }, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                           save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+
     parallel::stopCluster(cl)
-    
+
   } else {
-    
+
     lapply(mSel, # model selection criteria
-           function(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod, 
-                    save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript){
-             
-             f.plotScn(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod, 
-                       save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript) 
-             
-           }, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod, 
-           save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript)
+           function(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+
+             f.plotScn(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                       save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+
+           }, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+           save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
   }
-  
+
   if(save) cat(c("\n", "Figures saved in:", "\n", thrshld.path))
 }
 
 #' internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
 #' @inheritParams plotMdlDiff
 #' @inheritParams plotMdlDiffB
+#' @inheritParams f.plotMdl
 #' @param m Index of model selection criteria to be plotted
-f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thrshld.nms.mod, 
-                      save, msnm, msr, scnm, scr, tr, tnm, auto.layout, make.underscript){ # , tr, tnm, make.underscript
-  
+f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thrshld.nms.mod,
+                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+
   # for(m in mSel){ # model selection criteria
     # f.plotScn(m, sp, mtp.l, mdl.crit=m, tr, tnm, thrshld.path,
     #           thrshld.nms.mod, basemap, make.underscript, save, msnm, msr, scnm, scr) # comb.plots,
     # mSel <- mdl.crit
     # mdl.crit <- grep(m, names(mtp[[1]]$binary[[1]]))
   mdl.crit <- grep(m, names(mtp[[1]]$binary[[1]]))
-    
+
   comb.plots <- utils::combn(length(mtp), 2)
   cli.scn.pres <- which(names(mtp) == sel.clim.scn)
   sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==TRUE # rowsum(comb.plots == cli.scn.pres)==TRUE # comb.plots[, ]
   comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
   comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]
-    
+
     mods.thrshld <- mtp[[comb.plots[1,1]]]
-    
+
     n.t <- length(mods.thrshld$binary)
     n.scn <- ncol(comb.plots)
     # lm <- auto.layout(ncol(comb.plots), F)
@@ -393,28 +397,28 @@ f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thr
       grDevices::pdf(paste(thrshld.path, paste0("Mod.clim.scn.diff.bin", m, ".pdf"), sep='/'),
                      width = n.col*5+2, height = n.r*5)
     }
-    graphics::par(mfrow=c(n.col, n.r), mar=c(2,4,2,5), oma = c(3.5, 0, 3.5, 2)) # 
-    
+    graphics::par(mfrow=c(n.col, n.r), mar=c(2,4,2,5), oma = c(3.5, 0, 3.5, 2)) #
+
     for(tc in names(mods.thrshld$binary)){ # threshold criteria
       thr.CRT <- tr[which(tnm %in% tc)] #}
       cat(paste0(" - ", thr.CRT, ":", m))
-      
+
       for(j in 1:n.scn){ # climatic scenario
-        
+
         mod.sc1 <- mtp[[comb.plots[1,j]]]$binary[[tc]][[mdl.crit]]
         mod.sc2 <- mtp[[comb.plots[2,j]]]$binary[[tc]][[mdl.crit]]
-        
+
         r.dif <- raster::overlay(mod.sc1, mod.sc2, fun=function(r1, r2) {r1-r2})
-        
+
         # clim.scn name
         n1 <- names(mtp)[comb.plots[1,j]]
         n2 <- names(mtp)[comb.plots[2,j]]
         main.nms <- paste0("Threshold: ", thr.CRT, "\nMod. Sel. Crit: ", m) #, "\nClim. scen.: ", n1, " vs. ", n2)
-        
+
         graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
         raster::plot(mod.sc1, breaks= c(0, .5, 1), col=c("white", "gray90"),
                      main= main.nms, legend=FALSE) #
-        
+
         if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
         raster::plot(r.dif, breaks= c(-1, -.33, .33, 1), col=c("blue", grDevices::rgb(0,0,0,0), "red"),
                      legend=FALSE, add=TRUE) # main= main.nms,
@@ -425,7 +429,7 @@ f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thr
                      breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
                      axis.args=list(at=seq(-1, 1), labels=c(n2, "equal", n1 )))
       }  # climatic scenario
-      
+
     }
     if(save){
       grDevices::dev.off()
@@ -436,7 +440,7 @@ f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thr
 
 ############ TODO
 #' Plot compare climatic scenarios differences between model selection criteria
-#' 
+#'
 #' i.e. plotScnDiff with panels for each of thresholds, and climatic scenario
 #'  difference (i.e. current vs. climScn1) for each model being compared side
 
@@ -478,7 +482,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 
 #' Determine the arrangement of multiple plots in a single panel
 #' Given a particular number of plots, \code{auto.layout} will automatically determine the arrangement of each
-#' plot using the \code{layout} function or par(mfrow=c(nrow, ncol)). See examples. 
+#' plot using the \code{layout} function or par(mfrow=c(nrow, ncol)). See examples.
 #' modified from: https://github.com/cran/fifer/blob/master/R/auto.layout.R
 #' @title Automatically select the layout.
 #' @param n the number of plots
@@ -489,22 +493,22 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' ## plot six plots
 #' auto.layout(6)
 #' for (i in 1:6){
-#' 	plot(rnorm(100), rnorm(100))	
+#' 	plot(rnorm(100), rnorm(100))
 #' }
 #' ## same as mar(mfrow=c(3,2))
 #' par(mfrow=c(3,2))
 #' for (i in 1:6){
-#' 	plot(rnorm(100), rnorm(100))	
+#' 	plot(rnorm(100), rnorm(100))
 #' }
 #' ## default for odd number of plots using mfrow looks terrible
 #' par(mfrow=c(3,2))
 #' for (i in 1:5){
-#' 	plot(rnorm(100), rnorm(100))	
+#' 	plot(rnorm(100), rnorm(100))
 #' }
 #' ## much better with auto.layout
 #' auto.layout(5)
 #' for (i in 1:5){
-#' 	plot(rnorm(100), rnorm(100))	
+#' 	plot(rnorm(100), rnorm(100))
 #' }
 #' ## see matrices of layouts for multiple plots
 # for(i in 4:12){
@@ -524,13 +528,13 @@ auto.layout <- function(n, layout=T){
   ### figure out how many rows
   sq = sqrt(n)
   rws = round(sq)
-  
+
   #### if it's a perfect square, fill the matrix
   if (sq == rws){
     numbs = sort(rep(1:n, times=1))
     m = matrix(numbs, nrow=sq, byrow=T)
   } else {
-    
+
     #### repeat twice the numbers that fit nicely
     topNum = trunc(n/rws)*rws
     numbs = sort(rep(1:topNum, times=1))
@@ -546,7 +550,7 @@ auto.layout <- function(n, layout=T){
         rest = c(rest, rep(0, times=(top-n))) # rep(0, times=(cols-length(rest))/2),
         m = matrix(c(numbs, rest), ncol = cols , nrow=rws+1, byrow=T)
       } else {
-        top <- (cols+1)*(rws)  
+        top <- (cols+1)*(rws)
         rest = c(rest, rep(0, times=(top-n))) # rep(0, times=(cols-length(rest))/2),
         m = matrix(c(numbs, rest), ncol = cols+1, nrow=rws, byrow=T)
       }
@@ -554,7 +558,7 @@ auto.layout <- function(n, layout=T){
       # m = matrix(c(numbs, rest), ncol = cols+1 , nrow=rws, byrow=T)
     }
   }
-  
+
   if (layout){
     layout(m)
   } else {

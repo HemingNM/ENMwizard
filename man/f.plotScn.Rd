@@ -5,8 +5,7 @@
 \title{internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}}
 \usage{
 f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
-  thrshld.nms.mod, save, msnm, msr, scnm, scr, tr, tnm, auto.layout,
-  make.underscript)
+  thrshld.nms.mod, save, msnm, msr, scnm, scr)
 }
 \arguments{
 \item{m}{Index of model selection criteria to be plotted}
@@ -15,9 +14,13 @@ f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 
+\item{thrshld.path}{path to threshold projections}
+
+\item{thrshld.nms.mod}{names of threshold models}
+
 \item{save}{Logical. If TRUE will save plots in pdf.}
 
-\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in 
+\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in
 Model names (ex. AUC10, AUCmtp, OR10, ORmtp)}
 
 \item{msr}{Character vector. Long names of model selection criteria to replace the short names. Must

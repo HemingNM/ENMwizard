@@ -33,15 +33,15 @@ mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raste
 
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   args.all <- mcm$mxnt.args
-  
+
   # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"])
   mod.nms <- paste0("Mod.", xsel.mdls$sel.cri)
   # mod.nms2 <- gsub(paste0("AIC_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
   ens2gsub <- paste0(c("AIC_", "WAAUC_", "EBPM_"), rep(1:length(xsel.mdls$sel.cri),each=3), "." , collapse = "|")
   mod.nms2 <- gsub(ens2gsub, "", mod.nms)
   mod.nms2 <- gsub(paste0("\\.{", 1:length(xsel.mdls$sel.cri), "}" , collapse = "|"), ".", mod.nms2)
-  
-  
+
+
   mod.preds <- raster::stack() #vector("list", length(mod.pred.nms))
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -87,15 +87,15 @@ mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raste
   mod.preds <- EnsembleProjs(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, formt)
   # if(length(grep("AvgAIC", mcm$mSel))>0) {
   #   #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
-  #   # args.aicc <- order(xsel.mdls$delta.AICc) 
+  #   # args.aicc <- order(xsel.mdls$delta.AICc)
   #   args.aicc <- grep("AIC", xsel.mdls$sel.cri) #
   #   # create vector of model weights
   #   wv <- xsel.mdls[args.aicc,"w.AIC"] #[seq_along(args.aicc)]
-  # 
+  #
   #   ### stack prediction rasters (to create Average Model prediction)
   #   filename.avg.stk <- filename.or.auc.laic[args.aicc]
   #   Mod.AIC.stack <- raster::stack(filename.avg.stk)
-  # 
+  #
   #   # create averaged prediction map
   #   if(length(args.aicc)>1){
   #     mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.AIC.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
@@ -106,7 +106,7 @@ mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raste
   #                                                                  filename = filename.aicc, #paste(avg.m.path, paste0("Mod.AvgAIC", ".", pred.nm,".grd"), sep='/'),
   #                                                                  format = formt, overwrite = T) )
   #   }
-  # 
+  #
   #   names(mod.preds)[raster::nlayers(mod.preds)] <- "Mod.AvgAIC"
   # }
 
@@ -273,10 +273,10 @@ mxntProjB <- function(mcm.l, a.proj.l, formt = "raster", numCores = 1, parallelT
 # #' @examples
 #' @keywords internal
 # #' @export
-EnsembleProjs <- function(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, formt){
+EnsembleProjs <- function(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, pred.nm, formt){
   mod.preds <- raster::stack()
   xsel.mdls <- mcm$selected.mdls
-  
+
   ens <- c("AvgAIC", "WAAUC", "EBPM")
   ens.i <- grepl(paste0("^", mcm$mSel, collapse = "|^"), ens)
   if(sum(ens.i)>0){
@@ -286,10 +286,10 @@ EnsembleProjs <- function(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, 
       ens.m.path <- paste(path.mdls, outpt, paste0("Mod.", EM), sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
       if(dir.exists(ens.m.path)==FALSE) dir.create(ens.m.path)
       filename.ens <- paste(ens.m.path, paste0("Mod.", EM, ".", pred.nm,".grd"), sep='/')#[1:length(args.aicc)]
-      
+
       #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
       argsEns <- grep(EM, xsel.mdls$sel.cri)
-      
+
       # create vector of model weights
       if(EM == "AvgAIC"){ #
         argsEns <- grep("AIC", xsel.mdls$sel.cri)
@@ -299,11 +299,11 @@ EnsembleProjs <- function(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, 
       } else if(EM == "EBPM"){ # EBPM
         wv <- rep(1, length(argsEns))
       }
-      
+
       ### stack prediction rasters (to create Average Model prediction)
       filename.avg.stk <- filename.or.auc.laic[argsEns]
       Mod.ens.stack <- raster::stack(filename.avg.stk)
-      
+
       # create averaged prediction map
       if(length(argsEns)>1){
         mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.ens.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
@@ -318,7 +318,7 @@ EnsembleProjs <- function(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, 
     }
     return(mod.preds)
   } else {
-    # print("No models selected for ensembling. Returning empty stack.") 
+    # print("No models selected for ensembling. Returning empty stack.")
     return(mod.preds)
   }
 }

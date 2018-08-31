@@ -7,6 +7,8 @@
 cFPA(mtp.l, digits = 3)
 }
 \arguments{
+\item{mtp.l}{List of stack or brick of thresholded predictions}
+
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}
 }
 \value{

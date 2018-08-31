@@ -25,11 +25,15 @@ calibrated models and model projections for each species}
 
 \item{mtp}{Stack or brick of thresholded predictions}
 
+\item{sp.nm}{Species name. Used to name the output folder}
+
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 
 \item{save}{Logical. If TRUE will save plots in pdf.}
 
-\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in 
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+
+\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in
 Model names (ex. AUC10, AUCmtp, OR10, ORmtp)}
 
 \item{msr}{Character vector. Long names of model selection criteria to replace the short names. Must
@@ -42,7 +46,7 @@ be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5
 }
 \description{
 Will plot (or save as PDF) differences between predictions of models selected
- using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved 
+ using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
  within the folder 'Mdls.thrshld/figs'.
 }
 \details{

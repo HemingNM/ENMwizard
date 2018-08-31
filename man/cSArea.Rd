@@ -7,6 +7,8 @@
 cSArea(mtp.l, restrict = NULL, digits = 0)
 }
 \arguments{
+\item{mtp.l}{List of stack or brick of thresholded predictions}
+
 \item{restrict}{a raster to select a region to compute area.}
 
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}

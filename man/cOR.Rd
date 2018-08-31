@@ -7,7 +7,9 @@
 cOR(mtp.l, occ.l, clim.scn.nm = NULL, digits = 3)
 }
 \arguments{
-\item{occ.l}{list of species occurrence data.}
+\item{mtp.l}{List of stack or brick of thresholded predictions}
+
+\item{occ.l}{list of species occurrence data}
 
 \item{clim.scn.nm}{name to locate climatic scenario from which Omission Rate will
 be extracted. Usually the scenario used to calibrate maxent models}
