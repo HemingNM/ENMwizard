@@ -2,77 +2,56 @@
 % Please edit documentation in R/7.f.plot.mdl.sel.crit.diff.R
 \name{plotMdlDiff}
 \alias{plotMdlDiff}
-\title{Plot differences between predictions of models selected from several criteria}
+\title{Plot differences in suitable areas between models selected using distinct criteria}
 \usage{
-plotMdlDiff(mcmp.l, mtp.l, basemap = NULL, save = FALSE,
-  numCores = 1)
+plotMdlDiff(mcmp, mtp, sp.nm = "species", basemap = NULL,
+  save = FALSE, numCores = 1, msnm = c("AUC10", "AUCmtp", "OR10",
+  "ORmtp"), msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)",
+  "ORlpt (AUC)"), scnm = c("cc26bi70", "cc45bi70", "cc60bi70",
+  "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70", "mr26bi70", "mr45bi70",
+  "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_", "melgmbi",
+  "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
+  scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0",
+  "2070-CCSM4-rcp8.5", "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5",
+  "2070-MPI-ESM-LR-rcp8.5", "2070-MIROC-ESM-rcp2.6",
+  "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
+  "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3",
+  "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM",
+  "Present"))
 }
 \arguments{
-\item{mcmp.l}{Object returned by "mxnt.p.batch.mscn", containing a list of calibrated models
-and model projections for each species.}
+\item{mcmp}{Species "i" of a object returned by "mxntProjB", containing a list of
+calibrated models and model projections for each species}
 
-\item{mtp.l}{List of stack or brick of thresholded predictions}
+\item{mtp}{Stack or brick of thresholded predictions}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 
 \item{save}{Logical. If TRUE will save plots in pdf.}
 
-\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+\item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in 
+Model names (ex. AUC10, AUCmtp, OR10, ORmtp)}
 
-\item{mtp.l}{List of stack or brick of thresholded predictions}
+\item{msr}{Character vector. Long names of model selection criteria to replace the short names. Must
+be in same order of argument 'msnm'}
 
-\item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
-}
-\value{
-won't return any object. Will save pdf's with differences among model predictions
+\item{scnm}{Character vector. Short names of climatic scenarios to be replaced. Ex. "cc26bi70", "cc45bi70"}
 
-won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
+\item{scr}{Character vector. Long names of climatic scenarios to replace the short names. Must
+be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5"}
 }
 \description{
-Plot differences among predictions of species model projetions selected using distinct criteria.
-This function will save the figures on pdf files in the folder "Mdls.thrshld/figs".
+Will plot (or save as PDF) differences between predictions of models selected
+ using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved 
+ within the folder 'Mdls.thrshld/figs'.
+}
+\details{
+Plot differences between predictions of models selected using distinct
+criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios
 }
 \examples{
-f.plot.mxnt.preds(mxnt.mdls.preds.lst, mods.thrshld.lst, basemap=NewWorld)
-plotMdlDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
-plotMdlDiff(mcmp.l=mxnt.mdls.preds.pf[1], mtp.l=mods.thrshld.lst[1], basemap=NewWorld)
+plotMdlDiff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
 }
 \seealso{
-\code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
-
-\code{\link{plotScnDiff}}
+\code{\link{plotScnDiffB}}
 }
-\keyword{"AUC")}
-\keyword{"AvgAIC",}
-\keyword{"LowAIC",}
-\keyword{"Mdls.thrshld/figs".}
-\keyword{"OR",}
-\keyword{(e.g.}
-\keyword{(for}
-\keyword{Plot}
-\keyword{This}
-\keyword{among}
-\keyword{climatic}
-\keyword{criteria}
-\keyword{criteria.}
-\keyword{differences}
-\keyword{distinct}
-\keyword{figures}
-\keyword{files}
-\keyword{folder}
-\keyword{from}
-\keyword{function}
-\keyword{in}
-\keyword{internal}
-\keyword{model}
-\keyword{multiple}
-\keyword{on}
-\keyword{pdf}
-\keyword{predictions}
-\keyword{save}
-\keyword{scenarios)}
-\keyword{selected}
-\keyword{several}
-\keyword{the}
-\keyword{using}
-\keyword{will}

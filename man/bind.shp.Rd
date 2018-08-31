@@ -20,9 +20,9 @@ bind.shp(occ.polys, sp.nm = "sp.nm", save = TRUE,
 shapefile with binded polygons
 }
 \description{
-This function will bind a list of splitted polygons (from poly.splt()) into a single SpatialPolygons object.
+This function will bind a list of splitted polygons (from polySplt()) into a single SpatialPolygons object.
 }
 \seealso{
-\code{\link{poly.c.batch}}, \code{\link{poly.c}}, \code{\link{poly.splt}}, \code{\link[NbClust]{NbClust}}
+\code{\link{polyCB}}, \code{\link{polyC}}, \code{\link{polySplt}}, \code{\link[NbClust]{NbClust}}
 }
 \keyword{internal}

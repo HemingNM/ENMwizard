@@ -2,7 +2,7 @@
 % Please edit documentation in R/7.f.plot.mdl.sel.crit.diff.R
 \name{make.underscript}
 \alias{make.underscript}
-\title{Format (underscript) selected texts for plotting}
+\title{Plot compare climatic scenarios differences between model selection criteria}
 \usage{
 make.underscript(x)
 }
@@ -13,12 +13,17 @@ make.underscript(x)
 list of formatted text
 }
 \description{
+i.e. plotScnDiff with panels for each of thresholds, and climatic scenario
+ difference (i.e. current vs. climScn1) for each model being compared side
+Format (underscript) selected texts for plotting
+}
+\details{
 Format (underscript) selected texts (criteria used to select models) to be used on plotting.
 }
 \examples{
 make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 }
 \seealso{
-\code{\link{plotMdlDiff}}, \code{\link{plotScnDiff}}
+\code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
 }
 \keyword{internal}

@@ -2,12 +2,12 @@
 % Please edit documentation in R/1.f.data.prep.R
 \name{loadTocc}
 \alias{loadTocc}
-\title{Load "thin.batch" filtered occurrence data}
+\title{Load filtered occurrence data}
 \usage{
 loadTocc(occ.list.thin, from.disk = FALSE)
 }
 \arguments{
-\item{occ.list.thin}{named list returned from "thin.batch"}
+\item{occ.list.thin}{named list returned from "thinB"}
 
 \item{from.disk}{boolean. Read from disk or from one of thinned datasets stored in 'occ.list.thin' obj}
 }
@@ -15,11 +15,11 @@ loadTocc(occ.list.thin, from.disk = FALSE)
 named list of thinned occurence data for each species in the list
 }
 \description{
-Load "thin.batch" filtered occurrence data
+Load filtered occurrence data from object returned by "thinB" function
 }
 \examples{
 occ.locs <- loadTocc(thinned.dataset.batch)
 }
 \seealso{
-\code{\link[spThin]{thin}}, \code{\link{thin.batch}}
+\code{\link[spThin]{thin}}, \code{\link{thinB}}
 }
