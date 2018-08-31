@@ -60,7 +60,7 @@ a.proj.l, a.calib.l, occ.l are lists with occurence data, projection and calibra
 Species in these lists must all be in the same order of species in ENMeval.o.
 }
 \examples{
-mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o=ENMeval.res.lst,
+mxnt.mdls.preds.lst <- mxnt.c.batch(ENMeval.o.l=ENMeval.res.lst,
 a.calib.l=occ.b.env, a.proj.l=areas.projection, occ.l=occ, wAICsum=0.99)
 mxnt.mdls.preds.lst[[1]][[1]] # models [ENM]evaluated and selected using sum of wAICc
 mxnt.mdls.preds.lst[[1]][[2]] # MaxEnt models

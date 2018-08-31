@@ -8,10 +8,10 @@ ENMevaluate.batch(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
   bg.grp = NULL, RMvalues = seq(0.5, 4.5, 0.5), fc = c("L", "P", "Q",
   "H", "LP", "LQ", "LH", "PQ", "PH", "QH", "LPQ", "LPH", "LQH", "PQH",
   "LPQH"), categoricals = NULL, n.bg = 10000, method = "block",
-  overlap = FALSE, aggregation.factor = c(2, 2), kfolds = NA,
-  bin.output = FALSE, clamp = TRUE, rasterPreds = TRUE,
-  parallel = FALSE, numCores = NULL, progbar = TRUE,
-  updateProgress = FALSE, resultsOnly = F, ...)
+  algorithm = "maxnet", overlap = FALSE, aggregation.factor = c(2,
+  2), kfolds = NA, bin.output = FALSE, clamp = TRUE,
+  rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
+  progbar = TRUE, updateProgress = FALSE, resultsOnly = F, ...)
 }
 \arguments{
 \item{occ.l}{list of species occurrence data}
@@ -36,6 +36,8 @@ a presence or background record.}
 \item{n.bg}{ The number of random background localities to draw from the study extent. }
 
 \item{method}{ Character string designating the method used for data partitioning.  Choices are: \code{"jackknife", "randomkfold", "user", "block", "checkerboard1", "checkerboard2"}.  See details and \code{\link{get.evaluation.bins}} for more information. }
+
+\item{algorithm}{ Character vector.  Use \code{'maxnet'} to use the \pkg{maxnet} package [default] or \code{'maxent.jar'} to use the \pkg{dismo} package and the 'maxent.jar' Java program. See details for more information on these different implementations.}
 
 \item{overlap}{ logical; If \code{TRUE}, provides pairwise metric of niche overlap (see details and \code{\link{calc.niche.overlap}}). }
 
