@@ -189,4 +189,6 @@ f.thr.batch <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
 
 
 
-
+### threshold names to sub
+tnm <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
+tr <- c("FCV1", "FCV5", "FCV10", "LPT (mtp)", "10P (x10ptp)", "ETSS (etss)", "MTSS", "BTO", "EETD")
