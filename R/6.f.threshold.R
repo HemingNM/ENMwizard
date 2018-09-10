@@ -46,7 +46,8 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
   mod.nms  <- mcmp.spi[["selected.mdls"]]$sel.cri
 
   if(sum(grepl("AvgAICc", mod.sel.crit))>0) {
-    wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
+    # wv <- mcmp.spi[["selected.mdls"]][order(mcmp.spi[["selected.mdls"]]$delta.AICc[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri)]),"w.AIC"]
+    wv <- mcmp.spi[["selected.mdls"]][grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri),"w.AIC"]
   }
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
