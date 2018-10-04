@@ -599,7 +599,7 @@ cut_calibarea <- function(poly, env.uncut, sp.nm){
 
 #' Spatially thin a list of species occurrence data
 #'
-#' Will use spThin optimisation algorithm to subset the dataset such that
+#' Will use \code{\link[spThin]} optimisation algorithm to subset the dataset such that
 #' all occurrence locations are a minimum distance apart. This process helps
 #' reduce the effect of biases in observation records on the predictive
 #' performance of ecological niche models.
