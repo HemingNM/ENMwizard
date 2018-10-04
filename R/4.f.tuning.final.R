@@ -1,5 +1,6 @@
 ## 4.2 Generate final models for occ
-#' Create arguments for selected models
+
+#' Model selection and creation of MaxEnt arguments for selected models
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
 #' return the necessary arguments for final model calibration and predictions.
@@ -114,6 +115,7 @@ f.args <- function(x, mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
 #### 4.3 Run top corresponding models and save predictions
 #### 4.3.1 save maxent best models and predictions for each model
 # "f.mxnt.mdl.pred" renamed to "mxnt.c"
+
 #' Calibrate MaxEnt models based on model selection criteria
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and

@@ -258,7 +258,7 @@ poly.splt <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 0
 #
 
 
-#' Create occ polygon for several species
+#' Create minimum convex polygon based on coordinates of species occurence data for several species
 #'
 #' This function will use a list of coordinates of species occurence data and create minimum convex polygons
 #' for each element in the list.
@@ -597,7 +597,7 @@ env.cut <- function(occ.b, env.uncut, numCores = 1){
 
 #' Spatially thin a list of species occurrence data
 #'
-#' Will use spThin optimisation algorithm to subset the dataset such that
+#' Will use \code{\link[spThin]} optimisation algorithm to subset the dataset such that
 #' all occurrence locations are a minimum distance apart. This process helps
 #' reduce the effect of biases in observation records on the predictive
 #' performance of ecological niche models.

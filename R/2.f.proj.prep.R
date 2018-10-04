@@ -82,7 +82,7 @@ pred.a.poly <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FALS
 }
 
 
-#' Select area for projection based on the extent of occ points
+#' Select area for projection based on the extent of occ points for multiple species
 #'
 #' This function is a wrapper for "pred.a". See ?pred.a
 #' It works with a named list of occ.polys to delimit the projection area for each of the species.
@@ -277,7 +277,7 @@ pred.a.rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp"){ # 
 }
 
 ### TODO - update description
-#' Cut projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)
+#' Cut projection areas of multiple species based on a unique SpatialPolygon object (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask raster/brick objects to be used on model projections.
 #'
@@ -315,7 +315,7 @@ pred.a.batch.rst <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=""
 
 #### 4.8.3 function to cut multiple environmental layers based on pred.polys
 ### TODO - update description
-#' Cut multiple projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)
+#' Cut multiple projection areas of multiple species based on a single SpatialPolygon object (e.g. Ecoregion)
 #'
 #' This function will use a single SpatialPolygon to crop/mask multiple raster/brick objects
 #' to be used on model projections.
