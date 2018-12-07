@@ -30,6 +30,11 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
 
+  if ("All" %in% mSel) {
+    x$sel.cri <- sub("^\\.", "",
+                     paste(x$sel.cri, paste0("All_", x$ID), sep = "."))
+  }
+
   x.a.i <- order(x$delta.AICc)
   x <- x[x.a.i,]
   if(is.null(x$rankAIC)) {x$rankAIC <- 1:nrow(x)} # if something goes wrong with function mxntCalib, check this line

@@ -110,7 +110,7 @@ mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raste
   # }
 
   #### AUC OR & LowAIC models
-  args.or.auc.laic <- grep("LowAIC|AUC10|AUCmtp|OR10|ORmtp", mod.nms)
+  args.or.auc.laic <- grep("All|LowAIC|AUC10|AUCmtp|OR10|ORmtp", mod.nms)
   for(i in args.or.auc.laic){
     mod.preds <- raster::addLayer(mod.preds, mod.all[[i]] )
     names(mod.preds)[raster::nlayers(mod.preds)] <- mod.nms2[i]# gsub(paste0("AIC_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms[i])
