@@ -3,7 +3,15 @@
 #' Model selection and creation of MaxEnt arguments for selected models
 #'
 #' This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
-#' return the necessary arguments for final model calibration and predictions.
+#' return the results table with models selected by the chosen criteria. It can also return the
+#' necessary arguments for final model calibration and predictions.
+#' Current implemented methods are: "LowAIC", "OR", "AUC", "AvgAIC", "WAAUC", "EBPM":
+#' LowAIC (model with lowest AIC value) -
+#' OR (model with lowest Omission Rate) -
+#' AUC (model with lowest AUC value) -
+#' AvgAIC (AIC Model Averaging) - Gutiérrez & Heming 2018
+#' WAAUC (Weighted Average Consensus Through AUC) - Marmion et al 2009
+#' EBPM (Ensemble of Best-Performing Models) - Boria et al 2016
 #'
 #' @param x Slot "results" of object of class ENMevaluation
 #' @param mSel character vector. Which criteria to use when selecting model(s). Currently implemented:
@@ -185,7 +193,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
   # args.aicc <- grep("AIC", xsel.mdls$sel.cri)
   # args.WAAUC <- grep("WAAUC", xsel.mdls$sel.cri)
   # args.EBPM <- grep("EBPM", xsel.mdls$sel.cri)
-  
+
   # exportar planilha de resultados
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
   res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "parameters", "rankAICc", "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
@@ -241,7 +249,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
 
   }
-  return(list(algorithm = algorithm, 
+  return(list(algorithm = algorithm,
               ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
               selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,
