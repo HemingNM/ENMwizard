@@ -4,18 +4,18 @@
 \alias{selEnv}
 \title{Find, optionally remove, highly correlated variables from a raster brick/stack}
 \usage{
-selEnv(env = NULL, cutoff = 0.9, corr_matrix = NULL,
+selEnv(env = NULL, corr_matrix = NULL, cutoff = 0.9,
   names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
   filename = NULL)
 }
 \arguments{
 \item{env}{raster brick/stack}
 
-\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff}
-
 \item{corr_matrix}{Correlation matrix from which variables will be selected. If the correlation
 matrix was already computed from env, you can just input here and choose other cutoff values for
 selecting variable layers.}
+
+\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff}
 
 \item{names.only}{Logical. Return only the names of selected variables (T) or return
 the raster brick containing the least correlated variables (F).}
