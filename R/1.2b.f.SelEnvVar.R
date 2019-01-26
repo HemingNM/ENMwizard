@@ -29,7 +29,7 @@ selEnv <- function(env=NULL, corr_matrix=NULL, cutoff=.9, names.only=F, plot.den
     lStats <- raster::layerStats(env, 'pearson', na.rm=T)
     corr_matrix <- lStats[['pearson correlation coefficient']]
   }
-  to.rm <- caret::findCorrelation(corr_matrix, cutoff)
+  to.rm <- caret::findCorrelation(corr_matrix, cutoff=cutoff)
   if(length(to.rm)==0){
     sel.nms <- sort(colnames(corr_matrix))
   } else {
@@ -55,8 +55,8 @@ selEnv <- function(env=NULL, corr_matrix=NULL, cutoff=.9, names.only=F, plot.den
     dend <- stats::dendrapply(dend, labelCol, sel.nms)
     # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
     graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
-    axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
     graphics::abline(h = 1 - cutoff, col = "red")
+    axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
   }
 
   ### return names of selected variables only
