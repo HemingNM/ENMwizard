@@ -1,4 +1,4 @@
-#' Find highly correlated variables from raster brick/stack
+#' Find, optionally remove, highly correlated variables from a raster brick/stack
 #'
 #' This function creates a correlation matrix for the layers of a raster brick/stack
 #' and returns a brick containing the least correlated variables below the cutoff value.
@@ -84,7 +84,7 @@ selEnv <- function(env=NULL, cutoff=.9, corr_matrix=NULL, names.only=F, plot.den
 
 
 
-#' Remove highly correlated variables from raster brick/stack for several species
+#' Find, optionally remove, highly correlated variables from a list (several species) of raster brick/stack
 #'
 #' This function is a wrapper for ENMwizard::env.sel. See ?ENMwizard::env.sel for details
 #' It works with a named list of environmental variables (raster brick/stack).
