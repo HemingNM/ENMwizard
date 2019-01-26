@@ -2,7 +2,7 @@
 % Please edit documentation in R/1.2b.f.SelEnvVar.R
 \name{env.sel.l}
 \alias{env.sel.l}
-\title{Remove highly correlated variables from raster brick/stack for several species}
+\title{Find, optionally remove, highly correlated variables from a list (several species) of raster brick/stack}
 \usage{
 env.sel.l(env.l, cutoff = 0.9, corr_matrix.l = NULL, names.only = F,
   plot.dend = T, rm.old = F, filename = NULL)
