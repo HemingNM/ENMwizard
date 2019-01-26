@@ -24,7 +24,7 @@
 #' @inheritParams caret::findCorrelation
 #' @inheritParams raster::writeRaster
 #' @export
-env.sel <- function(env=NULL, cutoff=.9, corr_matrix=NULL, names.only=F, plot.dend=T, rm.old=F, sp.nm="sp", filename=NULL){
+env.sel <- function(env=NULL, corr_matrix=NULL, cutoff=.9, names.only=F, plot.dend=T, rm.old=F, sp.nm="sp", filename=NULL){
   if(is.null(corr_matrix)){
     lStats <- raster::layerStats(env, 'pearson', na.rm=T)
     corr_matrix <- lStats[['pearson correlation coefficient']]
@@ -53,7 +53,9 @@ env.sel <- function(env=NULL, cutoff=.9, corr_matrix=NULL, names.only=F, plot.de
 
     ## apply labelCol on all nodes of the dendrogram
     dend <- stats::dendrapply(dend, labelCol, sel.nms)
-    graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
+    # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
+    graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
+    axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)))
     graphics::abline(h = 1 - cutoff, col = "red")
   }
 
@@ -101,7 +103,7 @@ env.sel <- function(env=NULL, cutoff=.9, corr_matrix=NULL, names.only=F, plot.de
 #' occ.b.env <- env.sel.b(occ.b.env, .9, names.only=F, rm.old=F)
 #' @inheritParams env.sel
 #' @export
-env.sel.l <- function(env.l, cutoff=.9, corr_matrix.l=NULL, names.only = F, plot.dend = T, rm.old=F, filename=NULL){
+env.sel.l <- function(env.l=NULL, corr_matrix.l=NULL, cutoff=.9, names.only = F, plot.dend = T, rm.old=F, filename=NULL){
   if(is.null(filename)){
     path.env.out <- "2_envData/area.calib"
     if (dir.exists("2_envData") == FALSE) {
@@ -115,7 +117,7 @@ env.sel.l <- function(env.l, cutoff=.9, corr_matrix.l=NULL, names.only = F, plot
 
   env.l.sel <- base::lapply(base::seq_along(env.l), function(i, x, cutoff, corr_matrix.l, names.only, rm.old, filename){ # , n.env.l
     sp.nm <- names(x)[i]
-    env.sel(x[[i]], cutoff=cutoff, corr_matrix=corr_matrix.l[[i]], names.only = names.only, plot.dend = plot.dend,
+    env.sel(x[[i]], cutoff=cutoff, corr_matrix=corr_matrix.l[[i]]$corr_matrix, names.only = names.only, plot.dend = plot.dend,
            rm.old = rm.old, sp.nm = sp.nm, filename = filename)
   }, x=env.l, cutoff, corr_matrix.l, names.only, rm.old, filename=filename) # , n.env.l
 
