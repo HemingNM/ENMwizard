@@ -23,6 +23,7 @@
 #' @inheritParams mxnt.c
 #' @inheritParams caret::findCorrelation
 #' @inheritParams raster::writeRaster
+#' @export
 env.sel <- function(env=NULL, cutoff=.9, corr_matrix=NULL, names.only=F, plot.dend=T, rm.old=F, sp.nm="sp", filename=NULL){
   if(is.null(corr_matrix)){
     lStats <- raster::layerStats(env, 'pearson', na.rm=T)
@@ -99,6 +100,7 @@ env.sel <- function(env=NULL, cutoff=.9, corr_matrix=NULL, names.only=F, plot.de
 #' env.sel.b(occ.b.env, .9, names.only=T)
 #' occ.b.env <- env.sel.b(occ.b.env, .9, names.only=F, rm.old=F)
 #' @inheritParams env.sel
+#' @export
 env.sel.l <- function(env.l, cutoff=.9, corr_matrix.l=NULL, names.only = F, plot.dend = T, rm.old=F, filename=NULL){
   if(is.null(filename)){
     path.env.out <- "2_envData/area.calib"
