@@ -76,7 +76,7 @@ f.thr <- function(mcmp.spi, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL) {
     matrix(apply(data.frame(thrshld.crit.v[grep("AICc_", mcmp.spi[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
       stats::weighted.mean(x, wv)
     }, wv), nrow = 1, dimnames = list("AvgAICc", thrshld.nms) )
-  } else {thrshld.crit <- thrshld.crit.v},
+  }, # else {thrshld.crit <- thrshld.crit.v},
   thrshld.crit.v)
   thrshld.mod.crt <- subset(thrshld.mod.crt, grepl(paste0(mcmp.spi$mSel, collapse = "|"), rownames(thrshld.mod.crt)))
 
