@@ -55,7 +55,7 @@ env.sel <- function(env=NULL, corr_matrix=NULL, cutoff=.9, names.only=F, plot.de
     dend <- stats::dendrapply(dend, labelCol, sel.nms)
     # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
     graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
-    axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)))
+    axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
     graphics::abline(h = 1 - cutoff, col = "red")
   }
 
