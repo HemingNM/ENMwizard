@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.f.proj.prep.R
 \name{pred.a.poly.batch}
 \alias{pred.a.poly.batch}
-\title{Select area for projection based on the extent of occ points}
+\title{Select area for projection based on the extent of occ points for multiple species}
 \usage{
 pred.a.poly.batch(occ.polys, deg.incr = NULL, mult = 1,
   buffer = FALSE, same = TRUE)

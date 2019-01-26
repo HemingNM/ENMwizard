@@ -2,7 +2,7 @@
 % Please edit documentation in R/4.f.tuning.final.R
 \name{f.args}
 \alias{f.args}
-\title{Create arguments for selected models}
+\title{Model selection and creation of MaxEnt arguments for selected models}
 \usage{
 f.args(x, mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
   save = "B", randomseed = FALSE, responsecurves = TRUE,
@@ -32,7 +32,15 @@ a list with both, args and selected models, (if save="B")
 }
 \description{
 This function will read an object of class ENMevaluation (See ?ENMeval::ENMevaluate for details) and
-return the necessary arguments for final model calibration and predictions.
+return the results table with models selected by the chosen criteria. It can also return the
+necessary arguments for final model calibration and predictions.
+Current implemented methods are: "LowAIC", "OR", "AUC", "AvgAIC", "WAAUC", "EBPM":
+LowAIC (model with lowest AIC value) -
+OR (model with lowest Omission Rate) -
+AUC (model with lowest AUC value) -
+AvgAIC (AIC Model Averaging) - Gutiérrez & Heming 2018
+WAAUC (Weighted Average Consensus Through AUC) - Marmion et al 2009
+EBPM (Ensemble of Best-Performing Models) - Boria et al 2016
 }
 \seealso{
 \code{\link{mxnt.c}}, \code{\link{mxnt.c.batch}}, \code{\link[dismo]{maxent}}, \code{\link[ENMeval]{ENMevaluate}},

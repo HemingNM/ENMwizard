@@ -2,7 +2,7 @@
 % Please edit documentation in R/2.f.proj.prep.R
 \name{pred.a.batch.rst}
 \alias{pred.a.batch.rst}
-\title{Cut projection areas of multiple species based on a unique SpatialPolygon (e.g. Ecoregion)}
+\title{Cut projection areas of multiple species based on a unique SpatialPolygon object (e.g. Ecoregion)}
 \usage{
 pred.a.batch.rst(area.p, env.uncut, occ.polys, mask = FALSE,
   prj.nm = "", sp.nm = "mult.spp")

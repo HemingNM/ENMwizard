@@ -2,7 +2,7 @@
 % Please edit documentation in R/6.f.threshold.R
 \name{f.thr.batch}
 \alias{f.thr.batch}
-\title{Apply threshold for MaxEnt projections across all species}
+\title{Apply threshold for MaxEnt projections for multiple species}
 \usage{
 f.thr.batch(mcmp.l, thrshld.i = 4:6, numCores = 1)
 }
