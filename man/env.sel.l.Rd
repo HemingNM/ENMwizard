@@ -4,17 +4,17 @@
 \alias{env.sel.l}
 \title{Find, optionally remove, highly correlated variables from a list (several species) of raster brick/stack}
 \usage{
-env.sel.l(env.l, cutoff = 0.9, corr_matrix.l = NULL, names.only = F,
-  plot.dend = T, rm.old = F, filename = NULL)
+env.sel.l(env.l = NULL, corr_matrix.l = NULL, cutoff = 0.9,
+  names.only = F, plot.dend = T, rm.old = F, filename = NULL)
 }
 \arguments{
 \item{env.l}{List of raster brick/stack.}
 
-\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff}
-
 \item{corr_matrix.l}{List of correlation matrices from which variables will be selected. If the correlation
 matrix was already computed from env, you can just input here and choose other cutoff values for
 selecting variable layers.}
+
+\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff}
 
 \item{names.only}{Logical. Return only the names of selected variables (T) or return
 the raster brick containing the least correlated variables (F).}
