@@ -223,32 +223,32 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
 
       cl <- parallel::makeCluster(numCores)
 
-      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
+      mxnt.mdls <- parallel::clusterApply(cl, seq_along(args.all), function(i, args.all, pred.args, mod.nms, a.calib, occ, a) {
 
         path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
 
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
         set.seed(1)
-        resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+        resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=c(args.all[[i]], pred.args) ) # final model fitting/calibration
         return(resu)
-      }, args.all, mod.nms, a.calib, occ, a) #)
+      }, args.all, pred.args, mod.nms, a.calib, occ, a) #)
 
       parallel::stopCluster(cl)
 
 
 
     } else {
-      mxnt.mdls <- lapply(seq_along(args.all), function(i, args.all, mod.nms, a.calib, occ, a) {
+      mxnt.mdls <- lapply(seq_along(args.all), function(i, args.all, pred.args, mod.nms, a.calib, occ, a) {
 
         path2file <- paste(path.mdls, outpt, mod.nms[i], sep='/')
 
         filename <- paste(path2file, paste0(mod.nms[i], ".grd"), sep='/')
         # maxent models
         set.seed(1)
-        resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=args.all[[i]]) # final model fitting/calibration
+        resu <- dismo::maxent(a.calib, occ, a, path=path2file, args=c(args.all[[i]], pred.args) ) # final model fitting/calibration
         return(resu)
-      }, args.all, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
+      }, args.all, pred.args, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
 
     } # closes else
 
