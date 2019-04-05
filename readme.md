@@ -118,7 +118,7 @@ If the variables were already saved in a raster brick, you just need to read the
 env.uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 ```
 
-Finally, crop environmental variables for each species (and plot them for visual inspection)
+Crop environmental variables for each species (and plot them for visual inspection)
 ```r
 occ.b.env <- cut_calibarea_b(occ.b, env.uncut)
 
