@@ -130,6 +130,15 @@ for(i in 1:length(occ.b.env)){
 }
 ```
 
+Select the least correlated variables
+```r
+vars <- selEnvB(occ.b.env, cutoff=.75, names=T)
+# See selected variables for each species
+lapply(vars, function(x)x[[1]])
+# remove correlated variables from our variable set
+occ.b.env <- selEnvB(occ.b.env, vars, cutoff=.75, names=F)
+```
+
 
 ## - 2. Prepare occurence data
 ### - 2.1 Filtering original dataset
