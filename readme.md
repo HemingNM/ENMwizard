@@ -119,7 +119,7 @@ If the variables were already saved in a raster brick, you just need to read the
 env.uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 ```
 
-Finally, crop environmental variables for each species (and plot them for visual inspection)
+Crop environmental variables for each species (and plot them for visual inspection)
 ```r
 occ.b.env <- env.cut(occ.b, env.uncut)
 
@@ -128,6 +128,15 @@ for(i in 1:length(occ.b.env)){
   plot(occ.polys[[i]], border = "red", add = T)
   plot(occ.b[[i]], add = T)
 }
+```
+
+Select the least correlated variables
+```r
+vars <- env.sel.l(occ.b.env, cutoff=.75, names=T)
+# See selected variables for each species
+lapply(vars, function(x)x[[1]])
+# remove correlated variables from our variable set
+occ.b.env <- env.sel.l(occ.b.env, vars, cutoff=.75, names=F)
 ```
 
 
