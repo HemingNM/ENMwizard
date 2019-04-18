@@ -32,7 +32,8 @@ Imports:
     NbClust,
     methods,
     spThin,
-    data.table
+    data.table,
+    caret
 Suggests:
     rJava,
     testthat,

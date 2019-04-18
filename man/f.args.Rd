@@ -47,6 +47,6 @@ EBPM (Ensemble of Best-Performing Models) - Boria et al 2016
 \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' @examples
 ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
-f.args(ENMeval.res.lst[[1]]@results)
+f.args(x=ENMeval.res.lst[[1]]@results)
 }
 \keyword{internal}

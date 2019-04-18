@@ -27,7 +27,7 @@
 #' \code{\link{mxnt.p}}, \code{\link{mxnt.p.batch.mscn}}
 #' #' @examples
 #' ENMeval.res.lst <- ENMevaluate.batch(occ.locs, occ.b.env, parallel = T , numCores = 7)
-#' f.args(ENMeval.res.lst[[1]]@results)
+#' f.args(x=ENMeval.res.lst[[1]]@results)
 #' @return A vector of args (if save="A"), data.frame of selected models (if save="M") or
 #' a list with both, args and selected models, (if save="B")
 #' @keywords internal
@@ -61,6 +61,15 @@ f.args <- function(x, mSel=c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, sav
 
   }
   x <- x[order(x$ID),]
+
+  # if("Cobos" %in% mSel){
+  #   mod.cobos <- x#[!is.na(x$avg.pROC.p),]
+  #   mod.cobos[is.na(mod.cobos$avg.pROC.p),"avg.pROC.p"] <- 1
+  #   delta.mc <- mod.cobos$AICc - min(mod.cobos$AICc[(mod.cobos$avg.pROC.p<0.05 & mod.cobos$avg.test.or10pct<0.1)])
+  #   mc <- delta.mc<=2 & delta.mc>=0
+  #   x$sel.cri[mc] <- sub("^\\.", "", paste(x$sel.cri[mc], "Cobos", sep = "."))
+  # }
+
 
   # LowAIC
   if("LowAIC" %in% mSel){
@@ -258,6 +267,7 @@ mxnt.c <- function(ENMeval.o, sp.nm, a.calib, occ = NULL, use.ENMeval.bgpts = TR
               ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
               selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,
+              occ.grp = ENMeval.o@occ.grp, bg.grp = ENMeval.o@bg.grp,
               mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 
