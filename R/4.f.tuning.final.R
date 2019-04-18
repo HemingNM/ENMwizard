@@ -284,6 +284,7 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
               ENMeval.results = ENMeval.r, mxnt.mdls = mxnt.mdls,
               selected.mdls = xsel.mdls, mSel = mSel,
               occ.pts = occ, bg.pts = a,
+              occ.grp = ENMeval.o@occ.grp, bg.grp = ENMeval.o@bg.grp,
               mxnt.args = args.all, pred.args = pred.args)) #, mxnt.preds = mod.preds))
 }
 
