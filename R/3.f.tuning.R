@@ -10,6 +10,8 @@
 #' also be a data.frame, in which case each column should be a predictor variable and each row
 #' a presence or background record.
 #' @param bg.coords.l list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).
+#' @param bg.grp.l list containing a vector of bins of occurrence localities (required for 'user' method) for each species.
+#' @param occ.grp.l list containing a vector of bins of occurrence localities (required for 'user' method) for each species.
 #' @param resultsOnly logical; If TRUE, only results, occ.pts, and bg.pts are returned.
 #' 'predictions', 'models', 'occ.grp', and 'bg.grp' are set to NULL.
 #' It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
@@ -20,8 +22,9 @@
 #' @examples
 #' ENMeval.res.lst <- ENMevaluateB(occ.locs, occ.b.env, parallel = T , numCores = 7)
 #' @export
-ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
-                              bg.grp = NULL, RMvalues = seq(0.5, 4.5, 0.5),
+ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL,
+                         occ.grp.l = NULL, bg.grp.l = NULL,
+                         RMvalues = seq(0.5, 4.5, 0.5),
                               fc = c("L", "P", "Q", "H",
                                      "LP", "LQ", "LH",
                                      "PQ", "PH", "QH",
@@ -43,7 +46,7 @@ ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
     for(i in 1:length(occ.l)){
       cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
       eval <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
-                                   occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
+                                   occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
                                    fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
                                    algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
@@ -57,7 +60,7 @@ ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
   } else {
       for(i in 1:length(occ.l)){
         ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
-                                                 occ.grp = occ.grp, bg.grp = bg.grp, RMvalues=RMvalues,
+                                                 occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
                                                  fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
                                                  algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                                  kfolds = kfolds, bin.output = bin.output, clamp = clamp,
