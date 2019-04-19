@@ -85,7 +85,7 @@ mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raste
   mod.all <- setNames(mod.all, names(mxnt.mdls))
 
   #### Ensemble models (AvgAIC, WAAUC, EBPM)
-  mod.preds <- EnsembleProjs(mcm, filename.or.auc.laic, path.mdls, outpt, pred.nm, formt)
+  mod.preds <- EnsembleProjs(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, pred.nm, formt)
   # if(length(grep("AvgAIC", mcm$mSel))>0) {
   #   #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
   #   # args.aicc <- order(xsel.mdls$delta.AICc)
@@ -308,9 +308,9 @@ EnsembleProjs <- function(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, p
       ### stack prediction rasters (to create Average Model prediction)
       filename.avg.stk <- filename.or.auc.laic[argsEns]
       Mod.ens.stack <- raster::stack(filename.avg.stk)
-      plot(Mod.ens.stack[[1]])
-      print(names(Mod.ens.stack))
-      plot(a.proj[[1]])
+      # plot(Mod.ens.stack[[1]])
+      # print(names(Mod.ens.stack))
+      # plot(a.proj[[1]])
       # create averaged prediction map
       if(length(argsEns)>1){
         mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.ens.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
