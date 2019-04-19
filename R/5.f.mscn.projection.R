@@ -308,8 +308,9 @@ EnsembleProjs <- function(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, p
       ### stack prediction rasters (to create Average Model prediction)
       filename.avg.stk <- filename.or.auc.laic[argsEns]
       Mod.ens.stack <- raster::stack(filename.avg.stk)
-      # plot(Mod.ens.stack)
-      # print(names(Mod.ens.stack))
+      plot(Mod.ens.stack[[1]])
+      print(names(Mod.ens.stack))
+      plot(a.proj[[1]])
       # create averaged prediction map
       if(length(argsEns)>1){
         mod.preds <- raster::addLayer(mod.preds, raster::writeRaster(raster::mask((sum(Mod.ens.stack*wv, na.rm = T)/sum(wv)), a.proj[[1]]),
