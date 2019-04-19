@@ -52,7 +52,10 @@ thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="spe
     wv.wa <- mcmp[["selected.mdls"]][grep("WAAUC_", mcmp[["selected.mdls"]]$sel.cri),"avg.test.AUC"]
   }
   if(sum(grepl("EBPM", mod.sel.crit))>0) {
-    wv.bp <- rep(1, length(grep("EBPM", mcmp[["selected.mdls"]]$sel.cri)))
+    wv.bp <- rep(1, length(grep("EBPM_", mcmp[["selected.mdls"]]$sel.cri)))
+  }
+  if(sum(grepl("ESOR", mod.sel.crit))>0) {
+    wv.es <- rep(1, length(grep("ESOR_", mcmp[["selected.mdls"]]$sel.cri)))
   }
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -93,10 +96,15 @@ thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="spe
         stats::weighted.mean(x, wv)
       }, wv.bp), nrow = 1, dimnames = list("EBPM", thrshld.nms) )
     } ,
+    if(sum(grepl("ESOR_", mod.nms))>0){
+      matrix(apply(data.frame(thrshld.crit.v[grep("ESOR_", mcmp[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
+        stats::weighted.mean(x, wv)
+      }, wv.es), nrow = 1, dimnames = list("ESOR", thrshld.nms) )
+    } ,
     thrshld.crit.v)
 
   ### subset thrshld.mod.crt
-  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC$", "^EBPM$", "^WAAUC$")
+  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC$", "^EBPM$", "^WAAUC$", "^ESOR$")
   thrshld.mod.crt <- subset(thrshld.mod.crt, grepl(paste0(s.nms, collapse = "|"), rownames(thrshld.mod.crt)))
 
   brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
