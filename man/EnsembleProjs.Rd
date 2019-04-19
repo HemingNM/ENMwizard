@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.f.mscn.projection.R
 \name{EnsembleProjs}
 \alias{EnsembleProjs}
-\title{Ensemble models (AvgAIC, WAAUC, EBPM)}
+\title{Ensemble models (AvgAIC, WAAUC, EBPM, ESOR)}
 \usage{
 EnsembleProjs(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, pred.nm,
   formt)

@@ -54,8 +54,6 @@ criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios 
 A panel for each combination of climatic scenario and threshold criteria will be created.
 Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will
 be plotted
-}
-\examples{
 plotMdlDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
 }
 \seealso{

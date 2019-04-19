@@ -48,13 +48,11 @@ be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5
 Will plot (or save as PDF) differences between predictions of models selected
  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
  within the folder 'Mdls.thrshld/figs'.
+plotMdlDiff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
 }
 \details{
 Plot differences between predictions of models selected using distinct
 criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios
-}
-\examples{
-plotMdlDiff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
 }
 \seealso{
 \code{\link{plotScnDiffB}}

@@ -4,9 +4,9 @@
 \alias{ENMevaluateB}
 \title{Tuning and evaluation of ENMs with Maxent for several species using ENMeval}
 \usage{
-ENMevaluateB(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp = NULL,
-  bg.grp = NULL, RMvalues = seq(0.5, 4.5, 0.5), fc = c("L", "P", "Q",
-  "H", "LP", "LQ", "LH", "PQ", "PH", "QH", "LPQ", "LPH", "LQH", "PQH",
+ENMevaluateB(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp.l = NULL,
+  bg.grp.l = NULL, RMvalues = seq(0.5, 4.5, 0.5), fc = c("L", "P",
+  "Q", "H", "LP", "LQ", "LH", "PQ", "PH", "QH", "LPQ", "LPH", "LQH", "PQH",
   "LPQH"), categoricals = NULL, n.bg = 10000, method = "block",
   algorithm = "maxnet", overlap = FALSE, aggregation.factor = c(2,
   2), kfolds = NA, bin.output = FALSE, clamp = TRUE,
@@ -23,9 +23,9 @@ a presence or background record.}
 
 \item{bg.coords.l}{list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).}
 
-\item{occ.grp}{ Vector of bins of occurrence localities (required for '\code{user}' method). }
+\item{occ.grp.l}{list containing a vector of bins of occurrence localities (required for 'user' method) for each species.}
 
-\item{bg.grp}{ Vector of bins of background localities (required for '\code{user}' method). }
+\item{bg.grp.l}{list containing a vector of bins of occurrence localities (required for 'user' method) for each species.}
 
 \item{RMvalues}{ Vector of (non-negative) values to use for the regularization multiplier. }
 

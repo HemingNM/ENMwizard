@@ -4,8 +4,8 @@
 \alias{modSel}
 \title{Model selection and creation of MaxEnt arguments for selected models}
 \usage{
-modSel(x, mSel = c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"),
-  wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE,
+modSel(x, mSel = c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR",
+  "AUC"), wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE,
   arg1 = "noaddsamplestobackground", arg2 = "noautofeature",
   save = "M")
 }

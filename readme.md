@@ -167,7 +167,7 @@ By providing [at least] two lists, occurence and environmental data, we will be 
 ```r
 ENMeval.res.lst <- ENMevaluateB(occ.locs, occ.b.env, 
                     RMvalues = c(1, 1.5), fc = c("L", "LQ", "LP"),
-                    method="block")
+                    method="block", algorithm="maxent.jar")
 ```
 
 -----
@@ -179,7 +179,7 @@ After tuning MaxEnt models, we will calibrate them using all occurence data (i.e
 # Run model
 mxnt.mdls.preds.lst <- mxntCalibB(ENMeval.o.l = ENMeval.res.lst, 
                                     a.calib.l = occ.b.env, occ.l = occ.locs,
-                                    mSel = c("LowAIC", "AUC"))# "LowAIC") # , "OR"
+                                    mSel = c("LowAIC", "AUC"))# 
 
 
 # # Comparing single core processing and multiple core processing
@@ -216,13 +216,9 @@ names(futAC5085) <- names(current)
 futAC7085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
 names(futAC7085) <- names(current)
 
-# current.l <- list(current = current[[c(1,12,16,17,5,6,7,8)]])
-# future.l <- list(futAC5085 = futAC5085[[c(1,12,16,17,5,6,7,8)]],
-#                 futAC7085 = futAC7085[[c(1,12,16,17,5,6,7,8)]])
-
-env.proj.l <- list(current = current[[c(1,5,6,7,8,12,16,17)]],
-                futAC5085 = futAC5085[[c(1,5,6,7,8,12,16,17)]],
-                futAC7085 = futAC7085[[c(1,5,6,7,8,12,16,17)]])
+env.proj.l <- list(current = current,
+                futAC5085 = futAC5085,
+                futAC7085 = futAC7085)
 
 ```
 

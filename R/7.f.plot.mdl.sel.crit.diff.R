@@ -17,7 +17,7 @@
 #' @details A panel for each combination of climatic scenario and threshold criteria will be created.
 #' Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will
 #' be plotted
-#' @examples
+# #' @examples
 #' plotMdlDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
 #' @export
 plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
@@ -75,7 +75,7 @@ plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 #' @description  Will plot (or save as PDF) differences between predictions of models selected
 #'  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
 #'  within the folder 'Mdls.thrshld/figs'.
-#' @examples
+# #' @examples
 #' plotMdlDiff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
 #' @export
 plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
@@ -228,7 +228,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
 #' @inheritParams mxntCalib
 #' @seealso \code{\link{plotScnDiff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
-#' @examples
+# #' @examples
 # plotScnDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' @export
 plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="current",
@@ -278,7 +278,7 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="c
 #' @param save Export to pdf or not?
 #' @seealso \code{\link{plotScnDiffB}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
-#' @examples
+# #' @examples
 # plotScnDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' @export
 plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
