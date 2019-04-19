@@ -283,6 +283,7 @@ EnsembleProjs <- function(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, p
   if(sum(ens.i)>0){
     ens <- ens[ens.i]
     for(EM in ens){
+      print(EM)
       # filenames
       ens.m.path <- paste(path.mdls, outpt, paste0("Mod.", EM), sep='/') # paste0("3_out.MaxEnt/selected.models/cloglog/", mod.pred.nms[2])
       if(dir.exists(ens.m.path)==FALSE) dir.create(ens.m.path)
