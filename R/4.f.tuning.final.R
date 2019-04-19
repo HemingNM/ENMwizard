@@ -25,7 +25,7 @@
 #' a list with both, args and selected models, (if save="B")
 #' @keywords internal
 #' @export
-modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
+modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", "AUC"), wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
   x <- x@results
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
@@ -79,6 +79,19 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
     # }
   }
 
+  # ESOR (Ensemble Significant pROC, low Omission Rate) - Cobos et al 2019
+  # Selects models according to: pROC<=0.05; OR<=ORspecified; AICc<=2
+  if("ESOR" %in% mSel){
+    mod.cobos <- x#[!is.na(x$avg.pROC.p),]
+    mod.cobos[is.na(mod.cobos$avg.pROC.p),"avg.pROC.p"] <- 1
+    ESOR <- mod.cobos$avg.pROC.p<=0.05 & mod.cobos$avg.test.or10pct<=0.1
+    if(sum(ESOR)==0) {
+      ESOR <- mod.cobos$avg.pROC.p<=0.05 & (mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct))
+      warning("ESOR: No model with OR <= OR criteria. Using model with lowest OR")}
+    delta <- mod.cobos$AICc - min(mod.cobos$AICc[ESOR])
+    ESOR <- delta<=2 & delta>=0 & ESOR
+    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESOR_", 1:length(ESOR)), sep = "."))
+  }
 
   # # Mean ALL - Marmion et al 2009
   # mean(mji)
@@ -129,7 +142,7 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
   f <- factor(xsel.mdls$features)
   beta <- c(xsel.mdls$rm)
   cat("\n", "arguments used for building models", "\n")
-  print(data.frame(ID=xsel.mdls$ID, optimality.criteria = xsel.mdls$sel.cri, features=xsel.mdls$features, beta=xsel.mdls$rm))
+  print(data.frame(ID=xsel.mdls$ID, optimality.criteria = xsel.mdls$sel.cri, settings=xsel.mdls$settings))
   xsel.mdls$ID <- NULL
 
   cat("\n")
@@ -144,12 +157,14 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "LowAIC", "OR", "AUC"), 
                 paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
 
+  args <- setNames(c(strsplit(args, ",")), xsel.mdls$settings)
+
   if(save == "A"){
-    return(c(strsplit(args, ",")))
+    return(args)
   } else if(save == "M"){
     return(xsel.mdls)
   } else if (save == "B"){
-    return(list(args=c(strsplit(args, ",")), mdls=xsel.mdls))
+    return(list(args=args, mdls=xsel.mdls))
   }
 }
 
@@ -227,12 +242,12 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 
   # exportar planilha de resultados
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
-  res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "w.AIC", "parameters", "rankAIC", "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
-  colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAIC", "NP", "Rank", "OR10", "ORLPT", "AUC")
+  res.tbl <- xsel.mdls #[,c("sel.cri", "features","rm","AICc", "w.AIC", "parameters", "rankAIC", "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
+  # colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "wAIC", "NP", "Rank", "OR10", "ORLPT", "AUC")
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
-  # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"])
-  mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"])
+  mod.nms <- paste0("Mod.",xsel.mdls[, "settings"]) #
+  # mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"])
   mod.preds <- raster::stack()
 
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
@@ -241,7 +256,7 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 
   if(dir.exists(paste(path.mdls, outpt, sep='/'))==FALSE) dir.create(paste(path.mdls, outpt, sep='/'))
 
-  mxnt.mdls <- vector("list", length(args.all))
+  # mxnt.mdls <- setNames(vector("list", length(args.all)), names(args.all))
 
   #### Calibrate ALL selected models
   {
@@ -277,7 +292,7 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
       }, args.all, pred.args, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
 
     } # closes else
-
+    mxnt.mdls <- setNames(mxnt.mdls, names(args.all))
 
   }
   return(list(algorithm = algorithm,
