@@ -293,7 +293,7 @@ plotMdlDiffB(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-plotScnDiff(mxnt.mdls.preds.cf, mods.thrshld.lst, 
+plotScnDiffB(mxnt.mdls.preds.cf, mods.thrshld.lst, 
               sel.clim.scn = "current", mSel = "LowAIC", save=F)
 ```
 
@@ -301,7 +301,7 @@ plotScnDiff(mxnt.mdls.preds.cf, mods.thrshld.lst,
 ## - 7. Metrics
 ### - Compute variable contribution and importance
 ```r
-cVarCI(mxnt.mdls.preds.lst)
+cVarCI(mxnt.mdls.preds.cf)
 ```
 ### - Compute "Omission Rate"
 ```r

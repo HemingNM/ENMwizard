@@ -90,7 +90,7 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", 
       warning("ESOR: No model with OR <= OR criteria. Using model with lowest OR")}
     delta <- mod.cobos$AICc - min(mod.cobos$AICc[ESOR])
     ESOR <- delta<=2 & delta>=0 & ESOR
-    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESOR_", 1:length(ESOR)), sep = "."))
+    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESOR_", 1:sum(ESOR)), sep = "."))
   }
 
   # # Mean ALL - Marmion et al 2009
