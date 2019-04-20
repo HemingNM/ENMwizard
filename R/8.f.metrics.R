@@ -221,10 +221,6 @@ cVarCI <- function(mcmp.l){
         f.wm("ESOR_", pred.nms, sel.mod.nms, var.nms, wv.es, var.cont.df, dimnames1="Mod.ESOR")
       },
       var.cont.df))
-    # var.cont.df <- cbind(sel.crit=rownames(var.cont.df), var.cont.df)
-    # var.cont.df$sel.crit <- as.character(var.cont.df$sel.crit)
-    # var.cont.df$sel.crit[!is.na(match(rownames(var.cont.df), mod.nms))] <- sel.mod.nms
-
 
     var.permImp.df <- as.data.frame(rbind(
       if(sum(grepl("AvgAIC", pred.nms))>0){
@@ -240,9 +236,15 @@ cVarCI <- function(mcmp.l){
         f.wm("ESOR_", pred.nms, sel.mod.nms, var.nms, wv.es, var.permImp.df, dimnames1="Mod.ESOR")
       },
       var.permImp.df))
-    # var.permImp.df <- cbind(sel.crit=var.cont.df$sel.crit, var.permImp.df)
+    mnms.i <- is.na(match(rownames(var.cont.df), mod.nms))
+    sel.mod.nms <- c(rownames(var.cont.df)[mnms.i], sel.mod.nms)
+    var.cont.df <- cbind(sel.crit=sel.mod.nms, var.cont.df)
+    # var.cont.df$sel.crit <- as.character(var.cont.df$sel.crit)
+    # var.cont.df$sel.crit[!is.na(match(rownames(var.cont.df), mod.nms))] <- sel.mod.nms
+    var.permImp.df <- cbind(sel.crit=sel.mod.nms, var.permImp.df)
 
-    var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
+    # var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
+    var.contPermImp[[sp]] <- list(contribution=var.cont.df, permutation.importance=var.permImp.df)
     utils::write.csv(var.cont.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.Contribution.", sp, ".csv"))
     utils::write.csv(var.permImp.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.PermImportance", sp, ".csv"))
   }
