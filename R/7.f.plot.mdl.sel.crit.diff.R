@@ -294,6 +294,11 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
                                 "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
 ){
   # numCores=1
+
+  if(length(mtp)==1){
+    stop("Only one climatic scenario. Nothing to compare to.")
+  }
+
   {
     path.res <- "3_out.MaxEnt"
     if(dir.exists(path.res)==FALSE) dir.create(path.res)

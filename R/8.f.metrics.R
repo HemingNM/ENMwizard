@@ -171,7 +171,8 @@ cVarCI <- function(mcmp.l){
   var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
   for(sp in names(mcmp.l)){
     mxnt.mdls <- mcmp.l[[sp]]$mxnt.mdls
-    mod.nms <- paste0("Mod.", mcmp.l[[sp]]$selected.mdls$sel.cri)
+    sel.mod.nms <- paste0("Mod.", mcmp.l[[sp]]$selected.mdls$sel.cri)
+    mod.nms <- paste0("Mod.", mcmp.l[[sp]]$selected.mdls$settings)
     pred.nms <- names(mcmp.l[[sp]]$mxnt.preds[[1]])
     var.nms <- gsub( ".contribution", "", rownames(mxnt.mdls[[1]]@results)[grepl("contribution", rownames(mxnt.mdls[[1]]@results))])
     # w.mdls <- mcmp.l[[sp]]$selected.mdls$w.AIC
@@ -184,8 +185,8 @@ cVarCI <- function(mcmp.l){
     if(sum(grepl("EBPM", pred.nms))>0) {
       wv.bp <- rep(1, length(grep("EBPM", mcmp.l[[sp]][["selected.mdls"]]$sel.cri)))
     }
-    if(sum(grepl("ESOR", mod.sel.crit))>0) {
-      wv.es <- rep(1, length(grep("ESOR_", mcmp[["selected.mdls"]]$sel.cri)))
+    if(sum(grepl("ESOR", pred.nms))>0) {
+      wv.es <- rep(1, length(grep("ESOR_", mcmp.l[[sp]][["selected.mdls"]]$sel.cri)))
     }
 
     ## variable contributions and importance
@@ -199,42 +200,47 @@ cVarCI <- function(mcmp.l){
       var.permImp.df[i,] <- mxnt.mdls[[i]]@results[grepl("permutation.importance", rownames(mxnt.mdls[[i]]@results))]
     }
 
-    f.wm <- function(pattern="AIC_", pred.nms, mod.nms, var.nms, wv, df, dimnames1="Mod.AvgAIC" ){
-      matrix(apply(data.frame(matrix(df[grep(pattern, mod.nms),],
-                                     nrow = sum(grepl(pattern, mod.nms)), byrow = FALSE ) ), 2, function(x, wv) {
+    f.wm <- function(pattern="AIC_", pred.nms, sel.mod.nms, var.nms, wv, df, dimnames1="Mod.AvgAIC" ){
+      matrix(apply(data.frame(matrix(df[grep(pattern, sel.mod.nms),],
+                                     nrow = sum(grepl(pattern, sel.mod.nms)), byrow = FALSE ) ), 2, function(x, wv) {
                                        stats::weighted.mean(x, wv)
                                      }, wv), nrow = 1, dimnames = list(dimnames1, var.nms) )
     }
 
-    var.cont.df <- rbind(
+    var.cont.df <- as.data.frame(rbind(
       if(sum(grepl("AvgAIC", pred.nms))>0){
-        f.wm("AIC_", pred.nms, mod.nms, var.nms, wv.aic, var.cont.df, dimnames1="Mod.AvgAIC")
+        f.wm("AIC_", pred.nms, sel.mod.nms, var.nms, wv.aic, var.cont.df, dimnames1="Mod.AvgAIC")
       },
       if(sum(grepl("WAAUC", pred.nms))>0){
-        f.wm("WAAUC_", pred.nms, mod.nms, var.nms, wv.wa, var.cont.df, dimnames1="Mod.WAAUC")
+        f.wm("WAAUC_", pred.nms, sel.mod.nms, var.nms, wv.wa, var.cont.df, dimnames1="Mod.WAAUC")
       },
       if(sum(grepl("EBPM", pred.nms))>0){
-        f.wm("EBPM_", pred.nms, mod.nms, var.nms, wv.bp, var.cont.df, dimnames1="Mod.EBPM")
+        f.wm("EBPM_", pred.nms, sel.mod.nms, var.nms, wv.bp, var.cont.df, dimnames1="Mod.EBPM")
       },
       if(sum(grepl("ESOR", pred.nms))>0){
-        f.wm("ESOR_", pred.nms, mod.nms, var.nms, wv.es, var.cont.df, dimnames1="Mod.ESOR")
+        f.wm("ESOR_", pred.nms, sel.mod.nms, var.nms, wv.es, var.cont.df, dimnames1="Mod.ESOR")
       },
-      var.cont.df)
+      var.cont.df))
+    # var.cont.df <- cbind(sel.crit=rownames(var.cont.df), var.cont.df)
+    # var.cont.df$sel.crit <- as.character(var.cont.df$sel.crit)
+    # var.cont.df$sel.crit[!is.na(match(rownames(var.cont.df), mod.nms))] <- sel.mod.nms
 
-    var.permImp.df <- rbind(
+
+    var.permImp.df <- as.data.frame(rbind(
       if(sum(grepl("AvgAIC", pred.nms))>0){
-        f.wm("AIC_", pred.nms, mod.nms, var.nms, wv.aic, var.permImp.df, dimnames1="Mod.AvgAIC")
+        f.wm("AIC_", pred.nms, sel.mod.nms, var.nms, wv.aic, var.permImp.df, dimnames1="Mod.AvgAIC")
       },
       if(sum(grepl("WAAUC", pred.nms))>0){
-        f.wm("WAAUC_", pred.nms, mod.nms, var.nms, wv.wa, var.permImp.df, dimnames1="Mod.WAAUC")
+        f.wm("WAAUC_", pred.nms, sel.mod.nms, var.nms, wv.wa, var.permImp.df, dimnames1="Mod.WAAUC")
       },
       if(sum(grepl("EBPM", pred.nms))>0){
-        f.wm("EBPM_", pred.nms, mod.nms, var.nms, wv.bp, var.permImp.df, dimnames1="Mod.EBPM")
+        f.wm("EBPM_", pred.nms, sel.mod.nms, var.nms, wv.bp, var.permImp.df, dimnames1="Mod.EBPM")
       },
       if(sum(grepl("ESOR", pred.nms))>0){
-        f.wm("ESOR_", pred.nms, mod.nms, var.nms, wv.es, var.permImp.df, dimnames1="Mod.ESOR")
+        f.wm("ESOR_", pred.nms, sel.mod.nms, var.nms, wv.es, var.permImp.df, dimnames1="Mod.ESOR")
       },
-      var.permImp.df)
+      var.permImp.df))
+    # var.permImp.df <- cbind(sel.crit=var.cont.df$sel.crit, var.permImp.df)
 
     var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
     utils::write.csv(var.cont.df, paste0("3_out.MaxEnt/Mdls.", sp, "/var.Contribution.", sp, ".csv"))
