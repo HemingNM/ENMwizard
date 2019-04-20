@@ -4,7 +4,7 @@ mopout <- function(M, G){
   d1 <- raster::nlayers(M)
   MRange <- raster::cellStats(M, "range")
 
-  out <- which(getValues(sum(stack(
+  out <- which(raster::getValues(sum(raster::stack(
     lapply(1:d1, function(i, G, MRange){
       G[[i]] < MRange[1,i] | G[[i]] > MRange[2,i]
     }, G, MRange))))>0)
@@ -45,7 +45,7 @@ mopi3 <- function(x, probs, reff){
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
 #' @export
-mop <- function(M, G, p=0.1, quantile=0.1, min.M.sz=100, filename=NULL, scn.nm="", numCores=1, ...) {
+mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numCores=1, ...) {
 
   if(any(names(M) != names(G))) {
     stop("M and G must contain the same environmental variables")
@@ -88,12 +88,12 @@ mop <- function(M, G, p=0.1, quantile=0.1, min.M.sz=100, filename=NULL, scn.nm="
 
   # compute MOP
   if(numCores==1){
-    if (canProcessInMemory(G)) {
-      mop.r <- raster(G)
-      G <- getValues(G)
+    if (raster::canProcessInMemory(G)) {
+      mop.r <- raster::raster(G)
+      G <- raster::getValues(G)
       G <- apply(G, 1, mopi3, reff=Mmat, probs=q)
       names(mop.r) <- "MOP"
-      mop.r <- setValues(mop.r, G)
+      mop.r <- raster::setValues(mop.r, G)
       # return(mop.r)
     }
     else {
@@ -136,7 +136,7 @@ mop <- function(M, G, p=0.1, quantile=0.1, min.M.sz=100, filename=NULL, scn.nm="
 
   # write raster
   # cat("MOP computed, saving file in: \n", filename, "\n")
-  mop.r <- writeRaster(mop.r, filename = filename, overwrite=T, ...)
+  mop.r <- raster::writeRaster(mop.r, filename = filename, overwrite=T, ...)
   return(mop.r)
 }
 
@@ -146,7 +146,7 @@ mop <- function(M, G, p=0.1, quantile=0.1, min.M.sz=100, filename=NULL, scn.nm="
 #' This function will compute the omission rate (OR) for each species' AICc Averaged Model
 #' from a 'mcmp.l' object, based on the selected threshold value.
 #'
-#' @inheritParams calc_or_ensemble
+#' @inheritParams mop
 #' @inheritParams mxntCalibB
 #' @inheritParams mxntProjB
 #' @inheritParams plotScnDiff
@@ -165,7 +165,7 @@ mop_b <- function(a.calib.l, proj.area.l,
         dir.create(path.MOP)
     }
 
-    sp.MOP <- setNames(vector("list", length(a.calib.l)), names(a.calib.l))
+    sp.MOP <- stats::setNames(vector("list", length(a.calib.l)), names(a.calib.l))
     for (sp in names(a.calib.l)) {
       cat(c("\n", "Species: ", sp, "\n"))
 
@@ -182,11 +182,11 @@ mop_b <- function(a.calib.l, proj.area.l,
         G <- proj.area.spi[[g]][[var.nms]]
         mop.spi[[g]] <- mop(M=a.calib.spi[[var.nms]], G, p, q, min.M.sz, filename=NULL, scn.nm=g, numCores)
       }
-      mop.spi <- stack(unlist(mop.spi))
+      mop.spi <- raster::stack(unlist(mop.spi))
       names(mop.spi) <- paste0("MOP_", n.scn)
 
       flnm <- paste0(path.MOP, "/", sp, "_MOP")
-      mop.spi <- writeRaster(mop.spi, flnm,
+      mop.spi <- raster::writeRaster(mop.spi, flnm,
                              format = format, overwrite=T)
       cat("MOP computed for all climatic scenarios of", sp,". File saved in: \n", flnm, "\n")
 

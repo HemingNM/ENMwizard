@@ -10,13 +10,17 @@
 #' @inheritParams mxntProj
 #' @inheritParams ENMeval::ENMevaluate
 #' @inheritParams ENMeval::modelTune.maxentJar
-#' @seealso \code{\link{f.thr.batch}}
+#' @seealso \code{\link{calc_or_ensemble_b}}
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
 #' @export
-calc_or_ensemble <- function(mcm=mxnt.mdls.preds.cf[[1]], a.calib=occ.b.env[[1]],
+calc_or_ensemble <- function(mcm, a.calib,
                            ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals){
 
+  allMaxentArgs <- c("addsamplestobackground", "addallsamplestobackground", "allowpartialdata",
+                     "beta_threshold", "beta_categorical", "beta_lqp", "beta_hinge", "convergencethreshold",
+                     "defaultprevalence", "extrapolate", "fadebyclamping", "jackknife", "maximumbackground",
+                     "maximumiterations", "removeduplicates")
   if (length(userArgs) == 0) {
     userArgs <- NULL
   } else {
@@ -32,7 +36,7 @@ calc_or_ensemble <- function(mcm=mxnt.mdls.preds.cf[[1]], a.calib=occ.b.env[[1]]
   ens <- c("AvgAIC", "WAAUC", "EBPM", "ESOR")
   ens.i <- grepl(paste0("^", mcm$mSel, collapse = "|^"), ens)
   ens <- ens[ens.i]
-  statsTbl2 <- setNames(vector("list", length(ens)), ens)
+  statsTbl2 <- stats::setNames(vector("list", length(ens)), ens)
   for(EM in ens){
     #### 4.3.2.1.2 create model averaged prediction (models*weights, according to model selection)
     argsEns <- grep(EM, xsel.mdls$sel.cri)
@@ -57,8 +61,8 @@ calc_or_ensemble <- function(mcm=mxnt.mdls.preds.cf[[1]], a.calib=occ.b.env[[1]]
 
   group.data <- list(occ.grp = mcm$occ.grp,
                      bg.grp = mcm$bg.grp)
-  pres <- as.data.frame(extract(a.calib, mcm$occ.pts))
-  bg <- as.data.frame(extract(a.calib, mcm$bg.pts))
+  pres <- as.data.frame(raster::extract(a.calib, mcm$occ.pts))
+  bg <- as.data.frame(raster::extract(a.calib, mcm$bg.pts))
 
   nk <- length(unique(group.data$bg.grp))
 
@@ -87,12 +91,12 @@ calc_or_ensemble <- function(mcm=mxnt.mdls.preds.cf[[1]], a.calib=occ.b.env[[1]]
       # create mod with train data
       mod <- dismo::maxent(x, p, args = c(args[[i]], userArgs), factors = categoricals)
       # predict values for training and testing data
-      p.train[i,] <- predict(mod, train.val, args = mcm$pred.args)
-      p.test[i,] <- predict(mod, test.val, args = mcm$pred.args)
+      p.train[i,] <- dismo::predict(mod, train.val, args = mcm$pred.args)
+      p.test[i,] <- dismo::predict(mod, test.val, args = mcm$pred.args)
     }
 
-    p.train.wm <- apply(p.train, 2, weighted.mean, w=wv)
-    p.test.wm <- apply(p.test, 2, weighted.mean, w=wv)
+    p.train.wm <- apply(p.train, 2, stats::weighted.mean, w=wv)
+    p.test.wm <- apply(p.test, 2, stats::weighted.mean, w=wv)
 
     # compute OR for each threshold value
     for(t in seq_along(ORt)) {
@@ -109,7 +113,7 @@ calc_or_ensemble <- function(mcm=mxnt.mdls.preds.cf[[1]], a.calib=occ.b.env[[1]]
 
   statsTbl <- data.table::dcast(data.table::melt(cbind(data.frame(
     stat=c("avgOR", "varOR"),
-    apply(statsTbl, 2, function(x)c(mean(x), var(x)) )
+    apply(statsTbl, 2, function(x)c(mean(x), stats::var(x)) )
   )), id.vars = "stat"), variable~stat)
 
   statsTbl <- cbind(ORt, statsTbl[,-1])
@@ -134,24 +138,24 @@ calc_or_ensemble <- function(mcm=mxnt.mdls.preds.cf[[1]], a.calib=occ.b.env[[1]]
 #' @inheritParams mxntProjB
 #' @inheritParams ENMeval::ENMevaluate
 #' @inheritParams ENMeval::modelTune.maxentJar
-#' @seealso \code{\link{f.thr.batch}}
+#' @seealso \code{\link{calc_or_ensemble}}
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
 #' @export
-calc_or_ensemble_b <- function(mcm.l=mxnt.mdls.preds.cf, a.calib.l=occ.b.env,
-                             ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals,
+calc_or_ensemble_b <- function(mcm.l, a.calib.l,
+                             ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals=NULL,
                              numCores = 1){
   if(numCores>1){
 
     cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl, list("calc_or_avgmdl"))
+    parallel::clusterExport(cl, list("calc_or_ensemble"))
 
     AvgOR.lst <- parallel::clusterApply(cl, base::seq_along(mcm.l),
                                         function(i, mcm.l, a.calib.l,
                                                  ORt, userArgs, categoricals){
                                           cat(c(names(mcm.l[i]), "\n"))
                                           # Compute Omission Rate for a species' AICc Averaged Model
-                                          resu <- calc_or_avgmdl(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
+                                          resu <- calc_or_ensemble(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
                                                            ORt=ORt, userArgs=userArgs, categoricals=categoricals)
 
                                           return(resu)
@@ -166,7 +170,7 @@ calc_or_ensemble_b <- function(mcm.l=mxnt.mdls.preds.cf, a.calib.l=occ.b.env,
                                                          ORt, userArgs, categoricals){
       cat(c(names(mcm.l[i]), "\n"))
       # Compute Omission Rate for a species' AICc Averaged Model
-      resu <- calc_or_avgmdl(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
+      resu <- calc_or_ensemble(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
                        ORt=ORt, userArgs=userArgs, categoricals=categoricals)
       return(resu)
     }, mcm.l, a.calib.l,

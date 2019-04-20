@@ -82,7 +82,7 @@ mxntProj <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, formt = "raste
       resu <- dismo::predict(mxnt.mdls[[i]], a.proj, args = pred.args, progress = 'text', file = filename.or.auc.laic[i], format = formt, overwrite = TRUE)
       return(resu)}) #) ## fecha for or lapply
   }
-  mod.all <- setNames(mod.all, names(mxnt.mdls))
+  mod.all <- stats::setNames(mod.all, names(mxnt.mdls))
 
   #### Ensemble models (AvgAIC, WAAUC, EBPM)
   mod.preds <- EnsembleProjs(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, pred.nm, formt)

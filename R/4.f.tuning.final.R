@@ -157,7 +157,7 @@ modSel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", 
                 paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
 
-  args <- setNames(c(strsplit(args, ",")), xsel.mdls$settings)
+  args <- stats::setNames(c(strsplit(args, ",")), xsel.mdls$settings)
 
   if(save == "A"){
     return(args)
@@ -292,7 +292,7 @@ mxntCalib <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
       }, args.all, pred.args, mod.nms, a.calib, occ, a) #) ## fecha for or lapply
 
     } # closes else
-    mxnt.mdls <- setNames(mxnt.mdls, names(args.all))
+    mxnt.mdls <- stats::setNames(mxnt.mdls, names(args.all))
 
   }
   return(list(algorithm = algorithm,
