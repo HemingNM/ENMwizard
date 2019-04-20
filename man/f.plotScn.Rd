@@ -4,7 +4,7 @@
 \alias{f.plotScn}
 \title{internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}}
 \usage{
-f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
+f.plotScn(m, mtp, ref.scn = "current", basemap, thrshld.path,
   thrshld.nms.mod, save, msnm, msr, scnm, scr)
 }
 \arguments{
@@ -12,7 +12,7 @@ f.plotScn(m, mtp, sel.clim.scn = "current", basemap, thrshld.path,
 
 \item{mtp}{Stack or brick of thresholded predictions}
 
-\item{sel.clim.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
+\item{ref.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 

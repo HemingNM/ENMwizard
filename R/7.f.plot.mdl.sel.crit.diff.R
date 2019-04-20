@@ -231,7 +231,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
 # #' @examples
 # plotScnDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' @export
-plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="current",
+plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="current",
                         basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
@@ -258,7 +258,7 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="c
     sp.nm <- sp.nm.l[sp]
 
     ##### function begins here:
-    plotScnDiff(mcmp, mtp, mSel, sel.clim.scn, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
+    plotScnDiff(mcmp, mtp, mSel, ref.scn, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
 
   } # fecha # species
 }
@@ -272,7 +272,7 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="c
 #' @inheritParams thrB
 #' @inheritParams plotMdlDiff
 #' @inheritParams mxntCalib
-#' @param sel.clim.scn Selected climatic scenario to compare with all others. Usually "current" one.
+#' @param ref.scn Selected climatic scenario to compare with all others. Usually "current" one.
 #' @param mSel Name of selection criteria to be compared: AvgAIC, LowAIC, avg.test.AUC10pct, avg.test.AUC.MTP,
 #' avg.test.or10pct, avg.test.orMTP
 #' @param save Export to pdf or not?
@@ -281,7 +281,7 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, sel.clim.scn="c
 # #' @examples
 # plotScnDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' @export
-plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
+plotScnDiff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
@@ -343,13 +343,13 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
     # , f.plotScn, tnm, tr, auto.layout, make.underscript
 
     parallel::clusterApply(cl, mSel,  # model selection criteria
-                           function(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                           function(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
                                     save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
 
-                             f.plotScn(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                             f.plotScn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
                                        save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
 
-                           }, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+                           }, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
                            save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
 
     parallel::stopCluster(cl)
@@ -357,13 +357,13 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
   } else {
 
     lapply(mSel, # model selection criteria
-           function(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+           function(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
                     save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
 
-             f.plotScn(m, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+             f.plotScn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
                        save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
 
-           }, mtp, sel.clim.scn, basemap, thrshld.path, thrshld.nms.mod,
+           }, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
            save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
   }
 
@@ -376,7 +376,7 @@ plotScnDiff <- function(mcmp, mtp, mSel, sel.clim.scn="current", sp.nm="species"
 #' @inheritParams plotMdlDiffB
 #' @param m Index of model selection criteria to be plotted
 #' @keywords internal
-f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thrshld.nms.mod,
+f.plotScn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.nms.mod,
                       save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
 
   # for(m in mSel){ # model selection criteria
@@ -387,7 +387,7 @@ f.plotScn <- function(m, mtp, sel.clim.scn="current", basemap, thrshld.path, thr
   mdl.crit <- grep(m, names(mtp[[1]]$binary[[1]]))
 
   comb.plots <- utils::combn(length(mtp), 2)
-  cli.scn.pres <- which(names(mtp) == sel.clim.scn)
+  cli.scn.pres <- which(names(mtp) == ref.scn)
   sel.col <- apply(comb.plots == cli.scn.pres, 2, sum)==TRUE # rowsum(comb.plots == cli.scn.pres)==TRUE # comb.plots[, ]
   comb.plots <- matrix(comb.plots[, sel.col], nrow = 2)
   comb.plots[, comb.plots[2,] == cli.scn.pres] <- comb.plots[c(2,1), comb.plots[2,] == cli.scn.pres]

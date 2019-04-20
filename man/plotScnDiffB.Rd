@@ -5,20 +5,19 @@
 \title{Plot differences in suitable areas between climatic scenarios for multiple species}
 \usage{
 plotScnDiffB(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel,
-  sel.clim.scn = "current", basemap = NULL, save = FALSE,
-  numCores = 1, msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
-  msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
-  scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70",
-  "mp45bi70", "mp85bi70", "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70",
-  "cclgmbi", "ccmidbi", "lig_30s_bio_", "melgmbi", "memidbi", "mrlgmbi",
-  "mrmidbi", "mxnt.preds"), scr = c("2070-CCSM4-rcp2.6",
-  "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
-  "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5",
-  "2070-MPI-ESM-LR-rcp8.5", "2070-MIROC-ESM-rcp2.6",
-  "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
-  "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3",
-  "LGM-MPI-ESM-P", "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM",
-  "Present"))
+  ref.scn = "current", basemap = NULL, save = FALSE, numCores = 1,
+  msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"), msr = c("AUC (OR10p)",
+  "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"), scnm = c("cc26bi70",
+  "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
+  "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi",
+  "lig_30s_bio_", "melgmbi", "memidbi", "mrlgmbi", "mrmidbi",
+  "mxnt.preds"), scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5",
+  "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5", "2070-MPI-ESM-LR-rcp2.6",
+  "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
+  "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5",
+  "2070-MIROC-ESM-rcp6.0", "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4",
+  "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P", "MH-MPI-ESM-P",
+  "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present"))
 }
 \arguments{
 \item{mcmp.l}{Object returned by "mxntProjB", containing a list of calibrated models
@@ -29,7 +28,7 @@ and model projections for each species.}
 \item{mSel}{Name of selection criteria to be compared: AvgAIC, LowAIC, avg.test.AUC10pct, avg.test.AUC.MTP,
 avg.test.or10pct, avg.test.orMTP}
 
-\item{sel.clim.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
+\item{ref.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 
