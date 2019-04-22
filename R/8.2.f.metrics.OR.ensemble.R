@@ -1,21 +1,22 @@
 
 #########	Omission Rate for AICc Averaged Model #############
-#' Compute Omission Rate for a species' AICc Averaged Model
+#' Compute Omission Rate for a species' ensembled model
 #'
-#' This function will compute the omission rate (OR) for a species' AICc Averaged Model
+#' This function will compute the omission rate (OR) for a species' ensembled model
 #' from a 'mcmp' object, based on the selected threshold value.
 #'
 #' @param ORt Threshold value to be used to compute OR
-#' @inheritParams mxntCalib
-#' @inheritParams mxntProj
+#' @inheritParams calib_mdl
+#' @inheritParams proj_mdl
 #' @inheritParams ENMeval::ENMevaluate
 #' @inheritParams ENMeval::modelTune.maxentJar
-#' @seealso \code{\link{calc_or_ensemble_b}}
+#' @seealso \code{\link{get_or_ensemble_b}}, \code{\link{get_tsa}}, \code{\link{get_cont_permimport}},
+#' \code{\link{get_fpa}}, \code{\link{get_cont_permimport_b}}, \code{\link{get_fpa_b}}, \code{\link{get_tsa_b}}
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
 #' @export
-calc_or_ensemble <- function(mcm, a.calib,
-                           ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals){
+get_or_ensemble <- function(mcm, a.calib,
+                           ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals, sp.nm="species"){
 
   allMaxentArgs <- c("addsamplestobackground", "addallsamplestobackground", "allowpartialdata",
                      "beta_threshold", "beta_categorical", "beta_lqp", "beta_hinge", "convergencethreshold",
@@ -122,41 +123,44 @@ calc_or_ensemble <- function(mcm, a.calib,
   statsTbl2[[EM]] <- statsTbl
   }
   statsTbl2 <- data.table::rbindlist(statsTbl2, idcol = "ensemble")
+  utils::write.csv(statsTbl2, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.or.ensemble.mdl.", sp.nm, ".csv")) # reorder ds
+  # utils::write.csv(ensOR.lst.c, paste0("3_out.MaxEnt/metric.or.ensemble.mdl.csv")) # reorder ds
   return(statsTbl2)
 }
 
 
 
 
-#' Compute Omission Rate for a list of species' AICc Averaged Models
+#' Compute Omission Rate for a list of species' ensembled models
 #'
-#' This function will compute the omission rate (OR) for each species' AICc Averaged Model
+#' This function will compute the omission rate (OR) for each species' ensembled model
 #' from a 'mcmp.l' object, based on the selected threshold value.
 #'
-#' @inheritParams calc_or_ensemble
-#' @inheritParams mxntCalibB
-#' @inheritParams mxntProjB
+#' @inheritParams get_or_ensemble
+#' @inheritParams calib_mdl_b
+#' @inheritParams proj_mdl_b
 #' @inheritParams ENMeval::ENMevaluate
 #' @inheritParams ENMeval::modelTune.maxentJar
-#' @seealso \code{\link{calc_or_ensemble}}
+#' @seealso \code{\link{get_or_ensemble}}
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
 #' @export
-calc_or_ensemble_b <- function(mcm.l, a.calib.l,
+get_or_ensemble_b <- function(mcm.l, a.calib.l,
                              ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals=NULL,
                              numCores = 1){
   if(numCores>1){
 
     cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl, list("calc_or_ensemble"))
+    parallel::clusterExport(cl, list("get_or_ensemble"))
 
-    AvgOR.lst <- parallel::clusterApply(cl, base::seq_along(mcm.l),
+    ensOR.lst <- parallel::clusterApply(cl, base::seq_along(mcm.l),
                                         function(i, mcm.l, a.calib.l,
                                                  ORt, userArgs, categoricals){
                                           cat(c(names(mcm.l[i]), "\n"))
                                           # Compute Omission Rate for a species' AICc Averaged Model
-                                          resu <- calc_or_ensemble(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
-                                                           ORt=ORt, userArgs=userArgs, categoricals=categoricals)
+                                          resu <- get_or_ensemble(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
+                                                           ORt=ORt, userArgs=userArgs, categoricals=categoricals,
+                                                           sp.nm=names(mcm.l[i]))
 
                                           return(resu)
                                         }, mcm.l, a.calib.l,
@@ -166,20 +170,21 @@ calc_or_ensemble_b <- function(mcm.l, a.calib.l,
 
   } else {
 
-    AvgOR.lst <- lapply(base::seq_along(mcm.l), function(i, mcm.l, a.calib.l,
+    ensOR.lst <- lapply(base::seq_along(mcm.l), function(i, mcm.l, a.calib.l,
                                                          ORt, userArgs, categoricals){
       cat(c(names(mcm.l[i]), "\n"))
       # Compute Omission Rate for a species' AICc Averaged Model
-      resu <- calc_or_ensemble(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
-                       ORt=ORt, userArgs=userArgs, categoricals=categoricals)
+      resu <- get_or_ensemble(mcm = mcm.l[[i]], a.calib = a.calib.l[[i]],
+                       ORt=ORt, userArgs=userArgs, categoricals=categoricals,
+                       sp.nm=names(mcm.l[i]))
       return(resu)
     }, mcm.l, a.calib.l,
     ORt, userArgs, categoricals)
    }
-  names(AvgOR.lst) <- names(mcm.l)
-  AvgOR.lst.c <- data.table::rbindlist(AvgOR.lst, idcol = "sp")
-  utils::write.csv(AvgOR.lst.c, paste0("3_out.MaxEnt/or.avgmdl.csv")) # reorder ds
-  return(AvgOR.lst.c)
+  names(ensOR.lst) <- names(mcm.l)
+  ensOR.lst.c <- data.table::rbindlist(ensOR.lst, idcol = "sp")
+  utils::write.csv(ensOR.lst.c, paste0("3_out.MaxEnt/metric.or.ensemble.mdl.csv")) # reorder ds
+  return(ensOR.lst.c)
 }
 
 

@@ -73,28 +73,28 @@ The occurence points in the named list are used to create polygons.
 Notice that you can cluster the occ points using several clustering methods. 
 See differences and choose one that fits your needs:
 ```r
-occ.polys <- polyCB(spp.occ.list)
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="E")
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="AP", q=.01) # less polygons
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="AP", q=.1)
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="AP", q=.2)
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="AP", q=.3)
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="AP", q=.5)
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="AP", q=.8) # more polygons
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "duda")
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "ball")
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "pseudot2")
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "trcovw")
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "kl") 
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdindex") 
-occ.polys <- polyCB(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdbw")
+occ.polys <- set_calibarea_b(spp.occ.list)
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="E")
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.01) # less polygons
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.1)
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.2)
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.3)
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.5)
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.8) # more polygons
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "duda")
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "ball")
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "pseudot2")
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "trcovw")
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "kl") 
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdindex") 
+occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdbw")
 ```
 
 ### - 1.2.1 creating buffer
 
 ... and the occurrence polygons are buffered using 1.5 degrees.
 ```r
-occ.b <- bffrB(occ.polys, bffr.width = 1.5)
+occ.b <- buffer_b(occ.polys, width = 1.5)
 ```
 
 ### - 1.3. Cut enviromental layers with occ.b and save in hardrive.
@@ -121,7 +121,7 @@ env.uncut <- brick(paste(path.env, "bio.grd", sep="/"))
 
 Finally, crop environmental variables for each species (and plot them for visual inspection)
 ```r
-occ.b.env <- envCut(occ.b, env.uncut)
+occ.b.env <- cut_calibarea_b(occ.b, env.uncut)
 
 for(i in 1:length(occ.b.env)){
   plot(occ.b.env[[i]][[1]])
@@ -132,11 +132,11 @@ for(i in 1:length(occ.b.env)){
 
 Select the least correlated variables
 ```r
-vars <- selEnvB(occ.b.env, cutoff=.75, names=T)
+vars <- sel_env_b(occ.b.env, cutoff=.75, names=T)
 # See selected variables for each species
 lapply(vars, function(x)x[[1]])
 # remove correlated variables from our variable set
-occ.b.env <- selEnvB(occ.b.env, vars, cutoff=.75, names=F)
+occ.b.env <- sel_env_b(occ.b.env, cutoff=.75, names=F)
 ```
 
 
@@ -144,7 +144,7 @@ occ.b.env <- selEnvB(occ.b.env, vars, cutoff=.75, names=F)
 ### - 2.1 Filtering original dataset
 Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
 ```r
-thinned.dataset.batch <- thinB(loc.data.lst = spp.occ.list)
+thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 ```
 
 ### Great! Now we are ready for tunning species' ENMs
@@ -157,7 +157,7 @@ thinned.dataset.batch <- thinB(loc.data.lst = spp.occ.list)
 ### - 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
 After thinning, we choose one dataset for each species for modelling.
 ```r
-occ.locs <- loadTocc(thinned.dataset.batch)
+occ.locs <- load_thin_occ(thinned.dataset.batch)
 ```
 
 ### - 3.3 model tuning using ENMeval
@@ -165,7 +165,7 @@ Here we will run ENMevaluateB to call ENMevaluate (from ENMeval package). Here w
 
 By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
-ENMeval.res.lst <- ENMevaluateB(occ.locs, occ.b.env, 
+ENMeval.res.lst <- ENMevaluate_b(occ.locs, occ.b.env, 
                     RMvalues = c(1, 1.5), fc = c("L", "LQ", "LP"),
                     method="block", algorithm="maxent.jar")
 ```
@@ -177,21 +177,21 @@ After tuning MaxEnt models, we will calibrate them using all occurence data (i.e
 ```r
 
 # Run model
-mxnt.mdls.preds.lst <- mxntCalibB(ENMeval.o.l = ENMeval.res.lst, 
+mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, 
                                     a.calib.l = occ.b.env, occ.l = occ.locs,
-                                    mSel = c("LowAIC", "AUC"))# 
+                                    mSel = c("AvgAIC", "AUC"))# 
 
 
 # # Comparing single core processing and multiple core processing
 # 
 # # Parallel processing forking models (best for small sets of species)
 # system.time(
-# mxnt.mdls.preds.lst <- mxntCalibB(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=TRUE)
+# mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=TRUE)
 # )
 # 
 # # Parallel processing forking species (best for large sets of species)
 # system.time(
-# mxnt.mdls.preds.lst <- mxntCalibB(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=FALSE)
+# mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, a.calib.l = occ.b.env, occ.l=occ.locs, wAICsum=0.99, numCores=3, parallelTunning=FALSE)
 # )
 
 ```
@@ -227,11 +227,11 @@ env.proj.l <- list(current = current,
 Now it is time to define the projection area for each species. The projection area can be the same for all species (in this example) of be defined individually. Here, the projection area will be defined as an square area slightly larger than the original occurrence of the species. Then, a two lists with models will be created for a species. In the first list, the projection will be performed using current climatic conditions. In the second list, two cenarios of futurure climate (defined above) are created.
 
 ```r
-poly.projection <- predArPolyB(occ.polys, mult = .1, buffer=FALSE)#
+poly.projection <- set_projarea_b(occ.polys, mult = .1, buffer=FALSE)#
 plot(poly.projection[[1]], col="gray")
 plot(occ.polys[[1]], col="yellow", add=T)
 
-pa.env.proj.l <- predArMscnB(poly.projection, env.proj.l)
+pa.env.proj.l <- cut_projarea_mscn_b(poly.projection, env.proj.l)
 plot(poly.projection[[1]], col="gray")
 plot(pa.env.proj.l[[1]][[1]][[1]], add=T)
 plot(occ.polys[[1]], add=T)
@@ -242,22 +242,22 @@ When all species are to be projected using the same current and future climates 
 
 ```r
 proj.extent <- extent(c(-109.5, -26.2, -59.5, 18.1))
-pa.env.proj.l <- predArRstMscnB(proj.extent, env.proj.l, occ.polys)
+pa.env.proj.l <- cut_projarea_rst_mscn_b(proj.extent, env.proj.l, occ.polys)
 ```
 
 ### - 5.3 Model projections
 
-Finally, the model(s) can be projected on all climatic cenarios. This is performed by `the mxntProjB` function. The function has two arguments: 1) MaxEnt fitted models (see step 4.3 above) and 2) list of rasters representing all cenarios onto which models will be projected.
+Finally, the model(s) can be projected on all climatic cenarios. This is performed by `the proj_mdl_b` function. The function has two arguments: 1) MaxEnt fitted models (see step 4.3 above) and 2) list of rasters representing all cenarios onto which models will be projected.
 This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
 
 ```r
 # For single or multiple species
 
 # using a single core (default)
-mxnt.mdls.preds.cf <- mxntProjB(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l)
+mxnt.mdls.preds.cf <- proj_mdl_b(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l)
 
 # or using multiple cores
-mxnt.mdls.preds.cf <- mxntProjB(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l, numCores=2)
+mxnt.mdls.preds.cf <- proj_mdl_b(mxnt.mdls.preds.lst, a.proj.l = pa.env.proj.l, numCores=2)
 
 # plot projections
 par(mfrow=c(1,2), mar=c(1,2,1,2))
@@ -279,7 +279,7 @@ apply on the projections.
 # 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 # 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
 
-mods.thrshld.lst <- thrB(mxnt.mdls.preds.cf, thrshld.i = 5)
+mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = 5)
 ```
 
 ## - 6. Visualizing
@@ -287,13 +287,13 @@ mods.thrshld.lst <- thrB(mxnt.mdls.preds.cf, thrshld.i = 5)
 ```r
 plot(mods.thrshld.lst$Bvarieg$current$binary$x10ptp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
-plotMdlDiff(mxnt.mdls.preds.lst[[1]], mods.thrshld.lst[[1]], sp.nm = "Bvarieg")
-plotMdlDiffB(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
+plot_mdl_diff(mxnt.mdls.preds.lst[[1]], mods.thrshld.lst[[1]], sp.nm = "Bvarieg")
+plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ```
 
 ### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
-plotScnDiffB(mxnt.mdls.preds.cf, mods.thrshld.lst, 
+plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, 
               sel.clim.scn = "current", mSel = "LowAIC", save=F)
 ```
 
@@ -301,18 +301,18 @@ plotScnDiffB(mxnt.mdls.preds.cf, mods.thrshld.lst,
 ## - 7. Metrics
 ### - Compute variable contribution and importance
 ```r
-cVarCI(mxnt.mdls.preds.cf)
+get_cont_permimport_b(mxnt.mdls.preds.cf)
 ```
 ### - Compute "Omission Rate"
 ```r
-cOR(mods.thrshld.lst, occ.locs, clim.scn.nm = "current")
+calc_or_ensemble_b(mxnt.mdls.preds.cf, occ.b.env, ORt=seq(0, 0.2, 0.05))
 ```
 
 ### - Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
 ```r
-cFPA(mods.thrshld.lst)
+calc_fpa_b(mods.thrshld.lst)
 ```
 ### - Compute species' total suitable area
 ```r
-cSArea(mods.thrshld.lst)
+calc_tsa_b(mods.thrshld.lst)
 ```

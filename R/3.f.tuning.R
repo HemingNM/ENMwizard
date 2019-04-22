@@ -20,9 +20,11 @@
 #'
 #' @seealso \code{\link[ENMeval]{ENMevaluate}}
 #' @examples
-#' ENMeval.res.lst <- ENMevaluateB(occ.locs, occ.b.env, parallel = T , numCores = 7)
+#'\dontrun{
+#' ENMeval.res.lst <- ENMevaluate_b(occ.locs, occ.b.env, parallel = T , numCores = 7)
+#' }
 #' @export
-ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL,
+ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
                          occ.grp.l = NULL, bg.grp.l = NULL,
                          RMvalues = seq(0.5, 4.5, 0.5),
                               fc = c("L", "P", "Q", "H",
@@ -73,16 +75,16 @@ ENMevaluateB <- function(occ.l, a.calib.l, bg.coords.l = NULL,
 
 
 
-#' Optimize the size of ENMevaluateB objects
+#' Optimize the size of ENMevaluate_b objects
 #'
 #' This function will set to NULL (erase) the largest slots ('predictions', 'models', 'occ.grp', and 'bg.grp')
 #' of ENMeval::ENMevaluate objects. Only results, occ.pts, and bg.pts are returned.
 #' Use with care. It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
 #' Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
 #'
-#' @inheritParams mxntCalibB
+#' @inheritParams calib_mdl_b
 #'
-#' @seealso \code{\link{ENMevaluateB}}, \code{\link[ENMeval]{ENMevaluate}},
+#' @seealso \code{\link{ENMevaluate_b}}, \code{\link[ENMeval]{ENMevaluate}},
 #' @keywords internal
 #' @export
 optENMevalObjL <- function (ENMeval.o.l) {

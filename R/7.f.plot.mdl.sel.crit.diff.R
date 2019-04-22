@@ -7,20 +7,22 @@
 #' criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios and multiple species
 #'
 # #' @inheritParams f.plot.mxnt.preds
-#' @inheritParams thrB
-#' @inheritParams plotMdlDiff
+#' @inheritParams thrshld_b
+#' @inheritParams plot_mdl_diff
 #' @param mtp.l List of stack or brick of thresholded predictions
-#' @seealso \code{\link{plotScnDiff}}
+#' @seealso \code{\link{plot_scn_diff}}
 #' @description Will plot (or save as PDF) differences between predictions of models selected
 #'  using distinct model selection criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for
 #'  multiple climatic scenarios.
 #' @details A panel for each combination of climatic scenario and threshold criteria will be created.
 #' Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will
 #' be plotted
-# #' @examples
-#' plotMdlDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
+#' @examples
+#'\dontrun{
+#' plot_mdl_diff_b(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
+#' }
 #' @export
-plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
+plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
                          msnm = c("avg.test.AUC10pct", "avg.test.AUC.MTP", "avg.test.or10pct", "avg.test.orMTP"),
                          msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                          scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
@@ -44,7 +46,7 @@ plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
     sp.nm <- sp.nm.l[sp]
 
     ##### function begins here:
-    plotMdlDiff(mcmp, mtp, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
+    plot_mdl_diff(mcmp, mtp, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
 
   } # fecha # species
 } # fecha function
@@ -59,8 +61,8 @@ plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 #' criteria (e.g. "AvgAIC", "LowAIC", "OR", "AUC") for multiple climatic scenarios
 #'
 # #' @inheritParams f.plot.mxnt.preds
-#' @inheritParams thr
-#' @inheritParams mxntCalib
+#' @inheritParams thrshld
+#' @inheritParams calib_mdl
 #' @param mtp Stack or brick of thresholded predictions
 #' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
 #' @param save Logical. If TRUE will save plots in pdf.
@@ -71,14 +73,16 @@ plotMdlDiffB <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 #' @param scnm Character vector. Short names of climatic scenarios to be replaced. Ex. "cc26bi70", "cc45bi70"
 #' @param scr Character vector. Long names of climatic scenarios to replace the short names. Must
 #'  be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5"
-#' @seealso \code{\link{plotScnDiffB}}
+#' @seealso \code{\link{plot_scn_diff_b}}
 #' @description  Will plot (or save as PDF) differences between predictions of models selected
 #'  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
 #'  within the folder 'Mdls.thrshld/figs'.
-# #' @examples
-#' plotMdlDiff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
+#' @examples
+#'\dontrun{
+#' plot_mdl_diff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
+#' }
 #' @export
-plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
+plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
@@ -110,17 +114,17 @@ plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, nu
   if(numCores>1 & save){
 
     cl<-parallel::makeCluster(numCores)
-    parallel::clusterExport(cl, list("f.plotMdl")) # , "tnm", "tr", "auto.layout", "make.underscript"
+    parallel::clusterExport(cl, list("plot_mdl")) # , "tnm", "tr", "auto_layout", "make_underscript"
 
     parallel::clusterApply(cl, names(mtp), # climatic scenario
                            function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
-                             f.plotMdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+                             plot_mdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
                            }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                           save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+                           save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
     parallel::stopCluster(cl)
 
@@ -128,28 +132,28 @@ plotMdlDiff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, nu
 
     lapply(names(mtp), # climatic scenario
          function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                  save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+                  save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
-           f.plotMdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                     save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+           plot_mdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                     save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
          }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-         save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+         save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
   } # fecha else
 
   if(save) cat(c("\n", "Figures saved in:", "\n", thrshld.path))
 } # fecha function
 
 
-#' internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
-#' @inheritParams plotMdlDiff
-#' @inheritParams plotMdlDiffB
+#' internal function for \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
+#' @inheritParams plot_mdl_diff
+#' @inheritParams plot_mdl_diff_b
 #' @param thrshld.path path to threshold projections
 #' @param thrshld.nms.mod names of threshold models
 #' @param sc Index of climatic scenario to be plotted
 #' @keywords internal
-f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
+                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
   # for(sc in names(mtp)){ # climatic scenario
   mtp.sc <- mtp[[sc]]
   cat(c("\n", "Climatic Scenario: ", sc))
@@ -168,7 +172,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
     thr.CRT <- tr[which(tnm %in% l)] #}
     cat(paste0(" - ", thr.CRT))
 
-    lm <- auto.layout(ncol(comb.plots), F)
+    lm <- auto_layout(ncol(comb.plots), F)
     n.t <- nrow(lm)
     n.scn <- ncol(lm)
     # n.t <- length(names(mtp.sc$binary))
@@ -186,7 +190,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
       if(n1 %in% msnm) { n1 <- msr[which(msnm %in% n1)] }
       if(n2 %in% msnm) { n2 <- msr[which(msnm %in% n2)] }
 
-      main.nms <- paste0( make.underscript(n1), " vs. ", make.underscript(n2))
+      main.nms <- paste0( make_underscript(n1), " vs. ", make_underscript(n2))
       graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
       raster::plot(mtp.sc$binary[[l]][[comb.plots[1,j]]], breaks= c(0, .5, 1), col=c("white", "gray90"),
                    legend=FALSE) # main= main.nms,
@@ -204,7 +208,7 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
       raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75,
                    xpd = TRUE, zlim=c(0, 1),
                    breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
-                   axis.args=list(at=seq(-1, 1), labels=c(make.underscript(n2), "equal", make.underscript(n1) )))
+                   axis.args=list(at=seq(-1, 1), labels=c(make_underscript(n2), "equal", make_underscript(n1) )))
     }
     if(save){
       grDevices::dev.off()
@@ -221,17 +225,19 @@ f.plotMdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
 #' Plot differences between a selected climatic scenario and all other climatic scenarios for each species.
 #' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
 #'
-#' @inheritParams thrB
-#' @inheritParams plotMdlDiff
-#' @inheritParams plotScnDiff
-#' @inheritParams plotMdlDiffB
-#' @inheritParams mxntCalib
-#' @seealso \code{\link{plotScnDiff}}
+#' @inheritParams thrshld_b
+#' @inheritParams plot_mdl_diff
+#' @inheritParams plot_scn_diff
+#' @inheritParams plot_mdl_diff_b
+#' @inheritParams calib_mdl
+#' @seealso \code{\link{plot_scn_diff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
-# #' @examples
-# plotScnDiffB(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
+#' @examples
+#'\dontrun{
+#' plot_scn_diff_b(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
+#' }
 #' @export
-plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="current",
+plot_scn_diff_b <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="current",
                         basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
@@ -258,7 +264,7 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="curren
     sp.nm <- sp.nm.l[sp]
 
     ##### function begins here:
-    plotScnDiff(mcmp, mtp, mSel, ref.scn, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
+    plot_scn_diff(mcmp, mtp, mSel, ref.scn, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
 
   } # fecha # species
 }
@@ -269,19 +275,21 @@ plotScnDiffB <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="curren
 #' Plot differences between a selected climatic scenario and all other climatic scenarios for each species.
 #' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
 #'
-#' @inheritParams thrB
-#' @inheritParams plotMdlDiff
-#' @inheritParams mxntCalib
+#' @inheritParams thrshld_b
+#' @inheritParams plot_mdl_diff
+#' @inheritParams calib_mdl
 #' @param ref.scn Selected climatic scenario to compare with all others. Usually "current" one.
 #' @param mSel Name of selection criteria to be compared: AvgAIC, LowAIC, avg.test.AUC10pct, avg.test.AUC.MTP,
 #' avg.test.or10pct, avg.test.orMTP
 #' @param save Export to pdf or not?
-#' @seealso \code{\link{plotScnDiffB}}
+#' @seealso \code{\link{plot_scn_diff_b}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
-# #' @examples
-# plotScnDiff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
+#' @examples
+#'\dontrun{
+#' plot_scn_diff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
+#' }
 #' @export
-plotScnDiff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
+plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
@@ -339,18 +347,18 @@ plotScnDiff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", bas
   if(numCores>1 & save){
 
     cl <- parallel::makeCluster(numCores)
-    parallel::clusterExport(cl, list("f.plotScn"))# , "tnm", "tr", "auto.layout", "make.underscript"))
-    # , f.plotScn, tnm, tr, auto.layout, make.underscript
+    parallel::clusterExport(cl, list("plot_scn"))# , "tnm", "tr", "auto_layout", "make_underscript"))
+    # , plot_scn, tnm, tr, auto_layout, make_underscript
 
     parallel::clusterApply(cl, mSel,  # model selection criteria
                            function(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
-                             f.plotScn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+                             plot_scn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
+                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
                            }, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                           save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+                           save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
     parallel::stopCluster(cl)
 
@@ -358,30 +366,30 @@ plotScnDiff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", bas
 
     lapply(mSel, # model selection criteria
            function(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
-             f.plotScn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                       save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+             plot_scn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
+                       save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
            }, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-           save, msnm, msr, scnm, scr) # , tr, tnm, auto.layout, make.underscript
+           save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
   }
 
   if(save) cat(c("\n", "Figures saved in:", "\n", thrshld.path))
 }
 
-#' internal function for \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
-#' @inheritParams f.plotMdl
-#' @inheritParams plotScnDiff
-#' @inheritParams plotMdlDiffB
+#' internal function for \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
+#' @inheritParams plot_mdl
+#' @inheritParams plot_scn_diff
+#' @inheritParams plot_mdl_diff_b
 #' @param m Index of model selection criteria to be plotted
 #' @keywords internal
-f.plotScn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.nms.mod,
-                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto.layout, make.underscript
+plot_scn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.nms.mod,
+                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
   # for(m in mSel){ # model selection criteria
-    # f.plotScn(m, sp, mtp.l, mdl.crit=m, tr, tnm, thrshld.path,
-    #           thrshld.nms.mod, basemap, make.underscript, save, msnm, msr, scnm, scr) # comb.plots,
+    # plot_scn(m, sp, mtp.l, mdl.crit=m, tr, tnm, thrshld.path,
+    #           thrshld.nms.mod, basemap, make_underscript, save, msnm, msr, scnm, scr) # comb.plots,
     # mSel <- mdl.crit
     # mdl.crit <- grep(m, names(mtp[[1]]$binary[[1]]))
   mdl.crit <- grep(m, names(mtp[[1]]$binary[[1]]))
@@ -396,8 +404,8 @@ f.plotScn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.
 
     n.t <- length(mods.thrshld$binary)
     n.scn <- ncol(comb.plots)
-    # lm <- auto.layout(ncol(comb.plots), F)
-    lm <- auto.layout((n.t*n.scn), F)
+    # lm <- auto_layout(ncol(comb.plots), F)
+    lm <- auto_layout((n.t*n.scn), F)
     n.r <- nrow(lm)
     n.col <- ncol(lm)
     if(save){
@@ -448,7 +456,7 @@ f.plotScn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.
 ############ TODO
 #' Plot compare climatic scenarios differences between model selection criteria
 #'
-#' i.e. plotScnDiff with panels for each of thresholds, and climatic scenario
+#' i.e. plot_scn_diff with panels for each of thresholds, and climatic scenario
 #'  difference (i.e. current vs. climScn1) for each model being compared side
 
 
@@ -465,13 +473,13 @@ f.plotScn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.
 #' Format (underscript) selected texts (criteria used to select models) to be used on plotting.
 #'
 #' @param x list of text to be formatted
-#' @seealso \code{\link{plotMdlDiff}}, \code{\link{plotScnDiffB}}
+#' @seealso \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
 #' @return list of formatted text
 #' @examples
-#' make.underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
+#' make_underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 #' @keywords internal
 # #' @export
-make.underscript <- function(x) as.expression(lapply(x, function(y) {
+make_underscript <- function(x) as.expression(lapply(x, function(y) {
   sp <- grepl("ORlpt", y)
   cf <- grepl("OR10p", y)
   y <- unlist(strsplit(y, "OR10p|ORlpt"))
@@ -488,7 +496,7 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 }))
 
 #' Determine the arrangement of multiple plots in a single panel
-#' Given a particular number of plots, \code{auto.layout} will automatically determine the arrangement of each
+#' Given a particular number of plots, \code{auto_layout} will automatically determine the arrangement of each
 #' plot using the \code{layout} function or par(mfrow=c(nrow, ncol)). See examples.
 #' modified from: https://github.com/cran/fifer/blob/master/R/auto.layout.R
 #' @title Automatically select the layout.
@@ -497,8 +505,9 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @return either a matrix or a layout object
 #' @author Dustin Fife
 #' @examples
+#'\dontrun{
 #' ## plot six plots
-#' auto.layout(6)
+#' auto_layout(6)
 #' for (i in 1:6){
 #' 	plot(rnorm(100), rnorm(100))
 #' }
@@ -512,27 +521,28 @@ make.underscript <- function(x) as.expression(lapply(x, function(y) {
 #' for (i in 1:5){
 #' 	plot(rnorm(100), rnorm(100))
 #' }
-#' ## much better with auto.layout
-#' auto.layout(5)
+#' ## much better with auto_layout
+#' auto_layout(5)
 #' for (i in 1:5){
 #' 	plot(rnorm(100), rnorm(100))
 #' }
 #' ## see matrices of layouts for multiple plots
 # for(i in 4:12){
-#   print(auto.layout(i, layout=F))
+#   print(auto_layout(i, layout=F))
 # }
 #' ##
 #' for(i in 2:6){
-#'   m <- auto.layout(i, layout=F)
+#'   m <- auto_layout(i, layout=F)
 #'   par(mfrow=c(nrow(m), ncol(m)))
 #'   for (j in 1:i){
 #'     plot(rnorm(100), rnorm(100))
 #'   }
 #'   Sys.sleep(1)
 #' }
+#' }
 # #' @export
 #' @keywords internal
-auto.layout <- function(n, layout=T){
+auto_layout <- function(n, layout=T){
   ### figure out how many rows
   sq = sqrt(n)
   rws = round(sq)

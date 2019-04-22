@@ -2,7 +2,7 @@
 % Please edit documentation in R/3.f.tuning.R
 \name{optENMevalObjL}
 \alias{optENMevalObjL}
-\title{Optimize the size of ENMevaluateB objects}
+\title{Optimize the size of ENMevaluate_b objects}
 \usage{
 optENMevalObjL(ENMeval.o.l)
 }
@@ -16,6 +16,6 @@ Use with care. It will not be possible to check MaxEnte models, predictions and 
 Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
 }
 \seealso{
-\code{\link{ENMevaluateB}}, \code{\link[ENMeval]{ENMevaluate}},
+\code{\link{ENMevaluate_b}}, \code{\link[ENMeval]{ENMevaluate}},
 }
 \keyword{internal}

@@ -8,8 +8,8 @@
 #' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
-#' @inheritParams mxntCalib
-#' @param mcmp Species "i" of a object returned by "mxntProjB", containing a list of
+#' @inheritParams calib_mdl
+#' @param mcmp Species "i" of a object returned by "proj_mdl_b", containing a list of
 #' calibrated models and model projections for each species
 #' @param scn.nm Name of climatic scenario to be looked for
 #' @param path.mdls Path where thresholded rasters will be saved
@@ -24,14 +24,16 @@
 #' 7. Maximum.training.sensitivity.plus.specificity (mtss);
 #' 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 #' 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
-#' @seealso \code{\link{thrB}}
+#' @seealso \code{\link{thrshld_b}}
 #' @return Stack or brick of thresholded predictions
 #' @examples
-#' mods.thrshld <- thr(mcmp=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+#'\dontrun{
+#' mods.thrshld <- thrshld(mcmp=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
+#' }
 #' @export
-thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="species") {
+thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="species") {
   if(is.null(path.mdls)){
     path.mdls <- paste("3_out.MaxEnt", paste0("Mdls.",sp.nm), sep = "/")
   }
@@ -152,9 +154,6 @@ thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="spe
   return(mt)
 }
 
-# mods.thrshld <- thr(mcmp, thrshld.i = 4:6, pred.args, path.mdls)
-# plot(mods.thrshld[[1]][[2]]) # continuous
-# plot(mods.thrshld[[2]][[2]]) # binary
 
 #### 4.8.5 threshold for past and future pred
 #' Apply threshold for MaxEnt projections for multiple species
@@ -163,16 +162,18 @@ thr <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="spe
 #' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
-#' @param mcmp.l Object returned by "mxntProjB", containing a list of calibrated models
+#' @param mcmp.l Object returned by "proj_mdl_b", containing a list of calibrated models
 #' and model projections for each species.
-#' @inheritParams thr
-#' @inheritParams mxntCalib
-#' @seealso \code{\link{thr}}
+#' @inheritParams thrshld
+#' @inheritParams calib_mdl
+#' @seealso \code{\link{thrshld}}
 #' @return List of stack or brick of thresholded predictions
 #' @examples
-#' mods.thrshld.lst <- thrB(mcmp.l=mxnt.mdls.preds.cf)
+#'\dontrun{
+#' mods.thrshld.lst <- thrshld_b(mcmp.l=mxnt.mdls.preds.cf)
+#' }
 #' @export
-thrB <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
+thrshld_b <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
   path.res <- "3_out.MaxEnt"
   if(dir.exists(path.res)==FALSE) dir.create(path.res)
   path.sp.m <- paste0("Mdls.", names(mcmp.l))
@@ -190,12 +191,12 @@ thrB <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
 
     if(numCores>1){
       cl <- parallel::makeCluster(numCores)
-      parallel::clusterExport(cl, list("thr"))
+      parallel::clusterExport(cl, list("thrshld"))
 
       mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms),
                                                  function(j, mcmp, scn.nms, thrshld.i, path.mdls.i){
 
-                                                   resu <- thr(mcmp, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+                                                   resu <- thrshld(mcmp, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
                                                    return(resu)
 
                                                  }, mcmp, scn.nms, thrshld.i, path.mdls.i)
@@ -205,7 +206,7 @@ thrB <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
       mods.thrshld.spi <- lapply(base::seq_along(scn.nms),
                                  function(j, mcmp, scn.nms, thrshld.i, path.mdls.i){
 
-                                   resu <- thr(mcmp, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
+                                   resu <- thrshld(mcmp, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
                                    return(resu)
 
                                  }, mcmp, scn.nms, thrshld.i, path.mdls.i)

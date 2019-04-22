@@ -6,7 +6,7 @@
 #' Measures overlap between two ENMs. Used to compare differences among model selection criteria.
 #' See ?ENMTools::raster.overlap for details.
 #'
-#' @inheritParams thrB
+#' @inheritParams thrshld_b
 #' @param scn.nm name of climatic scenarios to compute overlap.
 #' @param model.compare Reference model to be compared (AvgAIC, LowAIC, avg.test.orMTP,
 #'  avg.test.or10pct, avg.test.AUC.MTP, avg.test.AUC10pct)
@@ -14,12 +14,12 @@
 #' @return A list of matrices containing the three metrics (I, D, and Spearman rank correlation)
 #' for each climatic scenario
 #' @examples
-#' mxnt.mdls.ovlp <- cRasterOverlap(mxnt.mdls.preds.pf, scn.nm="current", 1)
-# #' mxnt.mdls.ovlp <- cRasterOverlap(mxnt.mdls.preds.pf,
+#' mxnt.mdls.ovlp <- raster_overlap_b(mxnt.mdls.preds.pf, scn.nm="current", 1)
+# #' mxnt.mdls.ovlp <- raster_overlap_b(mxnt.mdls.preds.pf,
 # #' scn.nm=c("futAC5085", "futAC7085"), 3)
 # #' @export
-cRasterOverlap <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
-# cRasterOverlap <- function(mcmp.l, scn.nm="current", model.compare=1){
+raster_overlap_b <- function(mcmp.l, scn.nm="current", model.compare=1){print("function disabled until ENMtools is fixed")}
+# raster_overlap_b <- function(mcmp.l, scn.nm="current", model.compare=1){
 #
 #   ovr.spp <- lapply(names(mcmp.l), function(sp, mcmp.l, comb.plots){ # , ovr.vl
 #     ovr.vl <- array(dim= c(length(clim.scn), # rows for pred.scenario
@@ -52,5 +52,5 @@ cRasterOverlap <- function(mcmp.l, scn.nm="current", model.compare=1){print("fun
 #   return(ovr.spp)
 # }
 
-# cRasterOverlap(mcmp.l, scn.nm=c("futAC5085", "futAC7085"), 3)
+# raster_overlap_b(mcmp.l, scn.nm=c("futAC5085", "futAC7085"), 3)
 

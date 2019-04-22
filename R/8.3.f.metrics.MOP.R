@@ -14,10 +14,9 @@ mopout <- function(M, G){
 # mopout(M, G)
 
 
-# .messi3
 #' low level MOP function
 #' @keywords internal
-mopi3 <- function(x, probs, reff){
+mopi <- function(x, probs, reff){
   di <- fields::rdist(matrix(x, nrow=1), reff)
   qdi <- stats::quantile(di, probs, na.rm = T)
   di <-  di[di <= qdi]
@@ -39,8 +38,10 @@ mopi3 <- function(x, probs, reff){
 #' @param q Quantile. Proportion of closest points in M is to be compared
 #' with G to calculate the MOP. Must be >0 and <=1.
 #' @param min.M.sz Threshold value to be used to compute OR
-#' @inheritParams mxntCalib
-#' @inheritParams mxntProj
+#' @inheritParams calib_mdl
+#' @inheritParams proj_mdl
+#' @inheritParams thrshld
+#' @inheritParams raster::writeRaster
 #' @seealso \code{\link{mop_b}}
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
@@ -91,7 +92,7 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
     if (raster::canProcessInMemory(G)) {
       mop.r <- raster::raster(G)
       G <- raster::getValues(G)
-      G <- apply(G, 1, mopi3, reff=Mmat, probs=q)
+      G <- apply(G, 1, mopi, reff=Mmat, probs=q)
       names(mop.r) <- "MOP"
       mop.r <- raster::setValues(mop.r, G)
       # return(mop.r)
@@ -99,7 +100,7 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
     else {
       mop.r <- raster::calc(G,
                     fun = function(x) {
-                      apply(x, 1, mopi3, probs=q, reff=Mmat)
+                      apply(x, 1, mopi, probs=q, reff=Mmat)
                     })
       # fun=function(x, probs=q, reff=Mmat){
       #   di <- fields::rdist(matrix(x, nrow=1), reff)
@@ -119,7 +120,7 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
 
     mop.r <- raster::calc(G,
                   fun=function(x){
-                    parallel::parApply(cl, x, 1, mopi3, probs=q, reff=Mmat)
+                    parallel::parApply(cl, x, 1, mopi, probs=q, reff=Mmat)
                   }) #, q, Mmat , filename = filename, overwrite=T, progress='text')
 
     parallel::stopCluster(cl)
@@ -147,14 +148,14 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
 #' from a 'mcmp.l' object, based on the selected threshold value.
 #'
 #' @inheritParams mop
-#' @inheritParams mxntCalibB
-#' @inheritParams mxntProjB
-#' @inheritParams plotScnDiff
+#' @inheritParams calib_mdl_b
+#' @inheritParams proj_mdl_b
+#' @inheritParams plot_scn_diff
 #' @seealso \code{\link{mop}}
 #' @return Data frame with average and variance of OR values across partition groups of data
 # #' @examples
 #' @export
-mop_b <- function(a.calib.l, proj.area.l,
+mop_b <- function(a.calib.l, a.proj.l,
                   p=0.1, q=0.1, min.M.sz=100, ref.scn="current", format = "raster", numCores=1){
     {
       path.res <- "2_envData"
@@ -169,7 +170,7 @@ mop_b <- function(a.calib.l, proj.area.l,
     for (sp in names(a.calib.l)) {
       cat(c("\n", "Species: ", sp, "\n"))
 
-      proj.area.spi <- proj.area.l[[sp]]
+      proj.area.spi <- a.proj.l[[sp]]
       a.calib.spi <- a.calib.l[[sp]]
 
       var.nms <- names(a.calib.spi)

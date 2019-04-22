@@ -4,7 +4,7 @@
 \alias{mop_b}
 \title{Extrapolation risk analysis for a list of species}
 \usage{
-mop_b(a.calib.l, proj.area.l, p = 0.1, q = 0.1, min.M.sz = 100,
+mop_b(a.calib.l, a.proj.l, p = 0.1, q = 0.1, min.M.sz = 100,
   ref.scn = "current", format = "raster", numCores = 1)
 }
 \arguments{
@@ -12,6 +12,8 @@ mop_b(a.calib.l, proj.area.l, p = 0.1, q = 0.1, min.M.sz = 100,
 predictor variables. These will be used to extract values from for the point locations. Can
 also be a data.frame, in which case each column should be a predictor variable and each row
 a presence or background record..}
+
+\item{a.proj.l}{A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict}
 
 \item{p}{Percent of values, sampled from calibration area, used as
 reference to calculate the MOP. Must be >0 and <=1.}
@@ -22,6 +24,8 @@ with G to calculate the MOP. Must be >0 and <=1.}
 \item{min.M.sz}{Threshold value to be used to compute OR}
 
 \item{ref.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
+
+\item{format}{Character. Output file type. Argument 'format' of raster::writeRaster}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
