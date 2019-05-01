@@ -23,9 +23,9 @@
 #' @inheritParams calib_mdl
 #' @inheritParams caret::findCorrelation
 #' @inheritParams raster::writeRaster
-#' @seealso \code{\link{sel_env_b}}, \code{\link[caret]{findCorrelation}}
+#' @seealso \code{\link{select_vars_b}}, \code{\link[caret]{findCorrelation}}
 #' @export
-sel_env <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.dend=T, rm.old=F, sp.nm="sp", filename=NULL){
+select_vars <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.dend=T, rm.old=F, sp.nm="sp", filename=NULL){
   if(is.null(corr.mat)){
     lStats <- raster::layerStats(env, 'pearson', na.rm=T)
     corr.mat <- lStats[['pearson correlation coefficient']]
@@ -99,13 +99,13 @@ sel_env <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.dend=
 #' @param corr.mat.l List of correlation matrices from which variables will be selected. If the correlation
 #' matrix was already computed from env, you can just input here and choose other cutoff values for
 #' selecting variable layers.
-#' @seealso \code{\link{sel_env}}, \code{\link[caret]{findCorrelation}}
+#' @seealso \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
 #' @examples
 #' env.sel.b(occ.b.env, .9, names.only=T)
 #' occ.b.env <- env.sel.b(occ.b.env, .9, names.only=F, rm.old=F)
-#' @inheritParams sel_env
+#' @inheritParams select_vars
 #' @export
-sel_env_b <- function(env.l, cutoff=.9, corr.mat.l=NULL, names.only = F, plot.dend = T, rm.old=F, filename=NULL){
+select_vars_b <- function(env.l, cutoff=.9, corr.mat.l=NULL, names.only = F, plot.dend = T, rm.old=F, filename=NULL){
   if(is.null(filename)){
     path.env.out <- "2_envData/area.calib"
     if (dir.exists("2_envData") == FALSE) {
@@ -119,7 +119,7 @@ sel_env_b <- function(env.l, cutoff=.9, corr.mat.l=NULL, names.only = F, plot.de
 
   env.l.sel <- base::lapply(base::seq_along(env.l), function(i, x, cutoff, corr.mat.l, names.only, rm.old, filename){ # , n.env.l
     sp.nm <- names(x)[i]
-    sel_env(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, names.only = names.only, plot.dend = plot.dend,
+    select_vars(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, names.only = names.only, plot.dend = plot.dend,
             rm.old = rm.old, sp.nm = sp.nm, filename = filename)
   }, x=env.l, cutoff, corr.mat.l, names.only, rm.old, filename=filename) # , n.env.l
 

@@ -47,9 +47,9 @@ library(ENMwizard)
 
 # Using ENMwizard's magic wand
 
-## - 1. Prepare environmental data
+## 1. Prepare environmental data
 
-### - 1.1 Load occurence data
+### 1.1 Load occurence data
 
 First, lets use occ data available in dismo package
 ```r
@@ -67,7 +67,7 @@ Now we make it a named list, where names correspond to species names.
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 ```
 
-### - 1.2 create occ polygon to crop rasters prior to modelling
+### 1.2 create occ polygon to crop rasters prior to modelling
 
 The occurence points in the named list are used to create polygons. 
 Notice that you can cluster the occ points using several clustering methods. 
@@ -90,14 +90,14 @@ occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", i
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdbw")
 ```
 
-### - 1.2.1 creating buffer
+### 1.2.1 creating buffer
 
 ... and the occurrence polygons are buffered using 1.5 degrees.
 ```r
 occ.b <- buffer_b(occ.polys, width = 1.5)
 ```
 
-### - 1.3. Cut enviromental layers with occ.b and save in hardrive.
+### 1.3. Cut enviromental layers with occ.b and save in hardrive.
 Specify the path to the environmental variables
 it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
 here we will use variables available in dismo package
@@ -132,16 +132,16 @@ for(i in 1:length(occ.b.env)){
 
 Select the least correlated variables
 ```r
-vars <- sel_env_b(occ.b.env, cutoff=.75, names=T)
+vars <- select_vars_b(occ.b.env, cutoff=.75, names=T)
 # See selected variables for each species
 lapply(vars, function(x)x[[1]])
 # remove correlated variables from our variable set
-occ.b.env <- sel_env_b(occ.b.env, cutoff=.75, names=F)
+occ.b.env <- select_vars_b(occ.b.env, cutoff=.75, names=F)
 ```
 
 
-## - 2. Prepare occurence data
-### - 2.1 Filtering original dataset
+## 2. Prepare occurence data
+### 2.1 Filtering original dataset
 Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
 ```r
 thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
@@ -153,14 +153,14 @@ thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 -----
 
 
-## - 3. Tunning Maxent's feature classes and regularization multiplier via ENMeval
-### - 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
+## 3. Tunning Maxent's feature classes and regularization multiplier via ENMeval
+### 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
 After thinning, we choose one dataset for each species for modelling.
 ```r
 occ.locs <- load_thin_occ(thinned.dataset.batch)
 ```
 
-### - 3.3 model tuning using ENMeval
+### 3.3 model tuning using ENMeval
 Here we will run ENMevaluateB to call ENMevaluate (from ENMeval package). Here we will test which combination of Feature Classes and Regularization Multipliers give the best results. For this, we will partition our occurence data using the "block" method.
 
 By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
@@ -171,7 +171,7 @@ ENMeval.res.lst <- ENMevaluate_b(occ.locs, occ.b.env,
 ```
 
 -----
-## - 4. Model Fitting (Calibration)
+## 4. Model Fitting (Calibration)
 After tuning MaxEnt models, we will calibrate them using all occurence data (i.e. without partition them).
 
 ```r
@@ -196,8 +196,8 @@ mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst,
 
 ```
 
-## -  5. Projection
-### - 5.1. Downloading environmental data
+##  5. Projection
+### 5.1. Downloading environmental data
 For projection it is necessary to download raster files with the environmnetal variables of interest. In this example, a directory called 'rasters' is created. Then, rasters from current and future climatic conditions projected for 2050 and 2070 are downloaded and loaded. Finally, two lists are created, one for current conditions and another for the two future cenarios.
 
 ```r
@@ -222,8 +222,8 @@ env.proj.l <- list(current = current,
 
 ```
 
-### - 5.2 Preparing projecion area: save rasters onto which the model will be projected in an object called "pa.env.proj.l"
-### - 5.2.1 select area for projection based on the extent of occ points
+### 5.2 Preparing projecion area: save rasters onto which the model will be projected in an object called "pa.env.proj.l"
+### 5.2.1 select area for projection based on the extent of occ points
 Now it is time to define the projection area for each species. The projection area can be the same for all species (in this example) of be defined individually. Here, the projection area will be defined as an square area slightly larger than the original occurrence of the species. Then, a two lists with models will be created for a species. In the first list, the projection will be performed using current climatic conditions. In the second list, two cenarios of futurure climate (defined above) are created.
 
 ```r
@@ -237,7 +237,7 @@ plot(pa.env.proj.l[[1]][[1]][[1]], add=T)
 plot(occ.polys[[1]], add=T)
 ```
 
-### - 5.2.2 if the extent to project is the same for all species
+### 5.2.2 if the extent to project is the same for all species
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
@@ -245,7 +245,7 @@ proj.extent <- extent(c(-109.5, -26.2, -59.5, 18.1))
 pa.env.proj.l <- cut_projarea_rst_mscn_b(proj.extent, env.proj.l, occ.polys)
 ```
 
-### - 5.3 Model projections
+### 5.3 Model projections
 
 Finally, the model(s) can be projected on all climatic cenarios. This is performed by `the proj_mdl_b` function. The function has two arguments: 1) MaxEnt fitted models (see step 4.3 above) and 2) list of rasters representing all cenarios onto which models will be projected.
 This function can be run using a single core (default) or multiple cores available in a computer. There two ways of performing parallel processing: by species or by model. If the distribution of few species is being modelled, and models are computationally intensive, then processing by model will provide best results. If there are many species, probably parallel processing by species (split species across the multiple cores of a computer) will be faster.
@@ -265,7 +265,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-### - 5.4 Applying thresholds on climatic scenarios
+### 5.4 Applying thresholds on climatic scenarios
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and 
 apply on the projections.
 ```r
@@ -282,8 +282,8 @@ apply on the projections.
 mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = 5)
 ```
 
-## - 6. Visualizing
-### - 6.1. Plotting one projection for current climate and another for a future climatic scenario
+## 6. Visualizing
+### 6.1. Plotting one projection for current climate and another for a future climatic scenario
 ```r
 plot(mods.thrshld.lst$Bvarieg$current$binary$x10ptp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
@@ -291,28 +291,28 @@ plot_mdl_diff(mxnt.mdls.preds.lst[[1]], mods.thrshld.lst[[1]], sp.nm = "Bvarieg"
 plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ```
 
-### - 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
+### 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
 plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, 
               sel.clim.scn = "current", mSel = "LowAIC", save=F)
 ```
 
 
-## - 7. Metrics
-### - Compute variable contribution and importance
+## 7. Metrics
+### Compute variable contribution and importance
 ```r
 get_cont_permimport_b(mxnt.mdls.preds.cf)
 ```
-### - Compute "Omission Rate"
+### Compute "Omission Rate"
 ```r
 calc_or_ensemble_b(mxnt.mdls.preds.cf, occ.b.env, ORt=seq(0, 0.2, 0.05))
 ```
 
-### - Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
+### Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
 ```r
 calc_fpa_b(mods.thrshld.lst)
 ```
-### - Compute species' total suitable area
+### Compute species' total suitable area
 ```r
 calc_tsa_b(mods.thrshld.lst)
 ```
