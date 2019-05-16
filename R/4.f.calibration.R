@@ -242,10 +242,18 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 
   # exportar planilha de resultados
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
-  res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "delta.AICc", "w.AIC", "parameters", "rankAIC", "avg.test.pROC.ratio", "avg.pROC.p",
-                          "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
-  colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "delta AICc", "wAIC", "parameters", "Rank AIC", "avg pROC ratio", "avg pROC pValue",
-                         "avg OR10", "avg ORLPT", "avg AUC")
+  if("avg.pROC.p" %in% colnames(xsel.mdls)){
+    res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "delta.AICc", "w.AIC", "parameters", "rankAIC", "avg.test.pROC.ratio", "avg.pROC.p",
+                            "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
+    colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "delta AICc", "wAIC", "parameters", "Rank AIC", "avg pROC ratio", "avg pROC pValue",
+                           "avg OR10", "avg ORLPT", "avg AUC")
+  } else {
+    res.tbl <- xsel.mdls[,c("sel.cri", "features","rm","AICc", "delta.AICc", "w.AIC", "parameters", "rankAIC", # "avg.test.pROC.ratio", "avg.pROC.p",
+                            "avg.test.or10pct", "avg.test.orMTP", "avg.test.AUC")]
+    colnames(res.tbl) <- c("Optimality criteria", "FC", "RM", "AICc", "delta AICc", "wAIC", "parameters", "Rank AIC", # "avg pROC ratio", "avg pROC pValue",
+                           "avg OR10", "avg ORLPT", "avg AUC")
+
+  }
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
   mod.nms <- paste0("Mod_", format(xsel.mdls[, "rm"], digits=2), "_", xsel.mdls[, "features"]) #
