@@ -294,7 +294,7 @@ plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ### 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
 ```r
 plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, 
-              sel.clim.scn = "current", mSel = "LowAIC", save=F)
+              ref.scn = "current", mSel = "AvgAIC", save=F)
 ```
 
 
@@ -303,16 +303,11 @@ plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst,
 ```r
 get_cont_permimport_b(mxnt.mdls.preds.cf)
 ```
-### Compute "Omission Rate"
-```r
-calc_or_ensemble_b(mxnt.mdls.preds.cf, occ.b.env, ORt=seq(0, 0.2, 0.05))
-```
-
 ### Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
 ```r
-calc_fpa_b(mods.thrshld.lst)
+get_fpa_b(mods.thrshld.lst)
 ```
 ### Compute species' total suitable area
 ```r
-calc_tsa_b(mods.thrshld.lst)
+get_tsa_b(mods.thrshld.lst)
 ```
