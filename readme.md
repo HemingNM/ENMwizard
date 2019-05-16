@@ -36,7 +36,6 @@ Download from https://github.com/HemingNM/ENMwizard/archive/master.zip and run t
 ```r
 install.packages("devtools")
 library(devtools)
-install_local("PATH")
 library(ENMwizard)
 ```
 
