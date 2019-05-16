@@ -315,7 +315,7 @@ get_fpa_b <- function(mtp.l, digits = 3){
 
   df.FPA <- lapply(seq_along(mtp.l), function(i, mtp.l, digits, sp.nm.l){
     get_fpa(mtp.l[[i]], digits, sp.nm.l[i])
-    }, mtp.l, digits) # species, areas
+    }, mtp.l, digits, sp.nm.l) # species, areas
 
   names(df.FPA) <- sp.nm.l
   df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
