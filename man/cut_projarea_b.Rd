@@ -25,6 +25,8 @@ This function is a wrapper for "cut_projarea". See ?cut_projarea
 It works with a named list of pred.poly to delimit the projection area for each of the species.
 }
 \examples{
+\dontrun{
 area.projection <- cut_projarea_b(pred.polys, env.uncut)
 plot(area.projection[[1]][[1]])
+}
 }
