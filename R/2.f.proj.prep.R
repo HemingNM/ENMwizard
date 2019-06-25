@@ -173,8 +173,10 @@ cut_projarea <- function(pred.poly, env.uncut, prj.nm="", sp.nm="species"){
 #' \code{\link{cut_projarea_rst}}, \code{\link{cut_projarea_rst_b}}, \code{\link{cut_projarea_rst_mscn_b}}
 #' @return  named list of cropped raster or brick
 #' @examples
+#' \dontrun{
 #' area.projection <- cut_projarea_b(pred.polys, env.uncut)
 #' plot(area.projection[[1]][[1]])
+#' }
 #' @export
 cut_projarea_b <- function(pred.polys, env.uncut, prj.nm=""){ # pred.poly, env.uncut, prj.nm="", sp.nm="sp"
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}

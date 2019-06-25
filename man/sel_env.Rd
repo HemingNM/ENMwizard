@@ -6,6 +6,9 @@
 \usage{
 sel_env(...)
 }
+\arguments{
+\item{...}{additional arguments}
+}
 \description{
 Find, optionally remove, highly correlated variables from a raster brick/stack
 }
