@@ -1,6 +1,6 @@
 #' Deprecated & Defunct Functions
 #'
-#' These functions are Deprecated or Defunct in this release of ENMwizard,
+#' These functions are Deprecated or Defunct in this release of ENMwizard.
 #' Deprecated functions will be marked as Defunct and removed in a future version.
 #' Defunct functions were already removed from this version.
 #' @name ENMwizard-deprecated-defunct
