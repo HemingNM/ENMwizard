@@ -147,6 +147,7 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
 #' This function will compute the omission rate (OR) for each species' AICc Averaged Model
 #' from a 'mcmp.l' object, based on the selected threshold value.
 #'
+#' @param ignore.scn Vector of scenario names to ignore.
 #' @inheritParams mop
 #' @inheritParams calib_mdl_b
 #' @inheritParams proj_mdl_b
@@ -156,7 +157,7 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
 # #' @examples
 #' @export
 mop_b <- function(a.calib.l, a.proj.l,
-                  p=0.1, q=0.1, min.M.sz=100, ref.scn="current", format = "raster", numCores=1){
+                  p=0.1, q=0.1, min.M.sz=100, ignore.scn='', format = "raster", numCores=1){
     {
       path.res <- "2_envData"
       if (dir.exists(path.res) == FALSE)
@@ -175,7 +176,7 @@ mop_b <- function(a.calib.l, a.proj.l,
 
       var.nms <- names(a.calib.spi)
       n.scn <- names(proj.area.spi)
-      n.scn <- n.scn[!n.scn %in% ref.scn]
+      n.scn <- n.scn[!n.scn %in% ignore.scn]
 
       mop.spi <- vector("list", length(n.scn))
       for (g in n.scn) {
