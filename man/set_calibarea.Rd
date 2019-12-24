@@ -4,8 +4,14 @@
 \alias{set_calibarea}
 \title{Create minimum convex polygon based on species occurence data}
 \usage{
-set_calibarea(occ.spdf, sp.nm = "species", convex = TRUE, alpha = 10,
-  save = TRUE, crs.set = "+proj=longlat +datum=WGS84")
+set_calibarea(
+  occ.spdf,
+  sp.nm = "species",
+  convex = TRUE,
+  alpha = 10,
+  save = TRUE,
+  crs.set = "+proj=longlat +datum=WGS84"
+)
 }
 \arguments{
 \item{occ.spdf}{An object of class SpatialPoints or SpatialPointsDataFrame (e.g. species occurence coordinates)}

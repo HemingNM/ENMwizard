@@ -4,8 +4,15 @@
 \alias{buffer_b}
 \title{Create buffer based on species polygons}
 \usage{
-buffer_b(occ.polys, width = NULL, mult = 0.2, quadsegs = 100,
-  numCores = 1, crs.set = NULL, plot = T)
+buffer_b(
+  occ.polys,
+  width = NULL,
+  mult = 0.2,
+  quadsegs = 100,
+  numCores = 1,
+  crs.set = NULL,
+  plot = T
+)
 }
 \arguments{
 \item{occ.polys}{list of SpatialPolygons, usually obj returned from set_calibarea_b()}

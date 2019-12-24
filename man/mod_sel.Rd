@@ -4,10 +4,16 @@
 \alias{mod_sel}
 \title{Model selection and creation of MaxEnt arguments for selected models}
 \usage{
-mod_sel(x, mSel = c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR",
-  "AUC"), wAICsum = 0.99, randomseed = FALSE, responsecurves = TRUE,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature",
-  save = "M")
+mod_sel(
+  x,
+  mSel = c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", "AUC"),
+  wAICsum = 0.99,
+  randomseed = FALSE,
+  responsecurves = TRUE,
+  arg1 = "noaddsamplestobackground",
+  arg2 = "noautofeature",
+  save = "M"
+)
 }
 \arguments{
 \item{x}{Object of class ENMevaluation}

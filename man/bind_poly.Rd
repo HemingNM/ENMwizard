@@ -4,8 +4,12 @@
 \alias{bind_poly}
 \title{Bind list of SpatialPolygons into a single SpatialPolygons object}
 \usage{
-bind_poly(occ.polys, sp.nm = "species", save = TRUE,
-  crs.set = "+proj=longlat +datum=WGS84")
+bind_poly(
+  occ.polys,
+  sp.nm = "species",
+  save = TRUE,
+  crs.set = "+proj=longlat +datum=WGS84"
+)
 }
 \arguments{
 \item{occ.polys}{list of SpatialPolygons to bind}

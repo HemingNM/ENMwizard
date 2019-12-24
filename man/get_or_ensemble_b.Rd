@@ -4,8 +4,14 @@
 \alias{get_or_ensemble_b}
 \title{Compute Omission Rate for a list of species' ensembled models}
 \usage{
-get_or_ensemble_b(mcm.l, a.calib.l, ORt = seq(0, 0.2, 0.05),
-  userArgs = NULL, categoricals = NULL, numCores = 1)
+get_or_ensemble_b(
+  mcm.l,
+  a.calib.l,
+  ORt = seq(0, 0.2, 0.05),
+  userArgs = NULL,
+  categoricals = NULL,
+  numCores = 1
+)
 }
 \arguments{
 \item{mcm.l}{A list of objects returned by "calib_mdl", containing calibrated models.}

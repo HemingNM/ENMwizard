@@ -4,8 +4,15 @@
 \alias{ensemble_projs}
 \title{Ensemble models (AvgAIC, WAAUC, EBPM, ESOR)}
 \usage{
-ensemble_projs(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt,
-  pred.nm, format)
+ensemble_projs(
+  mcm,
+  filename.or.auc.laic,
+  a.proj,
+  path.mdls,
+  outpt,
+  pred.nm,
+  format
+)
 }
 \arguments{
 \item{mcm}{Objects returned by "calib_mdl", containing calibrated models.}

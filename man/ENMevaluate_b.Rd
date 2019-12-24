@@ -4,14 +4,32 @@
 \alias{ENMevaluate_b}
 \title{Tuning and evaluation of ENMs with Maxent for several species using ENMeval}
 \usage{
-ENMevaluate_b(occ.l, a.calib.l, bg.coords.l = NULL, occ.grp.l = NULL,
-  bg.grp.l = NULL, RMvalues = seq(0.5, 4.5, 0.5), fc = c("L", "P",
-  "Q", "H", "LP", "LQ", "LH", "PQ", "PH", "QH", "LPQ", "LPH", "LQH", "PQH",
-  "LPQH"), categoricals = NULL, n.bg = 10000, method = "block",
-  algorithm = "maxnet", overlap = FALSE, aggregation.factor = c(2,
-  2), kfolds = NA, bin.output = FALSE, clamp = TRUE,
-  rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
-  progbar = TRUE, updateProgress = FALSE, resultsOnly = F, ...)
+ENMevaluate_b(
+  occ.l,
+  a.calib.l,
+  bg.coords.l = NULL,
+  occ.grp.l = NULL,
+  bg.grp.l = NULL,
+  RMvalues = seq(0.5, 4.5, 0.5),
+  fc = c("L", "P", "Q", "H", "LP", "LQ", "LH", "PQ", "PH", "QH", "LPQ", "LPH", "LQH",
+    "PQH", "LPQH"),
+  categoricals = NULL,
+  n.bg = 10000,
+  method = "block",
+  algorithm = "maxnet",
+  overlap = FALSE,
+  aggregation.factor = c(2, 2),
+  kfolds = NA,
+  bin.output = FALSE,
+  clamp = TRUE,
+  rasterPreds = TRUE,
+  parallel = FALSE,
+  numCores = NULL,
+  progbar = TRUE,
+  updateProgress = FALSE,
+  resultsOnly = F,
+  ...
+)
 }
 \arguments{
 \item{occ.l}{list of species occurrence data}
@@ -35,13 +53,13 @@ a presence or background record.}
 
 \item{n.bg}{ The number of random background localities to draw from the study extent. }
 
-\item{method}{ Character string designating the method used for data partitioning.  Choices are: \code{"jackknife", "randomkfold", "user", "block", "checkerboard1", "checkerboard2"}.  See details and \code{\link{get.evaluation.bins}} for more information. }
+\item{method}{ Character string designating the method used for data partitioning.  Choices are: \code{"jackknife", "randomkfold", "user", "block", "checkerboard1", "checkerboard2"}.  See details and \code{\link[ENMeval]{get.evaluation.bins}} for more information. }
 
 \item{algorithm}{ Character vector.  Use \code{'maxnet'} to use the \pkg{maxnet} package [default] or \code{'maxent.jar'} to use the \pkg{dismo} package and the 'maxent.jar' Java program. See details for more information on these different implementations.}
 
-\item{overlap}{ logical; If \code{TRUE}, provides pairwise metric of niche overlap (see details and \code{\link{calc.niche.overlap}}). }
+\item{overlap}{ logical; If \code{TRUE}, provides pairwise metric of niche overlap (see details and \code{\link[ENMeval]{calc.niche.overlap}}). }
 
-\item{aggregation.factor}{ List giving the factor by which the original input grid should be aggregated for checkerboard partitioning methods (see details and \code{\link{get.evaluation.bins}}). }
+\item{aggregation.factor}{ List giving the factor by which the original input grid should be aggregated for checkerboard partitioning methods (see details and \code{\link[ENMeval]{get.evaluation.bins}}). }
 
 \item{kfolds}{ Number of bins to use in the \emph{k}-fold random method of data partitioning. }
 

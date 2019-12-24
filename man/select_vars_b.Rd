@@ -4,8 +4,15 @@
 \alias{select_vars_b}
 \title{Find, optionally remove, highly correlated variables from a list (several species) of raster brick/stack}
 \usage{
-select_vars_b(env.l, cutoff = 0.9, corr.mat.l = NULL, names.only = F,
-  plot.dend = T, rm.old = F, filename = NULL)
+select_vars_b(
+  env.l,
+  cutoff = 0.9,
+  corr.mat.l = NULL,
+  names.only = F,
+  plot.dend = T,
+  rm.old = F,
+  filename = NULL
+)
 }
 \arguments{
 \item{env.l}{List of raster brick/stack.}

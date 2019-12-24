@@ -4,8 +4,15 @@
 \alias{cut_projarea_rst_mscn_b}
 \title{Cut multiple projection areas of multiple species based on a single SpatialPolygon object (e.g. Ecoregion)}
 \usage{
-cut_projarea_rst_mscn_b(area.p, env.uncut.l, occ.polys, mask = FALSE,
-  prj.nm = "", sp.nm = "mult.spp", numCores = 1)
+cut_projarea_rst_mscn_b(
+  area.p,
+  env.uncut.l,
+  occ.polys,
+  mask = FALSE,
+  prj.nm = "",
+  sp.nm = "mult.spp",
+  numCores = 1
+)
 }
 \arguments{
 \item{area.p}{SpatialPolygon to be used as reference to crop/mask environmental variables of all species}

@@ -4,9 +4,16 @@
 \alias{select_vars}
 \title{Find, optionally remove, highly correlated variables from a raster brick/stack}
 \usage{
-select_vars(env = NULL, cutoff = 0.9, corr.mat = NULL,
-  names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
-  filename = NULL)
+select_vars(
+  env = NULL,
+  cutoff = 0.9,
+  corr.mat = NULL,
+  names.only = F,
+  plot.dend = T,
+  rm.old = F,
+  sp.nm = "sp",
+  filename = NULL
+)
 }
 \arguments{
 \item{env}{raster brick/stack}

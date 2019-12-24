@@ -4,13 +4,24 @@
 \alias{calib_mdl}
 \title{Calibrate MaxEnt models based on model selection criteria}
 \usage{
-calib_mdl(ENMeval.o, sp.nm = "species", a.calib, occ = NULL,
-  use.ENMeval.bgpts = TRUE, nbg = 10000, format = "raster",
+calib_mdl(
+  ENMeval.o,
+  sp.nm = "species",
+  a.calib,
+  occ = NULL,
+  use.ENMeval.bgpts = TRUE,
+  nbg = 10000,
+  format = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
-  randomseed = FALSE, responsecurves = TRUE,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature",
-  numCores = 1, parallelTunning = TRUE)
+  mSel = c("AvgAIC", "LowAIC", "OR", "AUC"),
+  wAICsum = 0.99,
+  randomseed = FALSE,
+  responsecurves = TRUE,
+  arg1 = "noaddsamplestobackground",
+  arg2 = "noautofeature",
+  numCores = 1,
+  parallelTunning = TRUE
+)
 }
 \arguments{
 \item{ENMeval.o}{Object of class ENMevaluation}

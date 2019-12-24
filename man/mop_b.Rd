@@ -4,8 +4,16 @@
 \alias{mop_b}
 \title{Extrapolation risk analysis for a list of species}
 \usage{
-mop_b(a.calib.l, a.proj.l, p = 0.1, q = 0.1, min.M.sz = 100,
-  ref.scn = "current", format = "raster", numCores = 1)
+mop_b(
+  a.calib.l,
+  a.proj.l,
+  p = 0.1,
+  q = 0.1,
+  min.M.sz = 100,
+  ref.scn = "current",
+  format = "raster",
+  numCores = 1
+)
 }
 \arguments{
 \item{a.calib.l}{List of predictors (cropped environmental variables) for model tuning. Used in model calibration. Argument 'x' of dismo::maxent. Raster* object or SpatialGridDataFrame, containing grids with

@@ -4,8 +4,15 @@
 \alias{proj_mdl}
 \title{Project calibrated MaxEnt models}
 \usage{
-proj_mdl(mcm, sp.nm = "species", pred.nm = "fut", a.proj,
-  format = "raster", numCores = 1, parallelTunning = TRUE)
+proj_mdl(
+  mcm,
+  sp.nm = "species",
+  pred.nm = "fut",
+  a.proj,
+  format = "raster",
+  numCores = 1,
+  parallelTunning = TRUE
+)
 }
 \arguments{
 \item{mcm}{Objects returned by "calib_mdl", containing calibrated models.}

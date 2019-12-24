@@ -4,8 +4,19 @@
 \alias{plot_mdl}
 \title{internal function for \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}}
 \usage{
-plot_mdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod, save, msnm,
-  msr, scnm, scr)
+plot_mdl(
+  sc,
+  mcmp,
+  mtp,
+  basemap,
+  thrshld.path,
+  thrshld.nms.mod,
+  save,
+  msnm,
+  msr,
+  scnm,
+  scr
+)
 }
 \arguments{
 \item{sc}{Index of climatic scenario to be plotted}

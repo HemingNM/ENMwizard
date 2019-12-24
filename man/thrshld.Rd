@@ -4,8 +4,13 @@
 \alias{thrshld}
 \title{Apply threshold for MaxEnt projections of a species}
 \usage{
-thrshld(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL,
-  sp.nm = "species")
+thrshld(
+  mcmp,
+  scn.nm = "",
+  thrshld.i = 4:6,
+  path.mdls = NULL,
+  sp.nm = "species"
+)
 }
 \arguments{
 \item{mcmp}{Species "i" of a object returned by "proj_mdl_b", containing a list of

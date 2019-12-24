@@ -10,7 +10,7 @@
 #' "AvgAIC", "LowAIC", "OR", "AUC"
 #' @param wAICsum cumulative sum of top ranked models for which arguments will be created
 #' @param save should save args only ("A"), selected models only ("M") or both ("B")?
-#' @inheritParams dismo::maxent
+# #' @inheritParams dismo::maxent
 #' @param randomseed logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param responsecurves logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param arg1 charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.

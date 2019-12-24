@@ -4,13 +4,22 @@
 \alias{calib_mdl_b}
 \title{Calibrate MaxEnt models based on model selection criteria for several species}
 \usage{
-calib_mdl_b(ENMeval.o.l, a.calib.l, occ.l = NULL,
-  use.ENMeval.bgpts = TRUE, format = "raster",
+calib_mdl_b(
+  ENMeval.o.l,
+  a.calib.l,
+  occ.l = NULL,
+  use.ENMeval.bgpts = TRUE,
+  format = "raster",
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-  mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99,
-  randomseed = FALSE, responsecurves = TRUE,
-  arg1 = "noaddsamplestobackground", arg2 = "noautofeature",
-  numCores = 1, parallelTunning = TRUE)
+  mSel = c("AvgAIC", "LowAIC", "OR", "AUC"),
+  wAICsum = 0.99,
+  randomseed = FALSE,
+  responsecurves = TRUE,
+  arg1 = "noaddsamplestobackground",
+  arg2 = "noautofeature",
+  numCores = 1,
+  parallelTunning = TRUE
+)
 }
 \arguments{
 \item{ENMeval.o.l}{List of objects of class ENMevaluation}

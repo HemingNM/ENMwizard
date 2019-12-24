@@ -4,8 +4,13 @@
 \alias{proj_mdl_b}
 \title{Project calibrated MaxEnt models for several species onto multiple environmental scenarios}
 \usage{
-proj_mdl_b(mcm.l, a.proj.l, format = "raster", numCores = 1,
-  parallelTunning = TRUE)
+proj_mdl_b(
+  mcm.l,
+  a.proj.l,
+  format = "raster",
+  numCores = 1,
+  parallelTunning = TRUE
+)
 }
 \arguments{
 \item{mcm.l}{A list of objects returned by "calib_mdl", containing calibrated models.}

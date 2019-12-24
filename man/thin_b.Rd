@@ -4,10 +4,18 @@
 \alias{thin_b}
 \title{Spatially thin a list of species occurrence data}
 \usage{
-thin_b(loc.data.lst = list(), lat.col = NULL, long.col = NULL,
-  spec.col = NULL, thin.par = 10, reps = 10,
-  locs.thinned.list.return = TRUE, write.files = TRUE, max.files = 1,
-  write.log.file = TRUE)
+thin_b(
+  loc.data.lst = list(),
+  lat.col = NULL,
+  long.col = NULL,
+  spec.col = NULL,
+  thin.par = 10,
+  reps = 10,
+  locs.thinned.list.return = TRUE,
+  write.files = TRUE,
+  max.files = 1,
+  write.log.file = TRUE
+)
 }
 \arguments{
 \item{loc.data.lst}{Named list containing data.frames/SpatialPoints/SpatialPointsDataFrame
@@ -27,11 +35,11 @@ records to be separated by.}
 process of removing nearest-neighbors there should be 'rep' number of different
 sets of coordinates.}
 
-\item{locs.thinned.list.return}{TRUE/FALSE - If true, the `list` of
-the data.frame of thinned locs resulting from each replication
+\item{locs.thinned.list.return}{TRUE/FALSE - If true, the `list` of 
+the data.frame of thinned locs resulting from each replication 
 is returned (see Returns below).}
 
-\item{write.files}{TRUE/FALSE - If true, new *.csv files will be
+\item{write.files}{TRUE/FALSE - If true, new *.csv files will be 
 written with the thinned locs data}
 
 \item{max.files}{The maximum number of *csv files to be written based on the

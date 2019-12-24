@@ -4,11 +4,26 @@
 \alias{set_calibarea_b}
 \title{Create minimum convex polygon based on coordinates of species occurence data for several species}
 \usage{
-set_calibarea_b(spp.occ.list, k = 1, c.m = "AP", r = 2, q = 0.3,
-  distance = "euclidean", min.nc = 2, max.nc = 20,
-  method = "mcquitty", index = "all", alphaBeale = 0.1, convex = T,
-  alpha = 10, plot = T, save = T, save.pts = F, numCores = 1,
-  crs.set = "+proj=longlat +datum=WGS84")
+set_calibarea_b(
+  spp.occ.list,
+  k = 1,
+  c.m = "AP",
+  r = 2,
+  q = 0.3,
+  distance = "euclidean",
+  min.nc = 2,
+  max.nc = 20,
+  method = "mcquitty",
+  index = "all",
+  alphaBeale = 0.1,
+  convex = T,
+  alpha = 10,
+  plot = T,
+  save = T,
+  save.pts = F,
+  numCores = 1,
+  crs.set = "+proj=longlat +datum=WGS84"
+)
 }
 \arguments{
 \item{spp.occ.list}{A named list of species occurence points, either as "data.frame" or "SpatialPoints"/"SpatialPointsDataFrame"}

@@ -4,8 +4,14 @@
 \alias{get_or_ensemble}
 \title{Compute Omission Rate for a species' ensembled model}
 \usage{
-get_or_ensemble(mcm, a.calib, ORt = seq(0, 0.2, 0.05), userArgs = NULL,
-  categoricals, sp.nm = "species")
+get_or_ensemble(
+  mcm,
+  a.calib,
+  ORt = seq(0, 0.2, 0.05),
+  userArgs = NULL,
+  categoricals,
+  sp.nm = "species"
+)
 }
 \arguments{
 \item{mcm}{Objects returned by "calib_mdl", containing calibrated models.}

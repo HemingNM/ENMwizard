@@ -4,8 +4,19 @@
 \alias{plot_scn}
 \title{internal function for \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}}
 \usage{
-plot_scn(m, mtp, ref.scn = "current", basemap, thrshld.path,
-  thrshld.nms.mod, save, msnm, msr, scnm, scr)
+plot_scn(
+  m,
+  mtp,
+  ref.scn = "current",
+  basemap,
+  thrshld.path,
+  thrshld.nms.mod,
+  save,
+  msnm,
+  msr,
+  scnm,
+  scr
+)
 }
 \arguments{
 \item{m}{Index of model selection criteria to be plotted}

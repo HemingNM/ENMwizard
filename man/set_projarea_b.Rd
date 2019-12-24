@@ -4,8 +4,13 @@
 \alias{set_projarea_b}
 \title{Select area for projection based on the extent of occ points for multiple species}
 \usage{
-set_projarea_b(occ.polys, deg.incr = NULL, mult = 1, buffer = FALSE,
-  same = TRUE)
+set_projarea_b(
+  occ.polys,
+  deg.incr = NULL,
+  mult = 1,
+  buffer = FALSE,
+  same = TRUE
+)
 }
 \arguments{
 \item{occ.polys}{list of occ.poly SpatialPolygons.  see ?set_projarea for details.}

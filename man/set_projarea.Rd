@@ -4,8 +4,14 @@
 \alias{set_projarea}
 \title{Select area for projection based on the extent of occ points}
 \usage{
-set_projarea(occ.poly, sp.nm = "sp", deg.incr = NULL, mult = 1,
-  buffer = FALSE, same = TRUE)
+set_projarea(
+  occ.poly,
+  sp.nm = "sp",
+  deg.incr = NULL,
+  mult = 1,
+  buffer = FALSE,
+  same = TRUE
+)
 }
 \arguments{
 \item{occ.poly}{list of species SpatialPolygons}

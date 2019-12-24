@@ -4,8 +4,17 @@
 \alias{mop}
 \title{Extrapolation risk analysis}
 \usage{
-mop(M, G, p = 0.1, q = 0.1, min.M.sz = 100, filename = NULL,
-  scn.nm = "", numCores = 1, ...)
+mop(
+  M,
+  G,
+  p = 0.1,
+  q = 0.1,
+  min.M.sz = 100,
+  filename = NULL,
+  scn.nm = "",
+  numCores = 1,
+  ...
+)
 }
 \arguments{
 \item{M}{RasterStack of environmental variables from calibration area}
@@ -29,8 +38,8 @@ with G to calculate the MOP. Must be >0 and <=1.}
 \item{...}{Additional arguments: 
   		
 \code{datatype}{Character. Output data type (e.g. 'INT2S' or 'FLT4S'). 
-See \code{\link{dataType}}. If no datatype is specified, 'FLT4S' is used,
-unless this default value was changed with \code{\link{rasterOptions}}}
+See \code{\link[raster]{dataType}}. If no datatype is specified, 'FLT4S' is used,
+unless this default value was changed with \code{\link[raster]{rasterOptions}}}
 	
 \code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
 	
