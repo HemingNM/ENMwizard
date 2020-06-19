@@ -112,7 +112,8 @@ get_or_ensemble <- function(mcm, a.calib,
     }
   }
 
-  statsTbl <- data.table::dcast(data.table::melt(cbind(data.frame(
+  # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
+  statsTbl <- data.table::dcast(data.table::melt(cbind(data.table::data.table(
     stat=c("avgOR", "varOR"),
     apply(statsTbl, 2, function(x)c(mean(x), stats::var(x)) )
   )), id.vars = "stat"), variable~stat)

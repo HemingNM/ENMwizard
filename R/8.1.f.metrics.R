@@ -107,13 +107,13 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
   # areas <- areas
   # mtp <- mtp
 
-  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, sp.nm, restrict, digits, areas){  # pred.scenario
+  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, sp.nm, restrict, digits){ # , areas  # pred.scenario
     mtp.sc <- mtp[[sc]][[2]]
 
-    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sp.nm, sc, restrict, digits, areas){ # threshold criteria
+    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sp.nm, sc, restrict, digits){ # , areas # threshold criteria
       mtp.sc.t <- mtp.sc[[t]]
 
-      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sp.nm, sc, t, restrict, digits, areas){ # model criteria
+      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sp.nm, sc, t, restrict, digits){ # , areas # model criteria
         ar <- mtp.sc.t[[m]]
 
         if(grDevices::is.raster(restrict)){
@@ -125,28 +125,33 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
         ar <- sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)
         ar <- round(ar, digits = digits)
 
-        areas[sc,t,m] <<- ar
-        return(ar) }, mtp.sc.t, sp.nm, sc, t, restrict, digits, areas) # model criteria
-      return(ar.mods) }, mtp.sc, sp.nm, sc, restrict, digits, areas) # threshold criteria
-    return(ar.mods.t) }, mtp, sp.nm, restrict, digits, areas) # pred.scenario
+        # areas[sc,t,m] <<- ar
+        return(ar) }, mtp.sc.t, sp.nm, sc, t, restrict, digits) # , areas # model criteria
+      return(ar.mods) }, mtp.sc, sp.nm, sc, restrict, digits) # , areas# threshold criteria
+    return(ar.mods.t) }, mtp, sp.nm, restrict, digits) # , areas # pred.scenario
 
-  ar.mods.t.p <- simplify2array(ar.mods.t.p)
+  ar.mods.t.p <- simplify2array(ar.mods.t.p) # transform list into array
   if(length(dim(ar.mods.t.p))==3){
-    areas[] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
+    ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
   } else if(length(dim(ar.mods.t.p))==2){
     dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1)
-    areas[] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
+    ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
   } else if(length(dim(ar.mods.t.p))==1){
     dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1, 1)
-    areas[] <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
-  } else if(is.null(dim(ar.mods.t.p))){
-    areas[] <- ar.mods.t.p
-  }
+    ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
+  } # else if(is.null(dim(ar.mods.t.p))){
+  #   ar.mods.t.p <- ar.mods.t.p
+  # }
 
+  # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
+  areas <- data.frame(expand.grid(Clim.scen=names(mtp), # pred.scenario
+              threshold=names(mtp[[1]][[2]]), # threshold criteria
+              Model=c.nms), # model criteria
+              TotSuitArea=ar.mods.t.p)
   # areas <- as.data.frame(areas) #
   # colnames(areas) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
-  areas <- data.table::melt(areas)
-  colnames(areas) <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
+  # areas <- data.table::melt(areas)
+  # colnames(areas) <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
   utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.totalArea", sp.nm, ".csv"))
   return(areas)
 }
@@ -338,20 +343,26 @@ get_fpa_b <- function(mtp.l, digits = 3){
 #' @export
 get_fpa <- function(mtp, digits, sp.nm){ # species, areas
   print(sp.nm)
-  areas <- array(dim=c(length(mtp), # rows for pred.scenario
-                       length(mtp[[1]][[2]]), # cols for threshold criteria
-                       raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
-                 dimnames = list(names(mtp), # pred.scenario
-                                 names(mtp[[1]][[2]]), # threshold criteria
-                                 gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
-                                              "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
-                                              "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]]))
-                 )) # model criteria
-  areas <- data.table::melt(areas)
-  colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
-
-  # areas <- areas
-  # mtp.l.sp <- mtp
+  # areas <- array(dim=c(length(mtp), # rows for pred.scenario
+  #                      length(mtp[[1]][[2]]), # cols for threshold criteria
+  #                      raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
+  #                dimnames = list(names(mtp), # pred.scenario
+  #                                names(mtp[[1]][[2]]), # threshold criteria
+  #                                gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
+  #                                             "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
+  #                                             "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]]))
+  #                )) # model criteria
+  # areas <- data.table::melt(areas)
+  # colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
+  #
+  # # areas <- areas
+  # # mtp.l.sp <- mtp
+  # areas <- expand.grid(Clim.scen=names(mtp),
+  #                      threshold=names(mtp[[1]][[2]]),
+  #                      Model=gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
+  #                                         "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
+  #                                         "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]])),
+  #                      FPA=NA)
 
   fpa.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, sp.nm, digits){  # pred.scenario
     mtp.sc <- mtp[[sc]][[2]]
@@ -371,16 +382,22 @@ get_fpa <- function(mtp, digits, sp.nm){ # species, areas
 
   fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
   if(length(dim(fpa.mods.t.p))==3){
-    areas[,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+    fpa.mods.t.p <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
   } else if(length(dim(fpa.mods.t.p))==2){
     dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
-    areas[,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+    fpa.mods.t.p <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
   } else if(length(dim(fpa.mods.t.p))==1){
     dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1, 1)
-    areas[,ncol(areas)] <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
-  } else if(is.null(dim(fpa.mods.t.p))){
-    areas[,ncol(areas)] <- fpa.mods.t.p
-  }
+    fpa.mods.t.p <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
+  } #else if(is.null(dim(fpa.mods.t.p))){
+  #   fpa.mods.t.p <- fpa.mods.t.p
+  # }
+  areas <- data.frame(expand.grid(Clim.scen=names(mtp),
+              threshold=names(mtp[[1]][[2]]),
+              Model=gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
+                                 "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
+                                 "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]]))),
+              FPA=fpa.mods.t.p)
 
   utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.FracPredArea.", sp.nm, ".csv")) # reorder ds
   return(areas)
@@ -436,9 +453,9 @@ get_OR <- function(mtp.l, occ.l, clim.scn.nm = "current", digits = 3){ # , save=
       } # model criteria
     } # threshold criteria
 
-    df.OmR[[sp]] <- data.table::melt(df.OmR[[sp]], id.vars="Model") # reshape2::melt(df.OmR[[sp]], id="Model") #
-    colnames(df.OmR[[sp]])[1:3] <- c("Model", "threshold", "OmR")
-    utils::write.csv(df.OmR[[sp]], paste0("3_out.MaxEnt/Mdls.", sp, "/metric.OmRate", sp, ".csv")) # reorder ds
+    df.OmR[[sp]] <- data.table::melt(data.table::data.table(df.OmR[[sp]]), id.vars="Model", variable.name="threshold", value.name="OmR") # reshape2::melt(df.OmR[[sp]], id="Model") #
+    # colnames(df.OmR[[sp]])[1:3] <- c("Model", "threshold", "OmR")
+    utils::write.csv(as.data.frame(df.OmR[[sp]]), paste0("3_out.MaxEnt/Mdls.", sp, "/metric.OmRate", sp, ".csv")) # reorder ds
   }
   df.OmR.c <- data.table::rbindlist(df.OmR, idcol = "sp")
   utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/metric.OmRate.csv")) # reorder ds
