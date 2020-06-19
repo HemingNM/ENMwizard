@@ -27,7 +27,7 @@
 #' @seealso \code{\link{thrshld_b}}
 #' @return Stack or brick of thresholded predictions
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' mods.thrshld <- thrshld(mcmp=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
@@ -169,7 +169,7 @@ thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm=
 #' @seealso \code{\link{thrshld}}
 #' @return List of stack or brick of thresholded predictions
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' mods.thrshld.lst <- thrshld_b(mcmp.l=mxnt.mdls.preds.cf)
 #' }
 #' @export

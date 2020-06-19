@@ -51,7 +51,7 @@ thinned data}
 Named list containing thinned datasets for each species. See ?thin of spThin package.
 }
 \description{
-Will use \code{\link[spThin]} optimisation algorithm to subset the dataset such that
+Will use spThin optimisation algorithm to subset the dataset such that
 all occurrence locations are a minimum distance apart. This process helps
 reduce the effect of biases in observation records on the predictive
 performance of ecological niche models.

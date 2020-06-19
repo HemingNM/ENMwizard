@@ -93,8 +93,10 @@ set_projarea <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FAL
 #' @return  named list of SpatialPolygons (enlarged occ.poly)
 # TODO - examples
 #' @examples
-#'area.projection <- set_projarea_b(occ.polys, mult=.55, buffer=FALSE)
-#'plot(area.projection[[1]][[1]])
+#' \dontrun{
+#' area.projection <- set_projarea_b(occ.polys, mult=.55, buffer=FALSE)
+#' plot(area.projection[[1]][[1]])
+#' }
 #' @export
 set_projarea_b <- function(occ.polys, deg.incr=NULL, mult=1, buffer=FALSE, same=TRUE){ # , o.path = "occ.poly"
   area.pl <- vector("list", length(occ.polys))

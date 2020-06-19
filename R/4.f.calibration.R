@@ -337,7 +337,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 #' \code{\link[dismo]{maxent}}, \code{\link{proj_mdl}}, \code{\link{proj_mdl_b}}
 #' @return A 'mcm.l' object. A list of 'mcm' (calib.mdls, Maxent Calibrated Models), returned from function "calib_mdl"
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l=ENMeval.res.lst,
 #' a.calib.l=occ.b.env, a.proj.l=areas.projection, occ.l=occ, wAICsum=0.99)
 #' mxnt.mdls.preds.lst[[1]][[1]] # models [ENMevaluate]d and selected using sum of wAIC

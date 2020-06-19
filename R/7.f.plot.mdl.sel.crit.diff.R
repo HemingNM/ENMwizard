@@ -18,7 +18,7 @@
 #' Within each panel, the differences between all combinations of 2 models (e.g. AvgAIC vs. OR) will
 #' be plotted
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' plot_mdl_diff_b(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
 #' }
 #' @export
@@ -78,7 +78,7 @@ plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 #'  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
 #'  within the folder 'Mdls.thrshld/figs'.
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' plot_mdl_diff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
 #' }
 #' @export
@@ -233,7 +233,7 @@ plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
 #' @seealso \code{\link{plot_scn_diff}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' plot_scn_diff_b(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' }
 #' @export
@@ -285,7 +285,7 @@ plot_scn_diff_b <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="cur
 #' @seealso \code{\link{plot_scn_diff_b}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' plot_scn_diff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' }
 #' @export
@@ -475,8 +475,8 @@ plot_scn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.n
 #' @param x list of text to be formatted
 #' @seealso \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
 #' @return list of formatted text
-#' @examples
-#' make_underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
+# #' @examples
+# #' make_underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
 #' @keywords internal
 # #' @export
 make_underscript <- function(x) as.expression(lapply(x, function(y) {
@@ -505,7 +505,7 @@ make_underscript <- function(x) as.expression(lapply(x, function(y) {
 #' @return either a matrix or a layout object
 #' @author Dustin Fife
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' ## plot six plots
 #' auto_layout(6)
 #' for (i in 1:6){

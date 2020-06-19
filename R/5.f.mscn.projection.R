@@ -114,7 +114,7 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
 #' \code{\link[ENMeval]{ENMevaluate}}, \code{\link{ENMevaluate_b}}, \code{\link{proj_mdl}}
 #' @return A 'mcmp.spl' object. A list of objects returned from function "proj_mdl", containing the new (multiple) projections for each element (species) of the list
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' mxnt.mdls.preds.pf <- proj_mdl_b(mcm.l = mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' }
 #' @export

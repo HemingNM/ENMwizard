@@ -599,7 +599,8 @@ cut_calibarea <- function(poly, env.uncut, sp.nm){
 
 #' Spatially thin a list of species occurrence data
 #'
-#' Will use \code{\link[spThin]} optimisation algorithm to subset the dataset such that
+# #' Will use \code{\link[spThin]} optimisation algorithm to subset the dataset such that
+#' Will use spThin optimisation algorithm to subset the dataset such that
 #' all occurrence locations are a minimum distance apart. This process helps
 #' reduce the effect of biases in observation records on the predictive
 #' performance of ecological niche models.
@@ -619,7 +620,7 @@ cut_calibarea <- function(poly, env.uncut, sp.nm){
 #' @return Named list containing thinned datasets for each species. See ?thin of spThin package.
 # #'  Also, by default it saves log file and the first thinned dataset in the folder "occ.thinned.full".
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 #' plotThin(thinned.dataset.batch[[1]])
 #' length(thinned.dataset.batch[[1]])

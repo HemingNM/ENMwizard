@@ -20,9 +20,6 @@ Format (underscript) selected texts for plotting
 \details{
 Format (underscript) selected texts (criteria used to select models) to be used on plotting.
 }
-\examples{
-make_underscript(c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"))
-}
 \seealso{
 \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
 }

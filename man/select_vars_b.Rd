@@ -41,8 +41,10 @@ It creates a correlation matrix for the layers of a raster brick/stack for each 
 and returns a brick containing the least correlated variables below the cutoff value.
 }
 \examples{
-env.sel.b(occ.b.env, .9, names.only=T)
-occ.b.env <- env.sel.b(occ.b.env, .9, names.only=F, rm.old=F)
+\dontrun{
+select_vars_b(occ.b.env, .9, names.only=T)
+occ.b.env <- select_vars_b(occ.b.env, .9, names.only=F, rm.old=F)
+}
 }
 \seealso{
 \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}

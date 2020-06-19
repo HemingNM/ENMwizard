@@ -23,6 +23,3 @@ for each climatic scenario
 Measures overlap between two ENMs. Used to compare differences among model selection criteria.
 See ?ENMTools::raster.overlap for details.
 }
-\examples{
-mxnt.mdls.ovlp <- raster_overlap_b(mxnt.mdls.preds.pf, scn.nm="current", 1)
-}

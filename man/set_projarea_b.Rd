@@ -31,8 +31,10 @@ This function is a wrapper for "cut_projarea". See ?cut_projarea
 It works with a named list of occ.polys to delimit the projection area for each of the species.
 }
 \examples{
+\dontrun{
 area.projection <- set_projarea_b(occ.polys, mult=.55, buffer=FALSE)
 plot(area.projection[[1]][[1]])
+}
 }
 \seealso{
 \code{\link{set_projarea}}

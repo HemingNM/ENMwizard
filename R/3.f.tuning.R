@@ -20,7 +20,7 @@
 #'
 #' @seealso \code{\link[ENMeval]{ENMevaluate}}
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' ENMeval.res.lst <- ENMevaluate_b(occ.locs, occ.b.env, parallel = T , numCores = 7)
 #' }
 #' @export

@@ -13,8 +13,8 @@
 # #' @seealso \code{\link[ENMTools]{raster.overlap}}, \code{\link{cSArea}}, \code{\link{cVarCI}}, \code{\link{cOR}}, \code{\link{cFPA}}
 #' @return A list of matrices containing the three metrics (I, D, and Spearman rank correlation)
 #' for each climatic scenario
-#' @examples
-#' mxnt.mdls.ovlp <- raster_overlap_b(mxnt.mdls.preds.pf, scn.nm="current", 1)
+# #' @examples
+# #' mxnt.mdls.ovlp <- raster_overlap_b(mxnt.mdls.preds.pf, scn.nm="current", 1)
 # #' mxnt.mdls.ovlp <- raster_overlap_b(mxnt.mdls.preds.pf,
 # #' scn.nm=c("futAC5085", "futAC7085"), 3)
 # #' @export

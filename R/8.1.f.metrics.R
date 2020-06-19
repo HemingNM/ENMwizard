@@ -32,7 +32,7 @@
 #' \code{\link{get_fpa}}, \code{\link{get_cont_permimport_b}}, \code{\link{get_fpa_b}}
 #' @return List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' areas.occ.lst <- get_tsa_b(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
@@ -75,7 +75,7 @@ get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
 #' \code{\link{get_cont_permimport_b}}, \code{\link{get_fpa_b}}
 #' @return List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' areas.occ.lst <- get_tsa_b(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
@@ -171,7 +171,7 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
 #' \code{\link{get_tsa_b}}, \code{\link{get_fpa_b}}, \code{\link[dismo]{maxent}}
 #' @return List of arrays containing variable contribution and importance for each species
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' get_cont_permimport_b(mcmp.l = mxnt.mdls.preds.lst)
 #' }
 #' @export
@@ -213,7 +213,7 @@ get_cont_permimport_b <- function(mcmp.l){
 #' \code{\link{get_tsa_b}}, \code{\link{get_fpa_b}}, \code{\link[dismo]{maxent}}
 #' @return List of arrays containing variable contribution and importance for each species
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' get_cont_permimport(mcmp = mxnt.mdls.preds)
 #' }
 #' @export
@@ -310,7 +310,7 @@ get_cont_permimport <- function(mcmp, sp.nm) {
 #' @seealso \code{\link{get_tsa_b}}, \code{\link{get_cont_permimport_b}}
 #' @return A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' get_fpa_b(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
@@ -337,7 +337,7 @@ get_fpa_b <- function(mtp.l, digits = 3){
 #' @seealso \code{\link{get_fpa_b}}, \code{\link{get_tsa}}, \code{\link{get_cont_permimport}}
 #' @return A list of species' FPAs computed for each climatic scenario, threshold and model criteria
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' get_fpa(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
@@ -418,7 +418,7 @@ get_fpa <- function(mtp, digits, sp.nm){ # species, areas
 #' @return A list of species' ORs computed for the selected (current) climatic scenario and
 #' each threshold and model criteria
 #' @examples
-#'\dontrun{
+#' \dontrun{
 #' get_OR(mtp.l=mods.thrshld.lst, occ.l=occ.locs)
 #' }
 # #'@export
