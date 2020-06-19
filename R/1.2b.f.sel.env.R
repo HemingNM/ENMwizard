@@ -39,25 +39,61 @@ select_vars <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.d
 
   ### plot dendrogram with selected and discarded variables
   if(plot.dend){
+	  # modified from rafalib::myplclust
+	  myplclust <- function (hclust, labels = hclust$labels, lab.col = rep(1, length(hclust$labels)),
+	                         lab.face = rep(1, length(hclust$labels)),
+	                         hang = 0.1, xlab = NA, sub = NA, axes=F, ...) {
+	    y <- rep(hclust$height, 2)
+	    x <- as.numeric(hclust$merge)
+	    y <- y[which(x < 0)]
+	    x <- x[which(x < 0)]
+	    x <- abs(x)
+	    y <- y[order(x)]
+	    x <- x[order(x)]
+	    graphics::plot(hclust, labels = FALSE, hang = hang, xlab = xlab, sub = sub, axes = axes, ...)
+	    graphics::text(x = x, y = 
+	                     if(hang > 0){ 
+	                       (y[hclust$order] - .04 - max(hclust$height) * hang) 
+	                     } else if(hang == 0){ 
+	                       y[hclust$order] - .04  # y[hclust$order] - .1 
+	                     } else {
+	                       - .04 #(mean(hclust$height) * hang)
+	                     },
+	                   labels = labels[hclust$order], col = lab.col[hclust$order], 
+	                   font = lab.face[hclust$order],
+	                   srt = 90, adj = c(1, 0.5), xpd = NA, ...)
+	  }
     dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
-    dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
-    ## function to set label color
-    labelCol <- function(x, sel.nms) {
-      if (stats::is.leaf(x)) {
-        ## fetch label
-        label <- base::attr(x, "label")
-        ## set label color to red for A and B, to blue otherwise
-        base::attr(x, "nodePar") <- base::list(lab.col=ifelse(label %in% sel.nms, "black", "firebrick"))
-      }
-      return(x)
-    }
-
-    ## apply labelCol on all nodes of the dendrogram
-    dend <- stats::dendrapply(dend, labelCol, sel.nms)
-    # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
-    graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
-    graphics::abline(h = 1 - cutoff, col = "red")
+	hcd <- stats::hclust(dist_matrix)
+	lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
+	lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
+	myplclust(hcd, hang=-.1, axes=F, xlab = "Variables",
+	          lab.col = lab.col, lab.face=lab.face, ylab = "Absolute correlation")
+	
+	# # dist_matrix <- stats::dist(corr.mat)
+	# dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
+    # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
+    # ## function to set label color
+    # labelCol <- function(x, sel.nms) {
+    #  if (stats::is.leaf(x)) {
+    #    ## fetch label
+    #    label <- base::attr(x, "label")
+    #    ## set label color to red for A and B, to blue otherwise
+    #    base::attr(x, "nodePar") <- base::list(lab.col=ifelse(label %in% sel.nms, "black", "firebrick"))
+    #  }
+    #  return(x)
+    # }
+# 
+    # ## apply labelCol on all nodes of the dendrogram
+    # dend <- stats::dendrapply(dend, labelCol, sel.nms)
+    # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
+    # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
+    graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
     graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
+    graphics::legend("topright", horiz=F, # title="Variables:", 
+	       legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1), 
+	       col=c(NA, NA, "firebrick"), lty=c(0,0,1), lwd=1.5, seg.len = 1,
+	       xpd=T, cex=.7)
   }
 
   ### return names of selected variables only

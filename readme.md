@@ -22,7 +22,7 @@ Run the following code from your R console:
 
 ```r
 install.packages("devtools")
-devtools::install_github("HemingNM/ENMwizard", ref="AvgMdls")
+devtools::install_github("HemingNM/ENMwizard")
 
 library(ENMwizard)
 ```
