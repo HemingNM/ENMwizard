@@ -16,7 +16,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/HemingNM/ENMwizard
 BugReports: https://github.com/HemingNM/ENMwizard/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Imports:
     dismo,
     ENMeval (>= 0.3.0),

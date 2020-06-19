@@ -4,7 +4,9 @@
 \name{tnm}
 \alias{tnm}
 \title{Threshold names to sub}
-\format{An object of class \code{character} of length 9.}
+\format{
+An object of class \code{character} of length 9.
+}
 \usage{
 tnm
 }
