@@ -189,10 +189,10 @@ get_cont_permimport_b <- function(mcmp.l){
 
   names(var.contPermImp) <- sp.nm.l
 
-  var.cont.sp <- data.table::rbindlist(lapply(var.contPermImp, function(x) x[[1]]), idcol = "sp")
+  var.cont.sp <- data.table::rbindlist(lapply(var.contPermImp, function(x) x[[1]]), idcol = "sp", fill=T)
   utils::write.csv(var.cont.sp, paste0("3_out.MaxEnt/metric.var.Contribution.csv")) # reorder ds
 
-  var.permImp.sp <- data.table::rbindlist(lapply(var.contPermImp, function(x) x[[2]]), idcol = "sp")
+  var.permImp.sp <- data.table::rbindlist(lapply(var.contPermImp, function(x) x[[2]]), idcol = "sp", fill=T)
   utils::write.csv(var.permImp.sp, paste0("3_out.MaxEnt/metric.var.PermImportance.csv")) # reorder ds
 
   # var.contPermImp.c <- data.table::rbindlist(var.contPermImp[[1]], idcol = "sp")
