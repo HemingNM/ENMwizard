@@ -207,8 +207,8 @@ plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
       graphics::par(mar=c(2,1,2,6))
       raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75,
                    xpd = TRUE, zlim=c(0, 1),
-                   breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
-                   axis.args=list(at=seq(-1, 1), labels=c(make_underscript(n2), "equal", make_underscript(n1) )))
+                   breaks= c(-1, -.34, .34, 1), col=c("blue", "gray70", "red"),
+                   axis.args=list(at=seq(-1, 1), labels=c(make_underscript(n2), "both", make_underscript(n1) )))
     }
     if(save){
       grDevices::dev.off()
@@ -431,7 +431,7 @@ plot_scn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.n
         main.nms <- paste0("Threshold: ", thr.CRT, "\nMod. Sel. Crit: ", m) #, "\nClim. scen.: ", n1, " vs. ", n2)
 
         graphics::par(mar=c(2,4,2,4.7)) # par(mar=c(2,4,2,5))
-        raster::plot(mod.sc1, breaks= c(0, .5, 1), col=c("white", "gray90"),
+        raster::plot(mod.sc1, breaks= c(0, .5, 1), col=c("white", "gray70"),
                      main= main.nms, legend=FALSE) #
 
         if(!is.null(basemap)) raster::plot(basemap, border="gray50", add= T)
@@ -441,8 +441,8 @@ plot_scn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.n
         graphics::par(mar=c(2,1,2,6)) # par(mar=c(2,3,2,6))
         raster::plot(r.dif,  legend.only=TRUE, legend.width=1.75, legend.shrink=.75,
                      xpd = TRUE, zlim=c(0, 1),
-                     breaks= c(-1, -.34, .34, 1), col=c("blue", "gray90", "red"),
-                     axis.args=list(at=seq(-1, 1), labels=c(n2, "equal", n1 )))
+                     breaks= c(-1, -.34, .34, 1), col=c("blue", "gray70", "red"),
+                     axis.args=list(at=seq(-1, 1), labels=c(n2, "both", n1 )))
       }  # climatic scenario
 
     }
