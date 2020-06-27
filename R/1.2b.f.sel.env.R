@@ -108,7 +108,7 @@ select_vars <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.d
       stop("corr.mat does not match environmental variables layers")
     }
     path.env.out <- "2_envData/area.calib"
-    cat("Selected layers: ", sel.nms)
+    cat("Selected variables: ", sel.nms, "\n")
     env <- env[[-to.rm]]
     env <- raster::writeRaster(env,
                        filename = ifelse(is.null(filename),

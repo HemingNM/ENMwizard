@@ -103,7 +103,7 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
 
   thrshld.crit <- names(mtp[[1]][[1]])
 
-  print(sp.nm)
+  # print(sp.nm)
   # areas <- areas
   # mtp <- mtp
 
@@ -342,7 +342,7 @@ get_fpa_b <- function(mtp.l, digits = 3){
 #' }
 #' @export
 get_fpa <- function(mtp, digits, sp.nm){ # species, areas
-  print(sp.nm)
+  # print(sp.nm)
   # areas <- array(dim=c(length(mtp), # rows for pred.scenario
   #                      length(mtp[[1]][[2]]), # cols for threshold criteria
   #                      raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
