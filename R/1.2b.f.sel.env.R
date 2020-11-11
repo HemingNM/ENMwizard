@@ -172,7 +172,7 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
 #' }
 #' @inheritParams select_vars
 #' @export
-select_vars_b <- function(env.l, cutoff = .9, corr.mat.l = NULL, sample.prop = 0.1, names.only = F, plot.dend = T, rm.old = F, filename = NULL){
+select_vars_b <- function(env.l, cutoff = .9, corr.mat.l = NULL, sample.size = NULL, names.only = F, plot.dend = T, rm.old = F, filename = NULL){
   if(is.null(filename)){
     path.env.out <- "2_envData/area.calib"
     if (dir.exists("2_envData") == FALSE) {
@@ -184,9 +184,9 @@ select_vars_b <- function(env.l, cutoff = .9, corr.mat.l = NULL, sample.prop = 0
     }
   }
 
-  env.l.sel <- base::lapply(base::seq_along(env.l), function(i, x, cutoff, corr.mat.l, sample.prop, names.only, rm.old, filename){ # , n.env.l
+  env.l.sel <- base::lapply(base::seq_along(env.l), function(i, x, cutoff, corr.mat.l, sample.size, names.only, rm.old, filename){ # , n.env.l
     sp.nm <- names(x)[i]
-    select_vars(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, sample.prop=sample.prop, names.only = names.only, plot.dend = plot.dend,
+    select_vars(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, sample.size=sample.size, names.only = names.only, plot.dend = plot.dend,
             rm.old = rm.old, sp.nm = sp.nm, filename = filename)
   }, x=env.l, cutoff, corr.mat.l, names.only, rm.old, filename=filename) # , n.env.l
 
