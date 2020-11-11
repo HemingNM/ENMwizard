@@ -28,13 +28,15 @@
 #' @inheritParams raster::writeRaster
 #' @seealso \code{\link{select_vars_b}}, \code{\link[caret]{findCorrelation}}
 #' @export
-select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 0.1,
+select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = NULL,
                         names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
                         filename = NULL){
   if(is.null(corr.mat)){
-    if(sample.prop<1){
-      # corr.mat <- cor(raster::sampleRandom(env, round(ncell(env)*sample.prop)), method = "pearson")
-      lStats <- raster::layerStats(raster::sampleRandom(env, round(ncell(env)*sample.prop), asRaster=T), 'pearson', na.rm=T)
+    if(!is.null(sample.size)){
+      # ns <- round(raster::ncell(env)*sample.prop)
+      # message(paste("Computing correlation with", ns, "sampled cells"))
+      # corr.mat <- cor(raster::sampleRandom(env, ns, method = "pearson")
+      lStats <- raster::layerStats(raster::sampleRandom(env, sample.size, asRaster=T), 'pearson', na.rm=T)
       corr.mat <- lStats[['pearson correlation coefficient']]
     } else {
       lStats <- raster::layerStats(env, 'pearson', na.rm=T)
