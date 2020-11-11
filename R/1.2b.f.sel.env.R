@@ -76,7 +76,7 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 
 	  }
 	  # standardize corr.mat range between min and 1
 	  # corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
-	  corr.mat <- corr.mat/base::max(corr.mat)
+	  corr.mat <- corr.mat/base::max(base::abs(corr.mat))
 	  diag(corr.mat) <- 1
 	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
 	  hcd <- stats::hclust(dist_matrix)
