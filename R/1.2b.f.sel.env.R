@@ -35,12 +35,22 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
     if(!is.null(sample.size)){
       # ns <- round(raster::ncell(env)*sample.prop)
       # message(paste("Computing correlation with", ns, "sampled cells"))
-      # corr.mat <- cor(raster::sampleRandom(env, ns, method = "pearson")
-      lStats <- raster::layerStats(raster::sampleRandom(env, sample.size, asRaster=T), 'pearson', na.rm=T)
-      corr.mat <- lStats[['pearson correlation coefficient']]
+      sample.size <- ifelse(sample.size >= raster::ncell(env), raster::ncell(env), sample.size)
+      n <- ceiling(raster::nlayers(env)*(sample.size/raster::ncell(env)))
+
+      if(raster::canProcessInMemory(env, n=n)){
+        corr.mat <- cor(raster::sampleRandom(env, sample.size), method = "pearson")
+      } else {
+        lStats <- raster::layerStats(raster::sampleRandom(env, sample.size, asRaster=T), 'pearson', na.rm=T)
+        corr.mat <- lStats[['pearson correlation coefficient']]
+      }
     } else {
-      lStats <- raster::layerStats(env, 'pearson', na.rm=T)
-      corr.mat <- lStats[['pearson correlation coefficient']]
+      if(raster::canProcessInMemory(env, n=raster::nlayers(env))){
+        corr.mat <- cor(raster::sampleRandom(env, raster::ncell(env)), method = "pearson")
+      } else {
+        lStats <- raster::layerStats(env, 'pearson', na.rm=T)
+        corr.mat <- lStats[['pearson correlation coefficient']]
+      }
     }
   }
   to.rm <- caret::findCorrelation(corr.mat, cutoff=cutoff)
@@ -78,9 +88,9 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
 	  }
 	  # standardize corr.mat range between min and 1
 	  # corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
-	  corr.mat <- corr.mat/base::max(base::abs(corr.mat))
-	  diag(corr.mat) <- 1
-	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
+	  corr.mat2 <- corr.mat/base::max(base::abs(corr.mat))
+	  diag(corr.mat2) <- 1
+	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat2))
 	  hcd <- stats::hclust(dist_matrix)
 	  lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
 	  lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
