@@ -74,7 +74,10 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 
 	                   font = lab.face[hclust$order],
 	                   srt = 90, adj = c(1, 0.5), xpd = NA, ...)
 	  }
-	  dist_matrix <- stats::as.dist(base::abs(1 - base::abs(corr.mat)))
+	  # standardize corr.mat range between 0 and 1
+	  corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
+	  diag(corr.mat) <- 1
+	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
 	  hcd <- stats::hclust(dist_matrix)
 	  lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
 	  lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
@@ -100,7 +103,6 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 
 	  # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
 	  # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
 	  graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
-	  ymx <- round(max(corr.mat), 1)
 	  graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
 	  graphics::legend("topright", horiz=F, # title="Variables:",
 	                   legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1),
