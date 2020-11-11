@@ -159,7 +159,7 @@ After thinning, we choose one dataset for each species for modelling.
 occ.locs <- load_thin_occ(thinned.dataset.batch)
 ```
 
-### 3.2 model tuning using ENMeval
+### 3.2 Model tuning using ENMeval
 Here we will run ENMevaluateB to call ENMevaluate (from ENMeval package). Here we will test which combination of Feature Classes and Regularization Multipliers give the best results. For this, we will partition our occurence data using the "block" method.
 
 By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
@@ -170,7 +170,7 @@ ENMeval.res.lst <- ENMevaluate_b(occ.locs, occ.b.env,
 ```
 
 -----
-## 4. Model Fitting (Calibration)
+## 4. Model fitting (calibration)
 After tuning MaxEnt models, we will calibrate them using all occurence data (i.e. without partition them).
 
 ```r
@@ -264,7 +264,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-### 5.4 Applying thresholds on climatic scenarios
+### 5.4 Applying thresholds on suitability projections
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and 
 apply on the projections.
 ```r
@@ -298,11 +298,11 @@ plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst,
 
 
 ## 7. Metrics
-### Compute variable contribution and importance
+### Compute variable contribution and permutation importance
 ```r
 get_cont_permimport_b(mxnt.mdls.preds.cf)
 ```
-### Compute "Fractional predicted area" ('n of occupied pixels'/n) for multiple scenarios
+### Compute "Fractional Predicted Area" ('n of occupied pixels'/n)
 ```r
 get_fpa_b(mods.thrshld.lst)
 ```
