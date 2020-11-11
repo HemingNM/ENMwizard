@@ -153,13 +153,13 @@ thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 
 
 ## 3. Tunning Maxent's feature classes and regularization multiplier via ENMeval
-### 3.1 Load occurrence data (filtered localities). So, set working directory as correspond. 
+### 3.1 Load occurrence data (filtered localities).
 After thinning, we choose one dataset for each species for modelling.
 ```r
 occ.locs <- load_thin_occ(thinned.dataset.batch)
 ```
 
-### 3.3 model tuning using ENMeval
+### 3.2 model tuning using ENMeval
 Here we will run ENMevaluateB to call ENMevaluate (from ENMeval package). Here we will test which combination of Feature Classes and Regularization Multipliers give the best results. For this, we will partition our occurence data using the "block" method.
 
 By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
@@ -290,7 +290,7 @@ plot_mdl_diff(mxnt.mdls.preds.lst[[1]], mods.thrshld.lst[[1]], sp.nm = "Bvarieg"
 plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ```
 
-### 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds we calculated
+### 6.2. Plotting differences between current climate and future climatic scenarios for all thresholds
 ```r
 plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, 
               ref.scn = "current", mSel = "AvgAIC", save=F)
