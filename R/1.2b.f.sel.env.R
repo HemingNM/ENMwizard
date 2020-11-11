@@ -74,8 +74,9 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 
 	                   font = lab.face[hclust$order],
 	                   srt = 90, adj = c(1, 0.5), xpd = NA, ...)
 	  }
-	  # standardize corr.mat range between 0 and 1
-	  corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
+	  # standardize corr.mat range between min and 1
+	  # corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
+	  corr.mat <- corr.mat/base::max(corr.mat)
 	  diag(corr.mat) <- 1
 	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
 	  hcd <- stats::hclust(dist_matrix)
