@@ -8,6 +8,7 @@ select_vars(
   env = NULL,
   cutoff = 0.9,
   corr.mat = NULL,
+  sample.prop = 0.1,
   names.only = F,
   plot.dend = T,
   rm.old = F,
@@ -23,6 +24,10 @@ select_vars(
 \item{corr.mat}{Correlation matrix from which variables will be selected. If the correlation
 matrix was already computed from env, you can just input here and choose other cutoff values for
 selecting variable layers.}
+
+\item{sample.prop}{Numeric. Proportion of cells of each layer to be sampled and used for computing
+correlation. Values must be > 0 and <= 1. If 1, all cells are used to compute correlation
+between variables.}
 
 \item{names.only}{Logical. Return only the names of selected variables (T) or return
 the raster brick containing the least correlated variables (F).}

@@ -15,6 +15,9 @@
 #' @param corr.mat Correlation matrix from which variables will be selected. If the correlation
 #' matrix was already computed from env, you can just input here and choose other cutoff values for
 #' selecting variable layers.
+#' @param sample.prop Numeric. Proportion of cells of each layer to be sampled and used for computing
+#' correlation. Values must be > 0 and <= 1. If 1, all cells are used to compute correlation
+#' between variables.
 #' @param names.only Logical. Return only the names of selected variables (T) or return
 #' the raster brick containing the least correlated variables (F).
 #' @param plot.dend Logical. Plot dendrogram of correlation distance between variables,
@@ -25,10 +28,16 @@
 #' @inheritParams raster::writeRaster
 #' @seealso \code{\link{select_vars_b}}, \code{\link[caret]{findCorrelation}}
 #' @export
-select_vars <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.dend=T, rm.old=F, sp.nm="sp", filename=NULL){
+select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 0.1,
+                        names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
+                        filename = NULL){
   if(is.null(corr.mat)){
-    lStats <- raster::layerStats(env, 'pearson', na.rm=T)
-    corr.mat <- lStats[['pearson correlation coefficient']]
+    if(sample.prop<1){
+      corr.mat <- cor(sampleRandom(env, round(ncell(env)*sample.prop)), method = "pearson")
+    } else {
+      lStats <- raster::layerStats(env, 'pearson', na.rm=T)
+      corr.mat <- lStats[['pearson correlation coefficient']]
+    }
   }
   to.rm <- caret::findCorrelation(corr.mat, cutoff=cutoff)
   if(length(to.rm)==0){
@@ -63,37 +72,37 @@ select_vars <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.d
 	                   font = lab.face[hclust$order],
 	                   srt = 90, adj = c(1, 0.5), xpd = NA, ...)
 	  }
-    dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
-	hcd <- stats::hclust(dist_matrix)
-	lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
-	lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
-	myplclust(hcd, hang=-.1, axes=F, xlab = "Variables",
-	          lab.col = lab.col, lab.face=lab.face, ylab = "Absolute correlation")
+	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
+	  hcd <- stats::hclust(dist_matrix)
+	  lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
+	  lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
+	  myplclust(hcd, hang=-.1, axes=F, xlab = "Variables",
+	            lab.col = lab.col, lab.face=lab.face, ylab = "Absolute correlation")
 
-	# # dist_matrix <- stats::dist(corr.mat)
-	# dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
-    # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
-    # ## function to set label color
-    # labelCol <- function(x, sel.nms) {
-    #  if (stats::is.leaf(x)) {
-    #    ## fetch label
-    #    label <- base::attr(x, "label")
-    #    ## set label color to red for A and B, to blue otherwise
-    #    base::attr(x, "nodePar") <- base::list(lab.col=ifelse(label %in% sel.nms, "black", "firebrick"))
-    #  }
-    #  return(x)
-    # }
-#
-    # ## apply labelCol on all nodes of the dendrogram
-    # dend <- stats::dendrapply(dend, labelCol, sel.nms)
-    # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
-    # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
-    graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
-    graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
-    graphics::legend("topright", horiz=F, # title="Variables:",
-	       legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1),
-	       col=c(NA, NA, "firebrick"), lty=c(0,0,1), lwd=1.5, seg.len = 1,
-	       xpd=T, cex=.7)
+	  # # dist_matrix <- stats::dist(corr.mat)
+	  # dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
+	  # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
+	  # ## function to set label color
+	  # labelCol <- function(x, sel.nms) {
+	  #  if (stats::is.leaf(x)) {
+	  #    ## fetch label
+	  #    label <- base::attr(x, "label")
+	  #    ## set label color to red for A and B, to blue otherwise
+	  #    base::attr(x, "nodePar") <- base::list(lab.col=ifelse(label %in% sel.nms, "black", "firebrick"))
+	  #  }
+	  #  return(x)
+	  # }
+	  #
+	  # ## apply labelCol on all nodes of the dendrogram
+	  # dend <- stats::dendrapply(dend, labelCol, sel.nms)
+	  # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
+	  # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
+	  graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
+	  graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
+	  graphics::legend("topright", horiz=F, # title="Variables:",
+	                   legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1),
+	                   col=c(NA, NA, "firebrick"), lty=c(0,0,1), lwd=1.5, seg.len = 1,
+	                   xpd=T, cex=.7)
   }
 
   ### return names of selected variables only
@@ -143,7 +152,7 @@ select_vars <- function(env=NULL, cutoff=.9, corr.mat=NULL, names.only=F, plot.d
 #' }
 #' @inheritParams select_vars
 #' @export
-select_vars_b <- function(env.l, cutoff=.9, corr.mat.l=NULL, names.only = F, plot.dend = T, rm.old=F, filename=NULL){
+select_vars_b <- function(env.l, cutoff = .9, corr.mat.l = NULL, sample.prop = 0.1, names.only = F, plot.dend = T, rm.old = F, filename = NULL){
   if(is.null(filename)){
     path.env.out <- "2_envData/area.calib"
     if (dir.exists("2_envData") == FALSE) {
@@ -155,9 +164,9 @@ select_vars_b <- function(env.l, cutoff=.9, corr.mat.l=NULL, names.only = F, plo
     }
   }
 
-  env.l.sel <- base::lapply(base::seq_along(env.l), function(i, x, cutoff, corr.mat.l, names.only, rm.old, filename){ # , n.env.l
+  env.l.sel <- base::lapply(base::seq_along(env.l), function(i, x, cutoff, corr.mat.l, sample.prop, names.only, rm.old, filename){ # , n.env.l
     sp.nm <- names(x)[i]
-    select_vars(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, names.only = names.only, plot.dend = plot.dend,
+    select_vars(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, sample.prop=sample.prop, names.only = names.only, plot.dend = plot.dend,
             rm.old = rm.old, sp.nm = sp.nm, filename = filename)
   }, x=env.l, cutoff, corr.mat.l, names.only, rm.old, filename=filename) # , n.env.l
 
