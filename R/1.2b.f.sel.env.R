@@ -33,7 +33,10 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.prop = 
                         filename = NULL){
   if(is.null(corr.mat)){
     if(sample.prop<1){
-      corr.mat <- cor(sampleRandom(env, round(ncell(env)*sample.prop)), method = "pearson")
+      # corr.mat <- cor(raster::sampleRandom(env, round(ncell(env)*sample.prop)), method = "pearson")
+      envs <- raster::sampleRandom(env, round(ncell(env)*sample.prop), asRaster=T)
+      lStatss <- raster::layerStats(envs, 'pearson', na.rm=T)
+      corr.mat <- lStats[['pearson correlation coefficient']]
     } else {
       lStats <- raster::layerStats(env, 'pearson', na.rm=T)
       corr.mat <- lStats[['pearson correlation coefficient']]
