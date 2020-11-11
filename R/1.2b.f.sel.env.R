@@ -127,11 +127,13 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
     path.env.out <- "2_envData/area.calib"
     cat("Selected variables: ", sel.nms, "\n")
     env <- env[[-to.rm]]
-    env <- raster::writeRaster(env,
-                       filename = ifelse(is.null(filename),
-                                         paste("2_envData/area.calib", paste0("envDataSel.", sp.nm, ".grd"), sep = "/"),
-                                         filename),
-                       format = "raster", overwrite=T)
+    if(dir.exists(path.env.out)){
+      env <- raster::writeRaster(env,
+                                 filename = ifelse(is.null(filename),
+                                                   paste("2_envData/area.calib", paste0("envDataSel.", sp.nm, ".grd"), sep = "/"),
+                                                   filename),
+                                 format = "raster", overwrite=T)
+    }
     if(rm.old & is.null(filename)){
       unlink(list.files(path.env.out, pattern = paste0("envData.", sp.nm), full.names=T), recursive = T)
     }

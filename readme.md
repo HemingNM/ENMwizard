@@ -66,7 +66,7 @@ Now we make it a named list, where names correspond to species names.
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 ```
 
-### 1.2 create occ polygon to crop rasters prior to modelling
+### 1.2 Create occ polygon to crop rasters prior to modelling
 
 The occurence points in the named list are used to create polygons. 
 Notice that you can cluster the occ points using several clustering methods. 
@@ -96,7 +96,7 @@ occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", i
 occ.b <- buffer_b(occ.polys, width = 1.5)
 ```
 
-### 1.3. Cut enviromental layers with occ.b and save in hardrive.
+### 1.3. Cut enviromental layers with occ.b and save in hardrive
 Specify the path to the environmental variables
 it usually is the path on your machine. E.g. "/path/to/variables/WorldClim/2_5min/bio_2-5m_bil"
 here we will use variables available in dismo package
@@ -146,14 +146,14 @@ Now we want to remove localities that are too close apart. We will do it for all
 thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 ```
 
-### Great! Now we are ready for tunning species' ENMs
+## Great! Now we are ready for tunning species' ENMs
 
 
 -----
 
 
 ## 3. Tunning Maxent's feature classes and regularization multiplier via ENMeval
-### 3.1 Load occurrence data (filtered localities).
+### 3.1 Load occurrence data (filtered localities)
 After thinning, we choose one dataset for each species for modelling.
 ```r
 occ.locs <- load_thin_occ(thinned.dataset.batch)
