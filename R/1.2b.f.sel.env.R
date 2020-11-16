@@ -188,7 +188,7 @@ select_vars_b <- function(env.l, cutoff = .9, corr.mat.l = NULL, sample.size = N
     sp.nm <- names(x)[i]
     select_vars(x[[i]], cutoff=cutoff, corr.mat=corr.mat.l[[i]]$corr.mat, sample.size=sample.size, names.only = names.only, plot.dend = plot.dend,
             rm.old = rm.old, sp.nm = sp.nm, filename = filename)
-  }, x=env.l, cutoff, corr.mat.l, names.only, rm.old, filename=filename) # , n.env.l
+  }, x=env.l, cutoff, corr.mat.l, sample.size, names.only, rm.old, filename=filename) # , n.env.l
 
   names(env.l.sel) <- names(env.l) # n.env.l
   return(env.l.sel)

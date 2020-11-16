@@ -131,11 +131,11 @@ for(i in 1:length(occ.b.env)){
 
 Select the least correlated variables
 ```r
-vars <- select_vars_b(occ.b.env, cutoff=.75, names=T)
+vars <- select_vars_b(occ.b.env, cutoff=.75, names.only = T)
 # See selected variables for each species
 lapply(vars, function(x)x[[1]])
 # remove correlated variables from our variable set
-occ.b.env <- select_vars_b(occ.b.env, cutoff=.75, names=F)
+occ.b.env <- select_vars_b(occ.b.env, cutoff=.75, names.only = F)
 ```
 
 
