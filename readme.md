@@ -9,7 +9,7 @@ This package provides tools to facilitate the use of advanced techiques related 
 # Installation
 ENMwizard is downloadable from https://github.com/HemingNM/ENMwizard. You can download it using devtools to install from GitHub.
 
-### Installing from GitHub using devtools
+## Install from GitHub using devtools
 Run the following code from your R console:
 
 ```r
@@ -19,7 +19,7 @@ devtools::install_github("HemingNM/ENMwizard")
 library(ENMwizard)
 ```
 
-# Citation
+## Citation
 Please cite ENMwizard (and other R packages it depends on) by using:
 
 ```r
@@ -77,7 +77,7 @@ occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", i
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdbw")
 ```
 
-### create buffer
+### Create buffer
 
 ... and the occurrence polygons are buffered using 1.5 degrees.
 ```r
@@ -106,7 +106,7 @@ for(i in 1:length(occ.b.env)){
 }
 ```
 
-Select the least correlated variables
+### Select the least correlated variables
 ```r
 vars <- select_vars_b(occ.b.env, cutoff=.75, names.only = T)
 # See selected variables for each species
@@ -123,7 +123,7 @@ Now we want to remove localities that are too close apart. We will do it for all
 thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 ```
 
-# Great! Now we are ready for tunning species' ENMs
+## Great! Now we are ready for tunning species' ENMs
 
 -----
 
@@ -158,7 +158,8 @@ mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst,
 ```
 
 ##  Projection
-### Download environmental data
+### Prepare projecion area
+#### Download environmental data
 For projection it is necessary to download raster files with the environmnetal variables of interest. Rasters with historical (near current) climatic conditions was already created. We will download data of climatic conditions for two future (2050 and 2070) scenarios and create one list with all three climate cenarios.
 
 ```r
@@ -176,8 +177,7 @@ predictors.l <- list(current = ncurrent,
 
 ```
 
-### Prepare projecion area
-### Select area for projection based on the extent of occ points
+#### Select area for projection based on the extent of occ points
 Now it is time to define the projection area for each species. The projection area can be the same for all species (in this example) of be defined individually. Here, the projection area will be defined as an square area slightly larger than the original occurrence of the species. Then, a two lists with models will be created for a species. In the first list, the projection will be performed using current climatic conditions. In the second list, two cenarios of futurure climate (defined above) are created.
 
 ```r
@@ -191,7 +191,7 @@ plot(pred.cut.l[[1]][[1]][[1]], add=T)
 plot(occ.polys[[1]], add=T)
 ```
 
-### if the extent to project is the same for all species
+#### ... if the extent to project is the same for all species
 When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
 
 ```r
@@ -219,7 +219,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-### Apply thresholds on suitability projections
+## Apply thresholds on suitability projections
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and apply on the projections.
 ```r
 # 1. Fixed.cumulative.value.1 (fcv1);
