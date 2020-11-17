@@ -219,7 +219,7 @@ plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
-## Apply thresholds on suitability projections
+### Apply thresholds on suitability projections
 We have the projections for each climatic scenario, now we must select one (or more) threshold criteria and apply on the projections.
 ```r
 # 1. Fixed.cumulative.value.1 (fcv1);
