@@ -38,7 +38,7 @@ citation("raster")
 
 ### Load occurence data
 
-First, lets use occ data available in dismo package
+First, lets use occ data available in dismo package.
 ```r
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
@@ -86,7 +86,7 @@ occ.b <- buffer_b(occ.polys, width = 1.5)
 
 ### Get and cut enviromental layers
 Get climate data for historical (near current) conditions.
-In this example, a directory called 'rasters' is created. Then, rasters from historical (near current) are downloaded
+In this example, a directory called 'rasters' is created. Then, rasters from historical (near current) are downloaded.
 ```r
 # Create directory to store raster files
 dir.create("./rasters")
@@ -95,7 +95,7 @@ dir.create("./rasters")
 predictors <- getData('worldclim', var='bio', res=10, path="rasters")
 ```
 
-Cut environmental variables for each species (and plot them for visual inspection)
+Cut environmental variables for each species (and plot them for visual inspection).
 ```r
 pred.cut <- cut_calibarea_b(occ.b, predictors)
 
@@ -192,7 +192,7 @@ plot(occ.polys[[1]], add=T)
 ```
 
 #### ... if the extent to project is the same for all species
-When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted)
+When all species are to be projected using the same current and future climates and in the same region, then the following lines can be used to repeat the same lists of cenarios for all species (could be defined differently for each species if wanted).
 
 ```r
 proj.extent <- extent(c(-109.5, -26.2, -59.5, 18.1))
