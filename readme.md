@@ -92,15 +92,15 @@ In this example, a directory called 'rasters' is created. Then, rasters from his
 dir.create("./rasters")
 
 # Download data for present
-ncurrent <- getData('worldclim', var='bio', res=10, path="rasters")
+predictors <- getData('worldclim', var='bio', res=10, path="rasters")
 ```
 
 Cut environmental variables for each species (and plot them for visual inspection)
 ```r
-occ.b.env <- cut_calibarea_b(occ.b, ncurrent)
+pred.cut <- cut_calibarea_b(occ.b, predictors)
 
-for(i in 1:length(occ.b.env)){
-  plot(occ.b.env[[i]][[1]])
+for(i in 1:length(pred.cut)){
+  plot(pred.cut[[i]][[1]])
   plot(occ.polys[[i]], border = "red", add = T)
   plot(occ.b[[i]], add = T)
 }
@@ -108,11 +108,11 @@ for(i in 1:length(occ.b.env)){
 
 ### Select the least correlated variables
 ```r
-vars <- select_vars_b(occ.b.env, cutoff=.75, names.only = T)
+vars <- select_vars_b(pred.cut, cutoff=.75, names.only = T)
 # See selected variables for each species
 lapply(vars, function(x)x[[1]])
 # remove correlated variables from our variable set
-occ.b.env <- select_vars_b(occ.b.env, cutoff=.75, names.only = F)
+pred.cut <- select_vars_b(pred.cut, cutoff=.75, names.only = F)
 ```
 
 
@@ -140,7 +140,7 @@ Here we will run ENMevaluateB to call ENMevaluate (from ENMeval package). Here w
 
 By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
-ENMeval.res.lst <- ENMevaluate_b(occ.locs, occ.b.env, 
+ENMeval.res.lst <- ENMevaluate_b(occ.locs, pred.cut, 
                     RMvalues = c(1, 1.5), fc = c("L", "LQ", "LP"),
                     method="block", algorithm="maxent.jar")
 ```
@@ -153,7 +153,7 @@ After tuning MaxEnt models, we will calibrate them using all occurence data (i.e
 
 # Run model
 mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, 
-                                    a.calib.l = occ.b.env, occ.l = occ.locs,
+                                    a.calib.l = pred.cut, occ.l = occ.locs,
                                     mSel = c("AvgAIC", "AUC"))
 ```
 
