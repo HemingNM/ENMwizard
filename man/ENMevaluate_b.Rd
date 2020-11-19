@@ -77,10 +77,9 @@ a presence or background record.}
 
 \item{updateProgress}{ logical; used internally. }
 
-\item{resultsOnly}{logical; If TRUE, only results, occ.pts, and bg.pts are returned.
-'predictions', 'models', 'occ.grp', and 'bg.grp' are set to NULL.
-It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
-Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.}
+\item{resultsOnly}{logical; If TRUE, only results, 'occ.pts', 'bg.pts', 'occ.grp', and 'bg.grp' are returned.
+The 'predictions' and 'models' slots will be empty. Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
+However it will not be possible to check MaxEnt models and predictions.}
 
 \item{...}{ character vector; use this to pass other arguments (e.g., prevalence) to the `maxent` call.  Note that not all options are functional or relevant.}
 }

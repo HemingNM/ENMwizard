@@ -12,10 +12,9 @@
 #' @param bg.coords.l list of background localities. Two-column matrix or data.frame of longitude and latitude (in that order) of background localities (required for 'user' method).
 #' @param bg.grp.l list containing a vector of bins of occurrence localities (required for 'user' method) for each species.
 #' @param occ.grp.l list containing a vector of bins of occurrence localities (required for 'user' method) for each species.
-#' @param resultsOnly logical; If TRUE, only results, occ.pts, and bg.pts are returned.
-#' 'predictions', 'models', 'occ.grp', and 'bg.grp' are set to NULL.
-#' It will not be possible to check MaxEnte models, predictions and grouping of occ and bg points.
-#' Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
+#' @param resultsOnly logical; If TRUE, only results, 'occ.pts', 'bg.pts', 'occ.grp', and 'bg.grp' are returned.
+#' The 'predictions' and 'models' slots will be empty. Can be used to optimize allocated RAM memory when 'ENMevaluate' objects are too large.
+#' However it will not be possible to check MaxEnt models and predictions.
 #' @inheritParams  ENMeval::ENMevaluate
 #'
 #' @seealso \code{\link[ENMeval]{ENMevaluate}}
@@ -47,17 +46,19 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
   if(resultsOnly){
     for(i in 1:length(occ.l)){
       cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
-      eval <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
+      ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                    occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
                                    fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
                                    algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
                                    progbar = progbar, updateProgress = updateProgress)
-      ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
-                              results = eval@results,
-                              occ.pts = eval@occ.pts,
-                              bg.pts = eval@bg.pts)
+      # ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
+      #                         results = eval@results,
+      #                         occ.pts = eval@occ.pts,
+      #                         bg.pts = eval@bg.pts)
+      ENMeval.res[[i]]@models <- list()
+      ENMeval.res[[i]]@predictions <- stack()
     }
   } else {
       for(i in 1:length(occ.l)){
