@@ -31,25 +31,50 @@
 select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = NULL,
                         names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
                         filename = NULL){
+  if(is.null(corr.mat) & is.null(env)){
+    stop("Cannot select variables without environmental variables or correlation matrix")
+  }
+  if(!is.null(corr.mat) & !is.null(env)){
+    if(grepl("raster", class(env), ignore.case = T)){
+      n.env <- raster::nlayers(env)
+    } else if (class(env) %in% c("data.frame", "matrix")){
+      n.env <- nrow(env)
+    }
+    if(nrow(corr.mat) != n.env |
+       any(!names(env) %in% colnames(corr.mat)) |
+       any(!colnames(corr.mat) %in% names(env))){
+      stop("Variable names in corr.mat does not match names of environmental variables")
+    }
+  }
   if(is.null(corr.mat)){
     if(!is.null(sample.size)){
-      # ns <- round(raster::ncell(env)*sample.prop)
-      # message(paste("Computing correlation with", ns, "sampled cells"))
-      sample.size <- ifelse(sample.size >= raster::ncell(env), raster::ncell(env), sample.size)
-      n <- ceiling(raster::nlayers(env)*(sample.size/raster::ncell(env)))
+      if(grepl("raster", class(env), ignore.case = T)){
+        # ns <- round(raster::ncell(env)*sample.prop)
+        # message(paste("Computing correlation with", ns, "sampled cells"))
+        sample.size <- ifelse(sample.size >= raster::ncell(env), raster::ncell(env), sample.size)
 
-      if(raster::canProcessInMemory(env, n=n)){
-        corr.mat <- stats::cor(raster::sampleRandom(env, sample.size), method = "pearson")
-      } else {
-        lStats <- raster::layerStats(raster::sampleRandom(env, sample.size, asRaster=T), 'pearson', na.rm=T)
-        corr.mat <- lStats[['pearson correlation coefficient']]
+        n <- ceiling(raster::nlayers(env)*(sample.size/raster::ncell(env)))
+        if(raster::canProcessInMemory(env, n=n)){
+          corr.mat <- stats::cor(raster::sampleRandom(env, sample.size), method = "pearson")
+        } else {
+          lStats <- raster::layerStats(raster::sampleRandom(env, sample.size, asRaster=T), 'pearson', na.rm=T)
+          corr.mat <- lStats[['pearson correlation coefficient']]
+        }
+      } else if (class(env) %in% c("data.frame", "matrix")){
+        sample.size <- ifelse(sample.size >= nrow(env), nrow(env), sample.size)
+        sample(1:nrow(env), sample.size)
+        corr.mat <- stats::cor(env, method = "pearson")
       }
     } else {
-      if(raster::canProcessInMemory(env, n=raster::nlayers(env))){
-        corr.mat <- stats::cor(raster::sampleRandom(env, raster::ncell(env)), method = "pearson")
-      } else {
-        lStats <- raster::layerStats(env, 'pearson', na.rm=T)
-        corr.mat <- lStats[['pearson correlation coefficient']]
+      if(grepl("raster", class(env), ignore.case = T)){
+        if(raster::canProcessInMemory(env, n=raster::nlayers(env))){
+          corr.mat <- stats::cor(raster::sampleRandom(env, raster::ncell(env)), method = "pearson")
+        } else {
+          lStats <- raster::layerStats(env, 'pearson', na.rm=T)
+          corr.mat <- lStats[['pearson correlation coefficient']]
+        }
+      } else if (class(env) %in% c("data.frame", "matrix")){
+        corr.mat <- stats::cor(env, method = "pearson")
       }
     }
   }
@@ -62,65 +87,65 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
 
   ### plot dendrogram with selected and discarded variables
   if(plot.dend){
-	  # modified from rafalib::myplclust
-	  myplclust <- function (hclust, labels = hclust$labels, lab.col = rep(1, length(hclust$labels)),
-	                         lab.face = rep(1, length(hclust$labels)),
-	                         hang = 0.1, xlab = NA, sub = NA, axes=F, ...) {
-	    y <- rep(hclust$height, 2)
-	    x <- as.numeric(hclust$merge)
-	    y <- y[which(x < 0)]
-	    x <- x[which(x < 0)]
-	    x <- abs(x)
-	    y <- y[order(x)]
-	    x <- x[order(x)]
-	    graphics::plot(hclust, labels = FALSE, hang = hang, xlab = xlab, sub = sub, axes = axes, ...)
-	    graphics::text(x = x, y =
-	                     if(hang > 0){
-	                       (y[hclust$order] - .04 - max(hclust$height) * hang)
-	                     } else if(hang == 0){
-	                       y[hclust$order] - .04  # y[hclust$order] - .1
-	                     } else {
-	                       - .04 #(mean(hclust$height) * hang)
-	                     },
-	                   labels = labels[hclust$order], col = lab.col[hclust$order],
-	                   font = lab.face[hclust$order],
-	                   srt = 90, adj = c(1, 0.5), xpd = NA, ...)
-	  }
-	  # standardize corr.mat range between min and 1
-	  # corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
-	  corr.mat2 <- corr.mat/base::max(base::abs(corr.mat))
-	  diag(corr.mat2) <- 1
-	  dist_matrix <- stats::as.dist(1 - base::abs(corr.mat2))
-	  hcd <- stats::hclust(dist_matrix)
-	  lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
-	  lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
-	  myplclust(hcd, hang=-.1, axes=F, xlab = "Variables",
-	            lab.col = lab.col, lab.face=lab.face, ylab = "Absolute correlation")
+    # modified from rafalib::myplclust
+    myplclust <- function (hclust, labels = hclust$labels, lab.col = rep(1, length(hclust$labels)),
+                           lab.face = rep(1, length(hclust$labels)),
+                           hang = 0.1, xlab = NA, sub = NA, axes=F, ...) {
+      y <- rep(hclust$height, 2)
+      x <- as.numeric(hclust$merge)
+      y <- y[which(x < 0)]
+      x <- x[which(x < 0)]
+      x <- abs(x)
+      y <- y[order(x)]
+      x <- x[order(x)]
+      graphics::plot(hclust, labels = FALSE, hang = hang, xlab = xlab, sub = sub, axes = axes, ...)
+      graphics::text(x = x, y =
+                       if(hang > 0){
+                         (y[hclust$order] - .04 - max(hclust$height) * hang)
+                       } else if(hang == 0){
+                         y[hclust$order] - .04  # y[hclust$order] - .1
+                       } else {
+                         - .04 #(mean(hclust$height) * hang)
+                       },
+                     labels = labels[hclust$order], col = lab.col[hclust$order],
+                     font = lab.face[hclust$order],
+                     srt = 90, adj = c(1, 0.5), xpd = NA, ...)
+    }
+    # standardize corr.mat range between min and 1
+    # corr.mat <- (corr.mat-min(corr.mat))/(max(corr.mat)-min(corr.mat))
+    corr.mat2 <- corr.mat/base::max(base::abs(corr.mat))
+    diag(corr.mat2) <- 1
+    dist_matrix <- stats::as.dist(1 - base::abs(corr.mat2))
+    hcd <- stats::hclust(dist_matrix)
+    lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
+    lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
+    myplclust(hcd, hang=-.1, axes=F, xlab = "Variables",
+              lab.col = lab.col, lab.face=lab.face, ylab = "Absolute correlation")
 
-	  # # dist_matrix <- stats::dist(corr.mat)
-	  # dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
-	  # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
-	  # ## function to set label color
-	  # labelCol <- function(x, sel.nms) {
-	  #  if (stats::is.leaf(x)) {
-	  #    ## fetch label
-	  #    label <- base::attr(x, "label")
-	  #    ## set label color to red for A and B, to blue otherwise
-	  #    base::attr(x, "nodePar") <- base::list(lab.col=ifelse(label %in% sel.nms, "black", "firebrick"))
-	  #  }
-	  #  return(x)
-	  # }
-	  #
-	  # ## apply labelCol on all nodes of the dendrogram
-	  # dend <- stats::dendrapply(dend, labelCol, sel.nms)
-	  # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
-	  # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
-	  graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
-	  graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
-	  graphics::legend("topright", horiz=F, # title="Variables:",
-	                   legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1),
-	                   col=c(NA, NA, "firebrick"), lty=c(0,0,1), lwd=1.5, seg.len = 1,
-	                   xpd=T, cex=.7)
+    # # dist_matrix <- stats::dist(corr.mat)
+    # dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
+    # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
+    # ## function to set label color
+    # labelCol <- function(x, sel.nms) {
+    #  if (stats::is.leaf(x)) {
+    #    ## fetch label
+    #    label <- base::attr(x, "label")
+    #    ## set label color to red for A and B, to blue otherwise
+    #    base::attr(x, "nodePar") <- base::list(lab.col=ifelse(label %in% sel.nms, "black", "firebrick"))
+    #  }
+    #  return(x)
+    # }
+    #
+    # ## apply labelCol on all nodes of the dendrogram
+    # dend <- stats::dendrapply(dend, labelCol, sel.nms)
+    # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
+    # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
+    graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
+    graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
+    graphics::legend("topright", horiz=F, # title="Variables:",
+                     legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1),
+                     col=c(NA, NA, "firebrick"), lty=c(0,0,1), lwd=1.5, seg.len = 1,
+                     xpd=T, cex=.7)
   }
 
   ### return names of selected variables only
@@ -128,24 +153,22 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
     return(list(sel_vars=sel.nms, corr.mat=corr.mat))
     # return(sel.nms)
   } else { ### return brick with selected variables
-    if(is.null(corr.mat) | is.null(env) |
-       nrow(corr.mat) != raster::nlayers(env) |
-       any(!names(env) %in% colnames(corr.mat)) |
-       any(!colnames(corr.mat) %in% names(env))){
-      stop("corr.mat does not match environmental variables layers")
-    }
-    path.env.out <- "2_envData/area.calib"
     cat("Selected variables: ", sel.nms, "\n")
-    env <- env[[-to.rm]]
-    if(dir.exists(path.env.out)){
-      env <- raster::writeRaster(env,
-                                 filename = ifelse(is.null(filename),
-                                                   paste("2_envData/area.calib", paste0("envDataSel.", sp.nm, ".grd"), sep = "/"),
-                                                   filename),
-                                 format = "raster", overwrite=T)
-    }
-    if(rm.old & is.null(filename)){
-      unlink(list.files(path.env.out, pattern = paste0("envData.", sp.nm), full.names=T), recursive = T)
+    if(grepl("raster", class(env), ignore.case = T)){
+      path.env.out <- "2_envData/area.calib"
+      env <- env[[-to.rm]]
+      if(dir.exists(path.env.out)){
+        env <- raster::writeRaster(env,
+                                   filename = ifelse(is.null(filename),
+                                                     paste("2_envData/area.calib", paste0("envDataSel.", sp.nm, ".grd"), sep = "/"),
+                                                     filename),
+                                   format = "raster", overwrite=T)
+      }
+      if(rm.old & is.null(filename)){
+        unlink(list.files(path.env.out, pattern = paste0("envData.", sp.nm), full.names=T), recursive = T)
+      }
+    } else if (class(env) %in% c("data.frame", "matrix")){
+      env <- env[-to.rm]
     }
     return(env)
   }
