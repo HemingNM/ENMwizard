@@ -58,7 +58,7 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
       #                         occ.pts = eval@occ.pts,
       #                         bg.pts = eval@bg.pts)
       ENMeval.res[[i]]@models <- list()
-      ENMeval.res[[i]]@predictions <- stack()
+      ENMeval.res[[i]]@predictions <- raster::stack()
     }
   } else {
       for(i in 1:length(occ.l)){

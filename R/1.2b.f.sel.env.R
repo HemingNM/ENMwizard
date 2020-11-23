@@ -39,14 +39,14 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
       n <- ceiling(raster::nlayers(env)*(sample.size/raster::ncell(env)))
 
       if(raster::canProcessInMemory(env, n=n)){
-        corr.mat <- cor(raster::sampleRandom(env, sample.size), method = "pearson")
+        corr.mat <- stats::cor(raster::sampleRandom(env, sample.size), method = "pearson")
       } else {
         lStats <- raster::layerStats(raster::sampleRandom(env, sample.size, asRaster=T), 'pearson', na.rm=T)
         corr.mat <- lStats[['pearson correlation coefficient']]
       }
     } else {
       if(raster::canProcessInMemory(env, n=raster::nlayers(env))){
-        corr.mat <- cor(raster::sampleRandom(env, raster::ncell(env)), method = "pearson")
+        corr.mat <- stats::cor(raster::sampleRandom(env, raster::ncell(env)), method = "pearson")
       } else {
         lStats <- raster::layerStats(env, 'pearson', na.rm=T)
         corr.mat <- lStats[['pearson correlation coefficient']]
