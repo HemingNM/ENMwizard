@@ -2,7 +2,7 @@ ENMwizard
 ======================
 ### Advanced Tecniques for Ecological Niche Modeling Made Easy
 
-This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modeling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions for easier: 1. preparation of occurence and environmental data; 2. model tunning (thanks to the package ENMeval); 3. model fitting and projection. Tunning and projection can be peformed using a single or multiple cores to speed up processing for multiple species. ENMwizard also implements AICc Model Averaging for MaxEnt models (Gutierrez & Heming, 2018, https://arxiv.org/abs/1807.04346).
+This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modeling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions for easier: 1. preparation of occurrence and environmental data; 2. model tunning (thanks to the package ENMeval); 3. model fitting and projection. Tunning and projection can be peformed using a single or multiple cores to speed up processing for multiple species. ENMwizard also implements AICc Model Averaging for MaxEnt models (Gutierrez & Heming, 2018, https://arxiv.org/abs/1807.04346).
 
 -----
 
@@ -36,17 +36,15 @@ citation("raster")
 
 ## Prepare environmental data
 
-### Load occurence data
+### Load occurrence data
 
 First, lets use occ data available in dismo package.
 ```r
 Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 "/ex/bradypus.csv", sep=""), header=TRUE, sep=",")
 
-head(Bvarieg.occ)# Check first rows
+head(Bvarieg.occ) # Check first rows
 
-# Column names must be in capital letters
-# colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT") # Change column names
 ```
 
 Now we make it a named list, where names correspond to species names.
@@ -56,25 +54,17 @@ spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 
 ### Create occ polygon to crop rasters prior to modelling
 
-The occurence points in the named list are used to create polygons. 
+The occurrence points in the named list are used to create polygons. 
 Notice that you can cluster the occ points using several clustering methods. 
 See differences and choose one that fits your needs:
 ```r
 occ.polys <- set_calibarea_b(spp.occ.list)
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="E")
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.01) # less polygons
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.1)
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.2)
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.3)
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.5)
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="AP", q=.8) # more polygons
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "duda")
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "ball")
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "pseudot2")
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "trcovw")
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "kl") 
 occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdindex") 
-occ.polys <- set_calibarea_b(spp.occ.list, k=0, c.m="NB", method = "centroid", index = "sdbw")
+
 ```
 
 ### Create buffer
@@ -92,6 +82,7 @@ In this example, a directory called 'rasters' is created. Then, rasters from his
 dir.create("./rasters")
 
 # Download data for present
+library(raster)
 predictors <- getData('worldclim', var='bio', res=10, path="rasters")
 ```
 
@@ -116,29 +107,27 @@ pred.cut <- select_vars_b(pred.cut, cutoff=.75, names.only = F)
 ```
 
 
-## Prepare occurence data
+## Prepare occurrence data
 ### Filter original dataset
 Now we want to remove localities that are too close apart. We will do it for all species listed in "spp.occ.list".
 ```r
 thinned.dataset.batch <- thin_b(loc.data.lst = spp.occ.list)
 ```
 
-## Great! Now we are ready for tunning species' ENMs
-
------
-
-
-## Tunning Maxent's feature classes and regularization multiplier via ENMeval
 ### Load occurrence data (filtered localities)
 After thinning, we choose one dataset for each species for modelling.
 ```r
 occ.locs <- load_thin_occ(thinned.dataset.batch)
 ```
 
-### Model tuning using ENMeval
-Here we will run ENMevaluateB to call ENMevaluate (from ENMeval package). Here we will test which combination of Feature Classes and Regularization Multipliers give the best results. For this, we will partition our occurence data using the "block" method.
+## Great! Now we are ready for tunning species' ENMs
 
-By providing [at least] two lists, occurence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
+-----
+## Tunning Maxent's feature classes and regularization multiplier via ENMeval
+### Model tuning using ENMeval
+Here we will run ENMevaluate_b to call ENMevaluate (from ENMeval package). Here we will test which combination of Feature Classes and Regularization Multipliers give the best results. For this, we will partition our occurrence data using the "block" method.
+
+By providing [at least] two lists, occurrence and environmental data, we will be able to evaluate ENMs for as many species as listed in our occ.locs object. For details see ?ENMeval::ENMevaluate. Notice that you can use multiple cores for this task. This is specially usefull when there are a large number of models and species.
 ```r
 ENMeval.res.lst <- ENMevaluate_b(occ.locs, pred.cut, 
                     RMvalues = c(1, 1.5), fc = c("L", "LQ", "LP"),
@@ -147,14 +136,14 @@ ENMeval.res.lst <- ENMevaluate_b(occ.locs, pred.cut,
 
 -----
 ## Model fitting (calibration)
-After tuning MaxEnt models, we will calibrate them using all occurence data (i.e. without partition them).
+After tuning MaxEnt models, we will calibrate them using all occurrence data (i.e. without partition them).
 
 ```r
 
 # Run model
 mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, 
                                     a.calib.l = pred.cut, occ.l = occ.locs,
-                                    mSel = c("AvgAIC", "AUC"))
+                                    mSel = c("LowAIC", "AUC"))
 ```
 
 ##  Projection
@@ -165,13 +154,13 @@ For projection it is necessary to download raster files with the environmnetal v
 ```r
 # Get climate data for future conditions (2050)
 futAC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
-names(futAC5085) <- names(ncurrent)
+names(futAC5085) <- names(predictors)
 
 # Get climate data for future conditions (2070)
 futAC7085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
-names(futAC7085) <- names(ncurrent)
+names(futAC7085) <- names(predictors)
 
-predictors.l <- list(current = ncurrent,
+predictors.l <- list(ncurrent = predictors,
                 futAC5085 = futAC5085,
                 futAC7085 = futAC7085)
 
@@ -215,7 +204,7 @@ mxnt.mdls.preds.cf <- proj_mdl_b(mxnt.mdls.preds.lst, a.proj.l = pred.cut.l, num
 
 # plot projections
 par(mfrow=c(1,2), mar=c(1,2,1,2))
-plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$current)
+plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$ncurrent)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
 ```
 
@@ -232,13 +221,13 @@ We have the projections for each climatic scenario, now we must select one (or m
 # 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 # 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
 
-mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = 5)
+mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = c(5,7))
 ```
 
 ## Visualize
 ### Plot one projection for current climate and another for a future climatic scenario
 ```r
-plot(mods.thrshld.lst$Bvarieg$current$binary$x10ptp)
+plot(mods.thrshld.lst$Bvarieg$ncurrent$binary$x10ptp)
 plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
 plot_mdl_diff(mxnt.mdls.preds.lst[[1]], mods.thrshld.lst[[1]], sp.nm = "Bvarieg")
 plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
@@ -247,7 +236,7 @@ plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ### Plot differences between current climate and future climatic scenarios for all thresholds
 ```r
 plot_scn_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, 
-              ref.scn = "current", mSel = "AvgAIC", save=F)
+              ref.scn = "ncurrent", mSel = "LowAIC", save=F)
 ```
 
 

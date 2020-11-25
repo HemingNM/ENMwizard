@@ -1,7 +1,7 @@
 citHeader("To cite ENMwizard in publications please use:")
 
 citEntry(entry	= "Misc", # "Article"
-         title 	= "ENMwizard: AIC model averaging and other advanced techniques in Ecological Niche Modeling made easy",
+         title 	= "ENMwizard: advanced techniques for Ecological Niche Modeling made easy",
          author 	= personList(person("Neander", "Heming", "Marcel",
                                      email="neanderh@yahoo.com.br", role="aut"),
                               person("Cristian", "Dambros", role="ctb"),
@@ -14,5 +14,5 @@ citEntry(entry	= "Misc", # "Article"
          note = paste("R package version", packageVersion("ENMwizard")),
          url = "https://github.com/HemingNM/ENMwizard",
          textVersion	=
-           paste("Heming, N.M., Dambros, C. and E.E. Gutiérrez (2018). ENMwizard: AIC model averaging and other advanced techniques in Ecological Niche Modeling made easy. in prep. https://github.com/HemingNM/ENMwizard")
+           paste("Heming, N.M., Dambros, C. and E.E. Gutiérrez (2018). ENMwizard: advanced techniques for Ecological Niche Modeling made easy. in prep. https://github.com/HemingNM/ENMwizard")
 )
