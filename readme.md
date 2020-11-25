@@ -152,6 +152,7 @@ mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst,
 For projection it is necessary to download raster files with the environmnetal variables of interest. Rasters with historical (near current) climatic conditions was already created. We will download data of climatic conditions for two future (2050 and 2070) scenarios and create one list with all three climate cenarios.
 
 ```r
+library(raster)
 # Get climate data for future conditions (2050)
 futAC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
 names(futAC5085) <- names(predictors)
