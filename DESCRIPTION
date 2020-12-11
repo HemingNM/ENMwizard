@@ -1,7 +1,7 @@
 Package: ENMwizard
 Type: Package
 Title: Advanced Techniques for Ecological Niche Modeling Made Easy
-Version: 0.3.2
+Version: 0.3.5
 Author: Neander M. Heming, Cristian Dambros, Eliecer E. Gutierrez
 Maintainer: Neander Marcel Heming <neanderh@yahoo.com.br>
 Description: This package provides tools to facilitate the use of advanced
@@ -29,8 +29,7 @@ Imports:
     maptools,
     fields,
     methods,
-    data.table,
-    caret
+    data.table
 Suggests:
     rJava,
     spThin,

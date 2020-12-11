@@ -1,3 +1,57 @@
+#' Find highly correlated variables
+#'
+#' This function creates a correlation matrix for the layers of a raster brick/stack
+#' and returns a brick containing the least correlated variables below the cutoff value.
+#' @details
+#' The function finds variables with correlation above the cutoff and
+#' sucessively picks up the variable with the largest number of pair-wise
+#' correlations above the cutoff.
+#' At each step, the variable is assigned to a group containing all variables
+#' with at least one correlated variable in common. The variable
+#' with the largest within group mean correlation is discarded.
+#' @return
+#' A vector of variable names (when names = TRUE) or variable/column indexes
+#' (when names = F). If there are no correlations above the cutoff, all variable
+#' names (or indexes) is returned
+#' @param corr.mat A correlation matrix
+#' @param cutoff A numeric value for the pair-wise absolute correlation cutoff.
+#' @param names Logical. Should variable names or indexes be returned?
+#' @seealso \code{\link{select_vars_b}}, \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
+#' @export
+correlated <- function(corr.mat, cutoff=0.9, names=F){
+  corr.mat <- abs(corr.mat)
+  xcut <- corr.mat > cutoff
+  ncorr <- sort(rowSums(xcut), decreasing = T)
+  kept <- names(ncorr[ncorr==1])
+  rmv <- character(0)
+  ncorr <- ncorr[ncorr!=1]
+
+  for(i in names(ncorr)){
+    if(i %in% c(rmv,kept)) next
+    col.check <- rownames(corr.mat)[!(rownames(corr.mat) %in% c(rmv,kept))]
+
+    tosum <- xcut[col.check, col.check[xcut[col.check,i]] ]
+    if(is.null(nrow(tosum))) next
+    group <- rowSums(tosum)>0
+    group <- names(group[group])
+    if(length(group)>2){
+      avg.wtin.corr <- (rowSums(corr.mat[group,group])-1)/(length(group)-1)
+      rmv <- c(rmv, names(which.max(avg.wtin.corr)))
+    } else {
+      avg.wtin.corr <- (rowSums(corr.mat[group,])-1)/(length(group)-1)
+      rmv <- c(rmv, names(which.max(avg.wtin.corr)))
+    }
+  }
+  # kept <- sort(c(kept, names(ncorr)[!(names(ncorr) %in% rmv)]))
+  index <- which(row.names(corr.mat) %in% rmv)
+  if(names){
+    return(row.names(corr.mat)[index])
+  } else {
+    return(index)
+  }
+}
+
+
 #' Find, optionally remove, highly correlated variables from a raster brick/stack
 #'
 #' This function creates a correlation matrix for the layers of a raster brick/stack
@@ -26,7 +80,7 @@
 #' @inheritParams calib_mdl
 #' @inheritParams caret::findCorrelation
 #' @inheritParams raster::writeRaster
-#' @seealso \code{\link{select_vars_b}}, \code{\link[caret]{findCorrelation}}
+#' @seealso \code{\link{select_vars_b}}, \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
 #' @export
 select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = NULL,
                         names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
@@ -78,7 +132,7 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
       }
     }
   }
-  to.rm <- caret::findCorrelation(corr.mat, cutoff=cutoff)
+  to.rm <- correlated(corr.mat, cutoff=cutoff)
   if(length(to.rm)==0){
     sel.nms <- sort(colnames(corr.mat))
   } else {

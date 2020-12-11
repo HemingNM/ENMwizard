@@ -55,5 +55,5 @@ a raster brick containing only the least correlated variables with correlation b
 value.
 }
 \seealso{
-\code{\link{select_vars_b}}, \code{\link[caret]{findCorrelation}}
+\code{\link{select_vars_b}}, \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
 }
