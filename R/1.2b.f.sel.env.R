@@ -57,13 +57,12 @@ correlated <- function(corr.mat, cutoff=0.9, names=F){
 #' This function creates a correlation matrix for the layers of a raster brick/stack
 #' and returns a brick containing the least correlated variables below the cutoff value.
 #' @details
-#' This function creates a correlation matrix for the layers of a raster brick/stack using
-#' raster::layerStats function.
-#' Then, through caret::findCorrelation function, it searches the correlation matrix
-#' for pair-wise correlations above the cutoff value and, for each pair of correlated variables,
-#' it removes the variable with the largest mean absolute correlation. At the end it returns
-#' a raster brick containing only the least correlated variables with correlation below the cutoff
-#' value.
+#' This function creates a correlation matrix for the layers of a raster brick/stack,
+#' then searches for pair-wise correlations above the cutoff, eliminates variables
+#' with most pair-wise correlations and retains the largest number of variables with
+#' pair-wise correlation below the cutoff
+#' Optionally, a raster brick containing only the variables with correlation below
+#' the cutoff is returned.
 #'
 #' @param env raster brick/stack
 #' @param corr.mat Correlation matrix from which variables will be selected. If the correlation
@@ -80,7 +79,7 @@ correlated <- function(corr.mat, cutoff=0.9, names=F){
 #' @inheritParams calib_mdl
 #' @inheritParams caret::findCorrelation
 #' @inheritParams raster::writeRaster
-#' @seealso \code{\link{select_vars_b}}, \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
+#' @seealso \code{\link{select_vars_b}}, \code{\link{correlated}}, \code{\link[caret]{findCorrelation}}
 #' @export
 select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = NULL,
                         names.only = F, plot.dend = T, rm.old = F, sp.nm = "sp",
@@ -241,7 +240,7 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
 #' @param corr.mat.l List of correlation matrices from which variables will be selected. If the correlation
 #' matrix was already computed from env, you can just input here and choose other cutoff values for
 #' selecting variable layers.
-#' @seealso \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
+#' @seealso \code{\link{select_vars}}, \code{\link{correlated}}, \code{\link[caret]{findCorrelation}}
 #' @examples
 #'\dontrun{
 #' select_vars_b(occ.b.env, .9, names.only=T)
