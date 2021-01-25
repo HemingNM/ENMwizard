@@ -87,23 +87,23 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
     mod.cobos <- x #[!is.na(x$avg.pROC.p),]
     mod.cobos[is.na(mod.cobos$avg.pROC.p),"avg.pROC.p"] <- 1
     ESOR.pROC <- mod.cobos$avg.pROC.p<=0.05
-    if(sum(ESOR.pROC)==0) {
+    if(sum(ESOR.pROC, na.rm = T)==0) {
       ESOR.pROC <- mod.cobos$avg.pROC.p == min(mod.cobos$avg.pROC.p, na.rm = T)
       warning("ESORIC: No model with pROC p value <= 0.05. Using model with lowest pROC.p")
     }
     ESOR.or <- mod.cobos$avg.test.or10pct<=0.1
-    if(sum(ESOR.or)==0) {
+    if(sum(ESOR.or, na.rm = T)==0) {
       ESOR.or <- mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct, na.rm = T)
       warning("ESORIC: No model with OR <= OR criteria. Using model with lowest OR")
     }
     ESOR <- ESOR.pROC & ESOR.or
-    if(sum(ESOR)==0) {
+    if(sum(ESOR, na.rm = T)==0) {
       ESOR <- mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct[ESOR.pROC], na.rm = T) #mod.cobos$avg.pROC.p<=0.05 &
       warning("ESORIC: No model match pROC criteria. Using model with lowest OR from models with lowest pROC.p")
     }
     delta <- mod.cobos$AICc - min(mod.cobos$AICc[ESOR], na.rm = T)
     ESOR <- delta<=dAICc & delta>=0 & ESOR
-    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESORIC_", 1:sum(ESOR)), sep = "."))
+    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESORIC_", 1:sum(ESOR, na.rm = T)), sep = "."))
   }
 
   # # Mean ALL - Marmion et al 2009
