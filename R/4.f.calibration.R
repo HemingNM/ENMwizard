@@ -101,9 +101,10 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
       ESOR <- mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct[ESOR.pROC], na.rm = T) #mod.cobos$avg.pROC.p<=0.05 &
       warning("ESORIC: No model match pROC criteria. Using model with lowest OR from models with lowest pROC.p")
     }
-    delta <- mod.cobos$AICc - min(mod.cobos$AICc[ESOR], na.rm = T)
-    ESOR <- delta<=dAICc & delta>=0 & ESOR
-    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESORIC_", 1:sum(ESOR, na.rm = T)), sep = "."))
+    delta <- ifelse((mod.cobos$AICc - min(mod.cobos$AICc[ESOR], na.rm = T)<0), NA, (mod.cobos$AICc - min(mod.cobos$AICc[ESOR], na.rm = T)))
+    ESOR <- which(delta<=dAICc & delta>=0 & ESOR)
+    ESOR <- ESOR[order(delta[ESOR])]
+    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESORIC_", 1:length(ESOR)), sep = "."))
   }
 
   # # Mean ALL - Marmion et al 2009
