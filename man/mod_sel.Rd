@@ -8,6 +8,7 @@ mod_sel(
   x,
   mSel = c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", "AUC"),
   wAICsum = 0.99,
+  dAICc = 2,
   randomseed = FALSE,
   responsecurves = TRUE,
   arg1 = "noaddsamplestobackground",
@@ -18,10 +19,12 @@ mod_sel(
 \arguments{
 \item{x}{Object of class ENMevaluation}
 
-\item{mSel}{character vector. Which criteria to use when selecting model(s). Currently implemented:
+\item{mSel}{Character vector. Which criteria to use when selecting model(s). Currently implemented:
 "AvgAIC", "LowAIC", "OR", "AUC"}
 
-\item{wAICsum}{cumulative sum of top ranked models for which arguments will be created}
+\item{wAICsum}{Cumulative sum of top ranked models for which arguments will be created}
+
+\item{dAICc}{Maximum delta AICc of models to be selected.}
 
 \item{randomseed}{logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
@@ -31,7 +34,7 @@ mod_sel(
 
 \item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
-\item{save}{should save args only ("A"), selected models only ("M") or both ("B")?}
+\item{save}{Should save args only ("A"), selected models only ("M") or both ("B")?}
 }
 \value{
 A vector of args (if save="A"), data.frame of selected models (if save="M") or

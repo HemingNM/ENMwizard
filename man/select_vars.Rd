@@ -19,7 +19,7 @@ select_vars(
 \arguments{
 \item{env}{raster brick/stack}
 
-\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff}
+\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff.}
 
 \item{corr.mat}{Correlation matrix from which variables will be selected. If the correlation
 matrix was already computed from env, you can just input here and choose other cutoff values for
@@ -46,14 +46,13 @@ This function creates a correlation matrix for the layers of a raster brick/stac
 and returns a brick containing the least correlated variables below the cutoff value.
 }
 \details{
-This function creates a correlation matrix for the layers of a raster brick/stack using
-raster::layerStats function.
-Then, through caret::findCorrelation function, it searches the correlation matrix
-for pair-wise correlations above the cutoff value and, for each pair of correlated variables,
-it removes the variable with the largest mean absolute correlation. At the end it returns
-a raster brick containing only the least correlated variables with correlation below the cutoff
-value.
+This function creates a correlation matrix for the layers of a raster brick/stack,
+then searches for pair-wise correlations above the cutoff, eliminates variables
+with most pair-wise correlations and retains the largest number of variables with
+pair-wise correlation below the cutoff
+Optionally, a raster brick containing only the variables with correlation below
+the cutoff is returned.
 }
 \seealso{
-\code{\link{select_vars_b}}, \code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
+\code{\link{select_vars_b}}, \code{\link{correlated}}, \code{\link[caret]{findCorrelation}}
 }

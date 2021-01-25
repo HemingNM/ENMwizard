@@ -15,6 +15,7 @@ calib_mdl(
   pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"),
   wAICsum = 0.99,
+  dAICc = 2,
   randomseed = FALSE,
   responsecurves = TRUE,
   arg1 = "noaddsamplestobackground",
@@ -55,10 +56,12 @@ arguments relevant to model fitting. There is no point in using args='outputform
 function. Some other arguments do not apply at all to the R implementation. An example is
 'outputfiletype', because the 'predict' function has its own 'filename' argument for that.}
 
-\item{mSel}{character vector. Which criteria to use when selecting model(s). Currently implemented:
+\item{mSel}{Character vector. Which criteria to use when selecting model(s). Currently implemented:
 "AvgAIC", "LowAIC", "OR", "AUC"}
 
-\item{wAICsum}{cumulative sum of top ranked models for which arguments will be created}
+\item{wAICsum}{Cumulative sum of top ranked models for which arguments will be created}
+
+\item{dAICc}{Maximum delta AICc of models to be selected.}
 
 \item{randomseed}{logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 

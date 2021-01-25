@@ -65,6 +65,7 @@ correlated <- function(corr.mat, cutoff=0.9, names=F){
 #' the cutoff is returned.
 #'
 #' @param env raster brick/stack
+#' @param cutoff A numeric value for the pair-wise absolute correlation cutoff.
 #' @param corr.mat Correlation matrix from which variables will be selected. If the correlation
 #' matrix was already computed from env, you can just input here and choose other cutoff values for
 #' selecting variable layers.
@@ -77,7 +78,6 @@ correlated <- function(corr.mat, cutoff=0.9, names=F){
 #' showing cutoff limit and selected (black) and discarded (red) variables
 #' @param rm.old Logical. Remove (T) old env variables from folder?
 #' @inheritParams calib_mdl
-#' @inheritParams caret::findCorrelation
 #' @inheritParams raster::writeRaster
 #' @seealso \code{\link{select_vars_b}}, \code{\link{correlated}}, \code{\link[caret]{findCorrelation}}
 #' @export

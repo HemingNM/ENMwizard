@@ -18,7 +18,7 @@ select_vars_b(
 \arguments{
 \item{env.l}{List of raster brick/stack.}
 
-\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff}
+\item{cutoff}{A numeric value for the pair-wise absolute correlation cutoff.}
 
 \item{corr.mat.l}{List of correlation matrices from which variables will be selected. If the correlation
 matrix was already computed from env, you can just input here and choose other cutoff values for
@@ -52,5 +52,5 @@ occ.b.env <- select_vars_b(occ.b.env, .9, names.only=F, rm.old=F)
 }
 }
 \seealso{
-\code{\link{select_vars}}, \code{\link[caret]{findCorrelation}}
+\code{\link{select_vars}}, \code{\link{correlated}}, \code{\link[caret]{findCorrelation}}
 }

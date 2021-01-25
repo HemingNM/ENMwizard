@@ -6,10 +6,11 @@
 #' necessary arguments for final model calibration and predictions.
 #'
 #' @param x Object of class ENMevaluation
-#' @param mSel character vector. Which criteria to use when selecting model(s). Currently implemented:
+#' @param mSel Character vector. Which criteria to use when selecting model(s). Currently implemented:
 #' "AvgAIC", "LowAIC", "OR", "AUC"
-#' @param wAICsum cumulative sum of top ranked models for which arguments will be created
-#' @param save should save args only ("A"), selected models only ("M") or both ("B")?
+#' @param wAICsum Cumulative sum of top ranked models for which arguments will be created
+#' @param dAICc Maximum delta AICc of models to be selected.
+#' @param save Should save args only ("A"), selected models only ("M") or both ("B")?
 # #' @inheritParams dismo::maxent
 #' @param randomseed logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
 #' @param responsecurves logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
@@ -26,7 +27,7 @@
 #' a list with both, args and selected models, (if save="B")
 # #' @keywords internal
 #' @export
-mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", "AUC"), wAICsum=0.99, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
+mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, dAICc=2, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
   x <- x@results
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
@@ -82,7 +83,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR",
 
   # ESOR (Ensemble Significant pROC, low Omission Rate) - Cobos et al 2019
   # Selects models according to: pROC<=0.05; OR<=ORspecified; AICc<=2
-  if("ESOR" %in% mSel){
+  if(any(c("ESOR", "ESORIC") %in% mSel)){
     mod.cobos <- x#[!is.na(x$avg.pROC.p),]
     mod.cobos[is.na(mod.cobos$avg.pROC.p),"avg.pROC.p"] <- 1
     ESOR <- mod.cobos$avg.pROC.p<=0.05 & mod.cobos$avg.test.or10pct<=0.1
@@ -90,7 +91,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR",
       ESOR <- mod.cobos$avg.pROC.p<=0.05 & (mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct))
       warning("ESOR: No model with OR <= OR criteria. Using model with lowest OR")}
     delta <- mod.cobos$AICc - min(mod.cobos$AICc[ESOR])
-    ESOR <- delta<=2 & delta>=0 & ESOR
+    ESOR <- delta<=dAICc & delta>=0 & ESOR
     x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESOR_", 1:sum(ESOR)), sep = "."))
   }
 
@@ -213,7 +214,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR",
 #' @export
 calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, format = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, randomseed = FALSE,
                    responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                    numCores = 1, parallelTunning = TRUE){
 
@@ -233,7 +234,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
   # ENMeval.r <- ENMeval.o@results
   algorithm <- ENMeval.o@algorithm
 
-  mdl.arg <- mod_sel(x=ENMeval.o, mSel=mSel, wAICsum=wAICsum, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2, save="B")
+  mdl.arg <- mod_sel(x=ENMeval.o, mSel=mSel, wAICsum=wAICsum, dAICc=dAICc, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2, save="B")
   xsel.mdls <- mdl.arg[[2]]
   ENMeval.r <- xsel.mdls[order(as.numeric(rownames(xsel.mdls))),]
   mdls.keep <- xsel.mdls$sel.cri!=""
@@ -348,7 +349,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 #' @export
 calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE, format = "raster", # , a.proj.l
                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                         mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, randomseed = FALSE,
+                         mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, randomseed = FALSE,
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                          numCores = 1, parallelTunning = TRUE){
 
@@ -359,7 +360,7 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
 
     mxnt.m.p.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                                              use.ENMeval.bgpts, format, pred.args,
-                                                                                             mSel, wAICsum, randomseed, responsecurves,
+                                                                                             mSel, wAICsum, dAICc, randomseed, responsecurves,
                                                                                              arg1, arg2, numCores, parallelTunning){
       cat(c(names(ENMeval.o.l[i]), "\n"))
       # compute final models and predictions
@@ -367,14 +368,14 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, # a=ENMeval.o.l[[i]]@bg.pts,
                      format = format,
-                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
+                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
                      randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,
                      numCores = numCores, parallelTunning = parallelTunning)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
     use.ENMeval.bgpts, format, pred.args,
-    mSel, wAICsum, randomseed, responsecurves,
+    mSel, wAICsum, dAICc, randomseed, responsecurves,
     arg1, arg2, numCores, parallelTunning)
 
     parallel::stopCluster(cl)
@@ -383,21 +384,21 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
 
     mxnt.m.p.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                          use.ENMeval.bgpts, format, pred.args,
-                                                                         mSel, wAICsum, randomseed, responsecurves,
+                                                                         mSel, wAICsum, dAICc, randomseed, responsecurves,
                                                                          arg1, arg2, numCores, parallelTunning){
       cat(c(names(ENMeval.o.l[i]), "\n"))
       # compute final models and predictions
       resu <- calib_mdl(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, format = format,
-                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum,
+                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
                      randomseed = randomseed, responsecurves = responsecurves,
                      arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning=parallelTunning)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
     use.ENMeval.bgpts, format, pred.args,
-    mSel, wAICsum, randomseed, responsecurves,
+    mSel, wAICsum, dAICc, randomseed, responsecurves,
     arg1, arg2, numCores, parallelTunning)
 
 
