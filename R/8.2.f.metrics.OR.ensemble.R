@@ -34,7 +34,7 @@ get_or_ensemble <- function(mcm, a.calib,
 
   xsel.mdls <- mcm$selected.mdls
 
-  ens <- c("AvgAIC", "WAAUC", "EBPM", "ESOR")
+  ens <- c("AvgAIC", "WAAUC", "EBPM", "ESORIC")
   ens.i <- grepl(paste0("^", mcm$mSel, collapse = "|^"), ens)
   ens <- ens[ens.i]
   statsTbl2 <- stats::setNames(vector("list", length(ens)), ens)
@@ -51,7 +51,7 @@ get_or_ensemble <- function(mcm, a.calib,
       wv <- xsel.mdls[argsEns,"avg.test.AUC"]
     } else if(EM == "EBPM"){ # EBPM
       wv <- rep(1, length(argsEns))
-    } else if(EM == "ESOR"){ # Cobos et al 2019
+    } else if(EM == "ESORIC"){ # Cobos et al 2019
       wv <- rep(1, length(argsEns))
     }
   # wv <- xsel.mdls$w.AIC[grep("AIC", xsel.mdls$sel.cri)]

@@ -85,7 +85,7 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
 
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mtp[[1]][[2]][[1]]))
   c.nms2 <- vector("character", length(c.nms))
-  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC", "^EBPM", "^WAAUC", "^ESOR")
+  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC", "^EBPM", "^WAAUC", "^ESORIC")
   invisible(sapply(seq_along(s.nms), function(i, x, y, z){
     si <- grepl(s.nms[i], c.nms)
     if(sum(si)>0){
@@ -234,8 +234,8 @@ get_cont_permimport <- function(mcmp, sp.nm) {
   if(sum(grepl("EBPM", pred.nms))>0) {
     wv.bp <- rep(1, length(grep("EBPM", mcmp[["selected.mdls"]]$sel.cri)))
   }
-  if(sum(grepl("ESOR", pred.nms))>0) {
-    wv.es <- rep(1, length(grep("ESOR_", mcmp[["selected.mdls"]]$sel.cri)))
+  if(sum(grepl("ESORIC", pred.nms))>0) {
+    wv.es <- rep(1, length(grep("ESORIC_", mcmp[["selected.mdls"]]$sel.cri)))
   }
 
   ## variable contributions and importance
@@ -266,8 +266,8 @@ get_cont_permimport <- function(mcmp, sp.nm) {
     if(sum(grepl("EBPM", pred.nms))>0){
       f.wm("EBPM_", pred.nms, sel.mod.nms, var.nms, wv.bp, var.cont.df, dimnames1="Mod.EBPM")
     },
-    if(sum(grepl("ESOR", pred.nms))>0){
-      f.wm("ESOR_", pred.nms, sel.mod.nms, var.nms, wv.es, var.cont.df, dimnames1="Mod.ESOR")
+    if(sum(grepl("ESORIC", pred.nms))>0){
+      f.wm("ESORIC_", pred.nms, sel.mod.nms, var.nms, wv.es, var.cont.df, dimnames1="Mod.ESORIC")
     },
     var.cont.df))
 
@@ -281,8 +281,8 @@ get_cont_permimport <- function(mcmp, sp.nm) {
     if(sum(grepl("EBPM", pred.nms))>0){
       f.wm("EBPM_", pred.nms, sel.mod.nms, var.nms, wv.bp, var.permImp.df, dimnames1="Mod.EBPM")
     },
-    if(sum(grepl("ESOR", pred.nms))>0){
-      f.wm("ESOR_", pred.nms, sel.mod.nms, var.nms, wv.es, var.permImp.df, dimnames1="Mod.ESOR")
+    if(sum(grepl("ESORIC", pred.nms))>0){
+      f.wm("ESORIC_", pred.nms, sel.mod.nms, var.nms, wv.es, var.permImp.df, dimnames1="Mod.ESORIC")
     },
     var.permImp.df))
 

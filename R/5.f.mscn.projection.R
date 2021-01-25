@@ -36,7 +36,7 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
   # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"]) #
   mod.nms2 <- paste0("Mod.", xsel.mdls$sel.cri)
   # # mod.nms2 <- gsub(paste0("AIC_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
-  ens.meth <- c("AIC_", "WAAUC_", "EBPM_", "ESOR_")
+  ens.meth <- c("AIC_", "WAAUC_", "EBPM_", "ESORIC_")
   ens2gsub <- paste0(ens.meth, rep(1:length(xsel.mdls$sel.cri), each= length(ens.meth)), collapse = "|")
   mod.nms2 <- gsub(ens2gsub, "", mod.nms2)
   mod.nms2 <- gsub(paste0("\\.{", 1:length(xsel.mdls$sel.cri), "}" , collapse = "|"), ".", mod.nms2)
@@ -194,7 +194,7 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
 
 
 
-#' Ensemble models (AvgAIC, WAAUC, EBPM, ESOR)
+#' Ensemble models (AvgAIC, WAAUC, EBPM, ESORIC)
 #'
 #' This function will read an object returned by "calib_mdl", read the calibrated models and project into
 #' new areas/climatic scenarios. These new projections will be returned together with (appended to)
@@ -215,7 +215,7 @@ ensemble_projs <- function(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, 
   mod.preds <- raster::stack()
   xsel.mdls <- mcm$selected.mdls
 
-  ens <- c("AvgAIC", "WAAUC", "EBPM", "ESOR")
+  ens <- c("AvgAIC", "WAAUC", "EBPM", "ESORIC")
   ens.i <- grepl(paste0("^", mcm$mSel, collapse = "|^"), ens)
   if(sum(ens.i)>0){
     ens <- ens[ens.i]
@@ -238,7 +238,7 @@ ensemble_projs <- function(mcm, filename.or.auc.laic, a.proj, path.mdls, outpt, 
         wv <- xsel.mdls[argsEns,"avg.test.AUC"]
       } else if(EM == "EBPM"){ # EBPM
         wv <- rep(1, length(argsEns))
-      } else if(EM == "ESOR"){ # Cobos et al 2019
+      } else if(EM == "ESORIC"){ # Cobos et al 2019
         wv <- rep(1, length(argsEns))
       }
 

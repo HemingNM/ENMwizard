@@ -28,6 +28,7 @@
 # #' @keywords internal
 #' @export
 mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, dAICc=2, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
+  mSel <- gsub("^ESOR$", "ESORIC",  mSel)
   x <- x@results
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
@@ -81,9 +82,9 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
     # }
   }
 
-  # ESOR (Ensemble Significant pROC, low Omission Rate) - Cobos et al 2019
+  # ESORIC or ESOR (Ensemble Significant pROC, low Omission Rate, low AICc) - Cobos et al 2019
   # Selects models according to: pROC<=0.05; OR<=ORspecified; AICc<=2
-  if(any(c("ESOR", "ESORIC") %in% mSel)){
+  if("ESORIC" %in% mSel){
     mod.cobos <- x #[!is.na(x$avg.pROC.p),]
     mod.cobos[is.na(mod.cobos$avg.pROC.p),"avg.pROC.p"] <- 1
     ESOR.pROC <- mod.cobos$avg.pROC.p<=0.05
