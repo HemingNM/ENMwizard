@@ -22,17 +22,17 @@
 #' plot_mdl_diff_b(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst, basemap=NewWorld)
 #' }
 #' @export
-plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
+plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, mfrow=c(0,0), numCores=1,
                          msnm = c("avg.test.AUC10pct", "avg.test.AUC.MTP", "avg.test.or10pct", "avg.test.orMTP"),
                          msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                          scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
                                   "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_",
-                                  "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
+                                  "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "ncurrent", "current"),
                          scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                  "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
                                  "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                  "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                 "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
+                                 "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Near Current", "Near Current")
 ){
 
 
@@ -46,7 +46,7 @@ plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
     sp.nm <- sp.nm.l[sp]
 
     ##### function begins here:
-    plot_mdl_diff(mcmp, mtp, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
+    plot_mdl_diff(mcmp, mtp, sp.nm, basemap, save, mfrow, numCores, msnm, msr, scnm, scr)
 
   } # fecha # species
 } # fecha function
@@ -63,16 +63,7 @@ plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 # #' @inheritParams f.plot.mxnt.preds
 #' @inheritParams thrshld
 #' @inheritParams calib_mdl
-#' @param mtp Stack or brick of thresholded predictions
-#' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
-#' @param save Logical. If TRUE will save plots in pdf.
-#' @param msnm Character vector. Short names of model selection criteria to be replaced. Same as given in
-#' Model names (ex. AUC10, AUCmtp, OR10, ORmtp)
-#' @param msr Character vector. Long names of model selection criteria to replace the short names. Must
-#'  be in same order of argument 'msnm'
-#' @param scnm Character vector. Short names of climatic scenarios to be replaced. Ex. "cc26bi70", "cc45bi70"
-#' @param scr Character vector. Long names of climatic scenarios to replace the short names. Must
-#'  be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5"
+#' @inheritParams plot_mdl
 #' @seealso \code{\link{plot_scn_diff_b}}
 #' @description  Will plot (or save as PDF) differences between predictions of models selected
 #'  using distinct model selection criteria (for multiple climatic scenarios). PDFs will be saved
@@ -82,17 +73,17 @@ plot_mdl_diff_b <- function(mcmp.l, mtp.l, basemap=NULL, save=FALSE, numCores=1,
 #' plot_mdl_diff(mcmp=mxnt.mdls.preds.lst[[1]], mtp.l=mods.thrshld.lst[[1]], basemap=NewWorld)
 #' }
 #' @export
-plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
+plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, mfrow=c(0,0), numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
                                  "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_",
-                                 "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
+                                 "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "ncurrent", "current"),
                         scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                 "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
                                 "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                 "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
+                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Near Current", "Near Current")
                         ){
   {
     path.res <- "3_out.MaxEnt"
@@ -118,13 +109,13 @@ plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, 
 
     parallel::clusterApply(cl, names(mtp), # climatic scenario
                            function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
+                                    save, mfrow, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
                              plot_mdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+                                       save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
                            }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                           save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+                           save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
     parallel::stopCluster(cl)
 
@@ -132,13 +123,13 @@ plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, 
 
     lapply(names(mtp), # climatic scenario
          function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                  save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
+                  save, mfrow, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
            plot_mdl(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                     save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+                     save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
          }, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-         save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+         save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
   } # fecha else
 
   if(save) cat(c("\n", "Figures saved in:", "\n", thrshld.path))
@@ -146,14 +137,25 @@ plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, 
 
 
 #' internal function for \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
-#' @inheritParams plot_mdl_diff
-#' @inheritParams plot_mdl_diff_b
+# #' @inheritParams plot_mdl_diff
+# #' @inheritParams plot_mdl_diff_b
+#' @param sc Index of climatic scenario to be plotted
+#' @param mtp Stack or brick of thresholded predictions
+#' @param basemap Shapefile to be plotted with. Usually a continent or country shapefile
 #' @param thrshld.path path to threshold projections
 #' @param thrshld.nms.mod names of threshold models
-#' @param sc Index of climatic scenario to be plotted
+#' @param save Logical. If TRUE will save plots in pdf.
+#' @param mfrow Number of rows and cols to draw plot (see ?par for details). If
+#' @param msnm Character vector. Short names of model selection criteria to be replaced. Same as given in
+#' Model names (ex. AUC10, AUCmtp, OR10, ORmtp)
+#' @param msr Character vector. Long names of model selection criteria to replace the short names. Must
+#'  be in same order of argument 'msnm'
+#' @param scnm Character vector. Short names of climatic scenarios to be replaced. Ex. "cc26bi70", "cc45bi70"
+#' @param scr Character vector. Long names of climatic scenarios to replace the short names. Must
+#'  be in same order of argument 'scnm'. Ex. "2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5"
 #' @keywords internal
 plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
-                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
+                      save, mfrow=c(0,0), msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
   # for(sc in names(mtp)){ # climatic scenario
   mtp.sc <- mtp[[sc]]
   cat(c("\n", "Climatic Scenario: ", sc))
@@ -172,16 +174,18 @@ plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
     thr.CRT <- tr[which(tnm %in% l)] #}
     cat(paste0(" - ", thr.CRT))
 
-    lm <- auto_layout(ncol(comb.plots), F)
-    n.t <- nrow(lm)
-    n.scn <- ncol(lm)
-    # n.t <- length(names(mtp.sc$binary))
-    # n.scn <- ncol(comb.plots)
+    if(any(mfrow == 0)){
+      lm <- auto_layout(ncol(comb.plots), F)
+      mfrow <- c(nrow(lm), ncol(lm))
+      # n.t <- nrow(lm)
+      # n.scn <- ncol(lm)
+    }
+
     if(save){
       grDevices::pdf(paste(thrshld.path, paste0("Mod.diff.bin.", sc, ".", thr.crt, ".pdf"), sep='/'),
-                     width = n.scn*5+2, height = n.t*5)
+                     width = mfrow[2]*5+2, height = mfrow[1]*5)
     }
-    graphics::par(mfrow=c(n.t, n.scn), oma = c(3.5, 0, 5.5, 2))
+    graphics::par(mfrow=mfrow, oma = c(3.5, 0, 5.5, 2))
 
     for(j in 1:ncol(comb.plots)){ #ncol(comb.plots)
       r.dif <- raster::overlay(mtp.sc$binary[[l]][[comb.plots[1,j]]], mtp.sc$binary[[l]][[comb.plots[2,j]]], fun=function(r1,r2) {r1-r2})
@@ -226,7 +230,6 @@ plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
 #' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
 #'
 #' @inheritParams thrshld_b
-#' @inheritParams plot_mdl_diff
 #' @inheritParams plot_scn_diff
 #' @inheritParams plot_mdl_diff_b
 #' @inheritParams calib_mdl
@@ -238,17 +241,17 @@ plot_mdl <- function(sc, mcmp, mtp, basemap, thrshld.path, thrshld.nms.mod,
 #' }
 #' @export
 plot_scn_diff_b <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="current",
-                        basemap=NULL, save=FALSE, numCores=1,
+                        basemap=NULL, save=FALSE, mfrow=c(0,0), numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
                                  "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_",
-                                 "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
+                                 "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "ncurrent", "current"),
                         scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                 "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
                                 "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                 "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
+                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Near Current", "Near Current")
                         ){
   if(is.null(mSel)){
     stop("Need to specify 'mSel'")
@@ -264,7 +267,7 @@ plot_scn_diff_b <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="cur
     sp.nm <- sp.nm.l[sp]
 
     ##### function begins here:
-    plot_scn_diff(mcmp, mtp, mSel, ref.scn, sp.nm, basemap, save, numCores, msnm, msr, scnm, scr)
+    plot_scn_diff(mcmp, mtp, mSel, ref.scn, sp.nm, basemap, save, mfrow, numCores, msnm, msr, scnm, scr)
 
   } # fecha # species
 }
@@ -275,13 +278,10 @@ plot_scn_diff_b <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="cur
 #' Plot differences between a selected climatic scenario and all other climatic scenarios for each species.
 #' This function will plota and (optionally) save the figures on pdf files in the folder "Mdls.thrshld/figs".
 #'
+#' @inheritParams plot_scn
 #' @inheritParams thrshld_b
 #' @inheritParams plot_mdl_diff
 #' @inheritParams calib_mdl
-#' @param ref.scn Selected climatic scenario to compare with all others. Usually "current" one.
-#' @param mSel Name of selection criteria to be compared: AvgAIC, LowAIC, avg.test.AUC10pct, avg.test.AUC.MTP,
-#' avg.test.or10pct, avg.test.orMTP
-#' @param save Export to pdf or not?
 #' @seealso \code{\link{plot_scn_diff_b}}
 #' @return won't return any object. Will save pdf's with differences among model predictions (for multiple climatic scenarios)
 #' @examples
@@ -289,17 +289,17 @@ plot_scn_diff_b <- function(mcmp.l, mtp.l, mSel = mcmp.l[[1]]$mSel, ref.scn="cur
 #' plot_scn_diff(mcmp.l=mxnt.mdls.preds.lst, mtp.l=mods.thrshld.lst)
 #' }
 #' @export
-plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", basemap=NULL, save=FALSE, numCores=1,
+plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="ncurrent", sp.nm="species", basemap=NULL, save=FALSE, mfrow=c(0,0), numCores=1,
                         msnm = c("AUC10", "AUCmtp", "OR10", "ORmtp"),
                         msr = c("AUC (OR10p)", "AUC (ORlpt)", "OR10p (AUC)", "ORlpt (AUC)"),
                         scnm = c("cc26bi70", "cc45bi70", "cc60bi70", "cc85bi70", "mp26bi70", "mp45bi70", "mp85bi70",
                                  "mr26bi70", "mr45bi70", "mr60bi50", "mr85bi70", "cclgmbi", "ccmidbi", "lig_30s_bio_",
-                                 "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "mxnt.preds"),
+                                 "melgmbi", "memidbi", "mrlgmbi", "mrmidbi", "ncurrent", "current"),
                         scr = c("2070-CCSM4-rcp2.6", "2070-CCSM4-rcp4.5", "2070-CCSM4-rcp6.0", "2070-CCSM4-rcp8.5",
                                 "2070-MPI-ESM-LR-rcp2.6", "2070-MPI-ESM-LR-rcp4.5", "2070-MPI-ESM-LR-rcp8.5",
                                 "2070-MIROC-ESM-rcp2.6", "2070-MIROC-ESM-rcp4.5", "2070-MIROC-ESM-rcp6.0",
                                 "2070-MIROC-ESM-rcp8.5", "LGM-CCSM4", "MH-CCSM4", "LIG-CCSM3", "LGM-MPI-ESM-P",
-                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Present")
+                                "MH-MPI-ESM-P", "LGM-MIROC-ESM", "MH-MIROC-ESM", "Near Current", "Near Current")
 ){
   # numCores=1
 
@@ -352,13 +352,13 @@ plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", b
 
     parallel::clusterApply(cl, mSel,  # model selection criteria
                            function(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
+                                    save, mfrow, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
                              plot_scn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                                       save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+                                       save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
                            }, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                           save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+                           save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
     parallel::stopCluster(cl)
 
@@ -366,13 +366,13 @@ plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", b
 
     lapply(mSel, # model selection criteria
            function(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                    save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
+                    save, mfrow, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
              plot_scn(m, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-                       save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+                       save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
 
            }, mtp, ref.scn, basemap, thrshld.path, thrshld.nms.mod,
-           save, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
+           save, mfrow, msnm, msr, scnm, scr) # , tr, tnm, auto_layout, make_underscript
   }
 
   if(save) cat(c("\n", "Figures saved in:", "\n", thrshld.path))
@@ -380,12 +380,14 @@ plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="current", sp.nm="species", b
 
 #' internal function for \code{\link{plot_mdl_diff}}, \code{\link{plot_scn_diff_b}}
 #' @inheritParams plot_mdl
-#' @inheritParams plot_scn_diff
-#' @inheritParams plot_mdl_diff_b
+# #' @inheritParams plot_scn_diff
+# #' @inheritParams plot_mdl_diff_b
 #' @param m Index of model selection criteria to be plotted
+#' @param ref.scn Selected climatic scenario to compare with all others. Usually "ncurrent".
+#' any (row or col) is 0, it will draw the layout automatically.
 #' @keywords internal
-plot_scn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.nms.mod,
-                      save, msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
+plot_scn <- function(m, mtp, ref.scn="ncurrent", basemap, thrshld.path, thrshld.nms.mod,
+                      save, mfrow=c(0,0), msnm, msr, scnm, scr){ # , tr, tnm, auto_layout, make_underscript
 
   # for(m in mSel){ # model selection criteria
     # plot_scn(m, sp, mtp.l, mdl.crit=m, tr, tnm, thrshld.path,
@@ -402,17 +404,18 @@ plot_scn <- function(m, mtp, ref.scn="current", basemap, thrshld.path, thrshld.n
 
     mods.thrshld <- mtp[[comb.plots[1,1]]]
 
-    n.t <- length(mods.thrshld$binary)
-    n.scn <- ncol(comb.plots)
-    # lm <- auto_layout(ncol(comb.plots), F)
-    lm <- auto_layout((n.t*n.scn), F)
-    n.r <- nrow(lm)
-    n.col <- ncol(lm)
+    if(any(mfrow == 0)){
+      n.t <- length(mods.thrshld$binary)
+      n.scn <- ncol(comb.plots)
+      lm <- auto_layout((n.t*n.scn), F)
+      mfrow <- c(nrow(lm), ncol(lm))
+    }
+
     if(save){
       grDevices::pdf(paste(thrshld.path, paste0("Mod.clim.scn.diff.bin", m, ".pdf"), sep='/'),
-                     width = n.col*5+2, height = n.r*5)
+                     width = mfrow[2]*5+2, height = mfrow[1]*5)
     }
-    graphics::par(mfrow=c(n.col, n.r), mar=c(2,4,2,5), oma = c(3.5, 0, 3.5, 2)) #
+    graphics::par(mfrow=mfrow, mar=c(2,4,2,5), oma = c(3.5, 0, 3.5, 2)) #
 
     for(tc in names(mods.thrshld$binary)){ # threshold criteria
       thr.CRT <- tr[which(tnm %in% tc)] #}

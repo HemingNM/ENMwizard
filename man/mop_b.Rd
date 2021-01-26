@@ -31,7 +31,8 @@ with G to calculate the MOP. Must be >0 and <=1.}
 
 \item{min.M.sz}{Threshold value to be used to compute OR}
 
-\item{ref.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
+\item{ref.scn}{Selected climatic scenario to compare with all others. Usually "ncurrent".
+any (row or col) is 0, it will draw the layout automatically.}
 
 \item{format}{Character. Output file type. Argument 'format' of raster::writeRaster}
 

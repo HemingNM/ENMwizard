@@ -398,7 +398,7 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
     mxnt.m.p.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                          use.ENMeval.bgpts, format, pred.args,
                                                                          mSel, wAICsum, dAICc, randomseed, responsecurves,
-                                                                         arg1, arg2, numCores, parallelTunning){
+                                                                         arg1, arg2, numCores){
       cat(c(names(ENMeval.o.l[i]), "\n"))
       # compute final models and predictions
       resu <- calib_mdl(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
@@ -406,13 +406,13 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, format = format,
                      pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
                      randomseed = randomseed, responsecurves = responsecurves,
-                     arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning=parallelTunning)
+                     arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning = FALSE)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
     use.ENMeval.bgpts, format, pred.args,
     mSel, wAICsum, dAICc, randomseed, responsecurves,
-    arg1, arg2, numCores, parallelTunning)
+    arg1, arg2, numCores)
 
 
   }

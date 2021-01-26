@@ -2,7 +2,7 @@
 % Please edit documentation in R/5.f.mscn.projection.R
 \name{ensemble_projs}
 \alias{ensemble_projs}
-\title{Ensemble models (AvgAIC, WAAUC, EBPM, ESOR)}
+\title{Ensemble models (AvgAIC, WAAUC, EBPM, ESORIC)}
 \usage{
 ensemble_projs(
   mcm,

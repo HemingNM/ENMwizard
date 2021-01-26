@@ -12,6 +12,7 @@ plot_mdl(
   thrshld.path,
   thrshld.nms.mod,
   save,
+  mfrow = c(0, 0),
   msnm,
   msr,
   scnm,
@@ -20,9 +21,6 @@ plot_mdl(
 }
 \arguments{
 \item{sc}{Index of climatic scenario to be plotted}
-
-\item{mcmp}{Species "i" of a object returned by "proj_mdl_b", containing a list of
-calibrated models and model projections for each species}
 
 \item{mtp}{Stack or brick of thresholded predictions}
 
@@ -33,6 +31,8 @@ calibrated models and model projections for each species}
 \item{thrshld.nms.mod}{names of threshold models}
 
 \item{save}{Logical. If TRUE will save plots in pdf.}
+
+\item{mfrow}{Number of rows and cols to draw plot (see ?par for details). If}
 
 \item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in
 Model names (ex. AUC10, AUCmtp, OR10, ORmtp)}

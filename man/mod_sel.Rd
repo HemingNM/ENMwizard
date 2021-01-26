@@ -6,7 +6,7 @@
 \usage{
 mod_sel(
   x,
-  mSel = c("AvgAIC", "EBPM", "WAAUC", "ESOR", "LowAIC", "OR", "AUC"),
+  mSel = c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR", "AUC"),
   wAICsum = 0.99,
   dAICc = 2,
   randomseed = FALSE,

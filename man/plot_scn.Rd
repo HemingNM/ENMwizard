@@ -7,11 +7,12 @@
 plot_scn(
   m,
   mtp,
-  ref.scn = "current",
+  ref.scn = "ncurrent",
   basemap,
   thrshld.path,
   thrshld.nms.mod,
   save,
+  mfrow = c(0, 0),
   msnm,
   msr,
   scnm,
@@ -23,7 +24,8 @@ plot_scn(
 
 \item{mtp}{Stack or brick of thresholded predictions}
 
-\item{ref.scn}{Selected climatic scenario to compare with all others. Usually "current" one.}
+\item{ref.scn}{Selected climatic scenario to compare with all others. Usually "ncurrent".
+any (row or col) is 0, it will draw the layout automatically.}
 
 \item{basemap}{Shapefile to be plotted with. Usually a continent or country shapefile}
 
@@ -32,6 +34,8 @@ plot_scn(
 \item{thrshld.nms.mod}{names of threshold models}
 
 \item{save}{Logical. If TRUE will save plots in pdf.}
+
+\item{mfrow}{Number of rows and cols to draw plot (see ?par for details). If}
 
 \item{msnm}{Character vector. Short names of model selection criteria to be replaced. Same as given in
 Model names (ex. AUC10, AUCmtp, OR10, ORmtp)}
