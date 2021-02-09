@@ -18,7 +18,8 @@ calib_mdl_b(
   responsecurves = TRUE,
   arg1 = "noaddsamplestobackground",
   arg2 = "noautofeature",
-  numCores = 1
+  numCores = 1,
+  parallelTunning = TRUE
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ function. Some other arguments do not apply at all to the R implementation. An e
 \item{arg2}{charater. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+
+\item{parallelTunning}{Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)}
 }
 \value{
 A 'mcm.l' object. A list of 'mcm' (calib.mdls, Maxent Calibrated Models), returned from function "calib_mdl"

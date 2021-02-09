@@ -364,9 +364,9 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
                          mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, randomseed = FALSE,
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
-                         numCores = 1){
+                         numCores = 1, parallelTunning = TRUE){
 
-  if(numCores>1){
+  if(numCores>1 & parallelTunning == F){
 
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("calib_mdl","mod_sel"))
@@ -393,7 +393,7 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
 
     parallel::stopCluster(cl)
 
-  } else {
+  } else if(numCores>1 & parallelTunning) {
 
     mxnt.m.p.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                          use.ENMeval.bgpts, format, pred.args,
@@ -406,7 +406,29 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, format = format,
                      pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
                      randomseed = randomseed, responsecurves = responsecurves,
-                     arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning = FALSE)
+                     arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning = TRUE)
+
+      return(resu)
+    }, ENMeval.o.l, a.calib.l, occ.l,
+    use.ENMeval.bgpts, format, pred.args,
+    mSel, wAICsum, dAICc, randomseed, responsecurves,
+    arg1, arg2, numCores)
+
+
+  } else {
+
+    mxnt.m.p.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
+                                                                  use.ENMeval.bgpts, format, pred.args,
+                                                                  mSel, wAICsum, dAICc, randomseed, responsecurves,
+                                                                  arg1, arg2, numCores){
+      cat(c(names(ENMeval.o.l[i]), "\n"))
+      # compute final models and predictions
+      resu <- calib_mdl(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
+                        a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
+                        occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, format = format,
+                        pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
+                        randomseed = randomseed, responsecurves = responsecurves,
+                        arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning = FALSE)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
