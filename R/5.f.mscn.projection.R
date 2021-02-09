@@ -38,7 +38,7 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
   # # mod.nms2 <- gsub(paste0("AIC_", 1:length(xsel.mdls$sel.cri), "." , collapse = "|"), "", mod.nms)
   ens.meth <- c("AIC_", "WAAUC_", "EBPM_", "ESORIC_")
   ens2gsub <- paste0(ens.meth, rep(1:length(xsel.mdls$sel.cri), each= length(ens.meth)), collapse = "|")
-  mod.nms2 <- gsub(ens2gsub, "", mod.nms2)
+  mod.nms2 <- gsub("\\.$", "", gsub(ens2gsub, "", mod.nms2))
   mod.nms2 <- gsub(paste0("\\.{", 1:length(xsel.mdls$sel.cri), "}" , collapse = "|"), ".", mod.nms2)
 
 
