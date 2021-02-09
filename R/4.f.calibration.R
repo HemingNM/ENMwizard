@@ -50,7 +50,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
       wsum <- 1:length(x$w.AIC)
     }
 
-    x$sel.cri[wsum] <- paste0(x$sel.cri[wsum], paste0("AIC_", wsum))
+    x$sel.cri[wsum] <- sub("^\\.", "", paste(x$sel.cri[wsum], paste0("AIC_", wsum), sep = "."))
 
     cat("\n", paste(length(wsum)), "of", nrow(x), "models selected using AIC")# from a total of", "models")
     cat("\n", "Total AIC weight (sum of Ws) of selected models is", round(sum(x$w.AIC[wsum]), 4), "of 1")
