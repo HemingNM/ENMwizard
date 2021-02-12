@@ -89,12 +89,12 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
     mod.cobos[is.na(mod.cobos$avg.pROC.p),"avg.pROC.p"] <- 1
     ESOR.pROC <- mod.cobos$avg.pROC.p<=0.05 & !is.na(mod.cobos$AICc)
     if(sum(ESOR.pROC, na.rm = T)==0) {
-      ESOR.pROC <- mod.cobos$avg.pROC.p == min(mod.cobos$avg.pROC.p[!is.na(mod.cobos$AICc)], na.rm = T)
-      warning("ESORIC: No model with pROC p value <= 0.05. Using model with lowest pROC.p")
+      # ESOR.pROC <- mod.cobos$avg.pROC.p == min(mod.cobos$avg.pROC.p[!is.na(mod.cobos$AICc)], na.rm = T)
+      warning("ESORIC: No model with pROC p value <= 0.05")
     }
     ESOR.or <- mod.cobos$avg.test.or10pct<=0.1 & !is.na(mod.cobos$AICc)
     if(sum(ESOR.or, na.rm = T)==0) {
-      ESOR.or <- mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct[!is.na(mod.cobos$AICc)], na.rm = T)
+      ESOR.or <- (mod.cobos$avg.test.or10pct == min(mod.cobos$avg.test.or10pct[!is.na(mod.cobos$AICc)], na.rm = T)) & !is.na(mod.cobos$AICc)
       warning("ESORIC: No model with OR <= OR criteria. Using model with lowest OR")
     }
     ESOR <- ESOR.pROC & ESOR.or
@@ -105,7 +105,11 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
     delta <- ifelse((mod.cobos$AICc - min(mod.cobos$AICc[ESOR], na.rm = T)<0), NA, (mod.cobos$AICc - min(mod.cobos$AICc[ESOR], na.rm = T)))
     ESOR <- which(delta<=dAICc & delta>=0 & ESOR)
     ESOR <- ESOR[order(delta[ESOR])]
-    x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESORIC_", 1:length(ESOR)), sep = "."))
+    if(length(ESOR)==0){
+      warning("ESORIC: No model match ESORIC criteria.")
+    } else {
+      x$sel.cri[ESOR] <- sub("^\\.", "", paste(x$sel.cri[ESOR], paste0("ESORIC_", 1:length(ESOR)), sep = "."))
+    }
   }
 
   # # Mean ALL - Marmion et al 2009
@@ -253,6 +257,11 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
   mdls.keep <- xsel.mdls$sel.cri!=""
   xsel.mdls <- xsel.mdls[mdls.keep,]
   args.all <- mdl.arg[[1]][mdls.keep]
+
+  ## test if any model met model selection criteria
+  if(("ESORIC" %in% mSel) & sum(grepl("ESORIC", xsel.mdls$sel.cri))==0){
+    mSel <- mSel[!grepl("ESORIC", mSel)]
+  }
 
   # exportar planilha de resultados
   utils::write.csv(ENMeval.r, paste0(path.mdls,"/sel.mdls.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))

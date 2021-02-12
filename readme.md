@@ -2,7 +2,7 @@ ENMwizard
 ======================
 ### Advanced Tecniques for Ecological Niche Modeling Made Easy
 
-This package provides tools to facilitate the use of advanced techiques related to Ecological Niche Modeling (ENM) and the automation of repetitive tasks (when modeling several species). This package has functions for easier: 1. preparation of occurrence and environmental data; 2. model tunning (thanks to the package ENMeval); 3. model fitting and projection. Tunning and projection can be peformed using a single or multiple cores to speed up processing for multiple species. ENMwizard also implements AICc Model Averaging for MaxEnt models (Gutierrez & Heming, 2018, https://arxiv.org/abs/1807.04346).
+This package provides tools to facilitate the use of advanced techniques related to ecological niche modeling (ENM) and the automation of the workflow for modeling multiple species. ENMwizard allows easier: 1. preparation of occurrence and environmental data (selection of environmental variables, selection of calibration and projection areas); 2. model tunning (thanks to the package ENMeval); 3. model selection and projection. Computationally intensive tasks can be performed using a single or multiple cores to speed up processing. ENMwizard also implements AICc Model Averaging for MaxEnt models (Gutierrez & Heming, 2018, https://arxiv.org/abs/1807.04346).
 
 -----
 
