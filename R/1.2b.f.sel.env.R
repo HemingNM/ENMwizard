@@ -25,24 +25,19 @@ correlated <- function(corr.mat, cutoff=0.9, names=F){
   kept <- names(ncorr[ncorr==1])
   rmv <- character(0)
   ncorr <- ncorr[ncorr!=1]
+  tcorr <- sort(rowSums(corr.mat[names(ncorr),names(ncorr)]), decreasing = T)
 
-  for(i in names(ncorr)){
-    if(i %in% c(rmv,kept)) next
+  for(i in names(tcorr)){
+    # if(i %in% c(rmv,kept)) next
     col.check <- rownames(corr.mat)[!(rownames(corr.mat) %in% c(rmv,kept))]
-
     tosum <- xcut[col.check, col.check[xcut[col.check,i]] ]
     if(is.null(nrow(tosum))) next
     group <- rowSums(tosum)>0
     group <- names(group[group])
-    if(length(group)>2){
-      avg.wtin.corr <- (rowSums(corr.mat[group,group])-1)/(length(group)-1)
-      rmv <- c(rmv, names(which.max(avg.wtin.corr)))
-    } else {
-      avg.wtin.corr <- (rowSums(corr.mat[group,])-1)/(length(group)-1)
-      rmv <- c(rmv, names(which.max(avg.wtin.corr)))
-    }
+    avg.wtin.corr <- (rowSums(corr.mat[group,])-1)/(length(group)-1)
+    rmv <- c(rmv, names(which.max(avg.wtin.corr)))
   }
-  # kept <- sort(c(kept, names(ncorr)[!(names(ncorr) %in% rmv)]))
+  # kept <- sort(unique(c(kept, names(ncorr)[!(names(ncorr) %in% rmv)])))
   index <- which(row.names(corr.mat) %in% rmv)
   if(names){
     return(row.names(corr.mat)[index])
@@ -50,7 +45,6 @@ correlated <- function(corr.mat, cutoff=0.9, names=F){
     return(index)
   }
 }
-
 
 #' Find, optionally remove, highly correlated variables from a raster brick/stack
 #'
