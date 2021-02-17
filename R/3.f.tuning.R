@@ -37,22 +37,40 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
                               rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
                               progbar = TRUE, updateProgress = FALSE,
                               resultsOnly = F, ...){
+  test.args <- function(x, y, obj=""){
+    if(!is.null(x)) {
+      if(length(x)==1){
+        x <- rep(x, length(y))
+        names(x) <- names(y)
+        # } else if(){
+        #   stop("length of objects: a.calib.l, bg.coords.l, occ.grp.l, and bg.grp.l must
+        #        be 1 or the same length of occ.l")
+      } else if(length(x)!=length(y) | all.equal(names(x), names(y))==F){
+        stop(paste0("When not null, object: ", obj, "
+            must have 'length=1' or equal length and names of occ.l")) # a.calib.l, bg.coords.l, occ.grp.l, and bg.grp.l
+      }
+    }
+    return(x)
+  }
+  a.calib.l <- test.args(a.calib.l, occ.l, "a.calib.l")
+  bg.coords.l <- test.args(bg.coords.l, occ.l, "bg.coords.l")
+  occ.grp.l <- test.args(occ.grp.l, occ.l, "occ.grp.l")
+  bg.grp.l <- test.args(bg.grp.l, occ.l, "bg.grp.l")
+  method <- test.args(method, occ.l, "bg.grp.l")
 
-  if(is.null(bg.coords.l)) bg.coords.l <- vector("list", length(occ.l))
-  if(length(bg.coords.l)!=length(occ.l)){ stop("bg.coords.l must contain one dataset of 'bg.coords' for each species")}
   ENMeval.res <- vector("list", length(occ.l))
   names(ENMeval.res) <- names(occ.l)
 
   if(resultsOnly){
-    for(i in 1:length(occ.l)){
+    for(i in names(occ.l)){
       cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
-      ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
+      ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                    occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
-                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
+                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
                                    algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
-                                   progbar = progbar, updateProgress = updateProgress)
+                                   progbar = progbar, updateProgress = updateProgress))
       # ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
       #                         results = eval@results,
       #                         occ.pts = eval@occ.pts,
@@ -62,13 +80,13 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
     }
   } else {
       for(i in 1:length(occ.l)){
-        ENMeval.res[[i]] <- ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
+        ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                                  occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
-                                                 fc = fc, categoricals = categoricals, n.bg = n.bg, method = method,
+                                                 fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
                                                  algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                                  kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                                  rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
-                                                 progbar = progbar, updateProgress = updateProgress)
+                                                 progbar = progbar, updateProgress = updateProgress))
       }
     }
   return(ENMeval.res)
