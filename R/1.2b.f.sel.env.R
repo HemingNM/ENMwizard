@@ -163,12 +163,12 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
     corr.mat2 <- corr.mat/base::max(base::abs(corr.mat))
     diag(corr.mat2) <- 1
     dist_matrix <- stats::as.dist(1 - base::abs(corr.mat2))
-    hcd <- stats::hclust(dist_matrix)
+    hcd <- stats::hclust(dist_matrix, method = "mcquitty") # mcquitty
     lab.col <- ifelse(rownames(corr.mat) %in% sel.nms, "black", "gray30")
     lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
-    myplclust(hcd, hang=-.1, axes=F, xlab = "Variables",
-              lab.col = lab.col, lab.face=lab.face, ylab = "Absolute correlation")
-
+    myplclust(hcd, hang=-.1, axes=F, xlab = "Variables", main=sp.nm,
+              lab.col = lab.col, lab.face=lab.face , ylab = "Correlation")
+    mtext("Cluster dendrogram", line=2.6)
     # # dist_matrix <- stats::dist(corr.mat)
     # dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
     # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
@@ -188,11 +188,11 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
     # # graphics::plot(dend, main=sp.nm, ylab = "1 - absolute correlation", xlab = "", sub = "")
     # graphics::plot(dend, main=sp.nm, axes=F, ylab = "Absolute correlation", xlab = "", sub = "")
     graphics::abline(h = 1 - cutoff, col = "firebrick", lwd=1.5)
-    graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2)), ylab = "Absolute correlation")
     graphics::legend("topright", horiz=F, # title="Variables:",
                      legend=c("selected vars","removed vars", "cutoff"), text.col=c("black", "gray30", "firebrick"), text.font=c(2, 1,1),
                      col=c(NA, NA, "firebrick"), lty=c(0,0,1), lwd=1.5, seg.len = 1,
                      xpd=T, cex=.7)
+    graphics::axis(2, at = seq(0,1,.2), labels=rev(seq(0,1,.2))) #, ylab = "1-abs(correlation)")
   }
 
   ### return names of selected variables only
