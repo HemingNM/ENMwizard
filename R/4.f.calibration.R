@@ -74,7 +74,9 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
   # Lowest average omission rate (OR) and, subsequently, the highest average AUCevaluation
   if("EBPM" %in% mSel){
     xORm <- order(x$avg.test.orMTP, -x$avg.test.AUC) # order(-x$avg.test.AUC, x$avg.test.orMTP)
-    EBPM <- xORm[ifelse(round(length(xORm)*.1)==0, 1, 1:round(length(xORm)*.1))]
+    xORi <- 1:(round(length(xORm)*.1))
+    xORi <- xORi[xORi>0]
+    EBPM <- xORm[xORi] # [ifelse(round(length(xORm)*.1)==0, 1, 1:round(length(xORm)*.1))]
     # if(length(EBPM)==1){
     #   print("only one model selected, Not performing EBPM")
     # } else {
