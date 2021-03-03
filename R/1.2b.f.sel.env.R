@@ -168,7 +168,7 @@ select_vars <- function(env = NULL, cutoff = .9, corr.mat = NULL, sample.size = 
     lab.face <- ifelse(rownames(corr.mat) %in% sel.nms, 2, 1)
     myplclust(hcd, hang=-.1, axes=F, xlab = "Variables", main=sp.nm,
               lab.col = lab.col, lab.face=lab.face , ylab = "Correlation")
-    mtext("Cluster dendrogram", line=2.6)
+    graphics::mtext("Cluster dendrogram", line=2.6)
     # # dist_matrix <- stats::dist(corr.mat)
     # dist_matrix <- stats::as.dist(1 - base::abs(corr.mat))
     # dend <- stats::as.dendrogram(stats::hclust(dist_matrix)) # as.dendrogram
