@@ -7,7 +7,7 @@
 raster_overlap_b(mcmp.l, scn.nm = "current", model.compare = 1)
 }
 \arguments{
-\item{mcmp.l}{Object returned by "proj_mdl_b", containing a list of calibrated models
+\item{mcmp.l}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
 and model projections for each species.}
 
 \item{scn.nm}{name of climatic scenarios to compute overlap.}

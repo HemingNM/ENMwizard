@@ -4,19 +4,11 @@
 \alias{thrshld}
 \title{Apply threshold for MaxEnt projections of a species}
 \usage{
-thrshld(
-  mcmp,
-  scn.nm = "",
-  thrshld.i = 4:6,
-  path.mdls = NULL,
-  sp.nm = "species"
-)
+thrshld(mcmp, thrshld.i = 4:6, sp.nm = "species", numCores = 1)
 }
 \arguments{
 \item{mcmp}{Species "i" of a object returned by "proj_mdl_b", containing a list of
 calibrated models and model projections for each species}
-
-\item{scn.nm}{Name of climatic scenario to be looked for}
 
 \item{thrshld.i}{List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
 1. Fixed.cumulative.value.1 (fcv1);
@@ -29,9 +21,11 @@ calibrated models and model projections for each species}
 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).}
 
-\item{path.mdls}{Path where thresholded rasters will be saved}
-
 \item{sp.nm}{Species name. Used to name the output folder}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+
+\item{scn.nm}{Name of climatic scenario to be looked for}
 }
 \value{
 Stack or brick of thresholded predictions

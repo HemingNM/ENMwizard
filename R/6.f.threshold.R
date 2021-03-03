@@ -12,7 +12,7 @@
 #' @param mcmp Species "i" of a object returned by "proj_mdl_b", containing a list of
 #' calibrated models and model projections for each species
 #' @param scn.nm Name of climatic scenario to be looked for
-#' @param path.mdls Path where thresholded rasters will be saved
+# #' @param path.mdls Path where thresholded rasters will be saved
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param thrshld.i List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
 #' 1. Fixed.cumulative.value.1 (fcv1);
@@ -33,20 +33,46 @@
 #' plot(mods.thrshld[[2]][[2]]) # binary
 #' }
 #' @export
-thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm="species") {
-  if(is.null(path.mdls)){
-    path.mdls <- paste("3_out.MaxEnt", paste0("Mdls.",sp.nm), sep = "/")
-  }
-  if(dir.exists(path.mdls)==FALSE) {dir.create(path.mdls)}
+thrshld <- function(mcmp, thrshld.i = 4:6, sp.nm="species", numCores=1) { # path.mdls = NULL,
+  ###- get necessary objects
   mxnt.mdls <- mcmp[["mxnt.mdls"]]
-
-  #### TODO use the "slot" to find and loop through predictions
-  ##  check here
-  pred.r <- mcmp$mxnt.preds[[scn.nm]] # mcmp[[match(pred.nm, names(mcmp))]] # , fixed=TRUE # [pred.i]
-  mod.sel.crit <- names(pred.r)
   pred.args <- mcmp$pred.args
-  mod.nms  <- mcmp[["selected.mdls"]]$sel.cri
+  mod.nms <- mcmp[["selected.mdls"]]$sel.cri # gsub("Mod.", "", names(mcmp[["mxnt.preds"]][[1]]))
+  names(mod.nms) <- apply(mcmp[["selected.mdls"]][,c("rm", "features")], 1,
+                          function(x){
+                            paste0("Mod_", paste(x, collapse = "_"))
+                          })
+  # mod.nms  <- names(mcmp$mxnt.mdls)
+  outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
+                  ifelse(grep("logistic", pred.args)==1, 'logistic',
+                         ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
 
+  ###- define and create output path
+  path.mdls <- paste("3_out.MaxEnt", paste0("Mdls.",sp.nm), sep = "/")
+  thrshld.path <- paste(path.mdls, outpt, "Mdls.thrshld", sep='/')
+  if(dir.exists(thrshld.path)==FALSE) {dir.create(thrshld.path, recursive = T)}
+
+  ###- get threshold name from maxent output
+  # thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
+  thrshld.nms <- tnm[thrshld.i]
+  thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl(outpt, rownames(mxnt.mdls[[1]]@results), ignore.case = T) & # TODO use "outpt" variable
+                                                     grepl("threshold", rownames(mxnt.mdls[[1]]@results))][thrshld.i]
+
+  ###- extract threshold values from selected models and criteria
+  thrshld.crit.v <- as.data.frame(matrix(data=sapply(thrshld.crit,
+                                                     function(y){
+                                                       sapply(mxnt.mdls[names(mod.nms)],
+                                                              function(x){
+                                                                x@results[rownames(x@results) == y]
+                                                              }) }),
+                                         ncol = length(thrshld.i)))
+  colnames(thrshld.crit.v) <- thrshld.nms
+  rownames(thrshld.crit.v) <- mod.nms
+  # thrshld.crit.v
+
+  ####- Ensemble models
+  ###- get threshold values of individual models
+  mod.sel.crit <- mcmp$mSel #names(pred.r)
   if(sum(grepl("AvgAIC", mod.sel.crit))>0) {
     wv.aic <- mcmp[["selected.mdls"]][grep("AIC_", mcmp[["selected.mdls"]]$sel.cri),"w.AIC"]
   }
@@ -60,28 +86,7 @@ thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm=
     wv.es <- rep(1, length(grep("ESORIC_", mcmp[["selected.mdls"]]$sel.cri)))
   }
 
-  outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
-                  ifelse(grep("logistic", pred.args)==1, 'logistic',
-                         ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
-
-  thrshld.path <- paste(path.mdls, outpt, "Mdls.thrshld", sep='/')
-
-  if(dir.exists(thrshld.path)==FALSE) {dir.create(thrshld.path)}
-
-  # thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
-  thrshld.nms <- tnm[thrshld.i]
-  thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl("Cloglog", rownames(mxnt.mdls[[1]]@results)) & # TODO use "outpt" variable
-                                                     grepl("threshold", rownames(mxnt.mdls[[1]]@results))][thrshld.i]
-
-  ## extract values of threshold from each model and criteria # sapply(mxnt.mdls[1:length(args)]
-  thrshld.crit.v <- as.data.frame(matrix(data=sapply(thrshld.crit, function(y) sapply(mxnt.mdls[1:length(mxnt.mdls)], function(x) x@results[rownames(x@results) == y]) ),
-                                         ncol = length(thrshld.i)))
-  colnames(thrshld.crit.v) <- thrshld.nms
-  rownames(thrshld.crit.v) <- mod.nms
-  thrshld.crit.v
-
-
-
+  ###- compute threshold values of ensemble models using individual models
   thrshld.mod.crt <- rbind(
     if(sum(grepl("AIC_", mod.nms))>1){
       matrix(apply(data.frame(thrshld.crit.v[grep("AIC_", mcmp[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
@@ -105,53 +110,92 @@ thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm=
     } ,
     thrshld.crit.v)
 
-  ### subset thrshld.mod.crt
+  ###- remove individual models used to build ensemble
   s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC$", "^EBPM$", "^WAAUC$", "^ESORIC$")
   thrshld.mod.crt <- subset(thrshld.mod.crt, grepl(paste0(s.nms, collapse = "|"), rownames(thrshld.mod.crt)))
 
-  brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
-  brick.nms.t.b <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms, ".b")
+  ###- get projections to apply thresholds
+  # TODO - choose between consensus, mxnt.preds, or both
+  scn.nms <- c(names(mcmp$mxnt.preds), names(mcmp$scn.consensus))
 
+  ###- workhorse function
+  fthr <- function(j, scn.nms, mcmp, thrshld.i, sp.nm,
+                   # thrshld.crit,
+                   mod.sel.crit, thrshld.path, thrshld.mod.crt){
+    scn.nm <- scn.nms[j]
+    if(j <= length(mcmp$mxnt.preds)){
+      pred.r <- mcmp$mxnt.preds[[scn.nm]] # mcmp[[match(pred.nm, names(mcmp))]] # , fixed=TRUE # [pred.i]
+    } else {
+      pred.r <- mcmp$scn.consensus[[scn.nm]]
+    }
 
-  mt.lst <- vector("list", length = length(thrshld.nms))
-  names(mt.lst) <- thrshld.nms
-  mt <- list(continuous=mt.lst, binary=mt.lst)
+    thrshld.nms <- colnames(thrshld.mod.crt)
+    brick.nms.t <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms)
+    brick.nms.t.b <- paste0("mxnt.pred.", scn.nm, ".", thrshld.nms, ".b")
 
-  lapply(base::seq_along(thrshld.crit),
-         function(t, mod.sel.crit, scn.nm, thrshld.nms, thrshld.path, thrshld.mod.crt,
-                  pred.r, brick.nms.t, brick.nms.t.b, mt){
+    mt.lst <- vector("list", length = length(thrshld.nms))
+    names(mt.lst) <- thrshld.nms
+    mt <- list(continuous=mt.lst, binary=mt.lst)
 
+    for(t in base::seq_along(thrshld.nms)){
 
-           mod.sel.crit.t <- paste(paste0(mod.sel.crit, ".", scn.nm), thrshld.nms[t], sep=".")
-           mod.sel.crit.b <- paste(paste0(mod.sel.crit, ".", scn.nm, ".b"), thrshld.nms[t], sep=".")
+      mod.sel.crit.t <- paste(paste0(mod.sel.crit, ".", scn.nm), thrshld.nms[t], sep=".")
+      mod.sel.crit.b <- paste(paste0(mod.sel.crit, ".", scn.nm, ".b"), thrshld.nms[t], sep=".")
 
-           pred.t <- pred.r
-           pred.t <- raster::stack(lapply(seq_along(mod.sel.crit), function(m, pred.t, thrshld.mod.crt, t) {
-             pred.t[[m]][pred.t[[m]] < thrshld.mod.crt[m,t]] <- 0
-             return(pred.t[[m]])
-           }, pred.t, thrshld.mod.crt, t))
+      pred.t <- pred.r
+      pred.t <- raster::stack(lapply(mod.sel.crit, # seq_along(mod.sel.crit)
+                                     function(m, pred.t, thrshld.mod.crt, t) {
+                                       mp <- grep(m, names(pred.t))
+                                       mt <- grep(m, rownames(thrshld.mod.crt))
+                                       pred.t[[mp]][pred.t[[mp]] < thrshld.mod.crt[mt,t]] <- 0
+                                       return(pred.t[[mp]])
+                                     }, pred.t, thrshld.mod.crt, t))
 
-           names(pred.t) <- mod.sel.crit.t
+      names(pred.t) <- mod.sel.crit.t
 
-           mt$continuous[[thrshld.nms[t]]] <<- raster::writeRaster(x = pred.t,
-                                                                   filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
-                                                                   format = "raster", overwrite = T) #)
+      mt$continuous[[thrshld.nms[t]]] <- raster::writeRaster(x = pred.t,
+                                                             filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".grd"), sep='/'),
+                                                             format = "raster", overwrite = T) #)
 
-           # create presence only raster
-           pred.t <- raster::stack(lapply(seq_along(mod.sel.crit), function(m) {
-             pred.t[[m]][pred.t[[m]] >= thrshld.mod.crt[m,t]] <- 1
-             return(pred.t[[m]])
-           }))
-           mt$binary[[thrshld.nms[t]]] <<- raster::writeRaster(x = pred.t,
-                                                               filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".b", ".grd"), sep='/'),
-                                                               format = "raster", overwrite = T)
+      # create presence only raster
+      pred.t <- raster::stack(lapply(mod.sel.crit, # seq_along(mod.sel.crit)
+                                     function(m) {
+                                       mp <- grep(m, names(pred.t))
+                                       mt <- grep(m, rownames(thrshld.mod.crt))
+                                       pred.t[[mp]][pred.t[[mp]] >= thrshld.mod.crt[mt,t]] <- 1
+                                       return(pred.t[[mp]])
+      }))
+      mt$binary[[thrshld.nms[t]]] <- raster::writeRaster(x = pred.t,
+                                                         filename = paste(thrshld.path, paste0("mxnt.pred", gsub(".mxnt.pred","", paste0(".",scn.nm)), ".", thrshld.nms[t], ".b", ".grd"), sep='/'),
+                                                         format = "raster", overwrite = T)
+    }
+    return(mt)
+  }
 
-           return(thrshld.nms[t])
+  ###- raster computation
+  {
+    if(numCores>1){
+      cl <- parallel::makeCluster(numCores)
+      parallel::clusterExport(cl, list("thrshld")) # , "scn.nms"
 
-         }, mod.sel.crit, scn.nm, thrshld.nms, thrshld.path, thrshld.mod.crt,
-         pred.r, brick.nms.t, brick.nms.t.b, mt)
+      mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms), # scn.nms
+                                                 fthr,
+                                                 scn.nms, mcmp, thrshld.i, sp.nm,
+                                                 # thrshld.crit,
+                                                 mod.sel.crit, thrshld.path, thrshld.mod.crt)
+      parallel::stopCluster(cl)
 
-  return(mt)
+    } else {
+      mods.thrshld.spi <- lapply(base::seq_along(scn.nms), # scn.nms
+                                 fthr,
+                                 scn.nms, mcmp, thrshld.i, sp.nm,
+                                 # thrshld.crit,
+                                 mod.sel.crit, thrshld.path, thrshld.mod.crt)
+    }
+    names(mods.thrshld.spi) <- scn.nms
+  }
+  return(mods.thrshld.spi)
+  # return(mt)
 }
 
 
@@ -162,7 +206,7 @@ thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm=
 #' and save on the folder "3_out.MaxEnt/Mdls.[species name]/Mdls.thrshld". For each projection (species and climatic
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
-#' @param mcmp.l Object returned by "proj_mdl_b", containing a list of calibrated models
+#' @param mcmp.l Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
 #' and model projections for each species.
 #' @inheritParams thrshld
 #' @inheritParams calib_mdl
@@ -174,45 +218,14 @@ thrshld <- function(mcmp, scn.nm = "", thrshld.i = 4:6, path.mdls = NULL, sp.nm=
 #' }
 #' @export
 thrshld_b <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
-  path.res <- "3_out.MaxEnt"
-  if(dir.exists(path.res)==FALSE) dir.create(path.res)
-  path.sp.m <- paste0("Mdls.", names(mcmp.l))
-  path.mdls <- paste(path.res, path.sp.m, sep="/")
-
   # thrshld for each species
   mods.thrshld <- vector("list", length(mcmp.l))
   names(mods.thrshld) <- names(mcmp.l)
-
-  for(i in base::seq_along(mcmp.l)){ # species i
-    path.mdls.i <- path.mdls[i]
-    if(dir.exists(path.mdls.i)==FALSE) dir.create(path.mdls.i)
-    mcmp <- mcmp.l[[i]]
-    scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
-
-    if(numCores>1){
-      cl <- parallel::makeCluster(numCores)
-      parallel::clusterExport(cl, list("thrshld"))
-
-      mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms),
-                                                 function(j, mcmp, scn.nms, thrshld.i, path.mdls.i){
-
-                                                   resu <- thrshld(mcmp, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
-                                                   return(resu)
-
-                                                 }, mcmp, scn.nms, thrshld.i, path.mdls.i)
-      parallel::stopCluster(cl)
-
-    }else{
-      mods.thrshld.spi <- lapply(base::seq_along(scn.nms),
-                                 function(j, mcmp, scn.nms, thrshld.i, path.mdls.i){
-
-                                   resu <- thrshld(mcmp, scn.nm = scn.nms[j], thrshld.i, path.mdls = path.mdls.i)
-                                   return(resu)
-
-                                 }, mcmp, scn.nms, thrshld.i, path.mdls.i)
-    }
+  for(i in names(mcmp.l)){ # species i
+    scn.nms <- c(names(mcmp.l[[i]]$mxnt.preds), names(mcmp.l[[i]]$scn.consensus)) # # scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
+    mods.thrshld.spi <- thrshld(mcmp.l[[i]], thrshld.i, sp.nm = i, numCores) # sp.nm = names(mcmp.l)[i]
     names(mods.thrshld.spi) <- scn.nms
-    mods.thrshld[[i]] <- append(mods.thrshld[[i]], mods.thrshld.spi)
+    mods.thrshld[[i]] <- mods.thrshld.spi
   }
   return(mods.thrshld)
 }

@@ -7,7 +7,7 @@
 get_cont_permimport_b(mcmp.l)
 }
 \arguments{
-\item{mcmp.l}{Object returned by "proj_mdl_b", containing a list of calibrated models
+\item{mcmp.l}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
 and model projections for each species.}
 }
 \value{

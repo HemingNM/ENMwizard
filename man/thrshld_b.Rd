@@ -7,7 +7,7 @@
 thrshld_b(mcmp.l, thrshld.i = 4:6, numCores = 1)
 }
 \arguments{
-\item{mcmp.l}{Object returned by "proj_mdl_b", containing a list of calibrated models
+\item{mcmp.l}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
 and model projections for each species.}
 
 \item{thrshld.i}{List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
