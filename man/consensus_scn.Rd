@@ -17,10 +17,10 @@ A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},
  containing the consensual projections for each element (species) of the list
 }
 \description{
-This function creates consensual projections of climatic scenarios 
-(e.g. GCMs, RCPs, SSPs). 
-User need to supply a 'mcmp' object (returned by \code{\link{proj_mdl}}), 
-and a list containing names for grouping projections. 
+This function creates consensual projections of climatic scenarios
+(e.g. GCMs, RCPs, SSPs).
+User need to supply a 'mcmp' object (returned by \code{\link{proj_mdl}}),
+and a list containing names for grouping projections.
 Projections will be grouped by matching names in the list of projections
 }
 \seealso{
