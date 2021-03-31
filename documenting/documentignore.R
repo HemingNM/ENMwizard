@@ -5,6 +5,7 @@ library(devtools)
 ## Wickham 2015 R packages (pg 98) Documenting package
 # ?devtools::use_package()
 # devtools::create()
+usethis::git_vaccinate()
 usethis::use_build_ignore(c("documenting", "parallel.md", "readme.md"))
 devtools::document()
 devtools::check()
