@@ -2,7 +2,6 @@
 library(devtools)
 # devtools::use_testthat()
 # devtools::use_vignette("introduction")
-# senha Git: GT!he36
 ## Wickham 2015 R packages (pg 98) Documenting package
 # ?devtools::use_package()
 # devtools::create()
