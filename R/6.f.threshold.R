@@ -24,6 +24,8 @@
 #' 7. Maximum.training.sensitivity.plus.specificity (mtss);
 #' 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 #' 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).
+#' @param t.all logical. Should threshold be applied on individual and consensus projections?
+#' Default is FALSE. Ignored if consensus projections are not found.
 #' @seealso \code{\link{thrshld_b}}
 #' @return Stack or brick of thresholded predictions
 #' @examples
@@ -33,7 +35,7 @@
 #' plot(mods.thrshld[[2]][[2]]) # binary
 #' }
 #' @export
-thrshld <- function(mcmp, thrshld.i = 4:6, sp.nm="species", numCores=1) { # path.mdls = NULL,
+thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", numCores = 1) { # path.mdls = NULL,
   ###- get necessary objects
   mxnt.mdls <- mcmp[["mxnt.mdls"]]
   pred.args <- mcmp$pred.args
@@ -115,18 +117,36 @@ thrshld <- function(mcmp, thrshld.i = 4:6, sp.nm="species", numCores=1) { # path
   thrshld.mod.crt <- subset(thrshld.mod.crt, grepl(paste0(s.nms, collapse = "|"), rownames(thrshld.mod.crt)))
 
   ###- get projections to apply thresholds
-  # TODO - choose between consensus, mxnt.preds, or both
-  scn.nms <- c(names(mcmp$mxnt.preds), names(mcmp$scn.consensus))
+  # choose between consensus, mxnt.preds, or both
+  if(!is.null(mcmp$scn.consensus)){
+    if(t.all){ # individual and consensus projections
+      scn.nms <- c(names(mcmp$mxnt.preds), names(mcmp$scn.consensus))
+    } else { # consensus projections only
+      scn.nms <- names(mcmp$scn.consensus)
+    }
+  } else { # individual projections only
+    scn.nms <- names(mcmp$mxnt.preds)
+  }
 
   ###- workhorse function
-  fthr <- function(j, scn.nms, mcmp, thrshld.i, sp.nm,
+  fthr <- function(j, scn.nms, mcmp, thrshld.i, t.all, sp.nm,
                    # thrshld.crit,
                    mod.sel.crit, thrshld.path, thrshld.mod.crt){
     scn.nm <- scn.nms[j]
-    if(j <= length(mcmp$mxnt.preds)){
-      pred.r <- mcmp$mxnt.preds[[scn.nm]] # mcmp[[match(pred.nm, names(mcmp))]] # , fixed=TRUE # [pred.i]
-    } else {
-      pred.r <- mcmp$scn.consensus[[scn.nm]]
+
+    # choose between consensus, mxnt.preds, or both
+    if(!is.null(mcmp$scn.consensus)){
+      if(t.all){ # individual and consensus projections
+        if(j <= length(mcmp$mxnt.preds)){
+          pred.r <- mcmp$mxnt.preds[[scn.nm]] # mcmp[[match(pred.nm, names(mcmp))]] # , fixed=TRUE # [pred.i]
+        } else {
+          pred.r <- mcmp$scn.consensus[[scn.nm]]
+        }
+      } else { # consensus projections only
+        pred.r <- mcmp$scn.consensus[[scn.nm]]
+      }
+    } else { # individual projections only
+      pred.r <- mcmp$mxnt.preds[[scn.nm]]
     }
 
     thrshld.nms <- colnames(thrshld.mod.crt)
@@ -180,7 +200,7 @@ thrshld <- function(mcmp, thrshld.i = 4:6, sp.nm="species", numCores=1) { # path
 
       mods.thrshld.spi <- parallel::clusterApply(cl, base::seq_along(scn.nms), # scn.nms
                                                  fthr,
-                                                 scn.nms, mcmp, thrshld.i, sp.nm,
+                                                 scn.nms, mcmp, thrshld.i, t.all, sp.nm,
                                                  # thrshld.crit,
                                                  mod.sel.crit, thrshld.path, thrshld.mod.crt)
       parallel::stopCluster(cl)
@@ -188,7 +208,7 @@ thrshld <- function(mcmp, thrshld.i = 4:6, sp.nm="species", numCores=1) { # path
     } else {
       mods.thrshld.spi <- lapply(base::seq_along(scn.nms), # scn.nms
                                  fthr,
-                                 scn.nms, mcmp, thrshld.i, sp.nm,
+                                 scn.nms, mcmp, thrshld.i, t.all, sp.nm,
                                  # thrshld.crit,
                                  mod.sel.crit, thrshld.path, thrshld.mod.crt)
     }
@@ -217,13 +237,13 @@ thrshld <- function(mcmp, thrshld.i = 4:6, sp.nm="species", numCores=1) { # path
 #' mods.thrshld.lst <- thrshld_b(mcmp.l=mxnt.mdls.preds.cf)
 #' }
 #' @export
-thrshld_b <- function(mcmp.l, thrshld.i = 4:6, numCores = 1) {
+thrshld_b <- function(mcmp.l, thrshld.i = 4:6, t.all = FALSE, numCores = 1) {
   # thrshld for each species
   mods.thrshld <- vector("list", length(mcmp.l))
   names(mods.thrshld) <- names(mcmp.l)
   for(i in names(mcmp.l)){ # species i
     scn.nms <- c(names(mcmp.l[[i]]$mxnt.preds), names(mcmp.l[[i]]$scn.consensus)) # # scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
-    mods.thrshld.spi <- thrshld(mcmp.l[[i]], thrshld.i, sp.nm = i, numCores) # sp.nm = names(mcmp.l)[i]
+    mods.thrshld.spi <- thrshld(mcmp.l[[i]], thrshld.i, t.all = t.all, sp.nm = i, numCores) # sp.nm = names(mcmp.l)[i]
     names(mods.thrshld.spi) <- scn.nms
     mods.thrshld[[i]] <- mods.thrshld.spi
   }
