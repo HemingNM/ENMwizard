@@ -232,6 +232,8 @@ consensus_gr(groups, clim.scn.nms)
 ## here we do compute the consensual projections
 mxnt.mdls.preds.cf <- consensus_scn_b(mcmp.l=mxnt.mdls.preds.cf, groups = list(yr, rcp))
 
+
+####
 ## just in case you have multiple GCMs by year and RCP, this is an example 
 ## that return more groups
 
