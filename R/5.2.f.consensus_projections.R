@@ -6,8 +6,9 @@
 #' This function creates consensual projections of climatic scenarios
 #' (e.g. GCMs, RCPs, SSPs).
 #' User need to supply a 'mcmp' object (returned by \code{\link{proj_mdl}}),
-#' and a list containing names for grouping projections.
-#' Projections will be grouped by matching names in the list of projections
+#' and a list containing vectors of names for grouping projections.
+#' Projections will be grouped by matching the character vectors in the list
+#' against projection names
 #'
 #' @param ref Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
 #' and model projections for each species.
@@ -100,8 +101,9 @@ consensus_scn <- function(mcm, groups, ref=NULL, sp.nm="species", save=T){
 #' This function creates consensual projections of climatic scenarios
 #' (e.g. GCMs, RCPs, SSPs) for multiple species.
 #' User need to supply a 'mcmp.l' object (returned by \code{\link{proj_mdl_b}}),
-#' and a list containing names for grouping projections.
-#' Projections will be grouped by matching names in the list of projections
+#' and a list containing vectors of names for grouping projections.
+#' Projections will be grouped by matching the character vectors in the list
+#' against projection names
 #'
 #' @inheritParams consensus_scn
 #' @inheritParams thrshld_b
