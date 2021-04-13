@@ -28,7 +28,8 @@ plot_scn_diff(
 )
 }
 \arguments{
-\item{mcmp}{Species "i" of a object returned by "proj_mdl_b", containing a list of
+\item{mcmp}{An object returned by \code{\link{proj_mdl}}, containing calibrated models and model
+projections for each species; or species "i" of a object returned by "proj_mdl_b", containing a list of
 calibrated models and model projections for each species}
 
 \item{mtp}{Stack or brick of thresholded predictions}

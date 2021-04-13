@@ -1,5 +1,62 @@
 
 ### ensemble GCMs
+#' Group climate scenarios for consensual projections
+#'
+#' This function groups climate scenarios by supplied groups (e.g. GCMs,
+#' RCPs, SSPs) for consensual projections.
+#' User need to supply a list containing vectors of names for grouping projections
+#' and names of climate scenarios.
+#' Projections will be grouped by matching the character vectors in the list
+#' against projection names
+#'
+#' @param groups list containing vectors of names for grouping projections.
+#' @param clim.scn.nms Vector with names of climate scenarios
+#' @seealso \code{\link{consensus_scn}}, \code{\link{consensus_scn_b}}
+#' @return A data.frame with three columns: climate scenario names, group names,
+#' and group numbers
+#' @examples
+#' \dontrun{
+#' # see projection names
+#' names(mxnt.mdls.preds.cf[[1]]$mxnt.preds)
+#' # vector with projection names
+#' clim.scn.nms <- c("CCSM4.2050.RCP45",  "MIROC.ESM.2050.RCP45", "MPI.ESM.LR.2050.RCP45",
+#'                   "CCSM4.2070.RCP45",  "MIROC.ESM.2070.RCP45", "MPI.ESM.LR.2070.RCP45",
+#'                   "CCSM4.2050.RCP85",  "MIROC.ESM.2050.RCP85", "MPI.ESM.LR.2050.RCP85",
+#'                   "CCSM4.2070.RCP85",  "MIROC.ESM.2070.RCP85", "MPI.ESM.LR.2070.RCP85")
+#' # create two vectors containing grouping codes
+#' yr <- c(2050, 2070)
+#' rcp <- c("RCP45", "RCP85")
+#' # run
+#' consensus_gr(groups = list(yr, rcp), )
+#' }
+#' @export
+consensus_gr <- function(groups, clim.scn.nms){
+  grps <- apply(as.data.frame(expand.grid(groups)), 1,
+                function(x){
+                  g <-  paste0(x, collapse=".")
+                  nbr <- suppressWarnings(as.numeric(substr(g, 1,1)))
+                  if(!is.na(nbr)){
+                    gsub(paste0("^", nbr,"{1}"), paste0("X", nbr), g)
+                  } else {
+                    g
+                  }
+                })
+
+  comb <- apply(as.data.frame(expand.grid(groups)), 1,
+                function(x){
+                  paste0("((.*", paste0(x, collapse=")(.*"), "))")
+                })
+  # create a data frame with groups
+  out <- data.frame(clim.scn=clim.scn.nms, consensus.nm=NA)
+  # levels(out$consensus.nm) <- grps #unique(c(levels(out$consensus.nm), grps))
+  for(i in seq_along(comb)){
+    out[grep(comb[i], clim.scn.nms), 2] <- grps[i]
+  }
+  out$consensus.nm <- factor(out$consensus.nm)
+  out$consensus.group <- as.numeric(out$consensus.nm)
+
+  return(out[order(out$consensus.group),])
+}
 
 #' Create consensual projections of climatic scenarios
 #'
@@ -10,10 +67,12 @@
 #' Projections will be grouped by matching the character vectors in the list
 #' against projection names
 #'
-#' @param ref Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
-#' and model projections for each species.
+#' @param ref Character. Name of reference projection (i.e. the one used for
+#' calibration and that will not be averaged with any other)
+#' @param save Logical. TRUE to save consensual rasters.
 #' @inheritParams thrshld
-#' @seealso \code{\link{consensus_scn_b}}
+#' @inheritParams consensus_gr
+#' @seealso \code{\link{consensus_scn_b}}, \code{\link{consensus_gr}}
 #' @return A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},
 #'  containing the consensual projections for each element (species) of the list
 # #' @examples
@@ -27,73 +86,60 @@
 # #' mxnt.mdls.preds <- consensus_scn(mcmp=mxnt.mdls.preds, groups = list(yr, rcp))
 # #' }
 #' @export
-consensus_scn <- function(mcm, groups, ref=NULL, sp.nm="species", save=T){
-  pred.args <- mcm$pred.args
+consensus_scn <- function(mcmp, groups, ref=NULL, sp.nm="species", save=T){
+  pred.args <- mcmp$pred.args
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
 
-  mdl <- names(mcm$mxnt.preds[[1]])# gsub("Mod.","", )
-  comb <- apply(as.data.frame(expand.grid(groups)), 1,
-                function(x){
-                  paste0("((.*", paste0(x, collapse=")(.*"), "))")
-                })
-  cnssl <- list()
+  mdl <- names(mcmp$mxnt.preds[[1]])# gsub("Mod.","", )
+
+  grps <- consensus_gr(groups, names(mcmp$mxnt.preds)[!names(mcmp$mxnt.preds) %in% ref])
+  comb <- levels(grps$consensus.nm)
+  cnssl <- stats::setNames(vector("list", length(comb)), comb)
   cnssl.sd <- cnssl
   for(lr.nm in comb){
-    c.nm <- gsub("^\\.", "",
-                 gsub("[()]", "",
-                      gsub(")(", ".",
-                           gsub(paste0(ref,"|\\||[.*]"), "", lr.nm), fixed=T))) # c.nm <- gsub("[&]|[*]|[.]|", "", gsub(paste0(ref,"|\\||[.*]"), "", lr.nm))
-    # insert "X" before numbers
-    nbr <- suppressWarnings(as.numeric(substr(c.nm, 1,1)))
-    if(!is.na(nbr)){
-      c.nmx <- gsub(paste0("^", nbr,"{1}"), paste0("X", nbr), c.nm)
-    } else {
-      c.nmx <- c.nm
-    }
-
-    lrs <- grep(lr.nm, names(mcm$mxnt.preds))
+    lrs <- names(mcmp$mxnt.preds) %in% grps[grps$consensus.nm == lr.nm,1] # grep(lr.nm, names(mcmp$mxnt.preds))
     cnss.m <- raster::stack()
     cnss.sd <- cnss.m
     for(m in seq_along(mdl)){
-      stm <- raster::stack(lapply(mcm$mxnt.preds[lrs],
-                          function(r, m){
-                            r[[m]] ##
-                          }, m=m))
-      cnss.m <- raster::stack(cnss.m, base::mean(stm))
+      stm <- raster::stack(lapply(mcmp$mxnt.preds[lrs],
+                                  function(r, m){
+                                    r[[m]] ##
+                                  }, m=m))
+      cnss.m <- raster::stack(cnss.m, raster::calc(stm, base::mean))
       cnss.sd <- raster::stack(cnss.sd, raster::calc(stm, stats::sd))
     } # for mdl
-      names(cnss.m) <- paste0(mdl)
-      names(cnss.sd) <- paste0(mdl, "_", "sd")
+    names(cnss.m) <- paste0(mdl)
+    names(cnss.sd) <- paste0(mdl, "_", "sd")
     if(save){
       dr <- paste0("3_out.MaxEnt/Mdls.", sp.nm, "/", outpt, "/Mdls.consensus")
       if(dir.exists(dr)==F) dir.create(dr, recursive = T)
       cnss.m <- raster::writeRaster(cnss.m,
-                                 paste0(dr, "/scn.consensus_", c.nm, "_mean", ".grd"),
-                                 overwrite=T)
+                                    paste0(dr, "/scn.consensus_", lr.nm, "_mean", ".grd"),
+                                    overwrite=T)
       cnss.sd <- raster::writeRaster(cnss.sd,
-                            paste0(dr, "/scn.consensus_", c.nm, "_sd", ".grd"),
-                            overwrite=T)
-      }
-    cnssl[[c.nmx]] <- cnss.m
-    cnssl.sd[[c.nmx]] <- cnss.sd
+                                     paste0(dr, "/scn.consensus_", lr.nm, "_sd", ".grd"),
+                                     overwrite=T)
+    }
+    cnssl[[lr.nm]] <- cnss.m
+    cnssl.sd[[lr.nm]] <- cnss.sd
   }
 
   if(!is.null(ref)){
-    if(!ref %in% names(mcm$mxnt.preds)){
+    if(!ref %in% names(mcmp$mxnt.preds)){
       warning("'ref' is not among predictions. Insert correct climatic scenario name.")
-      mcm$scn.consensus <- cnssl
+      mcmp$scn.consensus <- cnssl
     } else {
-      ref.l <- list(mcm$mxnt.preds[[ref]])
+      ref.l <- list(mcmp$mxnt.preds[[ref]])
       names(ref.l) <- ref
-      mcm$scn.consensus <- c(ref.l, cnssl)
+      mcmp$scn.consensus <- c(ref.l, cnssl)
     }
   } else {
-    mcm$scn.consensus <- cnssl
+    mcmp$scn.consensus <- cnssl
   }
-  mcm$scn.consensus.sd <- cnssl.sd
-  return(mcm)
+  mcmp$scn.consensus.sd <- cnssl.sd
+  return(mcmp)
 }
 
 #' Create consensual projections of climatic scenarios for multiple species
@@ -107,7 +153,7 @@ consensus_scn <- function(mcm, groups, ref=NULL, sp.nm="species", save=T){
 #'
 #' @inheritParams consensus_scn
 #' @inheritParams thrshld_b
-#' @seealso \code{\link{consensus_scn}}
+#' @seealso \code{\link{consensus_scn}}, \code{\link{consensus_gr}}
 #' @return A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},
 #'  containing the consensual projections for each element (species) of the list
 #' @examples

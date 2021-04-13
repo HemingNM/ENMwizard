@@ -38,6 +38,7 @@ mopi <- function(x, probs, reff){
 #' @param q Quantile. Proportion of closest points in M is to be compared
 #' with G to calculate the MOP. Must be >0 and <=1.
 #' @param min.M.sz Threshold value to be used to compute OR
+#' @param scn.nm Name of the climatic scenario used for saving results
 #' @inheritParams calib_mdl
 #' @inheritParams proj_mdl
 #' @inheritParams thrshld

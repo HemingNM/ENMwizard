@@ -10,8 +10,12 @@ consensus_scn_b(mcmp.l, groups, ref = NULL, save = T)
 \item{mcmp.l}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
 and model projections for each species.}
 
-\item{ref}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
-and model projections for each species.}
+\item{groups}{list containing vectors of names for grouping projections.}
+
+\item{ref}{Character. Name of reference projection (i.e. the one used for
+calibration and that will not be averaged with any other)}
+
+\item{save}{Logical. TRUE to save consensual rasters.}
 }
 \value{
 A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},
@@ -21,8 +25,9 @@ A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},
 This function creates consensual projections of climatic scenarios
 (e.g. GCMs, RCPs, SSPs) for multiple species.
 User need to supply a 'mcmp.l' object (returned by \code{\link{proj_mdl_b}}),
-and a list containing names for grouping projections.
-Projections will be grouped by matching names in the list of projections
+and a list containing vectors of names for grouping projections.
+Projections will be grouped by matching the character vectors in the list
+against projection names
 }
 \examples{
 \dontrun{
@@ -36,5 +41,5 @@ mxnt.mdls.preds.cf <- consensus_scn_b(mcmp.l=mxnt.mdls.preds.cf, groups = list(y
 }
 }
 \seealso{
-\code{\link{consensus_scn}}
+\code{\link{consensus_scn}}, \code{\link{consensus_gr}}
 }

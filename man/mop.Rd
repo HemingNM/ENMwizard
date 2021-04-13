@@ -31,7 +31,7 @@ with G to calculate the MOP. Must be >0 and <=1.}
 
 \item{filename}{Output filename}
 
-\item{scn.nm}{Name of climatic scenario to be looked for}
+\item{scn.nm}{Name of the climatic scenario used for saving results}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 

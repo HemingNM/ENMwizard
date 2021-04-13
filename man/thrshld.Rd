@@ -4,10 +4,11 @@
 \alias{thrshld}
 \title{Apply threshold for MaxEnt projections of a species}
 \usage{
-thrshld(mcmp, thrshld.i = 4:6, sp.nm = "species", numCores = 1)
+thrshld(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", numCores = 1)
 }
 \arguments{
-\item{mcmp}{Species "i" of a object returned by "proj_mdl_b", containing a list of
+\item{mcmp}{An object returned by \code{\link{proj_mdl}}, containing calibrated models and model
+projections for each species; or species "i" of a object returned by "proj_mdl_b", containing a list of
 calibrated models and model projections for each species}
 
 \item{thrshld.i}{List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
@@ -21,11 +22,12 @@ calibrated models and model projections for each species}
 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).}
 
+\item{t.all}{logical. Should threshold be applied on individual and consensus projections?
+Default is FALSE. Ignored if consensus projections are not found.}
+
 \item{sp.nm}{Species name. Used to name the output folder}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
-
-\item{scn.nm}{Name of climatic scenario to be looked for}
 }
 \value{
 Stack or brick of thresholded predictions
@@ -37,7 +39,7 @@ scenario), two layers will be generated, one with suitability above the threshol
 }
 \examples{
 \dontrun{
-mods.thrshld <- thrshld(mcmp=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+mods.thrshld <- thrshld(mcmp=mxnt.mdls.preds, thrshld.i = 4:6)
 plot(mods.thrshld[[1]][[2]]) # continuous
 plot(mods.thrshld[[2]][[2]]) # binary
 }

@@ -149,21 +149,29 @@ mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst,
 ##  Projection
 ### Prepare projecion area
 #### Download environmental data
-For projection it is necessary to download raster files with the environmnetal variables of interest. Rasters with historical (near current) climatic conditions was already created. We will download data of climatic conditions for two future (2050 and 2070) scenarios and create one list with all three climate cenarios.
+For projection it is necessary to download raster files with the environmnetal variables of interest. Rasters with historical (near current) climatic conditions was already created. We will download data of climatic conditions for two future (2050 and 2070) scenarios and create one list with all three climate scenarios.
 
 ```r
 library(raster)
-# Get climate data for future conditions (2050)
-futAC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50,path="rasters")
+# Get climate data for future conditions (2050) from two GCMs at RCP 8.5
+futAC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=50, path="rasters")
 names(futAC5085) <- names(predictors)
 
-# Get climate data for future conditions (2070)
-futAC7085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70,path="rasters")
+futCC5085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='CC', year=50, path="rasters")
+names(futCC5085) <- names(predictors)
+
+# Get climate data for future conditions (2070) from two GCMs at RCP 8.5
+futAC7085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='AC', year=70, path="rasters")
 names(futAC7085) <- names(predictors)
+
+futCC7085 <- getData('CMIP5', var='bio', res=10, rcp=85, model='CC', year=70, path="rasters")
+names(futCC7085) <- names(predictors)
 
 predictors.l <- list(ncurrent = predictors,
                 futAC5085 = futAC5085,
-                futAC7085 = futAC7085)
+                futCC5085 = futCC5085,
+                futAC7085 = futAC7085,
+                futCC7085 = futCC7085)
 
 ```
 
@@ -207,6 +215,40 @@ mxnt.mdls.preds.cf <- proj_mdl_b(mxnt.mdls.preds.lst, a.proj.l = pred.cut.l, num
 par(mfrow=c(1,2), mar=c(1,2,1,2))
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$ncurrent)
 plot(mxnt.mdls.preds.cf$Bvarieg$mxnt.preds$futAC5085)
+```
+### Create consensual projections across GCMs by (e.g.) year and/or RCP
+The climate scenario projections can be grouped and averaged to create consensual projections.
+Here we downloaded two GCMs for 2050 and two for 2070, both at RCP 8.5. So, the GCMs will
+be averaged by year.
+```r
+# create two vectors containing grouping codes
+yr <- c(50, 70)
+rcp <- c("45", "85")
+groups <- list(yr, rcp)
+
+# get names we gave to the predictors
+clim.scn.nms <- names(predictors.l)
+consensus_gr(groups, clim.scn.nms)
+
+## here we do compute the consensual projections
+mxnt.mdls.preds.cf <- consensus_scn_b(mcmp.l=mxnt.mdls.preds.cf, groups = list(yr, rcp))
+
+## just in case you have multiple GCMs by year and RCP, this is an example 
+## that return more groups
+
+# grouping codes
+yr <- c(2050, 2070)
+rcp <- c("RCP45", "RCP85")
+groups <- list(yr, rcp)
+
+# names of climate scenarios
+clim.scn.nms <- c("CCSM4.2050.RCP45",  "MIROC.ESM.2050.RCP45", "MPI.ESM.LR.2050.RCP45",
+                  "CCSM4.2070.RCP45",  "MIROC.ESM.2070.RCP45", "MPI.ESM.LR.2070.RCP45",
+                  "CCSM4.2050.RCP85",  "MIROC.ESM.2050.RCP85", "MPI.ESM.LR.2050.RCP85",
+                  "CCSM4.2070.RCP85",  "MIROC.ESM.2070.RCP85", "MPI.ESM.LR.2070.RCP85")
+consensus_gr(groups, clim.scn.nms)
+
+
 ```
 
 ### Apply thresholds on suitability projections

@@ -4,7 +4,7 @@
 \alias{thrshld_b}
 \title{Apply threshold for MaxEnt projections for multiple species}
 \usage{
-thrshld_b(mcmp.l, thrshld.i = 4:6, numCores = 1)
+thrshld_b(mcmp.l, thrshld.i = 4:6, t.all = FALSE, numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
@@ -20,6 +20,9 @@ and model projections for each species.}
 7. Maximum.training.sensitivity.plus.specificity (mtss);
 8. Balance.training.omission.predicted.area.and.threshold.value (bto);
 9. Equate.entropy.of.thresholded.and.original.distributions (eetd).}
+
+\item{t.all}{logical. Should threshold be applied on individual and consensus projections?
+Default is FALSE. Ignored if consensus projections are not found.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }

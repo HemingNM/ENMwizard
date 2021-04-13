@@ -9,9 +9,10 @@
 #' scenario), two layers will be generated, one with suitability above the threshold value and another with presence/absence only.
 #'
 #' @inheritParams calib_mdl
-#' @param mcmp Species "i" of a object returned by "proj_mdl_b", containing a list of
+#' @param mcmp An object returned by \code{\link{proj_mdl}}, containing calibrated models and model
+#'projections for each species; or species "i" of a object returned by "proj_mdl_b", containing a list of
 #' calibrated models and model projections for each species
-#' @param scn.nm Name of climatic scenario to be looked for
+# #' @param scn.nm Name of climatic scenario to be looked for
 # #' @param path.mdls Path where thresholded rasters will be saved
 # #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
 #' @param thrshld.i List of threshold criteria to be applied. Use numbers to choose the desired one(s). Current options:
@@ -30,7 +31,7 @@
 #' @return Stack or brick of thresholded predictions
 #' @examples
 #' \dontrun{
-#' mods.thrshld <- thrshld(mcmp=mxnt.mdls.preds, thrshld.i = 4:6, pred.args, path.mdls)
+#' mods.thrshld <- thrshld(mcmp=mxnt.mdls.preds, thrshld.i = 4:6)
 #' plot(mods.thrshld[[1]][[2]]) # continuous
 #' plot(mods.thrshld[[2]][[2]]) # binary
 #' }
