@@ -243,7 +243,17 @@ thrshld_b <- function(mcmp.l, thrshld.i = 4:6, t.all = FALSE, numCores = 1) {
   mods.thrshld <- vector("list", length(mcmp.l))
   names(mods.thrshld) <- names(mcmp.l)
   for(i in names(mcmp.l)){ # species i
-    scn.nms <- c(names(mcmp.l[[i]]$mxnt.preds), names(mcmp.l[[i]]$scn.consensus)) # # scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
+    # scn.nms <- c(names(mcmp.l[[i]]$mxnt.preds), names(mcmp.l[[i]]$scn.consensus)) # # scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
+    # choose between consensus, mxnt.preds, or both
+    if(!is.null(mcmp.l[[i]]$scn.consensus)){
+      if(t.all){ # individual and consensus projections
+        scn.nms <- c(names(mcmp.l[[i]]$mxnt.preds), names(mcmp.l[[i]]$scn.consensus))
+      } else { # consensus projections only
+        scn.nms <- names(mcmp.l[[i]]$scn.consensus)
+      }
+    } else { # individual projections only
+      scn.nms <- names(mcmp.l[[i]]$mxnt.preds)
+    }
     mods.thrshld.spi <- thrshld(mcmp.l[[i]], thrshld.i, t.all = t.all, sp.nm = i, numCores) # sp.nm = names(mcmp.l)[i]
     names(mods.thrshld.spi) <- scn.nms
     mods.thrshld[[i]] <- mods.thrshld.spi

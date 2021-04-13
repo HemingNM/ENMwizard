@@ -139,7 +139,6 @@ ENMeval.res.lst <- ENMevaluate_b(occ.locs, pred.cut,
 After tuning MaxEnt models, we will calibrate them using all occurrence data (i.e. without partition them).
 
 ```r
-
 # Run model
 mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, 
                                     a.calib.l = pred.cut, occ.l = occ.locs,
