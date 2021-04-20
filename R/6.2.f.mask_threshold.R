@@ -1,5 +1,4 @@
 #### 4.9 function to remove predicted areas outside protected areas (all and integral)
-
 #' Remove areas from projections using polygons or binary rasters
 #'
 #' This function will remove (mask) areas from suitability projections using polygons or
