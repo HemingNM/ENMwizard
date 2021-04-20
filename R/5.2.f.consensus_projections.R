@@ -27,7 +27,7 @@
 #' yr <- c(2050, 2070)
 #' rcp <- c("RCP45", "RCP85")
 #' # run
-#' consensus_gr(groups = list(yr, rcp), )
+#' consensus_gr(groups = list(yr, rcp), clim.scn.nms)
 #' }
 #' @export
 consensus_gr <- function(groups, clim.scn.nms){
@@ -44,13 +44,13 @@ consensus_gr <- function(groups, clim.scn.nms){
 
   comb <- apply(as.data.frame(expand.grid(groups)), 1,
                 function(x){
-                  paste0("((.*", paste0(x, collapse=")(.*"), "))")
+                  paste0("(?=.*", paste0(x, collapse=")(?=.*"), ")")
                 })
   # create a data frame with groups
   out <- data.frame(clim.scn=clim.scn.nms, consensus.nm=NA)
   # levels(out$consensus.nm) <- grps #unique(c(levels(out$consensus.nm), grps))
   for(i in seq_along(comb)){
-    out[grep(comb[i], clim.scn.nms), 2] <- grps[i]
+    out[grep(comb[i], clim.scn.nms, perl=T), 2] <- grps[i]
   }
   out$consensus.nm <- factor(out$consensus.nm)
   out$consensus.group <- as.numeric(out$consensus.nm)
