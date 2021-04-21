@@ -41,10 +41,9 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
   mxnt.mdls <- mcmp[["mxnt.mdls"]]
   pred.args <- mcmp$pred.args
   mod.nms <- mcmp[["selected.mdls"]]$sel.cri # gsub("Mod.", "", names(mcmp[["mxnt.preds"]][[1]]))
-  names(mod.nms) <- apply(mcmp[["selected.mdls"]][,c("rm", "features")], 1,
-                          function(x){
-                            paste0("Mod_", paste(x, collapse = "_"))
-                          })
+  names(mod.nms) <- paste0("Mod_",
+                           format(as.numeric(mcmp[["selected.mdls"]][, "rm"]), nsmall=1, digits = 2),
+                           "_", mcmp[["selected.mdls"]][, "features"]) #
   # mod.nms  <- names(mcmp$mxnt.mdls)
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',

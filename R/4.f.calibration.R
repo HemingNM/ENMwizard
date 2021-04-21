@@ -178,7 +178,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
                 paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
 
-  mod.nms <-  paste0("Mod_", format(xsel.mdls[, "rm"], digits=2), "_", xsel.mdls[, "features"]) #
+  mod.nms <-  paste0("Mod_", format(as.numeric(xsel.mdls[, "rm"]), nsmall=1, digits = 2), "_", xsel.mdls[, "features"]) #
   args <- stats::setNames(c(strsplit(args, ",")), mod.nms)
   # args <- stats::setNames(c(strsplit(args, ",")), xsel.mdls$settings)
 
