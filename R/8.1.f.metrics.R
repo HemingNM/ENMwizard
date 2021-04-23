@@ -60,7 +60,7 @@ get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
   # colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
   utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/metric.totalArea.csv")) # reorder ds
 
-  return(area.occ.spp)
+  return(area.occ.spp.c)
 }
 
 
@@ -148,11 +148,8 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
               threshold=names(mtp[[1]][[2]]), # threshold criteria
               Model=c.nms), # model criteria
               TotSuitArea=ar.mods.t.p)
-  # areas <- as.data.frame(areas) #
-  # colnames(areas) <- paste(thrshld.crit, rep(c.nms, each=length(thrshld.crit)), sep = ".")
-  # areas <- data.table::melt(areas)
-  # colnames(areas) <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
-  utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.totalArea", sp.nm, ".csv"))
+
+  # utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.totalArea", sp.nm, ".csv"))
   return(areas)
 }
 

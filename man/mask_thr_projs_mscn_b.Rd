@@ -6,23 +6,23 @@
 \usage{
 mask_thr_projs_mscn_b(
   mtp.l,
-  pred.args = "cloglog",
   sp.mask,
-  append = F,
+  pred.args = "cloglog",
+  append = T,
   mask.nm = "msk"
 )
 }
 \arguments{
 \item{mtp.l}{List of stack or brick of thresholded predictions}
 
+\item{sp.mask}{spatial object or list of spatial objects to use for masking suitability projections}
+
 \item{pred.args}{arguments used for MaxEnt prediction. Can be found in mcmp$pred.args.
 See resulting object from \code{\link{calib_mdl}} or \code{\link{calib_mdl_b}} functions}
 
-\item{sp.mask}{spatial object or list of spatial objects to use for masking suitability projections}
-
 \item{append}{Logical. Should append or not the resulting masked rasters?
-Append (append=T): apply each mask on the raster and save each as separate layer.
-Cascade (append=F): apply masks sequentially on the same raster and save as a single layer.}
+Append (append=T): apply masks sequentially on the raster and save each one as separate layer.
+Cascade (append=F): apply all masks on the raster and save as a single layer.}
 
 \item{mask.nm}{Character vector. Names to identify the resulting masked rasters.
 Should have the same length of 'sp.mask'.}

@@ -8,8 +8,8 @@
 #'
 #' @param sp.mask spatial object or list of spatial objects to use for masking suitability projections
 #' @param append Logical. Should append or not the resulting masked rasters?
-#' Append (append=T): apply each mask on the raster and save each as separate layer.
-#' Cascade (append=F): apply masks sequentially on the same raster and save as a single layer.
+#' Append (append=T): apply masks sequentially on the raster and save each one as separate layer.
+#' Cascade (append=F): apply all masks on the raster and save as a single layer.
 #' @param mask.nm Character vector. Names to identify the resulting masked rasters.
 #' Should have the same length of 'sp.mask'.
 #' @param pred.args arguments used for MaxEnt prediction. Can be found in mcmp$pred.args.
@@ -20,7 +20,7 @@
 #' mask_thr_projs_mscn_b(mtp.l=mods.thrshld.lst, sp.mask=NewWorld)
 #' }
 #' @export
-mask_thr_projs_mscn_b <- function(mtp.l, pred.args='cloglog', sp.mask, append=F, mask.nm="msk"){
+mask_thr_projs_mscn_b <- function(mtp.l, sp.mask, pred.args='cloglog', append=T, mask.nm="msk"){
   mods.maskd <- mtp.l
   sp.mask <- as.list(sp.mask)
   r.msk <- raster::raster(raster::extent(mtp.l[[1]][[1]][[2]][[1]]),
