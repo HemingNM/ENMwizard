@@ -19,8 +19,7 @@
 #' \dontrun{
 #' mask_thr_projs_mscn_b(mtp.l=mods.thrshld.lst, sp.mask=NewWorld)
 #' }
-# #' @export
-# seq (append=?): apply masks sequentially on the same raster and save as separate layer
+#' @export
 mask_thr_projs_mscn_b <- function(mtp.l, pred.args='cloglog', sp.mask, append=F, mask.nm="msk"){
   mods.maskd <- mtp.l
   sp.mask <- as.list(sp.mask)

@@ -36,7 +36,7 @@ clim.scn.nms <- c("CCSM4.2050.RCP45",  "MIROC.ESM.2050.RCP45", "MPI.ESM.LR.2050.
 yr <- c(2050, 2070)
 rcp <- c("RCP45", "RCP85")
 # run
-consensus_gr(groups = list(yr, rcp), )
+consensus_gr(groups = list(yr, rcp), clim.scn.nms)
 }
 }
 \seealso{

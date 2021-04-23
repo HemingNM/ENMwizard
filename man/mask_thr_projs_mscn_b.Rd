@@ -34,6 +34,6 @@ areas or species habitats (forests, open areas, etc.).
 }
 \examples{
 \dontrun{
-mask_thr_projs_mscn_b(mtp.l=mods.thrshld.lst, pred.args, sp.mask=NewWorld)
+mask_thr_projs_mscn_b(mtp.l=mods.thrshld.lst, sp.mask=NewWorld)
 }
 }
