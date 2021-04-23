@@ -16,6 +16,7 @@ calib_mdl(
   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"),
   wAICsum = 0.99,
   dAICc = 2,
+  AUCmin = 0.7,
   randomseed = FALSE,
   responsecurves = TRUE,
   arg1 = "noaddsamplestobackground",
@@ -62,6 +63,8 @@ function. Some other arguments do not apply at all to the R implementation. An e
 \item{wAICsum}{Cumulative sum of top ranked models for which arguments will be created}
 
 \item{dAICc}{Maximum delta AICc of models to be selected.}
+
+\item{AUCmin}{Minimum AUC value to select models using EBPM criteria.}
 
 \item{randomseed}{logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.}
 

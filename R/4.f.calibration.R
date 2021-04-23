@@ -10,6 +10,7 @@
 #' "AvgAIC", "LowAIC", "OR", "AUC"
 #' @param wAICsum Cumulative sum of top ranked models for which arguments will be created
 #' @param dAICc Maximum delta AICc of models to be selected.
+#' @param AUCmin Minimum AUC value to select models using EBPM criteria.
 #' @param save Should save args only ("A"), selected models only ("M") or both ("B")?
 # #' @inheritParams dismo::maxent
 #' @param randomseed logical. Args to be passed to dismo::maxent. See ?dismo::maxent and the MaxEnt help for more information.
@@ -27,9 +28,10 @@
 #' a list with both, args and selected models, (if save="B")
 # #' @keywords internal
 #' @export
-mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, dAICc=2, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
+mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR", "AUC"), wAICsum=0.99, dAICc=2, AUCmin=.7, randomseed=FALSE, responsecurves=TRUE, arg1='noaddsamplestobackground', arg2='noautofeature', save="M"){ # , seq=TRUE
   mSel <- gsub("^ESOR$", "ESORIC",  mSel)
   x <- x@results
+  x <- x[x$parameters>0,]
   x$sel.cri <- ""
   x$ID <- as.numeric(rownames(x))
 
@@ -73,9 +75,22 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
   # 10% top-performing models based on the sequential criteria:
   # Lowest average omission rate (OR) and, subsequently, the highest average AUCevaluation
   if("EBPM" %in% mSel){
-    xORm <- order(x$avg.test.orMTP, -x$avg.test.AUC) # order(-x$avg.test.AUC, x$avg.test.orMTP)
+    xORm <- order(x$avg.test.AUC < AUCmin, x$avg.test.orMTP, -x$avg.test.AUC) # order(-x$avg.test.AUC, x$avg.test.orMTP)
+    # x$avg.test.AUC > AUCmin
     xORi <- 1:(round(length(xORm)*.1))
     xORi <- xORi[xORi>0]
+    AUCsel <- which(x$avg.test.AUC[xORm] >= AUCmin)
+    if(length(AUCsel) < length(xORi)){
+      if(length(AUCsel)==0){
+        AUCsel <- 1
+        warning(paste("No model met min AUC value of:", AUCmin, "\n Chosing first single model"))
+      } else {
+        warning(paste("Not all models met min AUC value of:", AUCmin,
+                      "\n Chosing", length(AUCsel), "models instead of", length(xORi)))
+      }
+    }
+    xORi <- xORi[AUCsel]
+    xORi <- xORi[!is.na(xORi)]
     EBPM <- xORm[xORi] # [ifelse(round(length(xORm)*.1)==0, 1, 1:round(length(xORm)*.1))]
     # if(length(EBPM)==1){
     #   print("only one model selected, Not performing EBPM")
@@ -233,7 +248,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
 #' @export
 calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENMeval.bgpts = TRUE, nbg=10000, format = "raster", # , a.proj
                    pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, randomseed = FALSE,
+                   mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, AUCmin=.7, randomseed = FALSE,
                    responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                    numCores = 1, parallelTunning = TRUE){
 
@@ -253,7 +268,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
   # ENMeval.r <- ENMeval.o@results
   algorithm <- ENMeval.o@algorithm
 
-  mdl.arg <- mod_sel(x=ENMeval.o, mSel=mSel, wAICsum=wAICsum, dAICc=dAICc, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2, save="B")
+  mdl.arg <- mod_sel(x=ENMeval.o, mSel=mSel, wAICsum=wAICsum, dAICc=dAICc, AUCmin=AUCmin, randomseed=randomseed, responsecurves=responsecurves, arg1=arg1, arg2=arg2, save="B")
   xsel.mdls <- mdl.arg[[2]]
   ENMeval.r <- xsel.mdls[order(as.numeric(rownames(xsel.mdls))),]
   mdls.keep <- xsel.mdls$sel.cri!=""
@@ -373,7 +388,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
 #' @export
 calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts = TRUE, format = "raster", # , a.proj.l
                          pred.args = c("outputformat=cloglog", "doclamp=true", "pictures=true"),
-                         mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, randomseed = FALSE,
+                         mSel = c("AvgAIC", "LowAIC", "OR", "AUC"), wAICsum = 0.99, dAICc=2, AUCmin=.7, randomseed = FALSE,
                          responsecurves = TRUE, arg1 = 'noaddsamplestobackground', arg2 = 'noautofeature',
                          numCores = 1, parallelTunning = TRUE){
 
@@ -384,7 +399,7 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
 
     mxnt.m.p.lst <- parallel::clusterApply(cl, base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                                              use.ENMeval.bgpts, format, pred.args,
-                                                                                             mSel, wAICsum, dAICc, randomseed, responsecurves,
+                                                                                             mSel, wAICsum, dAICc, AUCmin, randomseed, responsecurves,
                                                                                              arg1, arg2, numCores){
       cat(c(names(ENMeval.o.l[i]), "\n"))
       # compute final models and predictions
@@ -392,14 +407,14 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, # a=ENMeval.o.l[[i]]@bg.pts,
                      format = format,
-                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
+                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc, AUCmin=AUCmin,
                      randomseed = randomseed, responsecurves = responsecurves, arg1 = arg1, arg2 = arg2,
                      numCores = numCores, parallelTunning = FALSE)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
     use.ENMeval.bgpts, format, pred.args,
-    mSel, wAICsum, dAICc, randomseed, responsecurves,
+    mSel, wAICsum, dAICc, AUCmin, randomseed, responsecurves,
     arg1, arg2, numCores)
 
     parallel::stopCluster(cl)
@@ -408,21 +423,21 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
 
     mxnt.m.p.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                          use.ENMeval.bgpts, format, pred.args,
-                                                                         mSel, wAICsum, dAICc, randomseed, responsecurves,
+                                                                         mSel, wAICsum, dAICc, AUCmin, randomseed, responsecurves,
                                                                          arg1, arg2, numCores){
       cat(c(names(ENMeval.o.l[i]), "\n"))
       # compute final models and predictions
       resu <- calib_mdl(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                      a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                      occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, format = format,
-                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
+                     pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc, AUCmin=AUCmin,
                      randomseed = randomseed, responsecurves = responsecurves,
                      arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning = TRUE)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
     use.ENMeval.bgpts, format, pred.args,
-    mSel, wAICsum, dAICc, randomseed, responsecurves,
+    mSel, wAICsum, dAICc, AUCmin, randomseed, responsecurves,
     arg1, arg2, numCores)
 
 
@@ -430,21 +445,21 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
 
     mxnt.m.p.lst <- lapply(base::seq_along(ENMeval.o.l), function(i, ENMeval.o.l, a.calib.l, occ.l,
                                                                   use.ENMeval.bgpts, format, pred.args,
-                                                                  mSel, wAICsum, dAICc, randomseed, responsecurves,
+                                                                  mSel, wAICsum, dAICc, AUCmin, randomseed, responsecurves,
                                                                   arg1, arg2, numCores){
       cat(c(names(ENMeval.o.l[i]), "\n"))
       # compute final models and predictions
       resu <- calib_mdl(ENMeval.o = ENMeval.o.l[[i]], sp.nm = names(ENMeval.o.l[i]),
                         a.calib = a.calib.l[[i]], # a.proj = a.proj.l[[i]],
                         occ = occ.l[[i]], use.ENMeval.bgpts = use.ENMeval.bgpts, format = format,
-                        pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc,
+                        pred.args = pred.args, mSel = mSel, wAICsum = wAICsum, dAICc, AUCmin=AUCmin,
                         randomseed = randomseed, responsecurves = responsecurves,
                         arg1 = arg1, arg2 = arg2, numCores=numCores, parallelTunning = FALSE)
 
       return(resu)
     }, ENMeval.o.l, a.calib.l, occ.l,
     use.ENMeval.bgpts, format, pred.args,
-    mSel, wAICsum, dAICc, randomseed, responsecurves,
+    mSel, wAICsum, dAICc, AUCmin, randomseed, responsecurves,
     arg1, arg2, numCores)
 
 
