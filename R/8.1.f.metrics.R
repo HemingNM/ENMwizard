@@ -92,14 +92,18 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
       c.nms2[si] <<- gsub("\\^|^\\.", "", paste(c.nms2[si], s.nms[i], sep = "."))
     }
   }, c.nms, s.nms, c.nms2))
+  rep.nm <- find.repeated.characters(gsub(paste(unique(c.nms2), collapse = "|"), "", c.nms))
+  masks <- gsub(paste(c(rep.nm,paste(unique(c.nms2), collapse = "|")), collapse = "|"), "", c.nms)
+  masks[masks==""] <- "all"
+  rep.mdl <- length(c.nms2)/length(unique(c.nms2))
   c.nms <- c.nms2
 
-  areas <- array(dim=c(length(mtp), # rows for pred.scenario
-                       length(mtp[[1]][[2]]), # cols for threshold criteria
-                       raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
-                 dimnames = list(names(mtp), # pred.scenario
-                                 names(mtp[[1]][[2]]), # threshold criteria
-                                 c.nms )) # model criteria
+  # areas <- array(dim=c(length(mtp), # rows for pred.scenario
+  #                      length(mtp[[1]][[2]]), # cols for threshold criteria
+  #                      raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
+  #                dimnames = list(names(mtp), # pred.scenario
+  #                                names(mtp[[1]][[2]]), # threshold criteria
+  #                                c.nms )) # model criteria
 
   thrshld.crit <- names(mtp[[1]][[1]])
 
@@ -145,9 +149,10 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
 
   # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
   areas <- data.frame(expand.grid(Clim.scen=names(mtp), # pred.scenario
-              threshold=names(mtp[[1]][[2]]), # threshold criteria
-              Model=c.nms), # model criteria
-              TotSuitArea=ar.mods.t.p)
+                                  threshold=names(mtp[[1]][[2]]), # threshold criteria
+                                  Model=c.nms), # model criteria
+                      Location=rep(unique(masks), each=length(ar.mods.t.p)/rep.mdl),
+                      TotSuitArea=ar.mods.t.p)
 
   # utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.totalArea", sp.nm, ".csv"))
   return(areas)
