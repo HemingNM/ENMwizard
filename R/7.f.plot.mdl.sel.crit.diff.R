@@ -504,7 +504,7 @@ make_underscript <- function(x) as.expression(lapply(x, function(y) {
 #' modified from: https://github.com/cran/fifer/blob/master/R/auto.layout.R
 #' @title Automatically select the layout.
 #' @param n the number of plots
-#' @param layout should the fuction return a preallocated layout object? If \code{FALSE}, it returns a matrix
+#' @param layout should the function return a preallocated layout object? If \code{FALSE}, it returns a matrix
 #' @return either a matrix or a layout object
 #' @author Dustin Fife
 #' @examples

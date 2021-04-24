@@ -92,7 +92,7 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
       c.nms2[si] <<- gsub("\\^|^\\.", "", paste(c.nms2[si], s.nms[i], sep = "."))
     }
   }, c.nms, s.nms, c.nms2))
-  rep.nm <- find.repeated.characters(gsub(paste(unique(c.nms2), collapse = "|"), "", c.nms))
+  rep.nm <- find_repeated_characters(gsub(paste(unique(c.nms2), collapse = "|"), "", c.nms))
   masks <- gsub(paste(c(rep.nm,paste(unique(c.nms2), collapse = "|")), collapse = "|"), "", c.nms)
   masks[masks==""] <- "all"
   rep.mdl <- length(c.nms2)/length(unique(c.nms2))

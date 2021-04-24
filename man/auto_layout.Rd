@@ -9,7 +9,7 @@ auto_layout(n, layout = T)
 \arguments{
 \item{n}{the number of plots}
 
-\item{layout}{should the fuction return a preallocated layout object? If \code{FALSE}, it returns a matrix}
+\item{layout}{should the function return a preallocated layout object? If \code{FALSE}, it returns a matrix}
 }
 \value{
 either a matrix or a layout object
