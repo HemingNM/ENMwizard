@@ -230,7 +230,7 @@ clim.scn.nms <- names(predictors.l)
 consensus_gr(groups, clim.scn.nms)
 
 ## here we do compute the consensual projections
-mxnt.mdls.preds.cf <- consensus_scn_b(mcmp.l=mxnt.mdls.preds.cf, groups = list(yr, rcp))
+mxnt.mdls.preds.cf <- consensus_scn_b(mcmp.l=mxnt.mdls.preds.cf, groups = list(yr, rcp), ref="ncurrent")
 
 
 ####
