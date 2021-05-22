@@ -193,7 +193,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
                 paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
 
-  mod.nms <-  paste0("Mod_", format(as.numeric(xsel.mdls[, "rm"]), nsmall=1, digits = 2), "_", xsel.mdls[, "features"]) #
+  xsel.mdls$mod.nms <-  paste0("Mod_", format(as.numeric(xsel.mdls[, "rm"]), nsmall=1, digits = 2), "_", xsel.mdls[, "features"]) #
   args <- stats::setNames(c(strsplit(args, ",")), mod.nms)
   # args <- stats::setNames(c(strsplit(args, ",")), xsel.mdls$settings)
 
@@ -296,7 +296,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
   }
   utils::write.csv(res.tbl, paste0(path.mdls,"/sel.mdls.smmr.", gsub("3_out.MaxEnt/Mdls.", "", path.mdls), ".csv"))
 
-  mod.nms <- paste0("Mod_", format(xsel.mdls[, "rm"], digits=2), "_", xsel.mdls[, "features"]) #
+  mod.nms <- xsel.mdls$mod.nms #mod.nms <- paste0("Mod_", format(xsel.mdls[, "rm"], nsmall=1, digits=2), "_", xsel.mdls[, "features"]) #
   # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"])
   # mod.nms <- paste0("Mod.", xsel.mdls[, "sel.cri"])
   mod.preds <- raster::stack()

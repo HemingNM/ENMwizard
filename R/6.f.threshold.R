@@ -40,11 +40,11 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
   ###- get necessary objects
   mxnt.mdls <- mcmp[["mxnt.mdls"]]
   pred.args <- mcmp$pred.args
-  mod.nms <- mcmp[["selected.mdls"]]$sel.cri # gsub("Mod.", "", names(mcmp[["mxnt.preds"]][[1]]))
-  names(mod.nms) <- paste0("Mod_",
-                           format(as.numeric(mcmp[["selected.mdls"]][, "rm"]), nsmall=1, digits = 2),
-                           "_", mcmp[["selected.mdls"]][, "features"]) #
-  # mod.nms  <- names(mcmp$mxnt.mdls)
+  m.sel.cri <- mcmp[["selected.mdls"]]$sel.cri # gsub("Mod.", "", names(mcmp[["mxnt.preds"]][[1]]))
+  names(m.sel.cri) <- mcmp[["selected.mdls"]]$mod.nms # paste0("Mod_",
+                           # format(as.numeric(mcmp[["selected.mdls"]][, "rm"]), nsmall=1, digits = 2),
+                           # "_", mcmp[["selected.mdls"]][, "features"]) #
+  # m.sel.cri  <- names(mcmp$mxnt.mdls)
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
                          ifelse(grep("raw", pred.args)==1, 'raw', "cumulative")))
@@ -57,19 +57,19 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
   ###- get threshold name from maxent output
   # thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")[thrshld.i]
   thrshld.nms <- tnm[thrshld.i]
-  thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl(outpt, rownames(mxnt.mdls[[1]]@results), ignore.case = T) & # TODO use "outpt" variable
+  thrshld.crit <- rownames(mxnt.mdls[[1]]@results)[grepl(outpt, rownames(mxnt.mdls[[1]]@results), ignore.case = T) &
                                                      grepl("threshold", rownames(mxnt.mdls[[1]]@results))][thrshld.i]
 
   ###- extract threshold values from selected models and criteria
   thrshld.crit.v <- as.data.frame(matrix(data=sapply(thrshld.crit,
                                                      function(y){
-                                                       sapply(mxnt.mdls[names(mod.nms)],
+                                                       sapply(mxnt.mdls[names(m.sel.cri)],
                                                               function(x){
                                                                 x@results[rownames(x@results) == y]
                                                               }) }),
                                          ncol = length(thrshld.i)))
   colnames(thrshld.crit.v) <- thrshld.nms
-  rownames(thrshld.crit.v) <- mod.nms
+  rownames(thrshld.crit.v) <- m.sel.cri
   # thrshld.crit.v
 
   ####- Ensemble models
@@ -90,22 +90,22 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
 
   ###- compute threshold values of ensemble models using individual models
   thrshld.mod.crt <- rbind(
-    if(sum(grepl("AIC_", mod.nms))>1){
+    if(sum(grepl("AIC_", m.sel.cri))>1){
       matrix(apply(data.frame(thrshld.crit.v[grep("AIC_", mcmp[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
         stats::weighted.mean(x, wv)
       }, wv.aic), nrow = 1, dimnames = list("AvgAIC", thrshld.nms) )
     } , # else {thrshld.crit <- thrshld.crit.v}
-    if(sum(grepl("WAAUC_", mod.nms))>0){
+    if(sum(grepl("WAAUC_", m.sel.cri))>0){
       matrix(apply(data.frame(thrshld.crit.v[grep("WAAUC_", mcmp[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
         stats::weighted.mean(x, wv)
       }, wv.wa), nrow = 1, dimnames = list("WAAUC", thrshld.nms) )
     } ,
-    if(sum(grepl("EBPM_", mod.nms))>0){
+    if(sum(grepl("EBPM_", m.sel.cri))>0){
       matrix(apply(data.frame(thrshld.crit.v[grep("EBPM_", mcmp[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
         stats::weighted.mean(x, wv)
       }, wv.bp), nrow = 1, dimnames = list("EBPM", thrshld.nms) )
     } ,
-    if(sum(grepl("ESORIC_", mod.nms))>0){
+    if(sum(grepl("ESORIC_", m.sel.cri))>0){
       matrix(apply(data.frame(thrshld.crit.v[grep("ESORIC_", mcmp[["selected.mdls"]]$sel.cri),]), 2, function(x, wv) {
         stats::weighted.mean(x, wv)
       }, wv.es), nrow = 1, dimnames = list("ESORIC", thrshld.nms) )

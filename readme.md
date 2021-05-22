@@ -141,7 +141,7 @@ After tuning MaxEnt models, we will calibrate them using all occurrence data (i.
 ```r
 # Run model
 mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst, 
-                                    a.calib.l = pred.cut, occ.l = occ.locs,
+                                    a.calib.l = pred.cut,
                                     mSel = c("LowAIC", "AUC"))
 ```
 
