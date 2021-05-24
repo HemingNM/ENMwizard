@@ -148,7 +148,7 @@ mxnt.mdls.preds.lst <- calib_mdl_b(ENMeval.o.l = ENMeval.res.lst,
 ##  Projection
 ### Prepare projecion area
 #### Download environmental data
-For projection it is necessary to download raster files with the environmnetal variables of interest. Rasters with historical (near current) climatic conditions was already created. We will download data of climatic conditions for two future (2050 and 2070) scenarios and create one list with all three climate scenarios.
+For projection it is necessary to download raster files with the environmental variables of interest. Rasters with historical (near current) climatic conditions was already created. We will download data of climatic conditions for two future (2050 and 2070) scenarios and create one list with all three climate scenarios.
 
 ```r
 library(raster)
@@ -272,7 +272,7 @@ mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = c(5,7))
 ### Plot one projection for current climate and another for a future climatic scenario
 ```r
 plot(mods.thrshld.lst$Bvarieg$ncurrent$binary$x10ptp)
-plot(mods.thrshld.lst$Bvarieg$futAC5085$binary$x10ptp)
+plot(mods.thrshld.lst$Bvarieg$X50.85$binary$x10ptp)
 plot_mdl_diff(mxnt.mdls.preds.lst[[1]], mods.thrshld.lst[[1]], sp.nm = "Bvarieg")
 plot_mdl_diff_b(mxnt.mdls.preds.cf, mods.thrshld.lst, save=T)
 ```

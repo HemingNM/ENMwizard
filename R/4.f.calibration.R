@@ -33,6 +33,7 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
   x <- x@results
   x <- x[x$parameters>0,]
   x$sel.cri <- ""
+  x$mod.nms <- paste0("Mod_", format(as.numeric(fcol(x, "rm")), nsmall=1, digits=2), "_", fcol(x, "features|fc")) #
   x$ID <- as.numeric(rownames(x))
 
   if ("All" %in% mSel) {
@@ -143,8 +144,6 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
   if("LowAIC" %in% mSel){
     x.la.i <- x.a.i[1]
     x$sel.cri[x.la.i] <- sub("^\\.", "", paste(x$sel.cri[x.la.i], "LowAIC", sep = "."))
-  } else {
-    x.la.i <- NULL
   }
 
   # OR
