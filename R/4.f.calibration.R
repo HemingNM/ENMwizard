@@ -33,7 +33,8 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
   x <- x@results
   x <- x[x$parameters>0,]
   x$sel.cri <- ""
-  x$mod.nms <- paste0("Mod_", format(as.numeric(fcol(x, "rm")), nsmall=1, digits=2), "_", fcol(x, "features|fc")) #
+  x$mod.nms <-  paste0("Mod_", format(as.numeric(x[, "rm"]), nsmall=1, digits = 2), "_", x[, "features"]) #
+
   x$ID <- as.numeric(rownames(x))
 
   if ("All" %in% mSel) {
@@ -192,8 +193,8 @@ mod_sel <- function(x, mSel=c("AvgAIC", "EBPM", "WAAUC", "ESORIC", "LowAIC", "OR
                 paste0("randomseed=", ifelse(randomseed==TRUE, "true", "false")),
                 sep = ",")
 
-  xsel.mdls$mod.nms <-  paste0("Mod_", format(as.numeric(xsel.mdls[, "rm"]), nsmall=1, digits = 2), "_", xsel.mdls[, "features"]) #
-  args <- stats::setNames(c(strsplit(args, ",")), mod.nms)
+  # xsel.mdls$mod.nms <-  paste0("Mod_", format(as.numeric(xsel.mdls[, "rm"]), nsmall=1, digits = 2), "_", xsel.mdls[, "features"]) #
+  args <- stats::setNames(c(strsplit(args, ",")), xsel.mdls$mod.nms)
   # args <- stats::setNames(c(strsplit(args, ",")), xsel.mdls$settings)
 
   if(save == "A"){
