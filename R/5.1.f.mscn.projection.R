@@ -31,7 +31,7 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
   xsel.mdls <- mcm$selected.mdls # [order(mcm$selected.mdls$delta.AICc),] # mdl.arg[[2]]
   args.all <- mcm$mxnt.args
 
-  mod.nms <- paste0("Mod_", format(xsel.mdls[, "rm"], digits=2), "_", xsel.mdls[, "features"]) #
+  mod.nms <- xsel.mdls$mod.nms #paste0("Mod_", format(xsel.mdls[, "rm"], digits=2), "_", xsel.mdls[, "features"]) #
   # mod.nms <- paste0("Mod.", xsel.mdls$sel.cri)
   # mod.nms <- paste0("Mod.", xsel.mdls[, "settings"]) #
   mod.nms2 <- paste0("Mod.", xsel.mdls$sel.cri)
