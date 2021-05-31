@@ -166,7 +166,7 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
       pred.t <- raster::stack(lapply(mod.sel.crit, # seq_along(mod.sel.crit)
                                      function(m, pred.t, thrshld.mod.crt, t) {
                                        mp <- grep(m, names(pred.t))
-                                       mt <- grep(m, rownames(thrshld.mod.crt))
+                                       mt <- which(grepl(m, rownames(thrshld.mod.crt)) & !grepl(paste0(m, "_"), rownames(thrshld.mod.crt))) # grep(m, rownames(thrshld.mod.crt))
                                        pred.t[[mp]][pred.t[[mp]] < thrshld.mod.crt[mt,t]] <- 0
                                        return(pred.t[[mp]])
                                      }, pred.t, thrshld.mod.crt, t))
@@ -181,7 +181,7 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
       pred.t <- raster::stack(lapply(mod.sel.crit, # seq_along(mod.sel.crit)
                                      function(m) {
                                        mp <- grep(m, names(pred.t))
-                                       mt <- grep(m, rownames(thrshld.mod.crt))
+                                       mt <- which(grepl(m, rownames(thrshld.mod.crt)) & !grepl(paste0(m, "_"), rownames(thrshld.mod.crt))) # grep(m, rownames(thrshld.mod.crt))
                                        pred.t[[mp]][pred.t[[mp]] >= thrshld.mod.crt[mt,t]] <- 1
                                        return(pred.t[[mp]])
       }))
