@@ -195,6 +195,8 @@ thrshld <- function(mcmp, thrshld.i = 4:6, t.all = FALSE, sp.nm = "species", num
   ###- raster computation
   {
     if(numCores>1){
+      check_install_pkg("parallel")
+
       cl <- parallel::makeCluster(numCores)
       parallel::clusterExport(cl, list("thrshld")) # , "scn.nms"
 

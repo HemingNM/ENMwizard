@@ -51,7 +51,7 @@ is_inst <- function(pkg) {
 check_install_pkg <- function(pkg){
   for(i in pkg){
     if(!is_inst(i)){
-      install.packages(eval(i))
+      utils::install.packages(eval(i))
     }
   }
 }
@@ -99,8 +99,8 @@ north_arrow <- function (x, y, size, lab = "North", cex.lab = 1, border ="black"
 circle4compass_rose <- function (x, y, radius=c(1, 1.3), nv = 200, bearing=0, border = NULL, fill = NA, lty = 1,
                                density = NULL, angle = 45, lwd = 1) {
   nv <- round(nv/16, 0)*16
-  xylim <- par("usr")
-  plotdim <- par("pin")
+  xylim <- graphics::par("usr")
+  plotdim <- graphics::par("pin")
   ymult <- plotrix::getYmult()
   angle.inc <- 2 * pi/nv
   angles <- seq(0, 2 * pi - angle.inc, by = angle.inc)
@@ -115,11 +115,11 @@ circle4compass_rose <- function (x, y, radius=c(1, 1.3), nv = 200, bearing=0, bo
   gap <- nv/16 - 1
   nsq <- (1:nv)[c(T, rep(F, gap))]
   nsq <- nsq[c(F,T)]
-  polygon(c(xv[1:nv,1], xv[nv:1,2], xv[1,1]) , c(yv[1:nv,1], yv[nv:1,2], yv[1,1]),
+  graphics::polygon(c(xv[1:nv,1], xv[nv:1,2], xv[1,1]) , c(yv[1:nv,1], yv[nv:1,2], yv[1,1]),
           border = border, col = fill[1], lty = lty,
           density = density, angle = angle, lwd = lwd)
   for(i in nsq){
-    polygon(c(xv[c(i:(i+gap)),1], xv[c((i+gap):i),2], xv[i,1]) , c(yv[c(i:(i+gap)),1], yv[c((i+gap):i),2], yv[i,1]) ,
+    graphics::polygon(c(xv[c(i:(i+gap)),1], xv[c((i+gap):i),2], xv[i,1]) , c(yv[c(i:(i+gap)),1], yv[c((i+gap):i),2], yv[i,1]) ,
             border = border, col = fill[2], lty = lty,
             density = density, angle = angle, lwd = lwd)
   }
@@ -132,15 +132,22 @@ circle4compass_rose <- function (x, y, radius=c(1, 1.3), nv = 200, bearing=0, bo
 #'
 #' @param size Compass size
 #' @param bearing bearing direction in degrees
-#' @param d
+#' @param d letter distance from circle
 #' @param draw.circle Logical. Draw circle around compass?
+#' @param cex A numerical value giving the amount by which plotting text
+#' and symbols should be magnified relative to the default.
+#' See \code{\link[graphics]{par}} for details
+#' @param lwd A numerical value giving the amount by which plotting text
+#' and symbols should be magnified relative to the default.
+#' See \code{\link[graphics]{par}} for details
 #' @inheritParams north_arrow
 #' @inheritParams graphics::polygon
+# #' @importFrom plotrix getYmult
 #' @references Tanimura et al. 2007. Auxiliary Cartographic Functions in R: North
 #' Arrow, Scale Bar, and Label with a Leader Arrow. Journal of Statistical
 #' Software. Volume 19, Code Snippet 1. https://www.jstatsoft.org/article/view/v019c01/v19c01.pdf
-#'
 # https://gis.stackexchange.com/questions/243743/alternative-north-arrow-using-r-gistools-package
+#' @export
 compass_rose <- function(x, y, size, bearing=0, d=.8, draw.circle=F, fill = c("white","black"), cex=1, lwd=1,...) {
   bearing <- bearing*pi/180
   # checking arguments
@@ -167,11 +174,11 @@ compass_rose <- function(x, y, size, bearing=0, d=.8, draw.circle=F, fill = c("w
     for (i in seq(1,32, 4)) {
       x1 <- c(xt[i], xt[i+1], xt[i+3])
       y1 <- c(yt[i], yt[i+1], yt[i+3])
-      polygon(x1,y1,col=fill[1], lwd=lwd*.8)
+      graphics::polygon(x1,y1,col=fill[1], lwd=lwd*.8)
 
       x1 <- c(xt[i+2], xt[i+1], xt[i+3])
       y1 <- c(yt[i+2], yt[i+1], yt[i+3])
-      polygon(x1,y1,col=fill[2],lwd=lwd*.8)
+      graphics::polygon(x1,y1,col=fill[2],lwd=lwd*.8)
     }
   }
 
@@ -184,11 +191,11 @@ compass_rose <- function(x, y, size, bearing=0, d=.8, draw.circle=F, fill = c("w
     i2 <- ifelse(i+1<=16, i+1, 1)
     x1 <- c(x[i],x[i2],loc[1])
     y1 <- c(y[i],y[i2],loc[2])
-    polygon(x1,y1,col=fill[i],lwd=lwd)
+    graphics::polygon(x1,y1,col=fill[i],lwd=lwd)
   }
   # drawing letters
   b <- c("E","N","W","S")
-  for (i in 0:3) text((size/1.2*2.2*d+par("cxy")[1])*cos(bearing+i*pi/2)+loc[1],
-                      (size/1.2*2.2*d+par("cxy")[1])*sin(bearing+i*pi/2) * ymult + loc[2],b[i+1],
+  for (i in 0:3) graphics::text((size/1.2*2.2*d+graphics::par("cxy")[1])*cos(bearing+i*pi/2)+loc[1],
+                      (size/1.2*2.2*d+graphics::par("cxy")[1])*sin(bearing+i*pi/2) * ymult + loc[2],b[i+1],
                       cex=cex)
 }

@@ -5,10 +5,10 @@
 \title{Draw north arrow in plotted map}
 \usage{
 north_arrow(
-  xb,
-  yb,
-  len,
-  lab = "NORTH",
+  x,
+  y,
+  size,
+  lab = "North",
   cex.lab = 1,
   border = "black",
   fill = c("white", border),
@@ -16,11 +16,11 @@ north_arrow(
 )
 }
 \arguments{
-\item{xb}{Position at x axis}
+\item{x}{Position at x axis}
 
-\item{yb}{Position at y axis}
+\item{y}{Position at y axis}
 
-\item{len}{Arrow length}
+\item{size}{Arrow size}
 
 \item{lab}{Label}
 
@@ -36,7 +36,7 @@ label characters should be scaled relative to the default.}
     and \code{TRUE} is equivalent to \code{NULL} (use the foreground colour),
   }
 
-\item{fill}{The color for filling polygons of both sides of the north arrow.
+\item{fill}{The color for filling polygons of both sides of the north arrow or compass rose.
 The default, c("white", border), fills one side with white and the other side
 with the color of the border. Two colors should be provided.}
 

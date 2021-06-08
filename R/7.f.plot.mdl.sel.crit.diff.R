@@ -103,6 +103,7 @@ plot_mdl_diff <- function(mcmp, mtp, sp.nm="species", basemap=NULL, save=FALSE, 
   }
 
   if(numCores>1 & save){
+    check_install_pkg("parallel")
 
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("plot_mdl")) # , "tnm", "tr", "auto_layout", "make_underscript"
@@ -331,20 +332,21 @@ plot_scn_diff <- function(mcmp, mtp, mSel, ref.scn="ncurrent", sp.nm="species", 
     stop("Need to specify 'mSel' correctly. \nOptions available from selected models are: ", paste(mSel.crt, collapse = " "))
   }
   mSel <- mSel[mSel %in% mSel.crt]
-  # m <- mSel[4]
-  if(any(grepl("^AUC", mSel))){
-    if(sum(grepl("AUCmtp|AUC10", names(mtp[[1]]$binary[[1]]))) == 1){
-      mSel[grepl("^AUC", mSel)] <- "AUCmtp.AUC10"
-    } else {
-    mSel <- c(mSel[!grepl("^AUC", mSel)], c("AUCmtp", "AUC10"))
-    }
-    # mSel <- c(mSel[!grepl("^AUC", mSel)], c("^AUC"))
-  }
-  if(any(grepl("^OR", mSel))){
-    mSel <- c(mSel[!grepl("^OR", mSel)], c("ORmtp", "OR10"))
-  }
+  # # m <- mSel[4]
+  # if(any(grepl("^AUC", mSel))){
+  #   if(sum(grepl("AUCmtp|AUC10", names(mtp[[1]]$binary[[1]]))) == 1){
+  #     mSel[grepl("^AUC", mSel)] <- "AUCmtp.AUC10"
+  #   } else {
+  #   mSel <- c(mSel[!grepl("^AUC", mSel)], c("AUCmtp", "AUC10"))
+  #   }
+  #   # mSel <- c(mSel[!grepl("^AUC", mSel)], c("^AUC"))
+  # }
+  # if(any(grepl("^OR", mSel))){
+  #   mSel <- c(mSel[!grepl("^OR", mSel)], c("ORmtp", "OR10"))
+  # }
 
   if(numCores>1 & save){
+    check_install_pkg("parallel")
 
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("plot_scn"))# , "tnm", "tr", "auto_layout", "make_underscript"))
