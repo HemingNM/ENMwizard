@@ -115,6 +115,8 @@ mop <- function(M, G, p=0.1, q=0.1, min.M.sz=100, filename=NULL, scn.nm="", numC
     }
   }
   else {
+    check_install_pkg("parallel")
+
     cl <- parallel::makeCluster(numCores)
     # mop.r[] <- parApply(cl, getValues(G), 1, ff, probs=q, reff=Mmat)
     parallel::clusterExport(cl, varlist=c("q", "Mmat"), envir=environment())

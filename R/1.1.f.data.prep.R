@@ -27,6 +27,7 @@ set_calibarea <- function(occ.spdf, sp.nm="species", convex=TRUE, alpha=10, save
   if(convex==FALSE){ # convex hulls to crop rasters
     # http://r.789695.n4.nabble.com/Concave-hull-td863710.html#a4688606
     # https://rpubs.com/geospacedman/alphasimple
+    check_install_pkg(c("alphahull","igraph"))
 
     ch <- alphahull::ashape(u.pts, alpha=alpha)
     chg <- igraph::graph.edgelist(cbind(as.character(ch$edges[, "ind1"]),
@@ -147,6 +148,7 @@ set_calibarea_b <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
 
   if(numCores>1){
     plot <- F
+    check_install_pkg("parallel")
 
     cl<-parallel::makeCluster(numCores)
 
@@ -257,6 +259,8 @@ split_poly <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 
 
       clust <- stats::cutree(hclust.obj, k)
     } else if (c.m == "AP") { # Affinity Propagation (AP)
+      check_install_pkg("apcluster")
+
       apclus <- apcluster::apcluster(apcluster::negDistMat(r=r), u.pts)
       # apclus <- apcluster::apcluster(apcluster::expSimMat(r=2, w=10), u.pts)
       apclus <- apcluster::apcluster(apclus@sim, q=q)
@@ -270,6 +274,8 @@ split_poly <- function(occ.spdf, k=NULL, nm.col.dt=NULL, c.m = "NB", r = 2, q = 
       if(nrow(u.pts)<max.nc){
         max.nc <- nrow(u.pts)-1
       }
+      check_install_pkg("NbClust")
+
       nb <- NbClust::NbClust(u.pts, distance = distance, min.nc = min.nc, max.nc = max.nc,
                              method = method, index = index, alphaBeale = 0.1)
       clust <- nb$Best.partition
@@ -491,6 +497,7 @@ buffer_b <- function(occ.polys, width = NULL, mult = .2, quadsegs = 100, numCore
 
   if(numCores>1){
     plot <- F
+    check_install_pkg("parallel")
 
     cl<-parallel::makeCluster(numCores)
 
@@ -557,6 +564,7 @@ cut_calibarea_b <- function(poly.l, env.uncut, numCores = 1){
   ## Cutting rasters for each species
 
   if(numCores>1){
+    check_install_pkg("parallel")
 
     cl <- parallel::makeCluster(numCores)
 

@@ -222,6 +222,8 @@ cut_projarea_mscn_b <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.pr
   for(i in base::seq_along(pred.polys)){
     area.p.spi <- vector("list", length(env.uncut.l))
     if(numCores>1){
+      check_install_pkg("parallel")
+
       area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)),
                                                 function(j, pred.polys, env.uncut.l, i){
         prj.nm.j <- names(env.uncut.l)[j]
@@ -348,6 +350,7 @@ cut_projarea_rst_mscn_b <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
 
   cat(c("\n","Creating projection area","\n"))
   area.p.spi <- vector("list", length(env.uncut.l))
+  check_install_pkg("parallel")
 
   p.area <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
     prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")

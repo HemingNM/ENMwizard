@@ -67,6 +67,7 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
   # mod.all <- vector("list")
 
   if(numCores>1 & parallelTunning){
+    check_install_pkg("parallel")
 
     cl <- parallel::makeCluster(numCores)
 

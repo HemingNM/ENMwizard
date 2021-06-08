@@ -29,6 +29,34 @@ find_repeated_characters <- function(x){
   }
 }
 
+
+
+#' Check if package is installed
+#'
+#' This function will check if a package is installed
+#'
+#' @param pkg packages to checked for installation
+#' @keywords internal
+is_inst <- function(pkg) {
+  # https://stackoverflow.com/a/38082613
+  nzchar(system.file(package = pkg))
+}
+
+#' Check if package is installed and install if needed
+#'
+#' This function will check if a package is installed and install it if needed
+#'
+#' @param pkg packages to checked for installation
+#' @keywords internal
+check_install_pkg <- function(pkg){
+  for(i in pkg){
+    if(!is_inst(i)){
+      install.packages(eval(i))
+    }
+  }
+}
+
+
 #' Draw north arrow in plotted map
 #'
 #' This function will draw a simple north arrow in a plotted map

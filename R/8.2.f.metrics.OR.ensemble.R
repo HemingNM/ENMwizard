@@ -150,6 +150,7 @@ get_or_ensemble_b <- function(mcm.l, a.calib.l,
                              ORt=seq(0, 0.2, 0.05), userArgs=NULL, categoricals=NULL,
                              numCores = 1){
   if(numCores>1){
+    check_install_pkg("parallel")
 
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("get_or_ensemble"))

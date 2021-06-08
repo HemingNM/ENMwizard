@@ -312,6 +312,7 @@ calib_mdl <- function(ENMeval.o, sp.nm = "species", a.calib, occ = NULL, use.ENM
   #### Calibrate ALL selected models
   {
     if(numCores>1 & parallelTunning){
+      check_install_pkg("parallel")
 
       cl <- parallel::makeCluster(numCores)
 
@@ -393,6 +394,7 @@ calib_mdl_b <- function(ENMeval.o.l, a.calib.l, occ.l = NULL, use.ENMeval.bgpts 
                          numCores = 1, parallelTunning = TRUE){
 
   if(numCores>1 & parallelTunning == F){
+    check_install_pkg("parallel")
 
     cl <- parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("calib_mdl","mod_sel"))
