@@ -24,7 +24,7 @@ comm_gr_trait <- function(mtp.l, trait.df, trait.cols, threshold=NULL, model=NUL
 
     if(length(names(mtp.l[[1]][[1]]$binary[[1]]))>1){
       mdls <- sapply(names(mtp.l[[1]][[1]]$binary[[threshold]]), function(x, split){
-        strsplit(x, split)[[1]][2]
+        strsplit(x, split)[[1]][1]
       }, split= "[.]")
 
       if(is.null(model) | !model %in% mdls){
