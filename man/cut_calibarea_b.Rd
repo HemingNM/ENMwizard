@@ -38,5 +38,5 @@ for(i in 1:length(occ.b.env)){
 }
 }
 \seealso{
-\code{\link[raster]{crop}}, \code{\link{buffer_b}}
+\code{\link{load_calib_data_b}}, \code{\link[raster]{crop}}, \code{\link{buffer_b}}
 }

@@ -539,7 +539,7 @@ buffer_b <- function(occ.polys, width = NULL, mult = .2, quadsegs = 100, numCore
 #' @param poly.l list of SpatialPolygons, usually returned from "buffer_b" function
 #' @param env.uncut raster brick or stack to be cropped
 #' @inheritParams set_calibarea_b
-#' @seealso \code{\link[raster]{crop}}, \code{\link{buffer_b}}
+#' @seealso \code{\link{load_calib_data_b}}, \code{\link[raster]{crop}}, \code{\link{buffer_b}}
 #' @return list [one element for each species] of cropped environmental variables. Details in ?raster::crop
 #' @examples
 #'\dontrun{
