@@ -603,7 +603,39 @@ cut_calibarea <- function(poly, env.uncut, sp.nm){
   return(env)
 }
 
+#' Load calibration areas already created
+#'
+#' Use a named list to load cropped environmental variables
+#' for each species.
+#'
+#' @param sel Logical. If TRUE, load selected (uncorrelated) variables,
+#' if FALSE (default), load all variables. See \code{\link{select_vars_b}}
+#'for details about selection of uncorrelated variables.
+#' @inheritParams cut_calibarea_b
+#' @seealso \code{\link{cut_calibarea_b}}, \code{\link{select_vars_b}}
+#' @return list [one element for each species] of cropped environmental variables. Details in ?raster::crop
+load_calib_data_b <- function(poly.l, sel = F){
+  path.env.out <- file.path("2_envData","area.calib")
+  files <- list.files(path.env.out, pattern = ".grd|.tif|.nc|.envi|.bil|.img", full.names = T)
 
+  if(sel){
+    files <- files[grepl("envDataSel", files)]
+    nm <- "envDataSel."
+  } else {
+    files <- files[!grepl("envDataSel", files)]
+    nm <- "envData."
+  }
+
+  careas <-sapply(names(poly.l),
+                  function(x, f){
+                    brick(f[grep(paste0(nm,x), f)])
+                  }, f=files)
+
+  unloaded <- sapply(careas, is.null)
+  if(any(is.null(unloaded))) warning(paste("Calibration area not found for:",
+                                         names(careas)[unloaded]))
+  return(careas)
+}
 
 #' Spatially thin a list of species occurrence data
 #'
