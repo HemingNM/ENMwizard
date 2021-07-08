@@ -89,10 +89,11 @@ comm_gr_trait <- function(mtp.l, trait.df, trait.cols, threshold=NULL, model=NUL
 #' @param fun function to be passed to \code{\link[raster]{calc}}
 #' @param user.fun User specified function. Can be used to compute focal/window metrics
 #' @param result.name Name of directory where results will be saved
+#' @inheritParams calib_mdl
 #' @inheritParams raster::writeRaster
 #' @export
 comm_spatial_metric <- function(trait.gr, fun=sum, user.fun=NULL, result.name="richness",
-                          format="raster", ...){
+                                numCores=1, format="raster", ...){
   res.dir <- paste0("4.results/", result.name, "/")
   if(dir.exists(res.dir)==F) dir.create(res.dir, recursive = T)
 
@@ -112,10 +113,23 @@ comm_spatial_metric <- function(trait.gr, fun=sum, user.fun=NULL, result.name="r
                                                   filename=filename,
                                                   ...)
         } else {
-          trait.gr[[tc]][[tr]][[s]] <- raster::calc(trait.gr[[tc]][[tr]][[s]],
-                                              fun=fun, format=format, overwrite=T,
-                                              filename=filename,
-                                              ...)
+          if(numCores>1){
+            cl <- parallel::makeCluster(numCores)
+            # parallel::clusterExport(cl)
+            trait.gr[[tc]][[tr]][[s]] <- raster::calc(trait.gr[[tc]][[tr]][[s]],
+                                                      fun=function(x){ parallel::parApply(cl, x, 1, fun)},
+                                                      format=format, overwrite=T,
+                                                      filename=filename,
+                                                      ... )
+            # set flag that cluster is available again
+            parallel::stopCluster(cl)
+          } else {
+            trait.gr[[tc]][[tr]][[s]] <- raster::calc(trait.gr[[tc]][[tr]][[s]],
+                                                      fun=fun,
+                                                      format=format, overwrite=T,
+                                                      filename=filename,
+                                                      ...)
+          }
         }
       }
     }
