@@ -126,8 +126,9 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
             ar <- ar*restrict
           }
         }
-        ar <- sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)
-        ar <- round(ar, digits = digits)
+        ar <- zonal(area(ar, na.rm=TRUE), ar, "sum", digits=digits)[2,2]
+        # ar <- sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)
+        # ar <- round(ar, digits = digits)
 
         # areas[sc,t,m] <<- ar
         return(ar) }, mtp.sc.t, sp.nm, sc, t, restrict, digits) # , areas # model criteria

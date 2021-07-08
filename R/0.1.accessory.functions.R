@@ -1,6 +1,6 @@
 ### Accessory functions
 
-#' Find repeated charaters in  a character vector
+#' Find repeated characters in  a character vector
 #'
 #' This function will take the shorter element and the characters repeated
 #' in the other elements of the character vector
