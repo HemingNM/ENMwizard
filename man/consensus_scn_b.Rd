@@ -4,7 +4,7 @@
 \alias{consensus_scn_b}
 \title{Create consensual projections of climatic scenarios for multiple species}
 \usage{
-consensus_scn_b(mcmp.l, groups, ref = NULL, save = T)
+consensus_scn_b(mcmp.l, groups, ref = NULL, save = T, numCores = 1)
 }
 \arguments{
 \item{mcmp.l}{Object returned by \code{\link{proj_mdl_b}}, containing a list of calibrated models
@@ -16,6 +16,8 @@ and model projections for each species.}
 calibration and that will not be averaged with any other)}
 
 \item{save}{Logical. TRUE to save consensual rasters.}
+
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }
 \value{
 A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},

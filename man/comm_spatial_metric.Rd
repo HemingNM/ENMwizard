@@ -9,6 +9,7 @@ comm_spatial_metric(
   fun = sum,
   user.fun = NULL,
   result.name = "richness",
+  numCores = 1,
   format = "raster",
   ...
 )
@@ -22,7 +23,9 @@ comm_spatial_metric(
 
 \item{result.name}{Name of directory where results will be saved}
 
-\item{format}{Character. Output file type. See \code{\link[raster]{writeFormats}}. If this argument is not provided, it is attempted to infer it from the filename extension. If that fails, the default format is used. The default format is 'raster', but this can be changed using \code{\link[raster]{rasterOptions}}}
+\item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
+
+\item{format}{Character. Output file type. Argument 'format' of raster::writeRaster}
 
 \item{...}{Additional arguments: 
   		

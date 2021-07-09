@@ -19,6 +19,9 @@ devtools::install_github("HemingNM/ENMwizard")
 library(ENMwizard)
 ```
 
+## Notice that ENMwizard is not compatible with ENMeval 2.0. 
+Sorry for that. I am working to make it compatible with the newest version soon
+
 ## Citation
 Please cite ENMwizard (and other R packages it depends on) by using:
 

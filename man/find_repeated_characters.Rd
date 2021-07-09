@@ -2,7 +2,7 @@
 % Please edit documentation in R/0.1.accessory.functions.R
 \name{find_repeated_characters}
 \alias{find_repeated_characters}
-\title{Find repeated charaters in  a character vector}
+\title{Find repeated characters in  a character vector}
 \usage{
 find_repeated_characters(x)
 }

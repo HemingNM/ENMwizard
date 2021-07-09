@@ -626,9 +626,9 @@ load_calib_data_b <- function(poly.l, sel = F){
     nm <- "envData."
   }
 
-  careas <-sapply(names(poly.l),
+  careas <- sapply(names(poly.l),
                   function(x, f){
-                    brick(f[grep(paste0(nm,x), f)])
+                    raster::brick(f[grep(paste0(nm,x), f)])
                   }, f=files)
 
   unloaded <- sapply(careas, is.null)

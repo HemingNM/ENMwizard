@@ -72,6 +72,7 @@ consensus_gr <- function(groups, clim.scn.nms){
 #' @param save Logical. TRUE to save consensual rasters.
 #' @inheritParams thrshld
 #' @inheritParams consensus_gr
+#' @inheritParams calib_mdl
 #' @seealso \code{\link{consensus_scn_b}}, \code{\link{consensus_gr}}
 #' @return A 'mcmp.l' object. An object returned from function \code{\link{proj_mdl_b}},
 #'  containing the consensual projections for each element (species) of the list
@@ -86,7 +87,7 @@ consensus_gr <- function(groups, clim.scn.nms){
 # #' mxnt.mdls.preds <- consensus_scn(mcmp=mxnt.mdls.preds, groups = list(yr, rcp))
 # #' }
 #' @export
-consensus_scn <- function(mcmp, groups, ref=NULL, sp.nm="species", save=T){
+consensus_scn <- function(mcmp, groups, ref=NULL, sp.nm="species", save=T, numCores=1){
   pred.args <- mcmp$pred.args
   outpt <- ifelse(grep('cloglog', pred.args)==1, 'cloglog',
                   ifelse(grep("logistic", pred.args)==1, 'logistic',
@@ -107,8 +108,29 @@ consensus_scn <- function(mcmp, groups, ref=NULL, sp.nm="species", save=T){
                                   function(r, m){
                                     r[[m]] ##
                                   }, m=m))
-      cnss.m <- raster::stack(cnss.m, raster::calc(stm, base::mean))
-      cnss.sd <- raster::stack(cnss.sd, raster::calc(stm, stats::sd))
+      if(numCores>1){
+        cl <- parallel::makeCluster(numCores)
+        # parallel::clusterExport(cl)
+        cnss.m <- raster::stack(cnss.m,
+                                raster::calc(stm,
+                                             fun=function(x){
+                                               parallel::parApply(cl, x, 1, base::mean)
+                                               })
+                                )
+
+        cnss.sd <- raster::stack(cnss.sd,
+                                 raster::calc(stm,
+                                              fun=function(x){
+                                                parallel::parApply(cl, x, 1, stats::sd)
+                                                })
+                                 )
+
+        # set flag that cluster is available again
+        parallel::stopCluster(cl)
+      } else {
+        cnss.m <- raster::stack(cnss.m, raster::calc(stm, base::mean))
+        cnss.sd <- raster::stack(cnss.sd, raster::calc(stm, stats::sd))
+    }
     } # for mdl
     names(cnss.m) <- paste0(mdl)
     names(cnss.sd) <- paste0(mdl, "_", "sd")
@@ -167,12 +189,12 @@ consensus_scn <- function(mcmp, groups, ref=NULL, sp.nm="species", save=T){
 #' mxnt.mdls.preds.cf <- consensus_scn_b(mcmp.l=mxnt.mdls.preds.cf, groups = list(yr, rcp))
 #' }
 #' @export
-consensus_scn_b <- function(mcmp.l, groups, ref=NULL, save=T){
+consensus_scn_b <- function(mcmp.l, groups, ref=NULL, save=T, numCores=1){
   cnss.l <- lapply(names(mcmp.l),
-                   function(i, x, groups, ref, save){
-                     consensus_scn(x[[i]], groups, ref, sp.nm=i, save)
+                   function(i, x, groups, ref, save, numCores){
+                     consensus_scn(x[[i]], groups, ref, sp.nm=i, save, numCores)
                    }
-                   , x=mcmp.l, groups=groups, ref, save=save)
+                   , x=mcmp.l, groups=groups, ref, save=save, numCores=numCores)
   names(cnss.l) <- names(mcmp.l)
   cnss.l
 }
