@@ -271,6 +271,20 @@ We have the projections for each climatic scenario, now we must select one (or m
 mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = c(5,7))
 ```
 
+### Identify range shifts: differences in suitable areas between climate scenarios and compute unchanged, lost and gained areas
+```r
+spp_rdiff <- range_shift_b(mods.thrshld.lst, ref.scn = "ncurrent")
+
+# plot maps of range change
+breaks <- round(seq(from=-1, to=1, .666), 2)
+colors <- colorRampPalette(c("red", "gray", "blue"))(length(breaks)-1)
+plot(spp_rdiff[[1]][[1]][[1]], col=colors, breaks=breaks)
+
+# area of range changes
+spp_rdiff_a <- get_rsa_b(spp_rdiff)
+spp_rdiff_a
+```
+
 ## Visualize
 ### Plot one projection for current climate and another for a future climatic scenario
 ```r
