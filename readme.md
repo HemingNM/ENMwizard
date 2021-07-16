@@ -271,7 +271,9 @@ We have the projections for each climatic scenario, now we must select one (or m
 mods.thrshld.lst <- thrshld_b(mxnt.mdls.preds.cf, thrshld.i = c(5,7))
 ```
 
-### Identify range shifts: differences in suitable areas between climate scenarios and compute unchanged, lost and gained areas
+### Identify range shifts
+Range shifts are differences in suitable areas between climate scenarios. 
+Here we will map where the range has shifted and compute unchanged, lost, and gained areas.
 ```r
 spp_rdiff <- range_shift_b(mods.thrshld.lst, ref.scn = "ncurrent")
 
