@@ -179,10 +179,10 @@ get_rsa <- function(mrs, digits=2, sp.nm){ # species, areas
               zstat[,])
         zstat[] <- zstat[order(zstat[,1]),]
 
-        areas.l[m,t,sc] <- zstat[zstat[,1]==-1, 2]
-        areas[m,t,sc] <- zstat[zstat[,1]==0, 2]
-        areas.g[m,t,sc] <- zstat[zstat[,1]==1, 2]
-       }
+        areas.l[m,t,sc] <- empty2zero(zstat[zstat[,1]==-1, 2])
+        areas[m,t,sc] <- empty2zero(zstat[zstat[,1]==0, 2])
+        areas.g[m,t,sc] <- empty2zero(zstat[zstat[,1]==1, 2])
+     }
     }
   }
 

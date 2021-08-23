@@ -4,7 +4,7 @@
 \alias{get_tsa}
 \title{Compute species' total suitable area}
 \usage{
-get_tsa(mtp, restrict, digits, sp.nm)
+get_tsa(mtp, restrict = NULL, digits, sp.nm)
 }
 \arguments{
 \item{mtp}{Stack or brick of thresholded predictions}

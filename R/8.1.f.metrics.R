@@ -79,9 +79,8 @@ get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
 #' areas.occ.lst <- get_tsa_b(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
-get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
+get_tsa <- function(mtp, restrict = NULL, digits){ # species, areas
   thrshld.nms <- paste(paste0(".", tnm), collapse = "|")
-  # thrshld.nms <- paste(paste0(".", c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")), collapse = "|")
 
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mtp[[1]][[2]][[1]]))
   c.nms2 <- vector("character", length(c.nms))
@@ -98,26 +97,15 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
   rep.mdl <- length(c.nms2)/length(unique(c.nms2))
   c.nms <- c.nms2
 
-  # areas <- array(dim=c(length(mtp), # rows for pred.scenario
-  #                      length(mtp[[1]][[2]]), # cols for threshold criteria
-  #                      raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
-  #                dimnames = list(names(mtp), # pred.scenario
-  #                                names(mtp[[1]][[2]]), # threshold criteria
-  #                                c.nms )) # model criteria
-
   thrshld.crit <- names(mtp[[1]][[1]])
 
-  # print(sp.nm)
-  # areas <- areas
-  # mtp <- mtp
-
-  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, sp.nm, restrict, digits){ # , areas  # pred.scenario
+  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, restrict, digits){ # , areas  # pred.scenario
     mtp.sc <- mtp[[sc]][[2]]
 
-    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sp.nm, sc, restrict, digits){ # , areas # threshold criteria
+    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sc, restrict, digits){ # , areas # threshold criteria
       mtp.sc.t <- mtp.sc[[t]]
 
-      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sp.nm, sc, t, restrict, digits){ # , areas # model criteria
+      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sc, t, restrict, digits){ # , areas # model criteria
         ar <- mtp.sc.t[[m]]
 
         if(grDevices::is.raster(restrict)){
@@ -127,13 +115,10 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
           }
         }
         ar <- raster::zonal(raster::area(ar, na.rm=TRUE), ar, "sum", digits=digits)
-        # ar <- sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)
-        # ar <- round(ar, digits = digits)
-
-        # areas[sc,t,m] <<- ar
-        return(ar[ar[,1]==1, 2]) }, mtp.sc.t, sp.nm, sc, t, restrict, digits) # , areas # model criteria
-      return(ar.mods) }, mtp.sc, sp.nm, sc, restrict, digits) # , areas# threshold criteria
-    return(ar.mods.t) }, mtp, sp.nm, restrict, digits) # , areas # pred.scenario
+        ar <- empty2zero(ar[ar[,1]==1, 2])
+        return(ar) }, mtp.sc.t, sc, t, restrict, digits) # , areas # model criteria
+      return(ar.mods) }, mtp.sc, sc, restrict, digits) # , areas# threshold criteria
+    return(ar.mods.t) }, mtp, restrict, digits) # , areas # pred.scenario
 
   ar.mods.t.p <- simplify2array(ar.mods.t.p) # transform list into array
   if(length(dim(ar.mods.t.p))==3){
@@ -144,9 +129,7 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
   } else if(length(dim(ar.mods.t.p))==1){
     dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1, 1)
     ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
-  } # else if(is.null(dim(ar.mods.t.p))){
-  #   ar.mods.t.p <- ar.mods.t.p
-  # }
+  }
 
   # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
   areas <- data.frame(expand.grid(Clim.scen=names(mtp), # pred.scenario
@@ -155,7 +138,6 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
                       Location=rep(unique(masks), each=length(ar.mods.t.p)/rep.mdl),
                       TotSuitArea=ar.mods.t.p)
 
-  # utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.totalArea", sp.nm, ".csv"))
   return(areas)
 }
 

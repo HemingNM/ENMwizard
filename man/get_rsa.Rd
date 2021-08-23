@@ -18,7 +18,7 @@ get_rsa(mrs, digits = 2, sp.nm)
 \value{
 An object of class "data.table" "data.frame" containing calculated areas of
  range shift between a selected climatic scenario and all other climatic scenarios
- for threshold, model and masked locations (if projections were masked, see \code{\link{mask_thr_projs_mscn}}).
+ for threshold, model and masked locations (if projections were masked, see \code{\link{mask_thr_projs_mscn_b}}).
 }
 \description{
 Compute changes in total suitable area at multiple climatic scenarios, threshold and model criteria.

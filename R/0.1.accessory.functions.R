@@ -56,6 +56,15 @@ check_install_pkg <- function(pkg){
   }
 }
 
+#' Check if element is empty
+#'
+#' This function will check if any element is empty
+#'
+#' @param x value to be checked
+#' @keywords internal
+empty2zero <- function(x) {
+  return(ifelse(identical(x, numeric(0)), 0, x))
+}
 
 #' Draw north arrow in plotted map
 #'
