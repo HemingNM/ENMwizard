@@ -126,12 +126,12 @@ get_tsa <- function(mtp, restrict, digits, sp.nm){ # species, areas
             ar <- ar*restrict
           }
         }
-        ar <- raster::zonal(raster::area(ar, na.rm=TRUE), ar, "sum", digits=digits)[2,2]
+        ar <- raster::zonal(raster::area(ar, na.rm=TRUE), ar, "sum", digits=digits)
         # ar <- sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)
         # ar <- round(ar, digits = digits)
 
         # areas[sc,t,m] <<- ar
-        return(ar) }, mtp.sc.t, sp.nm, sc, t, restrict, digits) # , areas # model criteria
+        return(ar[ar[,1]==1, 2]) }, mtp.sc.t, sp.nm, sc, t, restrict, digits) # , areas # model criteria
       return(ar.mods) }, mtp.sc, sp.nm, sc, restrict, digits) # , areas# threshold criteria
     return(ar.mods.t) }, mtp, sp.nm, restrict, digits) # , areas # pred.scenario
 
