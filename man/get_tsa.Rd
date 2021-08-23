@@ -4,7 +4,7 @@
 \alias{get_tsa}
 \title{Compute species' total suitable area}
 \usage{
-get_tsa(mtp, restrict = NULL, digits, sp.nm)
+get_tsa(mtp, restrict = NULL, digits)
 }
 \arguments{
 \item{mtp}{Stack or brick of thresholded predictions}
@@ -12,8 +12,6 @@ get_tsa(mtp, restrict = NULL, digits, sp.nm)
 \item{restrict}{a raster to select a region to compute area.}
 
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}
-
-\item{sp.nm}{Species name. Used to name the output folder}
 }
 \value{
 List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria

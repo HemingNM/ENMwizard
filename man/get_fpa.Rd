@@ -4,14 +4,12 @@
 \alias{get_fpa}
 \title{Compute "Fractional predicted area" ('n of occupied pixels'/n)}
 \usage{
-get_fpa(mtp, digits, sp.nm)
+get_fpa(mtp, digits)
 }
 \arguments{
 \item{mtp}{Stack or brick of thresholded predictions}
 
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}
-
-\item{sp.nm}{Species name. Used to name the output folder}
 }
 \value{
 A list of species' FPAs computed for each climatic scenario, threshold and model criteria

@@ -4,7 +4,7 @@
 \alias{get_rsa}
 \title{Compute changes in total suitable area}
 \usage{
-get_rsa(mrs, digits = 2, sp.nm)
+get_rsa(mrs, digits = 2)
 }
 \arguments{
 \item{mrs}{List containing stack or brick of range shifts. See \code{\link{range_shift}}}
@@ -12,8 +12,6 @@ get_rsa(mrs, digits = 2, sp.nm)
 \item{digits}{integer indicating the number of decimal places
     (\code{round}) or significant digits (\code{signif}) to be used.
     Negative values are allowed (see \sQuote{Details}).}
-
-\item{sp.nm}{Species name. Used to name the output folder}
 }
 \value{
 An object of class "data.table" "data.frame" containing calculated areas of
@@ -25,7 +23,7 @@ Compute changes in total suitable area at multiple climatic scenarios, threshold
 }
 \examples{
 \dontrun{
-range_diff <- range_shift(mods.thrshld.lst$haddadus_binotatus, sp.nm = "haddadus_binotatus")
+range_diff <- range_shift(mods.thrshld.lst$haddadus_binotatus)
 spp_diff_a <- get_rsa(mrs=range_diff)
 }
 }

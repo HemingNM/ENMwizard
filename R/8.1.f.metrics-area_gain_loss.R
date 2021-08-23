@@ -134,11 +134,11 @@ array2df <- function(a, clim.scen, threshold, model, location){
 #'  for threshold, model and masked locations (if projections were masked, see \code{\link{mask_thr_projs_mscn_b}}).
 #' @examples
 #' \dontrun{
-#' range_diff <- range_shift(mods.thrshld.lst$haddadus_binotatus, sp.nm = "haddadus_binotatus")
+#' range_diff <- range_shift(mods.thrshld.lst$haddadus_binotatus)
 #' spp_diff_a <- get_rsa(mrs=range_diff)
 #' }
 #' @export
-get_rsa <- function(mrs, digits=2, sp.nm){ # species, areas
+get_rsa <- function(mrs, digits=2){ # species, areas
   thrshld.nms <- paste(paste0(".", tnm), collapse = "|")
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mrs))
   c.nms2 <- vector("character", length(c.nms))
@@ -213,11 +213,10 @@ get_rsa <- function(mrs, digits=2, sp.nm){ # species, areas
 #' }
 #' @export
 get_rsa_b <- function(mrs.l, digits=2, numCores=1){
-  sp.nm.l <- names(mrs.l)
 
-  area.occ.spp <- lapply(seq_along(mrs.l), function(i, mrs.l, digits, sp.nm.l){
-    get_rsa(mrs.l[[i]], digits, sp.nm.l[i])
-  }, mrs.l, digits, sp.nm.l)
+  area.occ.spp <- lapply(seq_along(mrs.l), function(i, mrs.l, digits){
+    get_rsa(mrs.l[[i]], digits)
+  }, mrs.l, digits)
 
   names(area.occ.spp) <- names(mrs.l)
 

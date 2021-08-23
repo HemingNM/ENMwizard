@@ -37,27 +37,14 @@
 #' }
 #' @export
 get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
-  # thrshld.nms <- c("fcv1", "fcv5", "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto", "eetd")
 
-  # area.occ.spp <- vector("list", length = length(mtp.l))
-  # names(area.occ.spp) <- names(mtp.l)
-  sp.nm.l <- names(mtp.l)
-  # areas.occ.df <- vector("list")
-
-  area.occ.spp <- lapply(seq_along(mtp.l), function(i, mtp.l, restrict, digits, sp.nm.l){
-    get_tsa(mtp.l[[i]], restrict, digits, sp.nm.l[i])
-  }, mtp.l, restrict, digits, sp.nm.l) # species, areas
-
-  # area.occ.spp <- lapply(names(mtp.l), , mtp.l, restrict, digits) # species, areas
+  area.occ.spp <- lapply(seq_along(mtp.l), function(i, mtp.l, restrict, digits){
+    get_tsa(mtp.l[[i]], restrict, digits)
+  }, mtp.l, restrict, digits) # species, areas
 
   names(area.occ.spp) <- names(mtp.l)
-  # area.occ.spp <- lapply(area.occ.spp, function(x) data.table::melt(x))
-  # area.occ.spp <- lapply(area.occ.spp, function(x) data.table::melt(x)) # , cols=c("Clim.scen", "threshold", "Model"), value.name="TotSuitArea")
-  # area.occ.spp <- lapply(area.occ.spp, function(x) {
-  #   colnames(x) <- c("Clim.scen", "threshold", "Model", "TotSuitArea")
-  #   return(x)})
+
   area.occ.spp.c <- data.table::rbindlist(area.occ.spp, idcol = "sp")
-  # colnames(area.occ.spp.c)[1:5] <- c("sp", "Clim.scen", "threshold", "Model", "TotSuitArea")
   utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/metric.totalArea.csv")) # reorder ds
 
   return(area.occ.spp.c)
@@ -166,13 +153,11 @@ get_cont_permimport_b <- function(mcmp.l){
 
   # var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
 
-  sp.nm.l <- names(mcmp.l)
+  var.contPermImp <- lapply(seq_along(mcmp.l), function(i, mcmp.l){
+    get_cont_permimport(mcmp.l[[i]])
+  }, mcmp.l) # species, areas
 
-  var.contPermImp <- lapply(seq_along(mcmp.l), function(i, mcmp.l, sp.nm.l){
-    get_cont_permimport(mcmp.l[[i]], sp.nm.l[i])
-  }, mcmp.l, sp.nm.l) # species, areas
-
-  names(var.contPermImp) <- sp.nm.l
+  names(var.contPermImp) <- names(mcmp.l)
 
   var.cont.sp <- data.table::rbindlist(lapply(var.contPermImp, function(x) x[[1]]), idcol = "sp", fill=T)
   utils::write.csv(var.cont.sp, paste0("3_out.MaxEnt/metric.var.Contribution.csv")) # reorder ds
@@ -301,13 +286,12 @@ get_cont_permimport <- function(mcmp, sp.nm) {
 #' @export
 get_fpa_b <- function(mtp.l, digits = 3){
   # df.FPA <- vector("list", length = length(mtp.l))
-  sp.nm.l <- names(mtp.l)
 
-  df.FPA <- lapply(seq_along(mtp.l), function(i, mtp.l, digits, sp.nm.l){
-    get_fpa(mtp.l[[i]], digits, sp.nm.l[i])
-    }, mtp.l, digits, sp.nm.l) # species, areas
+  df.FPA <- lapply(seq_along(mtp.l), function(i, mtp.l, digits){
+    get_fpa(mtp.l[[i]], digits)
+    }, mtp.l, digits) # species, areas
 
-  names(df.FPA) <- sp.nm.l
+  names(df.FPA) <- names(mtp.l)
   df.FPA.c <- data.table::rbindlist(df.FPA, idcol = "sp")
   utils::write.csv(df.FPA.c, paste0("3_out.MaxEnt/metric.FracPredArea.csv")) # reorder ds
 
@@ -326,7 +310,7 @@ get_fpa_b <- function(mtp.l, digits = 3){
 #' get_fpa(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
-get_fpa <- function(mtp, digits, sp.nm){ # species, areas
+get_fpa <- function(mtp, digits){ # species, areas
   # print(sp.nm)
   # areas <- array(dim=c(length(mtp), # rows for pred.scenario
   #                      length(mtp[[1]][[2]]), # cols for threshold criteria
@@ -349,21 +333,21 @@ get_fpa <- function(mtp, digits, sp.nm){ # species, areas
   #                                         "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]])),
   #                      FPA=NA)
 
-  fpa.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, sp.nm, digits){  # pred.scenario
+  fpa.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, digits){  # pred.scenario
     mtp.sc <- mtp[[sc]][[2]]
 
-    fpa.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sp.nm,sc, digits){ # threshold criteria
+    fpa.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sc, digits){ # threshold criteria
       mtp.sc.t <- mtp.sc[[t]]
 
-      fpa.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sp.nm,sc,t, digits){ # model criteria
+      fpa.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sc, t, digits){ # model criteria
         ar <- mtp.sc.t[[m]]
 
         FPA <- (sum(raster::area(ar, na.rm=TRUE)[raster::getValues(ar)==1], na.rm=TRUE)/
                   sum(raster::area(ar, na.rm=TRUE)[!is.na(raster::getValues(ar))], na.rm=TRUE) )
 
-        return(FPA) }, mtp.sc.t, sp.nm,sc,t, digits) # model criteria
-      return(fpa.mods) }, mtp.sc, sp.nm,sc, digits) # threshold criteria
-    return(fpa.mods.t) }, mtp, sp.nm, digits) # pred.scenario
+        return(FPA) }, mtp.sc.t, sc, t, digits) # model criteria
+      return(fpa.mods) }, mtp.sc, sc, digits) # threshold criteria
+    return(fpa.mods.t) }, mtp, digits) # pred.scenario
 
   fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
   if(length(dim(fpa.mods.t.p))==3){
@@ -384,7 +368,7 @@ get_fpa <- function(mtp, digits, sp.nm){ # species, areas
                                  "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]]))),
               FPA=fpa.mods.t.p)
 
-  utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.FracPredArea.", sp.nm, ".csv")) # reorder ds
+  # utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.FracPredArea.", sp.nm, ".csv")) # reorder ds
   return(areas)
 }
 
