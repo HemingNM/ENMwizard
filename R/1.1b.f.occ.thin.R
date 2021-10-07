@@ -35,7 +35,7 @@ e_thin_algorithm <- function(data, bins=20){
   grp_size <- rowSums(apply(data, 2,
                             function(x, bins){
                               class.size <- table(sort(cut(x,
-                                                           qunif(seq(0, 1, bins = bins), min(x), max(x)),
+                                                           qunif(seq(0, 1, length.out = bins), min(x), max(x)),
                                                            labels=F, include.lowest=T)))
                               class.size
                               rep(class.size, times=class.size)-1
@@ -44,7 +44,7 @@ e_thin_algorithm <- function(data, bins=20){
   ## id of group for each variable
   grp_ids <- apply(apply(data, 2,
                          function(x, bins){
-                           breaks <- seq(0, 1, bins = bins)
+                           breaks <- seq(0, 1, length.out = bins)
                            cut(x,
                                stats::qunif(breaks, min(x), max(x)),
                                labels=F, include.lowest=T)
@@ -56,7 +56,7 @@ e_thin_algorithm <- function(data, bins=20){
   ## distance from group center
   grp_centerdist <- rowSums( apply(data, 2,
                                    function(x, bins){
-                                     breaks <- seq(0, 1, bins = bins)
+                                     breaks <- seq(0, 1, length.out = bins)
                                      meds <- numeric(length(breaks)-1)
                                      for(i in 1:(length(breaks)-1)){
                                        meds[i] <- mean(breaks[i:(i+1)])
