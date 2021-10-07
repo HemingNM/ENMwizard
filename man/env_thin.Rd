@@ -4,7 +4,7 @@
 \alias{env_thin}
 \title{Thinning of occurrence records using environmental information}
 \usage{
-env_thin(p, predictors, bins = 20, plot = F)
+env_thin(p, predictors, long.col = NULL, lat.col = NULL, bins = 20, plot = F)
 }
 \arguments{
 \item{p}{Two column matrix or data.frame with point coordinates

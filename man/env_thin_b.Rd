@@ -4,7 +4,14 @@
 \alias{env_thin_b}
 \title{Thinning of occurrence records using environmental information}
 \usage{
-env_thin_b(p.lst, predictors.lst, bins = 20, plot = F)
+env_thin_b(
+  p.lst,
+  predictors.lst,
+  long.col = NULL,
+  lat.col = NULL,
+  bins = 20,
+  plot = F
+)
 }
 \arguments{
 \item{p.lst}{List of two column matrix or data.frame with point coordinates
