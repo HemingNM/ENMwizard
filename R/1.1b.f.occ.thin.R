@@ -114,8 +114,16 @@ e_thin_algorithm <- function(data, bins=20){
 #' }
 #'
 #' @export
-env_thin <- function(p, predictors, bins=20, plot=F){
-  data <- raster::extract(predictors, p)
+env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, plot=F){
+  if(class(p) %in% c("data.frame", "matrix")){
+    if(is.null(lat.col) | is.null(long.col)) {
+      long.col <- colnames(p)[grep("^lon$|^long$|^longitude$", colnames(p), ignore.case = T, fixed = F)][1]
+      lat.col <- colnames(p)[grep("^lat$|^latitude$", colnames(p), ignore.case = T)][1]
+    }
+    coords <- p[,c(long.col, lat.col)]
+  }
+
+  data <- raster::extract(predictors, coords)
   selRec <- e_thin_algorithm(data, bins=bins)
 
   if(plot){
@@ -162,20 +170,22 @@ env_thin <- function(p, predictors, bins=20, plot=F){
 #' }
 #'
 #' @export
-env_thin_b <- function(p.lst, predictors.lst, bins=20, plot=F){
+env_thin_b <- function(p.lst, predictors.lst, long.col=NULL, lat.col=NULL, bins=20, plot=F){
   spp <- names(p.lst)
 
   if(class(predictors.lst) != "list"){
-    f_thin <- function(i, p.lst, predictors.lst, ...){
-      env_thin(p.lst[[i]], predictors.lst, ...)
+    f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, ...){
+      env_thin(p.lst[[i]], predictors.lst, long.col, lat.col, bins, ...)
     }
   } else {
-    f_thin <- function(i, p.lst, predictors.lst, ...){
-      env_thin(p.lst[[i]], predictors.lst[[i]], ...)
+    f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, ...){
+      env_thin(p.lst[[i]], predictors.lst[[i]], long.col, lat.col, bins, ...)
     }
   }
 
-  thinned_dataset_full <- lapply(1:length(p.lst), f_thin, p.lst=p.lst, predictors.lst=predictors.lst )
+  thinned_dataset_full <- lapply(1:length(p.lst), f_thin,
+                                 p.lst=p.lst, predictors.lst=predictors.lst,
+                                 long.col=long.col, lat.col=lat.col, bins=bins )
 
   names(thinned_dataset_full) <- spp
 
