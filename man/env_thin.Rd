@@ -4,7 +4,15 @@
 \alias{env_thin}
 \title{Thinning of occurrence records using environmental information}
 \usage{
-env_thin(p, predictors, long.col = NULL, lat.col = NULL, bins = 20, plot = F)
+env_thin(
+  p,
+  predictors,
+  long.col = NULL,
+  lat.col = NULL,
+  bins = 20,
+  file = NULL,
+  plot = F
+)
 }
 \arguments{
 \item{p}{Two column matrix or data.frame with point coordinates
@@ -16,6 +24,8 @@ predictor variables.}
 \item{lat.col, long.col}{Name of columns that contain coordinates (latitude and longitude)}
 
 \item{bins}{Number of bins to divide each environmental variable.}
+
+\item{file}{either a character string naming a file or a connection open for writing.}
 
 \item{plot}{Logical. Should results be plotted?}
 }

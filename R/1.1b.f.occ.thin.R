@@ -35,7 +35,7 @@ e_thin_algorithm <- function(data, bins=20){
   grp_size <- rowSums(apply(data, 2,
                             function(x, bins){
                               class.size <- table(sort(cut(x,
-                                                           qunif(seq(0, 1, length.out = bins), min(x), max(x)),
+                                                           stats::qunif(seq(0, 1, length.out = bins), min(x), max(x)),
                                                            labels=F, include.lowest=T)))
                               class.size
                               rep(class.size, times=class.size)-1
@@ -97,6 +97,7 @@ e_thin_algorithm <- function(data, bins=20){
 #' or \code{\link[sp]{SpatialPoints}} of occurrence records.
 #' @param lat.col,long.col Name of columns that contain coordinates (latitude and longitude)
 #' @param bins Number of bins to divide each environmental variable.
+#' @param file either a character string naming a file or a connection open for writing.
 #' @param plot Logical. Should results be plotted?
 #'
 #' @seealso \code{\link{env_thin_b}}, \code{\link{load_env_thin_occ}}
@@ -117,7 +118,7 @@ e_thin_algorithm <- function(data, bins=20){
 #' }
 #'
 #' @export
-env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, plot=F){
+env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, file=NULL, plot=F){
   if(class(p) %in% c("data.frame", "matrix")){
     if(is.null(lat.col) | is.null(long.col)) {
       long.col <- colnames(p)[grep("^lon$|^long$|^longitude$", colnames(p), ignore.case = T, fixed = F)][1]
@@ -137,7 +138,23 @@ env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, plot=F
     # maps::map(add = T)
     graphics::points(p[selRec,], col="brown", pch=19)
   }
-  return(p[selRec,])
+  if(!is.null(file)){
+    p$selRec <- F
+    p$selRec[selRec] <- T
+    utils::write.csv(as.data.frame(p), file = file)
+    sink(gsub(".csv", ".log.txt", file))
+    cat("\n**********************************************\n
+        Environmental thinning\n
+        Original number of records:", nrow(p), "\n
+        Number of retained records:", length(selRec), "\n
+        Number of bins:", bins, "\n
+        Environmental variables used for thinning:", colnames(data), "\n
+        Thinning done on:",  as.character(Sys.time()), "\n
+        File saved as:", file, "\n
+        **********************************************")
+    sink()
+  }
+  return(coords[selRec,])
 }
 
 
@@ -180,18 +197,23 @@ env_thin_b <- function(p.lst, predictors.lst, long.col=NULL, lat.col=NULL, bins=
   spp <- names(p.lst)
 
   if(class(predictors.lst) != "list"){
-    f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, ...){
-      env_thin(p.lst[[i]], predictors.lst, long.col, lat.col, bins, ...)
+    f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, spp, ...){
+      file=paste0("1_sppData/occ.thinned.full/",
+                  spp[i],".occ_env_thinned.csv")
+      env_thin(p.lst[[i]], predictors.lst, long.col, lat.col, bins, file, ...)
     }
   } else {
-    f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, ...){
-      env_thin(p.lst[[i]], predictors.lst[[i]], long.col, lat.col, bins, ...)
+    f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, spp, ...){
+      file=paste0("1_sppData/occ.thinned.full/",
+                  spp[i],".occ_env_thinned.csv")
+      env_thin(p.lst[[i]], predictors.lst[[i]], long.col, lat.col, bins, file, ...)
     }
   }
-
+  if(!dir.exists("1_sppData/occ.thinned.full"))dir.create("1_sppData/occ.thinned.full", recursive = T)
   thinned_dataset_full <- lapply(1:length(p.lst), f_thin,
                                  p.lst=p.lst, predictors.lst=predictors.lst,
-                                 long.col=long.col, lat.col=lat.col, bins=bins )
+                                 long.col=long.col, lat.col=lat.col, bins=bins,
+                                 spp=spp)
 
   names(thinned_dataset_full) <- spp
 
@@ -223,7 +245,7 @@ load_env_thin_occ <- function(p.lst, long.col=NULL, lat.col=NULL){
       }
       p <- p[,c(long.col, lat.col)]
     } else {
-      p <- coordinates(p)
+      p <- sp::coordinates(p)
     }
     return(p)
   }, long.col=NULL, lat.col=NULL)
