@@ -142,7 +142,7 @@ get_rsa <- function(mrs, digits=2){ # species, areas
   thrshld.nms <- paste(paste0(".", tnm), collapse = "|")
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mrs))
   c.nms2 <- vector("character", length(c.nms))
-  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC", "^EBPM", "^WAAUC", "^ESORIC")
+  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "AUC", "^AvgAIC", "^EBPM", "^WAAUC", "^ESORIC")
   c.nms2 <- unlist(sapply(seq_along(s.nms), function(i, x, y, z){
     si <- grepl(s.nms[i], c.nms)
     if(sum(si)>0){

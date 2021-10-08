@@ -95,8 +95,11 @@ e_thin_algorithm <- function(data, bins=20){
 #' predictor variables.
 #' @param p Two column matrix or data.frame with point coordinates
 #' or \code{\link[sp]{SpatialPoints}} of occurrence records.
+#' @param lat.col,long.col Name of columns that contain coordinates (latitude and longitude)
 #' @param bins Number of bins to divide each environmental variable.
 #' @param plot Logical. Should results be plotted?
+#'
+#' @seealso \code{\link{env_thin_b}}, \code{\link{load_env_thin_occ}}
 #'
 #' @examples \dontrun{
 #' file <- paste(system.file(package="dismo"), "/ex/bradypus.csv", sep="")
@@ -151,8 +154,11 @@ env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, plot=F
 #' predictor variables.
 #' @param p.lst  List of two column matrix or data.frame with point coordinates
 #' or \code{\link[sp]{SpatialPoints}} of occurrence records.
+#' @inheritParams env_thin
 #' @param bins Number of bins to divide each environmental variable.
 #' @param plot Logical. Should results be plotted?
+#'
+#' @seealso \code{\link{env_thin}}, \code{\link{load_env_thin_occ}}
 #'
 #' @examples \dontrun{
 #' file <- paste(system.file(package="dismo"), "/ex/bradypus.csv", sep="")
@@ -190,4 +196,35 @@ env_thin_b <- function(p.lst, predictors.lst, long.col=NULL, lat.col=NULL, bins=
   names(thinned_dataset_full) <- spp
 
   return(thinned_dataset_full)
+}
+
+
+#' Load filtered occurrence data
+#'
+#' Load filtered occurrence data from object returned by \code{\link{env_thin_b}}
+#'
+#' @param p.lst named list returned from \code{\link{env_thin_b}}
+#' @inheritParams env_thin
+#'
+#' @seealso \code{\link{env_thin}}, \code{\link{env_thin_b}}
+#'
+#' @return named list of thinned occurence data for each species in the list
+#' @examples
+#'\dontrun{
+#' occ.locs <- load_env_thin_occ(thinned.dataset.batch)
+#' }
+#' @export
+load_env_thin_occ <- function(p.lst, long.col=NULL, lat.col=NULL){
+  lapply(p.lst, function(p, ...){
+    if(class(p) %in% c("data.frame", "matrix")){
+      if(is.null(lat.col) | is.null(long.col)) {
+        long.col <- colnames(p)[grep("^lon$|^long$|^longitude$", colnames(p), ignore.case = T, fixed = F)][1]
+        lat.col <- colnames(p)[grep("^lat$|^latitude$", colnames(p), ignore.case = T)][1]
+      }
+      p <- p[,c(long.col, lat.col)]
+    } else {
+      p <- coordinates(p)
+    }
+    return(p)
+  }, long.col=NULL, lat.col=NULL)
 }

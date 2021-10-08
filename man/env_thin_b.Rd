@@ -20,6 +20,10 @@ or \code{\link[sp]{SpatialPoints}} of occurrence records.}
 \item{predictors.lst}{List of \code{\link[raster]{Raster-class}} object of environmental
 predictor variables.}
 
+\item{long.col}{Name of columns that contain coordinates (latitude and longitude)}
+
+\item{lat.col}{Name of columns that contain coordinates (latitude and longitude)}
+
 \item{bins}{Number of bins to divide each environmental variable.}
 
 \item{plot}{Logical. Should results be plotted?}
@@ -48,4 +52,7 @@ predictors <- getData('worldclim', var='bio', res=10, path="rasters")
 env_thin_b(list(coord), list(predictors))
 }
 
+}
+\seealso{
+\code{\link{env_thin}}, \code{\link{load_env_thin_occ}}
 }
