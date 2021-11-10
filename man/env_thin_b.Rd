@@ -10,15 +10,16 @@ env_thin_b(
   long.col = NULL,
   lat.col = NULL,
   bins = 20,
-  plot = F
+  plot = F,
+  verbose = F
 )
 }
 \arguments{
 \item{p.lst}{List of two column matrix or data.frame with point coordinates
 or \code{\link[sp]{SpatialPoints}} of occurrence records.}
 
-\item{predictors.lst}{List of \code{\link[raster]{Raster-class}} object of environmental
-predictor variables.}
+\item{predictors.lst}{A \code{\link[raster]{Raster-class}} or list of \code{\link[raster]{Raster-class}}
+object containing the predictor variables.}
 
 \item{long.col}{Name of columns that contain coordinates (latitude and longitude)}
 
@@ -27,6 +28,8 @@ predictor variables.}
 \item{bins}{Number of bins to divide each environmental variable.}
 
 \item{plot}{Logical. Should results be plotted?}
+
+\item{verbose}{Logical. Should information be printed on screen?}
 }
 \value{
 A data.frame, matrix, sp or sf object containing the selected records.

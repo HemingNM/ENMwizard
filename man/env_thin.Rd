@@ -11,7 +11,8 @@ env_thin(
   lat.col = NULL,
   bins = 20,
   file = NULL,
-  plot = F
+  plot = F,
+  verbose = F
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ predictor variables.}
 \item{file}{either a character string naming a file or a connection open for writing.}
 
 \item{plot}{Logical. Should results be plotted?}
+
+\item{verbose}{Logical. Should information be printed on screen?}
 }
 \value{
 A data.frame, matrix, sp or sf object containing the selected records.
@@ -45,6 +48,7 @@ coord <- bradypus [,2:3]
 
 # Download data for present
 dir.create("rasters")
+library(raster)
 predictors <- getData('worldclim', var='bio', res=10, path="rasters")
 
 #cor(data)
