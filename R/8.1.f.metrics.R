@@ -154,7 +154,7 @@ get_cont_permimport_b <- function(mcmp.l){
   # var.contPermImp <- stats::setNames(vector("list", length(mcmp.l)), names(mcmp.l))
 
   var.contPermImp <- lapply(seq_along(mcmp.l), function(i, mcmp.l){
-    get_cont_permimport(mcmp.l[[i]])
+    get_cont_permimport(mcmp.l[[i]], names(mcmp.l[i]))
   }, mcmp.l) # species, areas
 
   names(var.contPermImp) <- names(mcmp.l)
@@ -264,8 +264,8 @@ get_cont_permimport <- function(mcmp, sp.nm) {
   var.permImp.df <- cbind(sel.crit=sel.mod.nms, var.permImp.df)
 
   # var.contPermImp[[sp]] <- array(c(as.matrix(var.cont.df), as.matrix(var.permImp.df)), c(nrow(var.cont.df), ncol(var.cont.df), 2), dimnames = c(dimnames(var.cont.df), list(c("contribution", "permutation.importance") )))
-  utils::write.csv(var.cont.df, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.var.Contribution.", sp.nm, ".csv"))
-  utils::write.csv(var.permImp.df, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.var.PermImportance", sp.nm, ".csv"))
+  # utils::write.csv(var.cont.df, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.var.Contribution.", sp.nm, ".csv"))
+  # utils::write.csv(var.permImp.df, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.var.PermImportance", sp.nm, ".csv"))
   # var.contPermImp[[sp]] <- list(contribution=var.cont.df, permutation.importance=var.permImp.df)
   return(list(contribution=var.cont.df, permutation.importance=var.permImp.df))
 }
@@ -424,7 +424,7 @@ get_OR <- function(mtp.l, occ.l, clim.scn.nm = "current", digits = 3){ # , save=
 
     df.OmR[[sp]] <- data.table::melt(data.table::data.table(df.OmR[[sp]]), id.vars="Model", variable.name="threshold", value.name="OmR") # reshape2::melt(df.OmR[[sp]], id="Model") #
     # colnames(df.OmR[[sp]])[1:3] <- c("Model", "threshold", "OmR")
-    utils::write.csv(as.data.frame(df.OmR[[sp]]), paste0("3_out.MaxEnt/Mdls.", sp, "/metric.OmRate", sp, ".csv")) # reorder ds
+    # utils::write.csv(as.data.frame(df.OmR[[sp]]), paste0("3_out.MaxEnt/Mdls.", sp, "/metric.OmRate", sp, ".csv")) # reorder ds
   }
   df.OmR.c <- data.table::rbindlist(df.OmR, idcol = "sp")
   utils::write.csv(df.OmR.c, paste0("3_out.MaxEnt/metric.OmRate.csv")) # reorder ds
