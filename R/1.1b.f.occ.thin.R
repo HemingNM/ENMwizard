@@ -35,10 +35,11 @@ e_thin_algorithm <- function(data, bins=20){
   ## size of group
   grp_size <- rowSums(apply(data, 2,
                             function(x, bins){
+                              breaks <- seq(0, 1, length.out = bins)
                               class.size <- table(sort(cut(x,
-                                                           stats::qunif(seq(0, 1, length.out = bins), min(x), max(x)),
+                                                           stats::qunif(breaks, min(x)-abs(min(x))*.001, max(x)+abs(max(x))*.001),
                                                            labels=F, include.lowest=T)))
-                              class.size
+                              # class.size
                               rep(class.size, times=class.size)-1
                             }, bins = bins))
 
@@ -47,7 +48,7 @@ e_thin_algorithm <- function(data, bins=20){
                          function(x, bins){
                            breaks <- seq(0, 1, length.out = bins)
                            cut(x,
-                               stats::qunif(breaks, min(x), max(x)),
+                               stats::qunif(breaks, min(x)-abs(min(x))*.001, max(x)+abs(max(x))*.001),
                                labels=F, include.lowest=T)
                          }, bins = bins), 1,
                    function(x){
@@ -129,6 +130,9 @@ env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, file=N
       lat.col <- colnames(p)[grep("^lat$|^latitude$", colnames(p), ignore.case = T)][1]
     }
     coords <- p[,c(long.col, lat.col)]
+    if(class(p) %in% c("matrix")){
+      p <- as.data.frame(p)
+    }
   } else { # if(class(p) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
     coords <- p
   }
