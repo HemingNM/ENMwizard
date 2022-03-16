@@ -8,6 +8,7 @@ cut_projarea_rst(
   area.p,
   env.uncut,
   mask = FALSE,
+  sp.mask = NULL,
   prj.nm = "",
   sp.nm = "species"
 )
@@ -18,6 +19,9 @@ cut_projarea_rst(
 \item{env.uncut}{raster/brick of environmental variables to be cut}
 
 \item{mask}{should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details}
+
+\item{sp.mask}{an object of class: SpatialPolygons or SpatialPolygonsDataFrame, used as additional mask to be
+applied on the predictor variables (env.uncut)}
 
 \item{prj.nm}{climatic scenario name, usually "fut" or "past" is used to indicate a general timing of scenario}
 

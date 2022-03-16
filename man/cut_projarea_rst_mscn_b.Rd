@@ -9,6 +9,7 @@ cut_projarea_rst_mscn_b(
   env.uncut.l,
   occ.polys,
   mask = FALSE,
+  sp.mask.l = NULL,
   prj.nm = "",
   sp.nm = "mult.spp",
   numCores = 1
@@ -22,7 +23,10 @@ cut_projarea_rst_mscn_b(
 \item{occ.polys}{list of occ.poly SpatialPolygons.  see ?set_projarea for details.}
 
 \item{mask}{Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or
-use all spatial extent of area.p
+use all spatial extent of area.p}
+
+\item{sp.mask.l}{a list of objects of class: SpatialPolygons or SpatialPolygonsDataFrame, used as additional mask to be
+ applied on the predictor variables (env.uncut)
 
 #' @seealso \code{\link{set_projarea}}, \code{\link{set_projarea_b}},
 \code{\link{cut_projarea}}, \code{\link{cut_projarea_b}}, \code{\link{cut_projarea_mscn_b}},
