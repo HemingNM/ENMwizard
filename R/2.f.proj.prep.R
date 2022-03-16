@@ -251,6 +251,8 @@ cut_projarea_mscn_b <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.pr
 #' @inheritParams cut_projarea
 #' @inheritParams cut_projarea_b
 #' @param mask should use area.p to "mask" or "crop" env.uncut? See ?raster::mask and ?raster::crop for details
+#' @param sp.mask an object of class: SpatialPolygons or SpatialPolygonsDataFrame, used as additional mask to be
+#'  applied on the predictor variables (env.uncut)
 #'
 #' @seealso \code{\link{set_projarea}}, \code{\link{set_projarea_b}},
 #' \code{\link{cut_projarea}}, \code{\link{cut_projarea_b}}, \code{\link{cut_projarea_mscn_b}},
@@ -260,7 +262,7 @@ cut_projarea_mscn_b <- function(pred.polys, env.uncut.l, numCores=1){ # , ext.pr
 # #' @examples
 #'
 #' @export
-cut_projarea_rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="species"){ # , crs.set
+cut_projarea_rst <- function(area.p, env.uncut, mask=FALSE, sp.mask=NULL, prj.nm="", sp.nm="species"){ # , crs.set
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   if(dir.exists(paste(path.proj, sp.nm, sep="/"))==FALSE) dir.create(paste(path.proj, sp.nm, sep="/"))
@@ -272,6 +274,13 @@ cut_projarea_rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp
                            format = "raster", overwrite=TRUE)
   } else {
     env.crp <- raster::crop(env.uncut, ext.proj)
+    if(!is.null(sp.mask)){
+      if(grepl("SpatialPolygons", class(sp.mask))){
+        env.crp <- raster::mask(env.crp, sp.mask)
+      } else {
+        stop("sp.mask need to be an object of class: SpatialPolygons or SpatialPolygonsDataFrame")
+      }
+    }
     area.p <- raster::mask(env.crp, area.p,
                            file = paste(path.proj, sp.nm, gsub("^\\.|\\.\\.\\.|\\.\\.", ".", paste0("areaProj.", sp.nm, prj.nm,".grd")), sep="/"),
                            format = "raster", overwrite=TRUE)
@@ -291,6 +300,8 @@ cut_projarea_rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp
 #' @inheritParams set_projarea_b
 #' @param mask Should mask raster? (i.e. only use area inside polygon. See ?raster::mask for details) or
 #' use all spatial extent of area.p
+#' @param sp.mask.l a list of objects of class: SpatialPolygons or SpatialPolygonsDataFrame, used as additional mask to be
+#'  applied on the predictor variables (env.uncut)
 #'
 #' #' @seealso \code{\link{set_projarea}}, \code{\link{set_projarea_b}},
 #' \code{\link{cut_projarea}}, \code{\link{cut_projarea_b}}, \code{\link{cut_projarea_mscn_b}},
@@ -300,7 +311,7 @@ cut_projarea_rst <- function(area.p, env.uncut, mask=FALSE, prj.nm="", sp.nm="sp
 # #' @examples
 #'
 #' @export
-cut_projarea_rst_b <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm="", sp.nm = "mult.spp"){
+cut_projarea_rst_b <- function(area.p, env.uncut, occ.polys, mask=FALSE, sp.mask.l=NULL, prj.nm="", sp.nm = "mult.spp"){
   if(prj.nm != ""){ prj.nm <- paste0(".", prj.nm)}
   area.pl <- vector("list", length(occ.polys))
   names(area.pl) <- names(occ.polys)
@@ -309,10 +320,21 @@ cut_projarea_rst_b <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=
     area.p <- methods::as(raster::extent(area.p), "SpatialPolygons")
   }
 
-  cat(c("\n","Creating projection area","\n"))
-  area.pl[[1]] <- cut_projarea(area.p, env.uncut, prj.nm = prj.nm, sp.nm = sp.nm)
-  for(i in 2:length(occ.polys)){
-    area.pl[[i]] <- area.pl[[1]]
+  if(is.null(sp.mask.l)){
+    cat(c("\n","Creating projection area","\n"))
+    area.pl[[1]] <- cut_projarea(area.p, env.uncut, prj.nm = prj.nm, sp.nm = sp.nm)
+    for(i in 2:length(occ.polys)){
+      area.pl[[i]] <- area.pl[[1]]
+    }
+  } else {
+    if(length(sp.mask.l) != length(occ.polys)){
+      stop("length of 'sp.mask.l' must be the same of 'occ.polys'")
+    }
+    for(i in 1:length(occ.polys)){
+      area.pl[[i]] <- cut_projarea_rst(area.p, env.uncut, mask=mask,
+                                       sp.mask=sp.mask.l[[i]],
+                                       prj.nm=prj.nm, sp.nm=sp.nm)
+    }
   }
   return(area.pl)
 }
@@ -338,7 +360,7 @@ cut_projarea_rst_b <- function(area.p, env.uncut, occ.polys, mask=FALSE, prj.nm=
 #'
 #' @export
 cut_projarea_rst_mscn_b <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
-                                  prj.nm="", sp.nm = "mult.spp", numCores=1){
+                                    sp.mask.l=NULL, prj.nm="", sp.nm = "mult.spp", numCores=1){
   path.proj <- "2_envData/area.proj"
   if(dir.exists(path.proj)==FALSE) dir.create(path.proj)
   area.pl <- vector("list", length(occ.polys))
@@ -352,14 +374,28 @@ cut_projarea_rst_mscn_b <- function(area.p, env.uncut.l, occ.polys, mask=FALSE,
   area.p.spi <- vector("list", length(env.uncut.l))
   check_install_pkg("parallel")
 
-  p.area <- unlist(parallel::mclapply(base::seq_along(area.p.spi), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
-    prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")
-    area.p.spi[[j]] <- cut_projarea(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
-    area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(names(env.uncut.l)[j])) )
-  } ) )
+  if(is.null(sp.mask.l)){
+    p.area <- unlist(parallel::mclapply(base::seq_along(env.uncut.l), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
+      prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")
+      area.p.spi[[j]] <- cut_projarea(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = sp.nm)
+      area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(names(env.uncut.l)[j])) )
+    } ) )
 
-  for(i in 1:length(occ.polys)){
-    area.pl[[i]] <- p.area
+    for(i in 1:length(occ.polys)){
+      area.pl[[i]] <- p.area
+    }
+  } else {
+    for(i in 1:length(occ.polys)){
+      area.pl[[i]] <- unlist(parallel::mclapply(base::seq_along(env.uncut.l), mc.cores = getOption("mc.cores", as.integer(numCores)), function(j){
+        prj.nm.j <- paste("", names(env.uncut.l)[j], sep=".")
+
+        area.p.spi[[j]] <-# cut_projarea(area.p, env.uncut.l[[j]], prj.nm = prj.nm.j, sp.nm = names(occ.polys)[i])
+          cut_projarea_rst(area.p, env.uncut.l[[j]],
+                           mask=mask, sp.mask=sp.mask.l[[i]],
+                           prj.nm=prj.nm.j, sp.nm=names(occ.polys)[i])
+        area.p.spi[[j]] <- stats::setNames(area.p.spi[j], gsub("^\\.|\\.\\.\\.|\\.\\.","", paste0(names(env.uncut.l)[j])) )
+      } ) )
+    }
   }
   return(area.pl)
 }
