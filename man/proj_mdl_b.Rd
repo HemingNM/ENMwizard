@@ -9,7 +9,8 @@ proj_mdl_b(
   a.proj.l,
   format = "raster",
   numCores = 1,
-  parallelTunning = TRUE
+  parallelTunning = FALSE,
+  parallelProj = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ proj_mdl_b(
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
 \item{parallelTunning}{Should parallelize within species (parallelTunning=TRUE) or between species (parallelTunning=FALSE)}
+
+\item{parallelProj}{Should parallelize within species (parallelProj=TRUE) or between species (parallelProj=FALSE)?
+This argument is used to make multiple projections in parallel within species. parallelTunning must be set to FALSE.}
 }
 \value{
 A 'mcmp.l' object. A list of objects returned from function \code{\link{proj_mdl}}, containing the new (multiple) projections for each element (species) of the list

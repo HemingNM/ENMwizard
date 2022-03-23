@@ -109,6 +109,8 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
 #'
 #' @param mcm.l A list of objects returned by "calib_mdl", containing calibrated models.
 #' @param a.proj.l A list of Raster* objects or data.frames where models will be projected. Argument 'x' of dismo::predict
+#' @param parallelProj Should parallelize within species (parallelProj=TRUE) or between species (parallelProj=FALSE)?
+#' This argument is used to make multiple projections in parallel within species. parallelTunning must be set to FALSE.
 #' @inheritParams proj_mdl
 #' @inheritParams calib_mdl_b
 #' @seealso \code{\link{mod_sel}}, \code{\link{calib_mdl}}, \code{\link{calib_mdl_b}}, \code{\link[dismo]{maxent}},
@@ -119,13 +121,13 @@ proj_mdl <- function(mcm, sp.nm="species", pred.nm="fut", a.proj, format = "rast
 #' mxnt.mdls.preds.pf <- proj_mdl_b(mcm.l = mxnt.mdls.preds.lst, a.proj.l = area.projection.pf)
 #' }
 #' @export
-proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, parallelTunning = TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
+proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, parallelTunning = FALSE, parallelProj = TRUE){ #, # cores=2, #, pred.nm="fut", ENMeval.occ.results.lst, occ.b.env.lst, occ.locs.lst,
   mdl.names <- names(mcm.l)
 
-  if(numCores>1 & parallelTunning==FALSE){
+  if(numCores>1 & parallelTunning==FALSE & parallelProj==FALSE){
 
     cl<-parallel::makeCluster(numCores)
-    parallel::clusterExport(cl,list("proj_mdl"))
+    parallel::clusterExport(cl, list("proj_mdl", "ensemble_projs"))
 
     mcmp.l <- parallel::clusterApply(cl, seq_along(mcm.l),
 
@@ -155,7 +157,49 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
 
     parallel::stopCluster(cl)
 
-  }else{
+  } else if(numCores>1 & parallelTunning==FALSE & parallelProj==TRUE){
+
+    mcmp.l <- lapply(seq_along(mcm.l),
+
+                     function(i,a.proj.l,mcm.l,format){
+                       cat(c("\n", names(mcm.l)[i], "\n"))
+                       # mxnt.preds.spi <- list()
+                       mcm <- mcm.l[[i]]
+                       sp.nm <- names(mcm.l)[i]
+                       pred.nm <- names(a.proj.l[[i]])
+                       a.proj <- a.proj.l[[i]]
+
+                       f <- factor(mcm$selected.mdls$features)
+                       beta <- mcm$selected.mdls$rm
+                       print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
+
+                       cl<-parallel::makeCluster(numCores)
+                       parallel::clusterExport(cl, list("proj_mdl", "ensemble_projs"))
+
+                       mxnt.preds.spi <- parallel::clusterApply(cl, seq_along(a.proj),
+
+                                                        function(j, mcm,
+                                                                 sp.nm, pred.nm,
+                                                                 a.proj, format,
+                                                                 parallelTunning, numCores){
+
+                                                          proj_mdl(mcm = mcm,
+                                                                   sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                                                   a.proj = a.proj[[j]],
+                                                                   format = format, parallelTunning = parallelTunning,
+                                                                   numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
+
+                                                        }, mcm,
+                                                        sp.nm, pred.nm,
+                                                        a.proj, format,
+                                                        parallelTunning, numCores)
+
+                       names(mxnt.preds.spi) <- paste0(names(a.proj))
+
+                       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+                       return(mcm.l[[i]])}, a.proj.l, mcm.l, format)
+
+  } else {
 
     mcmp.l <- lapply(seq_along(mcm.l),
 
