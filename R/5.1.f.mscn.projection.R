@@ -127,7 +127,7 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
   if(numCores>1 & parallelTunning==FALSE & parallelProj==FALSE){
 
     cl<-parallel::makeCluster(numCores)
-    parallel::clusterExport(cl, list("proj_mdl", "ensemble_projs"))
+    parallel::clusterExport(cl, list("proj_mdl"))
 
     mcmp.l <- parallel::clusterApply(cl, seq_along(mcm.l),
 
@@ -174,7 +174,7 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
                        print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
 
                        cl<-parallel::makeCluster(numCores)
-                       parallel::clusterExport(cl, list("proj_mdl", "ensemble_projs"))
+                       parallel::clusterExport(cl, list("proj_mdl"))
 
                        mxnt.preds.spi <- parallel::clusterApply(cl, seq_along(a.proj),
 
