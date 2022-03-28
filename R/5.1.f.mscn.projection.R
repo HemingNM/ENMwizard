@@ -129,7 +129,7 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
     cl<-parallel::makeCluster(numCores)
     parallel::clusterExport(cl, list("proj_mdl"))
 
-    mcmp.l <- parallel::clusterApply(cl, seq_along(mcm.l),
+    mcm.l <- parallel::clusterApply(cl, seq_along(mcm.l),
 
                                      function(i, a.proj.l, mcm.l, format){
                                        mxnt.preds.spi <- list()
@@ -154,86 +154,96 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
                                        mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
                                        return(mcm.l[[i]])}, a.proj.l, mcm.l, format)
 
-
     parallel::stopCluster(cl)
 
   } else if(numCores>1 & parallelTunning==FALSE & parallelProj==TRUE){
 
-    mcmp.l <- lapply(seq_along(mcm.l),
+    # cl<-parallel::makeCluster(numCores)
+    # parallel::clusterExport(cl, list("proj_mdl"))
 
-                     function(i,a.proj.l,mcm.l,format){
-                       cat(c("\n", names(mcm.l)[i], "\n"))
-                       # mxnt.preds.spi <- list()
-                       mcm <- mcm.l[[i]]
-                       sp.nm <- names(mcm.l)[i]
-                       pred.nm <- names(a.proj.l[[i]])
-                       a.proj <- a.proj.l[[i]]
+    for(i in seq_along(mcm.l)){
+      # mcmp.l <- lapply(seq_along(mcm.l),
+      #                function(i,a.proj.l,mcm.l,format){
+      cat(c("\n", names(mcm.l)[i], "\n"))
+      # mxnt.preds.spi <- list()
+      mcm <- mcm.l[[i]]
+      sp.nm <- names(mcm.l)[i]
+      pred.nm <- names(a.proj.l[[i]])
+      a.proj <- a.proj.l[[i]]
 
-                       f <- factor(mcm$selected.mdls$features)
-                       beta <- mcm$selected.mdls$rm
-                       print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
+      f <- factor(mcm$selected.mdls$features)
+      beta <- mcm$selected.mdls$rm
+      print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
 
-                       cl<-parallel::makeCluster(numCores)
-                       parallel::clusterExport(cl, list("proj_mdl"))
+      cl<-parallel::makeCluster(numCores)
+      parallel::clusterExport(cl, list("proj_mdl"))
 
-                       mxnt.preds.spi <- parallel::clusterApply(cl, seq_along(a.proj),
+      mxnt.preds.spi <- parallel::clusterApply(cl, seq_along(a.proj),
 
-                                                        function(j, mcm,
-                                                                 sp.nm, pred.nm,
-                                                                 a.proj, format,
-                                                                 parallelTunning, numCores){
-
-                                                          proj_mdl(mcm = mcm,
-                                                                   sp.nm = sp.nm, pred.nm = pred.nm[j],
-                                                                   a.proj = a.proj[[j]],
-                                                                   format = format, parallelTunning = parallelTunning,
-                                                                   numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
-
-                                                        }, mcm,
+                                               function(j, mcm,
                                                         sp.nm, pred.nm,
                                                         a.proj, format,
-                                                        parallelTunning, numCores)
+                                                        parallelTunning, numCores){
 
-                       names(mxnt.preds.spi) <- paste0(names(a.proj))
+                                                 proj_mdl(mcm = mcm,
+                                                          sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                                          a.proj = a.proj[[j]],
+                                                          format = format, parallelTunning = parallelTunning,
+                                                          numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
 
-                       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-                       return(mcm.l[[i]])}, a.proj.l, mcm.l, format)
+                                               }, mcm,
+                                               sp.nm, pred.nm,
+                                               a.proj, format,
+                                               parallelTunning, numCores)
 
+      names(mxnt.preds.spi) <- paste0(names(a.proj))
+
+      mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+      # return(mcm.l[[i]])
+      # }, a.proj.l, mcm.l, format)
+
+      parallel::stopCluster(cl)
+      # mcmp.l <- mcm.l
+    }
+    # parallel::stopCluster(cl)
   } else {
 
-    mcmp.l <- lapply(seq_along(mcm.l),
+    for(i in seq_along(mcm.l)){
+      # mcmp.l <- lapply(seq_along(mcm.l),
+      #                  function(i,a.proj.l,mcm.l,format){
+      cat(c("\n", names(mcm.l)[i], "\n"))
+      mxnt.preds.spi <- list()
+      mcm <- mcm.l[[i]]
+      sp.nm <- names(mcm.l)[i]
+      pred.nm <- names(a.proj.l[[i]])
+      a.proj <- a.proj.l[[i]]
 
-                     function(i,a.proj.l,mcm.l,format){
-                       cat(c("\n", names(mcm.l)[i], "\n"))
-                       mxnt.preds.spi <- list()
-                       mcm <- mcm.l[[i]]
-                       sp.nm <- names(mcm.l)[i]
-                       pred.nm <- names(a.proj.l[[i]])
-                       a.proj <- a.proj.l[[i]]
+      f <- factor(mcm$selected.mdls$features)
+      beta <- mcm$selected.mdls$rm
+      print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
 
-                       f <- factor(mcm$selected.mdls$features)
-                       beta <- mcm$selected.mdls$rm
-                       print(data.frame(features=f, beta, row.names = mcm$selected.mdls$sel.cri))
+      for(j in 1:length(a.proj)){
+        cat(c("\n", "projection", j, "of", length(a.proj), "-",
+              names(a.proj)[j], "\n"))
 
-                       for(j in 1:length(a.proj)){
-                         cat(c("\n", "projection", j, "of", length(a.proj), "-",
-                               names(a.proj)[j], "\n"))
+        mxnt.preds.spi[j] <- proj_mdl(mcm = mcm,
+                                      sp.nm = sp.nm, pred.nm = pred.nm[j],
+                                      a.proj = a.proj[[j]],
+                                      format = format, parallelTunning = parallelTunning,
+                                      numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
+      }
+      names(mxnt.preds.spi) <- paste0(names(a.proj))
 
-                         mxnt.preds.spi[j] <- proj_mdl(mcm = mcm,
-                                                     sp.nm = sp.nm, pred.nm = pred.nm[j],
-                                                     a.proj = a.proj[[j]],
-                                                     format = format, parallelTunning = parallelTunning,
-                                                     numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
-                       }
-                       names(mxnt.preds.spi) <- paste0(names(a.proj))
+      mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
+      # return(mcm.l[[i]])}, a.proj.l, mcm.l, format)
 
-                       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-                       return(mcm.l[[i]])}, a.proj.l, mcm.l, format)
-
+      # mcmp.l <- mcm.l
+    }
   }
 
-  names(mcmp.l) <- mdl.names
-  return(mcmp.l)
+  # names(mcmp.l) <- mdl.names
+  # return(mcmp.l)
+  return(mcm.l)
 }
 
 
