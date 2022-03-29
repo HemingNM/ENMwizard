@@ -158,14 +158,8 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
 
   } else if(numCores>1 & parallelTunning==FALSE & parallelProj==TRUE){
 
-    # cl<-parallel::makeCluster(numCores)
-    # parallel::clusterExport(cl, list("proj_mdl"))
-
     for(i in seq_along(mcm.l)){
-      # mcmp.l <- lapply(seq_along(mcm.l),
-      #                function(i,a.proj.l,mcm.l,format){
       cat(c("\n", names(mcm.l)[i], "\n"))
-      # mxnt.preds.spi <- list()
       mcm <- mcm.l[[i]]
       sp.nm <- names(mcm.l)[i]
       pred.nm <- names(a.proj.l[[i]])
@@ -189,7 +183,7 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
                                                           sp.nm = sp.nm, pred.nm = pred.nm[j],
                                                           a.proj = a.proj[[j]],
                                                           format = format, parallelTunning = parallelTunning,
-                                                          numCores = numCores)$mxnt.preds[length(mcm$mxnt.preds) + 1]
+                                                          numCores = numCores)$mxnt.preds[[length(mcm$mxnt.preds) + 1]]
 
                                                }, mcm,
                                                sp.nm, pred.nm,
@@ -199,18 +193,14 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
       names(mxnt.preds.spi) <- paste0(names(a.proj))
 
       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-      # return(mcm.l[[i]])
-      # }, a.proj.l, mcm.l, format)
 
       parallel::stopCluster(cl)
-      # mcmp.l <- mcm.l
+
     }
-    # parallel::stopCluster(cl)
+
   } else {
 
     for(i in seq_along(mcm.l)){
-      # mcmp.l <- lapply(seq_along(mcm.l),
-      #                  function(i,a.proj.l,mcm.l,format){
       cat(c("\n", names(mcm.l)[i], "\n"))
       mxnt.preds.spi <- list()
       mcm <- mcm.l[[i]]
@@ -235,14 +225,10 @@ proj_mdl_b <- function(mcm.l, a.proj.l, format = "raster", numCores = 1, paralle
       names(mxnt.preds.spi) <- paste0(names(a.proj))
 
       mcm.l[[i]]$mxnt.preds <- append(mcm.l[[i]]$mxnt.preds, mxnt.preds.spi)
-      # return(mcm.l[[i]])}, a.proj.l, mcm.l, format)
 
-      # mcmp.l <- mcm.l
     }
   }
 
-  # names(mcmp.l) <- mdl.names
-  # return(mcmp.l)
   return(mcm.l)
 }
 
