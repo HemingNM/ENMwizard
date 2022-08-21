@@ -11,7 +11,7 @@ get_rsa_b(mrs.l, digits = 2, numCores = 1)
 
 \item{digits}{integer indicating the number of decimal places
     (\code{round}) or significant digits (\code{signif}) to be used.
-    Negative values are allowed (see \sQuote{Details}).}
+    For \code{round}, negative values are allowed (see \sQuote{Details}).}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }

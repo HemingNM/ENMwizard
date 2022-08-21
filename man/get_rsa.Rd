@@ -11,7 +11,7 @@ get_rsa(mrs, digits = 2)
 
 \item{digits}{integer indicating the number of decimal places
     (\code{round}) or significant digits (\code{signif}) to be used.
-    Negative values are allowed (see \sQuote{Details}).}
+    For \code{round}, negative values are allowed (see \sQuote{Details}).}
 }
 \value{
 An object of class "data.table" "data.frame" containing calculated areas of

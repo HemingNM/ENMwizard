@@ -36,11 +36,11 @@
 #' areas.occ.lst <- get_tsa_b(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
-get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
+get_tsa_b <- function(mtp.l, restrict=NULL, area.raster=NULL, digits=0){
 
   area.occ.spp <- lapply(seq_along(mtp.l), function(i, mtp.l, restrict, digits){
-    get_tsa(mtp.l[[i]], restrict, digits)
-  }, mtp.l, restrict, digits) # species, areas
+    get_tsa(mtp.l[[i]], restrict, area.raster, digits)
+  }, mtp.l, restrict, area.raster, digits) # species, areas
 
   names(area.occ.spp) <- names(mtp.l)
 
@@ -57,7 +57,10 @@ get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
 #'
 #' @inheritParams plot_mdl_diff
 #' @param digits integer indicating the number of decimal places. see ?round for details.
-#' @param restrict a raster to select a region to compute area.
+#' @param restrict A raster to select a region to compute area.
+#' @param area.raster A raster containing the cell areas to be summed across
+#' the suitable pixels. This allows summing areas of habitat when the pixel is
+#' partially occupied with the habitat of interest.
 #' @seealso \code{\link[raster]{area}}, \code{\link{get_tsa_b}}, \code{\link{get_cont_permimport}}, \code{\link{get_fpa}},
 #' \code{\link{get_cont_permimport_b}}, \code{\link{get_fpa_b}}
 #' @return List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
@@ -66,7 +69,7 @@ get_tsa_b <- function(mtp.l, restrict=NULL, digits=0){
 #' areas.occ.lst <- get_tsa_b(mtp.l=mods.thrshld.lst)
 #' }
 #' @export
-get_tsa <- function(mtp, restrict = NULL, digits){ # species, areas
+get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, areas
   thrshld.nms <- paste(paste0(".", tnm), collapse = "|")
 
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mtp[[1]][[2]][[1]]))
@@ -86,13 +89,13 @@ get_tsa <- function(mtp, restrict = NULL, digits){ # species, areas
 
   thrshld.crit <- names(mtp[[1]][[1]])
 
-  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, restrict, digits){ # , areas  # pred.scenario
+  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, restrict, area.raster, digits){ # , areas  # pred.scenario
     mtp.sc <- mtp[[sc]][[2]]
 
-    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sc, restrict, digits){ # , areas # threshold criteria
+    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sc, restrict, area.raster, digits){ # , areas # threshold criteria
       mtp.sc.t <- mtp.sc[[t]]
 
-      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sc, t, restrict, digits){ # , areas # model criteria
+      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sc, t, restrict, area.raster, digits){ # , areas # model criteria
         ar <- mtp.sc.t[[m]]
 
         if(grDevices::is.raster(restrict)){
@@ -101,11 +104,17 @@ get_tsa <- function(mtp, restrict = NULL, digits){ # species, areas
             ar <- ar*restrict
           }
         }
-        ar <- raster::zonal(raster::area(ar, na.rm=TRUE), ar, "sum", digits=digits)
+        if(is.null(area.raster)){
+          area.raster <- raster::area(ar, na.rm=TRUE)
+        }
+        if(isTRUE(all.equal(raster::extent(ar), raster::extent(area.raster)))){
+          area.raster <- raster::crop(area.raster, ar)
+        }
+        ar <- raster::zonal(area.raster, ar, "sum", digits=digits)
         ar <- empty2zero(ar[ar[,1]==1, 2])
-        return(ar) }, mtp.sc.t, sc, t, restrict, digits) # , areas # model criteria
-      return(ar.mods) }, mtp.sc, sc, restrict, digits) # , areas# threshold criteria
-    return(ar.mods.t) }, mtp, restrict, digits) # , areas # pred.scenario
+        return(ar) }, mtp.sc.t, sc, t, restrict, area.raster, digits) # , areas # model criteria
+      return(ar.mods) }, mtp.sc, sc, restrict, area.raster, digits) # , areas# threshold criteria
+    return(ar.mods.t) }, mtp, restrict, area.raster, digits) # , areas # pred.scenario
 
   ar.mods.t.p <- simplify2array(ar.mods.t.p) # transform list into array
   if(length(dim(ar.mods.t.p))==3){

@@ -4,12 +4,16 @@
 \alias{get_tsa}
 \title{Compute species' total suitable area}
 \usage{
-get_tsa(mtp, restrict = NULL, digits)
+get_tsa(mtp, restrict = NULL, area.raster = NULL, digits)
 }
 \arguments{
 \item{mtp}{Stack or brick of thresholded predictions}
 
-\item{restrict}{a raster to select a region to compute area.}
+\item{restrict}{A raster to select a region to compute area.}
+
+\item{area.raster}{A raster containing the cell areas to be summed across
+the suitable pixels. This allows summing areas of habitat when the pixel is
+partially occupied with the habitat of interest.}
 
 \item{digits}{integer indicating the number of decimal places. see ?round for details.}
 }

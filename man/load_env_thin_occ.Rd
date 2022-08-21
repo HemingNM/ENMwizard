@@ -9,9 +9,7 @@ load_env_thin_occ(p.lst, long.col = NULL, lat.col = NULL)
 \arguments{
 \item{p.lst}{named list returned from \code{\link{env_thin_b}}}
 
-\item{long.col}{Name of columns that contain coordinates (latitude and longitude)}
-
-\item{lat.col}{Name of columns that contain coordinates (latitude and longitude)}
+\item{lat.col, long.col}{Name of columns that contain coordinates (latitude and longitude)}
 }
 \value{
 named list of thinned occurence data for each species in the list
