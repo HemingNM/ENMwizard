@@ -38,7 +38,7 @@
 #' @export
 get_tsa_b <- function(mtp.l, restrict=NULL, area.raster=NULL, digits=0){
 
-  area.occ.spp <- lapply(seq_along(mtp.l), function(i, mtp.l, restrict, digits){
+  area.occ.spp <- lapply(seq_along(mtp.l), function(i, mtp.l, restrict, area.raster, digits){
     get_tsa(mtp.l[[i]], restrict, area.raster, digits)
   }, mtp.l, restrict, area.raster, digits) # species, areas
 
