@@ -108,14 +108,12 @@ comm_spatial_metric <- function(trait.gr, fun=sum, user.fun=NULL, result.name="r
       for(s in scn.nm){
         filename <- paste(file.path("4.results", result.name, tc), tr, s, sep = "_")
         if(!is.null(user.fun)){
-          trait.gr[[tc]][[tr]][[s]] <- user.fun(trait.gr[[tc]][[tr]][[s]],
-                                                  format=format, overwrite=T,
-                                                  filename=filename,
-                                                  ...)
+          trait.gr[[tc]][[tr]][[s]] <- user.fun(trait.gr[[tc]][[tr]][[s]], ...)
+
         } else {
           if(numCores>1){
             cl <- parallel::makeCluster(numCores)
-            # parallel::clusterExport(cl)
+            parallel::clusterExport(cl)
             trait.gr[[tc]][[tr]][[s]] <- raster::calc(trait.gr[[tc]][[tr]][[s]],
                                                       fun=function(x){ parallel::parApply(cl, x, 1, fun)},
                                                       format=format, overwrite=T,
