@@ -196,6 +196,8 @@ When all species are to be projected using the same current and future climates 
 
 ```r
 proj.extent <- extent(c(-109.5, -26.2, -59.5, 18.1))
+# coerce to a SpatialPolygons object
+proj.extent <- as(proj.extent, 'SpatialPolygons') 
 pred.cut.l <- cut_projarea_rst_mscn_b(proj.extent, predictors.l, occ.polys)
 ```
 

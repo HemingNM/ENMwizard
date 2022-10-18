@@ -21,7 +21,7 @@ partially occupied with the habitat of interest.}
 List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 }
 \description{
-Compute total suitable area at multiple climatic scenario, threshold and model criteria.
+Compute total suitable area at multiple climatic scenarios, threshold and model criteria.
 }
 \examples{
 \dontrun{

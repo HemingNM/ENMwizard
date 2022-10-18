@@ -2,7 +2,7 @@
 % Please edit documentation in R/8.1.f.metrics.R
 \name{get_tsa_b}
 \alias{get_tsa_b}
-\title{Compute species' total suitable area}
+\title{Compute total suitable area for multiple species}
 \usage{
 get_tsa_b(mtp.l, restrict = NULL, area.raster = NULL, digits = 0)
 }
@@ -21,7 +21,7 @@ partially occupied with the habitat of interest.}
 List of arrays containing species' total suitable areas for each climatic scenario, threshold and model criteria
 }
 \description{
-Compute total suitable area at multiple climatic scenario, threshold and model criteria.
+Compute total suitable area at multiple climatic scenarios, thresholds and model criteria.
 }
 \examples{
 \dontrun{

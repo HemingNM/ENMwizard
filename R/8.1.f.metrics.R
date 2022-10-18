@@ -1,30 +1,10 @@
 # # ##### 5. METRICS
 
-# TO DO - get_tsa;
-# In area.occ.spp[[sp]][] <- array(aperm(ar.mods.t.p, c(3, 2, 1))) :
-#   number of items to replace is not a multiple of replacement length
-# TO DO - get_fpa
-# Error in `[<-.data.frame`(`*tmp*`, , ncol(areas), value = c(0.526, 0.461,  :
-#   replacement has 6 rows, data has 8
-
-# # #### 4.6 compute area occupied
-# #' Compute total suitable area
-# #'
-# #' General function description. A short paragraph (or more) describing what the function does.
-# #' @inheritParams f.plot.mxnt.preds
-# #' @param pred.nm name of prediction to be appended to the final name. Usually "pres", "past" or "fut".
-# #' @param thrshld.i List of threshold criteria to be applied
-# #' @return Stack or brick of thresholded predictions
-# #' @examples
-# #' areas.occ.lst <- f.area.occ(mtp.l)
-# #' @export
-
-
 # #### 5.1 compute area occupied at multiple scenarios
 
-#' Compute species' total suitable area
+#' Compute total suitable area for multiple species
 #'
-#' Compute total suitable area at multiple climatic scenario, threshold and model criteria.
+#' Compute total suitable area at multiple climatic scenarios, thresholds and model criteria.
 #'
 #' @inheritParams plot_mdl_diff_b
 #' @inheritParams get_tsa
@@ -53,7 +33,7 @@ get_tsa_b <- function(mtp.l, restrict=NULL, area.raster=NULL, digits=0){
 
 #' Compute species' total suitable area
 #'
-#' Compute total suitable area at multiple climatic scenario, threshold and model criteria.
+#' Compute total suitable area at multiple climatic scenarios, threshold and model criteria.
 #'
 #' @inheritParams plot_mdl_diff
 #' @param digits integer indicating the number of decimal places. see ?round for details.
@@ -75,17 +55,17 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mtp[[1]][[2]][[1]]))
   c.nms2 <- vector("character", length(c.nms))
   s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC", "^EBPM", "^WAAUC", "^ESORIC")
-  invisible(sapply(seq_along(s.nms), function(i, x, y, z){
+  for(i in seq_along(s.nms)){
     si <- grepl(s.nms[i], c.nms)
     if(sum(si)>0){
-      c.nms2[si] <<- gsub("\\^|^\\.", "", paste(c.nms2[si], s.nms[i], sep = "."))
+      c.nms2[si] <- gsub("\\^|^\\.", "", paste(c.nms2[si], s.nms[i], sep = "."))
     }
-  }, c.nms, s.nms, c.nms2))
+  }
   rep.nm <- find_repeated_characters(gsub(paste(unique(c.nms2), collapse = "|"), "", c.nms))
-  masks <- gsub(paste(c(rep.nm,paste(unique(c.nms2), collapse = "|")), collapse = "|"), "", c.nms)
+  masks <- gsub(paste(c(rep.nm, paste(unique(c.nms2), collapse = "|")), collapse = "|"), "", c.nms)
   masks[masks==""] <- "all"
-  rep.mdl <- length(c.nms2)/length(unique(c.nms2))
-  c.nms <- c.nms2
+  # rep.mdl <- length(c.nms2)/length(unique(c.nms2))
+  # c.nms <- c.nms2
 
   thrshld.crit <- names(mtp[[1]][[1]])
 
@@ -117,21 +97,21 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
     return(ar.mods.t) }, mtp, restrict, area.raster, digits) # , areas # pred.scenario
 
   ar.mods.t.p <- simplify2array(ar.mods.t.p) # transform list into array
-  if(length(dim(ar.mods.t.p))==3){
-    ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
-  } else if(length(dim(ar.mods.t.p))==2){
+  # dimnames(ar.mods.t.p) <- list(paste(c.nms, masks, sep = "_"), names(mtp[[1]][[2]]), names(mtp))
+
+  if(length(dim(ar.mods.t.p))==2){
     dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1)
-    ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
   } else if(length(dim(ar.mods.t.p))==1){
     dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1, 1)
-    ar.mods.t.p <- array(aperm(ar.mods.t.p, c(3,2,1))) #,
   }
+  ar.mods.t.p <- array(ar.mods.t.p)
 
   # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
-  areas <- data.frame(expand.grid(Clim.scen=names(mtp), # pred.scenario
+  # expand.grid must be in same order of dimnames(ar.mods.t.p)
+  areas <- data.frame(expand.grid(Model=c.nms2,
                                   threshold=names(mtp[[1]][[2]]), # threshold criteria
-                                  Model=c.nms), # model criteria
-                      Location=rep(unique(masks), each=length(ar.mods.t.p)/rep.mdl),
+                                  Clim.scen=names(mtp)), # pred.scenario
+                      Location=rep(masks, length(ar.mods.t.p)/length(masks)),
                       TotSuitArea=ar.mods.t.p)
 
   return(areas)
@@ -320,27 +300,6 @@ get_fpa_b <- function(mtp.l, digits = 3){
 #' }
 #' @export
 get_fpa <- function(mtp, digits){ # species, areas
-  # print(sp.nm)
-  # areas <- array(dim=c(length(mtp), # rows for pred.scenario
-  #                      length(mtp[[1]][[2]]), # cols for threshold criteria
-  #                      raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
-  #                dimnames = list(names(mtp), # pred.scenario
-  #                                names(mtp[[1]][[2]]), # threshold criteria
-  #                                gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
-  #                                             "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
-  #                                             "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]]))
-  #                )) # model criteria
-  # areas <- data.table::melt(areas)
-  # colnames(areas)[1:4] <- c("Clim.scen", "threshold", "Model", "FPA")
-  #
-  # # areas <- areas
-  # # mtp.l.sp <- mtp
-  # areas <- expand.grid(Clim.scen=names(mtp),
-  #                      threshold=names(mtp[[1]][[2]]),
-  #                      Model=gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
-  #                                         "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
-  #                                         "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]])),
-  #                      FPA=NA)
 
   fpa.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, digits){  # pred.scenario
     mtp.sc <- mtp[[sc]][[2]]
@@ -359,23 +318,27 @@ get_fpa <- function(mtp, digits){ # species, areas
     return(fpa.mods.t) }, mtp, digits) # pred.scenario
 
   fpa.mods.t.p <- simplify2array(fpa.mods.t.p)
-  if(length(dim(fpa.mods.t.p))==3){
-    fpa.mods.t.p <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
-  } else if(length(dim(fpa.mods.t.p))==2){
+  # dimnames(fpa.mods.t.p) <- list(gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
+  #                                             "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
+  #                                             "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "",
+  #                                     names(mtp[[1]][[2]][[1]])), # Models
+  #                                names(mtp[[1]][[2]]), #threshold
+  #                                names(mtp)) # climScen
+  if(length(dim(fpa.mods.t.p))==2){
     dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1)
-    fpa.mods.t.p <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
   } else if(length(dim(fpa.mods.t.p))==1){
     dim(fpa.mods.t.p) <- c(dim(fpa.mods.t.p), 1, 1)
-    fpa.mods.t.p <- round(array(aperm(fpa.mods.t.p, c(3,2,1))), digits = digits) #,
-  } #else if(is.null(dim(fpa.mods.t.p))){
-  #   fpa.mods.t.p <- fpa.mods.t.p
-  # }
-  areas <- data.frame(expand.grid(Clim.scen=names(mtp),
-              threshold=names(mtp[[1]][[2]]),
-              Model=gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
-                                 "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
-                                 "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "", names(mtp[[1]][[2]][[1]]))),
-              FPA=fpa.mods.t.p)
+  }
+  fpa.mods.t.p <- round(array(fpa.mods.t.p), digits = digits)
+
+  # expand.grid must be in same order of dimnames(fpa.mods.t.p)
+  areas <- data.frame(expand.grid(Model=gsub(paste(c(".mxnt.pred.", ".current.", "Mod.", "fcv1", "fcv5",
+                                                     "fcv10", "mtp", "x10ptp", "etss", "mtss", "bto",
+                                                     "eetd", paste0(".", names(mtp), ".") ), collapse = "|"), "",
+                                             names(mtp[[1]][[2]][[1]])),
+                                  threshold=names(mtp[[1]][[2]]),
+                                  Clim.scen=names(mtp)),
+                      FPA=fpa.mods.t.p)
 
   # utils::write.csv(areas, paste0("3_out.MaxEnt/Mdls.", sp.nm, "/metric.FracPredArea.", sp.nm, ".csv")) # reorder ds
   return(areas)
