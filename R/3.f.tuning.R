@@ -84,8 +84,8 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
   } else {
     for(i in 1:length(occ.l)){
       ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
-                                                   occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
-                                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
+                                                   occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues[[i]],
+                                                   fc = fc[[i]], categoricals = categoricals[[i]], n.bg = n.bg, method = method[i],
                                                    algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
