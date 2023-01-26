@@ -56,9 +56,9 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
   bg.coords.l <- test.args(bg.coords.l, occ.l, "bg.coords.l")
   occ.grp.l <- test.args(occ.grp.l, occ.l, "occ.grp.l")
   bg.grp.l <- test.args(bg.grp.l, occ.l, "bg.grp.l")
-  RMvalues <- test.args(RMvalues, occ.l, "RMvalues")
-  fc <- test.args(fc, occ.l, "fc")
-  categoricals <- test.args(categoricals, occ.l, "categoricals")
+  RMvalues <- test.args(ifelse(inherits(RMvalues, "list"), RMvalues, list(RMvalues)), occ.l, "RMvalues")
+  fc <- test.args(ifelse(inherits(fc, "list"), fc, list(fc)), occ.l, "fc")
+  categoricals <- test.args(ifelse(inherits(categoricals, "list"), categoricals, list(categoricals)), occ.l, "categoricals")
   method <- test.args(method, occ.l, "method")
 
   ENMeval.res <- vector("list", length(occ.l))
@@ -69,7 +69,7 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
       cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
       ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
                                                    occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues[[i]],
-                                                   fc = fc[[i]], categoricals = categoricals[[i]], n.bg = n.bg, method = unlist(method[i]),
+                                                   fc = fc[[i]], categoricals = categoricals[[i]], n.bg = n.bg, method = method[i],
                                                    algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
                                                    kfolds = kfolds, bin.output = bin.output, clamp = clamp,
                                                    rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
