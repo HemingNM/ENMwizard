@@ -47,7 +47,7 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
         #        be 1 or the same length of occ.l")
       } else if(length(x)!=length(y) | all.equal(names(x), names(y))==F){
         stop(paste0("When not null, object: ", obj, "
-            must have 'length=1' or equal length and names of occ.l")) # a.calib.l, bg.coords.l, occ.grp.l, and bg.grp.l
+            must have 'length=1' or a 'list' with equal length and names of occ.l")) # a.calib.l, bg.coords.l, occ.grp.l, and bg.grp.l
       }
     }
     return(x)
