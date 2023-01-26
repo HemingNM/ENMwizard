@@ -24,19 +24,19 @@
 #' }
 #' @export
 ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
-                         occ.grp.l = NULL, bg.grp.l = NULL,
-                         RMvalues = seq(0.5, 4.5, 0.5),
-                              fc = c("L", "P", "Q", "H",
-                                     "LP", "LQ", "LH",
-                                     "PQ", "PH", "QH",
-                                     "LPQ", "LPH", "LQH", "PQH",
-                                     "LPQH"),
-                              categoricals = NULL, n.bg = 10000, method = "block",
-                              algorithm = 'maxnet', overlap = FALSE, aggregation.factor = c(2, 2),
-                              kfolds = NA, bin.output = FALSE, clamp = TRUE,
-                              rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
-                              progbar = TRUE, updateProgress = FALSE,
-                              resultsOnly = F, ...){
+                          occ.grp.l = NULL, bg.grp.l = NULL,
+                          RMvalues = seq(0.5, 4.5, 0.5),
+                          fc = c("L", "P", "Q", "H",
+                                 "LP", "LQ", "LH",
+                                 "PQ", "PH", "QH",
+                                 "LPQ", "LPH", "LQH", "PQH",
+                                 "LPQH"),
+                          categoricals = NULL, n.bg = 10000, method = "block",
+                          algorithm = 'maxnet', overlap = FALSE, aggregation.factor = c(2, 2),
+                          kfolds = NA, bin.output = FALSE, clamp = TRUE,
+                          rasterPreds = TRUE, parallel = FALSE, numCores = NULL,
+                          progbar = TRUE, updateProgress = FALSE,
+                          resultsOnly = F, ...){
   test.args <- function(x, y, obj=""){
     if(!is.null(x)) {
       if(length(x)==1){
@@ -65,12 +65,12 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
     for(i in names(occ.l)){
       cat(c( "sp", i, "\n", names(occ.l)[i]), "\n")
       ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
-                                   occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
-                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
-                                   algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
-                                   kfolds = kfolds, bin.output = bin.output, clamp = clamp,
-                                   rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
-                                   progbar = progbar, updateProgress = updateProgress))
+                                                   occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
+                                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
+                                                   algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
+                                                   kfolds = kfolds, bin.output = bin.output, clamp = clamp,
+                                                   rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
+                                                   progbar = progbar, updateProgress = updateProgress))
       # ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
       #                         results = eval@results,
       #                         occ.pts = eval@occ.pts,
@@ -79,16 +79,16 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
       ENMeval.res[[i]]@predictions <- raster::stack()
     }
   } else {
-      for(i in 1:length(occ.l)){
-        ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
-                                                 occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
-                                                 fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
-                                                 algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
-                                                 kfolds = kfolds, bin.output = bin.output, clamp = clamp,
-                                                 rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
-                                                 progbar = progbar, updateProgress = updateProgress))
-      }
+    for(i in 1:length(occ.l)){
+      ENMeval.res[[i]] <- try(ENMeval::ENMevaluate(occ.l[[i]], a.calib.l[[i]], bg.coords = bg.coords.l[[i]],
+                                                   occ.grp = occ.grp.l[[i]], bg.grp = bg.grp.l[[i]], RMvalues=RMvalues,
+                                                   fc = fc, categoricals = categoricals, n.bg = n.bg, method = method[i],
+                                                   algorithm = algorithm, overlap = overlap, aggregation.factor = aggregation.factor,
+                                                   kfolds = kfolds, bin.output = bin.output, clamp = clamp,
+                                                   rasterPreds = rasterPreds, parallel = parallel, numCores = numCores,
+                                                   progbar = progbar, updateProgress = updateProgress))
     }
+  }
   return(ENMeval.res)
 }
 
@@ -111,11 +111,9 @@ optENMevalObjL <- function (ENMeval.o.l) {
   names(ENMeval.res) <- names(ENMeval.o.l)
   for (i in seq_along(ENMeval.o.l)) {
     ENMeval.res[[i]] <- list( # methods::new("ENMevaluate.opt",
-                             results = ENMeval.o.l[[i]]@results,
-                             occ.pts = ENMeval.o.l[[i]]@occ.pts,
-                             bg.pts = ENMeval.o.l[[i]]@bg.pts)
+      results = ENMeval.o.l[[i]]@results,
+      occ.pts = ENMeval.o.l[[i]]@occ.pts,
+      bg.pts = ENMeval.o.l[[i]]@bg.pts)
   }
   return(ENMeval.res)
 }
-
-
