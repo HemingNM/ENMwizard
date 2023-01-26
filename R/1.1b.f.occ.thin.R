@@ -124,15 +124,15 @@ e_thin_algorithm <- function(data, bins=20){
 #'
 #' @export
 env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, file=NULL, plot=F, verbose=F){
-  if(class(p) %in% c("data.frame", "matrix")){
+  if(inherits(p, c("data.frame", "matrix"))){
+    if(inherits(p, "matrix")){
+      p <- as.data.frame(p)
+    }
     if(is.null(lat.col) | is.null(long.col)) {
       long.col <- colnames(p)[grep("^lon$|^long$|^longitude$", colnames(p), ignore.case = T, fixed = F)][1]
       lat.col <- colnames(p)[grep("^lat$|^latitude$", colnames(p), ignore.case = T)][1]
     }
     coords <- p[,c(long.col, lat.col)]
-    if(class(p) %in% c("matrix")){
-      p <- as.data.frame(p)
-    }
   } else { # if(class(p) %in% c("SpatialPoints", "SpatialPointsDataFrame")){
     coords <- p
   }
@@ -227,7 +227,7 @@ env_thin <- function(p, predictors, long.col=NULL, lat.col=NULL, bins=20, file=N
 env_thin_b <- function(p.lst, predictors.lst, long.col=NULL, lat.col=NULL, bins=20, plot=F, verbose=F){
   spp <- names(p.lst)
 
-  if(class(predictors.lst) != "list"){
+  if(!inherits(predictors.lst, "list")){
     f_thin <- function(i, p.lst, predictors.lst, long.col, lat.col, bins, spp, ...){
       file=paste0("1_sppData/occ.thinned.full/",
                   spp[i],"_occ_env_thinned.csv")
@@ -269,7 +269,7 @@ env_thin_b <- function(p.lst, predictors.lst, long.col=NULL, lat.col=NULL, bins=
 #' @export
 load_env_thin_occ <- function(p.lst, long.col=NULL, lat.col=NULL){
   lapply(p.lst, function(p, ...){
-    if(class(p) %in% c("data.frame", "matrix")){
+    if(inherits(p, c("data.frame", "matrix"))){
       if(is.null(lat.col) | is.null(long.col)) {
         long.col <- colnames(p)[grep("^lon$|^long$|^longitude$", colnames(p), ignore.case = T, fixed = F)][1]
         lat.col <- colnames(p)[grep("^lat$|^latitude$", colnames(p), ignore.case = T)][1]

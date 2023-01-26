@@ -21,9 +21,7 @@ or \code{\link[sp]{SpatialPoints}} of occurrence records.}
 \item{predictors.lst}{A \code{\link[raster]{Raster-class}} or list of \code{\link[raster]{Raster-class}}
 object containing the predictor variables.}
 
-\item{long.col}{Name of columns that contain coordinates (latitude and longitude)}
-
-\item{lat.col}{Name of columns that contain coordinates (latitude and longitude)}
+\item{lat.col, long.col}{Name of columns that contain coordinates (latitude and longitude)}
 
 \item{bins}{Number of bins to divide each environmental variable.}
 
