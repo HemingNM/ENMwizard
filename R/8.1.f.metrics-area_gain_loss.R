@@ -138,7 +138,7 @@ array2df <- function(a, clim.scen, threshold, model, location){
 #' spp_diff_a <- get_rsa(mrs=range_diff)
 #' }
 #' @export
-get_rsa <- function(mrs, digits=2){ # species, areas
+get_rsa <- function(mrs, area.raster=NULL, digits=2){ # species, areas
   thrshld.nms <- paste(paste0(".", tnm), collapse = "|")
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mrs))
   c.nms2 <- vector("character", length(c.nms))
@@ -172,7 +172,14 @@ get_rsa <- function(mrs, digits=2){ # species, areas
      for(sc in 1:raster::nlayers(mrs[[m]][[t]])){
         ar <- mrs[[m]][[t]][[sc]]
 
-        zstat <- raster::zonal(raster::area(ar, na.rm=TRUE), ar, "sum", digits=digits)
+        if(is.null(area.raster)){
+          area.raster <- raster::area(ar, na.rm=TRUE)
+        }
+        if(isTRUE(all.equal(raster::extent(ar), raster::extent(area.raster)))){
+          area.raster <- raster::crop(area.raster, ar)
+        }
+
+        zstat <- raster::zonal(area.raster, ar, "sum", digits=digits)
 
         missrow <- !zref[,1] %in% zstat[,1]
         zstat <- rbind(zref[missrow,],
@@ -212,11 +219,11 @@ get_rsa <- function(mrs, digits=2){ # species, areas
 #' spp_diff_a <- get_rsa_b(mods.thrshld.lst)
 #' }
 #' @export
-get_rsa_b <- function(mrs.l, digits=2, numCores=1){
+get_rsa_b <- function(mrs.l, area.raster=NULL, digits=2, numCores=1){
 
-  area.occ.spp <- lapply(seq_along(mrs.l), function(i, mrs.l, digits){
-    get_rsa(mrs.l[[i]], digits)
-  }, mrs.l, digits)
+  area.occ.spp <- lapply(seq_along(mrs.l), function(i, mrs.l, area.raster, digits){
+    get_rsa(mrs.l[[i]], area.raster, digits)
+  }, mrs.l, area.raster, digits)
 
   names(area.occ.spp) <- names(mrs.l)
 
