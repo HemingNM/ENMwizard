@@ -102,7 +102,7 @@ set_calibarea_b <- function(spp.occ.list, k = 1, c.m = "AP", r = 2, q = .3,
                          distance = "euclidean", min.nc = 2, max.nc = 20,
                          method = "mcquitty", index = "all", alphaBeale = 0.1,
                          convex = T, alpha = 10,
-                         plot = T, save = T, save.pts = F, numCores = 1,
+                         plot = F, save = T, save.pts = F, numCores = 1,
                          crs.set = "+proj=longlat +datum=WGS84"){ #, o.path=NULL
 
   occ.pgns <- vector("list", length(spp.occ.list)) # , names=
@@ -464,7 +464,7 @@ bind_poly <- function(occ.polys, sp.nm="species", save=TRUE, crs.set = "+proj=lo
 #' occ.b <- buffer_b(occ.polys, width=1.5)
 #' }
 #' @export
-buffer_b <- function(occ.polys, width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = T){ # , o.path = "occ.poly"
+buffer_b <- function(occ.polys, width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = F){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.bffr"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
