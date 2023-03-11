@@ -4,14 +4,16 @@
 \alias{get_rsa_b}
 \title{Compute changes in total suitable area for multiple species}
 \usage{
-get_rsa_b(mrs.l, digits = 2, numCores = 1)
+get_rsa_b(mrs.l, area.raster = NULL, digits = 2, numCores = 1)
 }
 \arguments{
 \item{mrs.l}{List containing stack or brick of range shifts. See \code{\link{range_shift_b}}}
 
-\item{digits}{integer indicating the number of decimal places
-    (\code{round}) or significant digits (\code{signif}) to be used.
-    For \code{round}, negative values are allowed (see \sQuote{Details}).}
+\item{area.raster}{A raster containing the cell areas to be summed across
+the suitable pixels. This allows summing areas of habitat when the pixel is
+partially occupied with the habitat of interest.}
+
+\item{digits}{integer indicating the number of decimal places. see ?round for details.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 }

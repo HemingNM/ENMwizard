@@ -4,14 +4,16 @@
 \alias{get_rsa}
 \title{Compute changes in total suitable area}
 \usage{
-get_rsa(mrs, digits = 2)
+get_rsa(mrs, area.raster = NULL, digits = 2)
 }
 \arguments{
 \item{mrs}{List containing stack or brick of range shifts. See \code{\link{range_shift}}}
 
-\item{digits}{integer indicating the number of decimal places
-    (\code{round}) or significant digits (\code{signif}) to be used.
-    For \code{round}, negative values are allowed (see \sQuote{Details}).}
+\item{area.raster}{A raster containing the cell areas to be summed across
+the suitable pixels. This allows summing areas of habitat when the pixel is
+partially occupied with the habitat of interest.}
+
+\item{digits}{integer indicating the number of decimal places. see ?round for details.}
 }
 \value{
 An object of class "data.table" "data.frame" containing calculated areas of

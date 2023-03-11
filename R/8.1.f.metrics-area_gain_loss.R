@@ -126,6 +126,7 @@ array2df <- function(a, clim.scen, threshold, model, location){
 #'
 #' @param mrs List containing stack or brick of range shifts. See \code{\link{range_shift}}
 #' @inheritParams thrshld
+#' @inheritParams get_tsa
 #' @inheritParams base::round
 #' @seealso \code{\link[raster]{area}}, \code{\link{get_tsa_b}}, \code{\link{get_cont_permimport}}, \code{\link{get_fpa}},
 #' \code{\link{get_cont_permimport_b}}, \code{\link{get_fpa_b}}
