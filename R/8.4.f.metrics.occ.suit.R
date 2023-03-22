@@ -91,7 +91,7 @@ get_occ_suit_b <- function(mcmp.l, occ.l=NULL, ref="current", t.all=F){
   }, mcmp.l, occ.l, ref, t.all)
   names(suit.occ.spp) <- names(mcmp.l)
 
-  suit.occ.spp.c <- data.table::rbindlist(suit.occ.spp, idcol = "sp")
+  suit.occ.spp.c <- data.table::rbindlist(suit.occ.spp, idcol = "Taxon")
 
   utils::write.csv(suit.occ.spp.c, paste0("3_out.MaxEnt/metric.occ.suit.csv")) # reorder ds
   return(suit.occ.spp.c)

@@ -24,7 +24,7 @@ get_tsa_b <- function(mtp.l, restrict=NULL, area.raster=NULL, digits=0){
 
   names(area.occ.spp) <- names(mtp.l)
 
-  area.occ.spp.c <- data.table::rbindlist(area.occ.spp, idcol = "sp")
+  area.occ.spp.c <- data.table::rbindlist(area.occ.spp, idcol = "Taxon")
   utils::write.csv(area.occ.spp.c, paste0("3_out.MaxEnt/metric.totalArea.csv")) # reorder ds
 
   return(area.occ.spp.c)
@@ -54,7 +54,7 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
 
   c.nms <- gsub(paste0("Mod\\.|", gsub("\\.", "\\\\.", thrshld.nms)), "", names(mtp[[1]][[2]][[1]]))
   c.nms2 <- vector("character", length(c.nms))
-  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AvgAIC", "^EBPM", "^WAAUC", "^ESORIC")
+  s.nms <- c("LowAIC", "ORmtp", "OR10", "AUCmtp", "AUC10", "^AUC", "^AvgAIC", "^EBPM", "^WAAUC", "^ESORIC")
   for(i in seq_along(s.nms)){
     si <- grepl(s.nms[i], c.nms)
     if(sum(si)>0){
@@ -64,20 +64,22 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
   rep.nm <- find_repeated_characters(gsub(paste(unique(c.nms2), collapse = "|"), "", c.nms))
   masks <- gsub(paste(c(rep.nm, paste(unique(c.nms2), collapse = "|")), collapse = "|"), "", c.nms)
   masks[masks==""] <- "all"
-  # rep.mdl <- length(c.nms2)/length(unique(c.nms2))
-  # c.nms <- c.nms2
+  rep.mdl <- length(c.nms2)/length(unique(c.nms2))
+  c.nms <- paste(c.nms2, masks, sep="_")
 
   thrshld.crit <- names(mtp[[1]][[1]])
 
-  ar.mods.t.p <- lapply(seq_along(mtp), function(sc, mtp, restrict, area.raster, digits){ # , areas  # pred.scenario
-    mtp.sc <- mtp[[sc]][[2]]
+  areas <- array(dim=c(length(mtp), # rows for pred.scenario
+                       length(mtp[[1]][[2]]), # cols for threshold criteria
+                       raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
+                 dimnames = list(Clim.scen = names(mtp), # pred.scenario
+                                 threshold = thrshld.crit,
+                                 Model = c.nms)) # model criteria
 
-    ar.mods.t <- sapply(seq_along(mtp.sc), function(t, mtp.sc, sc, restrict, area.raster, digits){ # , areas # threshold criteria
-      mtp.sc.t <- mtp.sc[[t]]
-
-      ar.mods <- sapply(1:raster::nlayers(mtp.sc.t), function(m, mtp.sc.t, sc, t, restrict, area.raster, digits){ # , areas # model criteria
-        ar <- mtp.sc.t[[m]]
-
+  for(sc in seq_along(mtp)){
+    for(t in seq_along(mtp[[sc]][[2]])){
+      for(m in 1:raster::nlayers(mtp[[sc]][[2]][[t]])){
+        ar <- mtp[[sc]][[2]][[t]][[m]]
         if(grDevices::is.raster(restrict)){
           if(raster::res(ar)!=raster::res(restrict)){
             ar <- raster::resample(ar, restrict)
@@ -92,29 +94,24 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
         }
         ar <- raster::zonal(area.raster, ar, "sum", digits=digits)
         ar <- empty2zero(ar[ar[,1]==1, 2])
-        return(ar) }, mtp.sc.t, sc, t, restrict, area.raster, digits) # , areas # model criteria
-      return(ar.mods) }, mtp.sc, sc, restrict, area.raster, digits) # , areas# threshold criteria
-    return(ar.mods.t) }, mtp, restrict, area.raster, digits) # , areas # pred.scenario
-
-  ar.mods.t.p <- simplify2array(ar.mods.t.p) # transform list into array
-  # dimnames(ar.mods.t.p) <- list(paste(c.nms, masks, sep = "_"), names(mtp[[1]][[2]]), names(mtp))
-
-  if(length(dim(ar.mods.t.p))==2){
-    dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1)
-  } else if(length(dim(ar.mods.t.p))==1){
-    dim(ar.mods.t.p) <- c(dim(ar.mods.t.p), 1, 1)
+        areas[sc,t,m] <- ar
+      }
+    }
   }
-  ar.mods.t.p <- array(ar.mods.t.p)
 
   # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
-  # expand.grid must be in same order of dimnames(ar.mods.t.p)
-  areas <- data.frame(expand.grid(Model=c.nms2,
-                                  threshold=names(mtp[[1]][[2]]), # threshold criteria
-                                  Clim.scen=names(mtp)), # pred.scenario
-                      Location=rep(masks, length(ar.mods.t.p)/length(masks)),
-                      TotSuitArea=ar.mods.t.p)
+  # expand.grid must be in same order of dimnames(areas)
+  ar.mods.t.p <- array(areas)
+  result <- data.frame(expand.grid(Clim.scen = names(mtp), # pred.scenario
+                                  Threshold = names(mtp[[1]][[2]]), # threshold criteria
+                                  Model = c.nms2), # model criteria
+                      Location = rep(unique(masks), each = length(ar.mods.t.p)/rep.mdl),
+                      TotSuitArea = ar.mods.t.p)
+  # result <- cbind(reshape2::melt(areas, value.name = "SuitArea"),
+  #       Location = rep(unique(masks), each=length(areas)/rep.mdl))[,c(1:3, 5, 4)]
+  result$Model <- gsub(paste0("_", masks, collapse = "|"), "", result$Model)
 
-  return(areas)
+  return(result)
 }
 
 

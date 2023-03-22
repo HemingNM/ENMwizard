@@ -18,7 +18,7 @@ set_calibarea_b(
   alphaBeale = 0.1,
   convex = T,
   alpha = 10,
-  plot = T,
+  plot = F,
   save = T,
   save.pts = F,
   numCores = 1,

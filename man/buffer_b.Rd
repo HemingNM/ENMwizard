@@ -11,7 +11,7 @@ buffer_b(
   quadsegs = 100,
   numCores = 1,
   crs.set = NULL,
-  plot = T
+  plot = F
 )
 }
 \arguments{
