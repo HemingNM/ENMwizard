@@ -19,7 +19,7 @@ get_occ_suit <- function(mcmp, occ=NULL, ref="current", t.all=F){
   npts <- nrow(as.data.frame(occ))
   ID <- 1:npts
   suit <- data.frame(matrix(ncol = 4, nrow = npts))
-  colnames(suit) <- c("clim.scen", "model", "suitability", "ID")
+  colnames(suit) <- c("Clim.scen", "Model", "Suitability", "ID")
   suit.f <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(suit.f) <- colnames(suit)
   ###- get projections to apply thresholds
@@ -55,17 +55,17 @@ get_occ_suit <- function(mcmp, occ=NULL, ref="current", t.all=F){
     }
 
     for(m in mod){
-      suit[,"suitability"] <- raster::extract(pred.r[[m]], occ)
-      suit[,"model"] <- m
-      suit[,"clim.scen"] <- sc
+      suit[,"Suitability"] <- raster::extract(pred.r[[m]], occ)
+      suit[,"Model"] <- m
+      suit[,"Clim.scen"] <- sc
       suit[,"ID"] <- ID
       suit.f <- rbind(suit.f, suit)
     } # for mod
   } # for scs
-  suit.f[ref] <- suit.f$suitability[suit.f$clim.scen==ref]
-  suit.f$direction <- "increase"
-  suit.f$direction[suit.f[ref] == suit.f$suitability] <- "stable"
-  suit.f$direction[suit.f[ref] > suit.f$suitability] <- "decrease"
+  suit.f[ref] <- suit.f$Suitability[suit.f$Clim.scen==ref]
+  suit.f$Direction <- "increase"
+  suit.f$Direction[suit.f[ref] == suit.f$Suitability] <- "stable"
+  suit.f$Direction[suit.f[ref] > suit.f$Suitability] <- "decrease"
   return(suit.f)
 }
 

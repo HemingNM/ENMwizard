@@ -161,7 +161,7 @@ get_rsa <- function(mrs, area.raster=NULL, digits=2){ # species, areas
                        length(mrs[[1]]), # cols for threshold criteria
                        length(mrs)), # rows for model criteria
                  dimnames = list(Clim.scen.change = scn.nm, # scn diff
-                                 threshold = names(mrs[[1]]), # threshold criteria
+                                 Threshold = names(mrs[[1]]), # threshold criteria
                                  Model = names(mrs))) # model criteria
   areas.g <- areas.l <- areas
   thrshld.crit <- names(mrs[[1]])
@@ -183,10 +183,10 @@ get_rsa <- function(mrs, area.raster=NULL, digits=2){ # species, areas
         zstat <- raster::zonal(area.raster, ar, "sum", digits=digits)
 
         missrow <- !zref[,1] %in% zstat[,1]
-        zstat <- rbind(zref[missrow,],
-              zstat[,])
-        zstat[] <- zstat[order(zstat[,1]),]
-
+        if(any(missrow)){
+          zstat <- rbind(zref[missrow,],
+                         zstat)
+        }
         areas.l[sc,t,m] <- empty2zero(zstat[zstat[,1]==-1, 2])
         areas[sc,t,m] <- empty2zero(zstat[zstat[,1]==0, 2])
         areas.g[sc,t,m] <- empty2zero(zstat[zstat[,1]==1, 2])
@@ -194,22 +194,12 @@ get_rsa <- function(mrs, area.raster=NULL, digits=2){ # species, areas
     }
   }
 
-  # result <- data.table::rbindlist(lapply(1:3, function(i, a, Change, loc){
-  #   cbind(reshape2::melt(a[[i]], value.name = "SuitArea"),
-  #         Location = loc,
-  #         Change = Change[[i]])
-  # }, a = list(areas.l, areas, areas.g), Change = c("loss", "unchanged", "gain"),
-  # loc = rep(unique(masks), each = length(areas)/rep.mdl)))
   result <- data.table::rbindlist(lapply(1:3, function(i, a, Change, loc){
-    cbind(data.frame(expand.grid(Clim.scen = scn.nm, # pred.scenario
-                                 Threshold = names(mrs[[1]]), # threshold criteria
-                                 Model = rep(unique(c.nms2), rep.mdl)), # model criteria
-                     Location = loc,
-                     SuitArea = array(a[[i]])),
-          Change = Change[[i]]) # check order of scn.nm and c.nms2
-  }, a = list(areas.l, areas, areas.g),
-  Change = c("loss", "unchanged", "gain"),
-  loc = rep(unique(masks), each=length(areas)/rep.mdl)))
+    cbind(reshape2::melt(a[[i]], value.name = "SuitArea"),
+          Location = loc,
+          Change = Change[[i]])
+  }, a = list(areas.l, areas, areas.g), Change = c("loss", "unchanged", "gain"),
+  loc = rep(unique(masks), each = length(areas)/rep.mdl)))
   result$Model <- gsub(paste0("_", masks, collapse = "|"), "", result$Model)
 
   return(result)

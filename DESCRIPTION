@@ -33,6 +33,7 @@ Imports:
     parallel,
     plotrix,
     raster,
+    reshape2,
     rgeos,
     sp,
     spThin,

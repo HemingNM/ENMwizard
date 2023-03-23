@@ -73,7 +73,7 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
                        length(mtp[[1]][[2]]), # cols for threshold criteria
                        raster::nlayers(mtp[[1]][[2]][[1]])), # sheet (3rd dim) for model criteria
                  dimnames = list(Clim.scen = names(mtp), # pred.scenario
-                                 threshold = thrshld.crit,
+                                 Threshold = thrshld.crit,
                                  Model = c.nms)) # model criteria
 
   for(sc in seq_along(mtp)){
@@ -99,16 +99,8 @@ get_tsa <- function(mtp, restrict = NULL, area.raster=NULL, digits){ # species, 
     }
   }
 
-  # https://stackoverflow.com/questions/40921426/converting-array-to-matrix-in-r
-  # expand.grid must be in same order of dimnames(areas)
-  ar.mods.t.p <- array(areas)
-  result <- data.frame(expand.grid(Clim.scen = names(mtp), # pred.scenario
-                                  Threshold = names(mtp[[1]][[2]]), # threshold criteria
-                                  Model = c.nms2), # model criteria
-                      Location = rep(unique(masks), each = length(ar.mods.t.p)/rep.mdl),
-                      TotSuitArea = ar.mods.t.p)
-  # result <- cbind(reshape2::melt(areas, value.name = "SuitArea"),
-  #       Location = rep(unique(masks), each=length(areas)/rep.mdl))[,c(1:3, 5, 4)]
+  result <- cbind(reshape2::melt(areas, value.name = "SuitArea"),
+        Location = rep(unique(masks), each=length(areas)/rep.mdl))[,c(1:3, 5, 4)]
   result$Model <- gsub(paste0("_", masks, collapse = "|"), "", result$Model)
 
   return(result)
