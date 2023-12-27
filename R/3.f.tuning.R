@@ -38,7 +38,7 @@ ENMevaluate_b <- function(occ.l, a.calib.l, bg.coords.l = NULL,
                           progbar = TRUE, updateProgress = FALSE,
                           resultsOnly = F, ...){
 
-  if(packageVersion("ENMeval") >= "1.0"){stop('ENMeval version >= 1.0 is not yet supported.
+  if(utils::packageVersion("ENMeval") >= "1.0"){stop('ENMeval version >= 1.0 is not yet supported.
     Please install an older version using:
          library(devtools)
          detach("package:ENMeval", unload=TRUE)

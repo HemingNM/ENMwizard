@@ -474,7 +474,7 @@ buffer_b <- function(occ.polys, width = NULL, mult = .2, #quadsegs = 100,
   TF.b.w <- is.null(width)
 
   f.bffr <- function(i, occ.polys, crs.set, TF.b.w, width,
-                     quadsegs, mult, o.path){
+                     mult, o.path){
     n.occp.i <- names(occ.polys)[i]
     occ.polys.i <- occ.polys[[i]]
     if(!is.null(crs.set) & is.null(raster::projection(occ.polys.i))){raster::projection(occ.polys.i) <- crs.set}
@@ -502,26 +502,26 @@ buffer_b <- function(occ.polys, width = NULL, mult = .2, #quadsegs = 100,
 
     occ.b <- parallel::clusterApply(cl, base::seq_along(occ.polys),
                                        function(i, occ.polys, crs.set, TF.b.w, width,
-                                                quadsegs, mult, o.path){
+                                                mult, o.path){
 
                                          f.bffr(i, occ.polys, crs.set, TF.b.w, width,
-                                                quadsegs, mult, o.path)
+                                                mult, o.path)
 
                                        }, occ.polys, crs.set, TF.b.w, width,
-                                    quadsegs, mult, o.path)
+                                    mult, o.path)
 
     parallel::stopCluster(cl)
 
   } else {
     occ.b <- lapply(base::seq_along(occ.polys),
                     function(i, occ.polys, crs.set, TF.b.w, width,
-                             quadsegs, mult, o.path){
+                             mult, o.path){
 
                       f.bffr(i, occ.polys, crs.set, TF.b.w, width,
-                             quadsegs, mult, o.path)
+                             mult, o.path)
 
                     }, occ.polys, crs.set, TF.b.w, width,
-                    quadsegs, mult, o.path)
+                    mult, o.path)
 
   }
   names(occ.b) <- names(occ.polys)
