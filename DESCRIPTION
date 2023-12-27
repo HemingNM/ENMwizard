@@ -22,6 +22,7 @@ Imports:
     alphahull,
     apcluster,
     data.table,
+    devtools,
     dismo,
     ENMeval (>= 0.3.0),
     fields,
@@ -39,7 +40,6 @@ Imports:
     stats,
     utils
 Suggests:
-    devtools,
     knitr,
     rmarkdown,
     testthat
