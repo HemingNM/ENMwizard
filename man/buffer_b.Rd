@@ -8,7 +8,6 @@ buffer_b(
   occ.polys,
   width = NULL,
   mult = 0.2,
-  quadsegs = 100,
   numCores = 1,
   crs.set = NULL,
   plot = F
@@ -17,11 +16,9 @@ buffer_b(
 \arguments{
 \item{occ.polys}{list of SpatialPolygons, usually obj returned from set_calibarea_b()}
 
-\item{width}{Buffer width. See 'width' of ?rgeos::gBuffer}
+\item{width}{numeric > 0. Unit is meter if \code{x} has a longitude/latitude CRS, or mapunits in other cases}
 
 \item{mult}{How much expand width}
-
-\item{quadsegs}{Number of line segments to use to approximate a quarter circle.}
 
 \item{numCores}{Number of cores to use for parallelization. If set to 1, no paralellization is performed}
 
@@ -45,9 +42,9 @@ Bvarieg.occ <- read.table(paste(system.file(package="dismo"),
 colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 occ.polys <- set_calibarea_b(spp.occ.list)
-occ.b <- buffer_b(occ.polys, width=1.5)
+occ.b <- buffer_b(occ.polys, width=150000)
 }
 }
 \seealso{
-\code{\link[rgeos]{gBuffer}}, \code{\link{set_calibarea_b}}
+\code{\link[raster]{buffer}}, \code{\link{set_calibarea_b}}
 }

@@ -71,7 +71,7 @@ set_projarea <- function(occ.poly, sp.nm="sp", deg.incr=NULL, mult=1, buffer=FAL
     area.p <- methods::as(ext.proj, "SpatialPolygons")
     raster::projection(area.p) <- raster::projection(occ.poly)
   } else {
-    area.p <- rgeos::gBuffer(occ.poly, width = deg.incr*mult, quadsegs=100)
+    area.p <- raster::buffer(occ.poly, width = deg.incr*mult)
     cat("\n", paste("New extent"), "\n")
     print(raster::extent(area.p))
     raster::projection(area.p) <- raster::projection(occ.poly)

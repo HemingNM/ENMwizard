@@ -444,15 +444,13 @@ bind_poly <- function(occ.polys, sp.nm="species", save=TRUE, crs.set = "+proj=lo
 #' using 'mult' argument.
 #'
 #' @param occ.polys list of SpatialPolygons, usually obj returned from set_calibarea_b()
-#' @param width Buffer width. See 'width' of ?rgeos::gBuffer
 #' @param mult How much expand width
 # #' @param plot Boolean, to draw plots or not
-# #' @param quadsegs see ?rgeos::gBuffer
-#' @inheritParams rgeos::gBuffer
+#' @inheritParams raster::buffer
 #' @inheritParams set_calibarea
 #' @inheritParams set_calibarea_b
 #'
-#' @seealso \code{\link[rgeos]{gBuffer}}, \code{\link{set_calibarea_b}}
+#' @seealso \code{\link[raster]{buffer}}, \code{\link{set_calibarea_b}}
 #' @return A named list of SpatialPolygons
 #' @examples
 #'\dontrun{
@@ -461,10 +459,11 @@ bind_poly <- function(occ.polys, sp.nm="species", save=TRUE, crs.set = "+proj=lo
 #' colnames(Bvarieg.occ) <- c("SPEC", "LONG", "LAT")
 #' spp.occ.list <- list(Bvarieg = Bvarieg.occ)
 #' occ.polys <- set_calibarea_b(spp.occ.list)
-#' occ.b <- buffer_b(occ.polys, width=1.5)
+#' occ.b <- buffer_b(occ.polys, width=150000)
 #' }
 #' @export
-buffer_b <- function(occ.polys, width = NULL, mult = .2, quadsegs = 100, numCores = 1, crs.set = NULL, plot = F){ # , o.path = "occ.poly"
+buffer_b <- function(occ.polys, width = NULL, mult = .2, #quadsegs = 100,
+                     numCores = 1, crs.set = NULL, plot = F){ # , o.path = "occ.poly"
   o.path <- "1_sppData/occ.bffr"
   if(dir.exists("1_sppData")==FALSE) dir.create("1_sppData")
   if(dir.exists(o.path)==FALSE) dir.create(o.path)
@@ -484,11 +483,11 @@ buffer_b <- function(occ.polys, width = NULL, mult = .2, quadsegs = 100, numCore
       width <- mean(c(abs(ext.proj[1]-ext.proj[2]), abs(ext.proj[3]-ext.proj[4])))*mult[i]
     }
     cat(c("Buffer width for", n.occp.i, "is", width, "\n"))
-    occ.b.i <- rgeos::gBuffer(occ.polys.i, width=width, quadsegs=quadsegs)
-    raster::shapefile(occ.b.i, filename = paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ), overwrite=TRUE)
-    occ.b.i <- raster::shapefile(paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ))
+    occ.b.i <- raster::buffer(occ.polys.i, width=width,
+                              filename = paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ), overwrite=TRUE)
+    # occ.b.i <- raster::shapefile(paste(o.path, paste0(n.occp.i, ".bffr", ".shp"), sep = "/" ))
 
-    if(plot == T){
+    if(plot){
       sp::plot(occ.b.i, col="green", main=n.occp.i)
       sp::plot(occ.polys.i, border="red", add=TRUE)
     }

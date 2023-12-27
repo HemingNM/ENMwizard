@@ -29,9 +29,7 @@ comm_spatial_metric(
 
 \item{...}{Additional arguments: 
   		
-\code{datatype}{Character. Output data type (e.g. 'INT2S' or 'FLT4S'). 
-See \code{\link[raster]{dataType}}. If no datatype is specified, 'FLT4S' is used,
-unless this default value was changed with \code{\link[raster]{rasterOptions}}}
+\code{datatype}: Character. Output data type (e.g. 'INT2S' or 'FLT4S'). See \code{\link[raster]{dataType}}. If no datatype is specified, 'FLT4S' is used, unless this default value was changed with \code{\link[raster]{rasterOptions}}
 	
 \code{overwrite}: Logical. If TRUE, "filename" will be overwritten if it exists
 	
